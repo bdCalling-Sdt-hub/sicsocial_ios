@@ -35,65 +35,87 @@ const EmailConfirmationScreen = ({navigation}: NavigProps<null>) => {
           fontFamily: GFonts.PoppinsSemiBold,
         }}
       />
-      <ScrollView>
+
+      <View
+        style={{
+          marginHorizontal: '5%',
+          gap: 24,
+          flex: 1,
+          //   alignItems: 'center',
+          justifyContent: 'center',
+          marginBottom: 80,
+        }}>
+        <View>
+          <Text
+            style={{
+              fontSize: 24,
+              fontFamily: GFonts.PoppinsSemiBold,
+              color: GColors.textColor.blackNormal,
+              textAlign: 'center',
+            }}>
+            Email Confirmation
+          </Text>
+          <Text
+            style={{
+              fontSize: 14,
+              fontFamily: GFonts.Poppins,
+              color: GColors.textColor.blacklight,
+              textAlign: 'center',
+            }}>
+            Enter Your email for verification.
+          </Text>
+        </View>
         <View
           style={{
-            marginTop: 105,
-            marginHorizontal: '5%',
-            gap: 24,
+            gap: 8,
           }}>
-          <View
+          <Text
             style={{
-              gap: 8,
+              fontFamily: GFonts.Poppins,
+              fontSize: 14,
+              color: '#A1A1A1',
+            }}>
+            Email
+          </Text>
+          <TextInput
+            value="Gabrail101@gmail.com"
+            style={{
+              fontFamily: GFonts.Poppins,
+              backgroundColor: GColors.primaryColor,
+              borderRadius: 100,
+              fontSize: 14,
+              paddingHorizontal: 20,
+              height: 56,
+            }}
+            placeholder="type "
+          />
+        </View>
+
+        <View>
+          <TouchableOpacity
+            onPress={() => {
+              // navigation?.navigate('HomeRoutes');
+              // handleSubmit();
+            }}
+            style={{
+              backgroundColor: GColors.secondaryColor,
+              borderRadius: 100,
+              height: 56,
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginVertical: 24,
             }}>
             <Text
               style={{
-                fontFamily: GFonts.Poppins,
-                fontSize: 14,
-                color: '#A1A1A1',
+                fontFamily: GFonts.PoppinsSemiBold,
+                fontSize: 16,
+                color: 'white',
               }}>
-              Email
+              Send Verification Code
             </Text>
-            <TextInput
-              value="Gabrail101@gmail.com"
-              style={{
-                fontFamily: GFonts.Poppins,
-                backgroundColor: GColors.primaryColor,
-                borderRadius: 100,
-                fontSize: 14,
-                paddingHorizontal: 20,
-                height: 56,
-              }}
-              placeholder="type "
-            />
-          </View>
-
-          <View>
-            <TouchableOpacity
-              onPress={() => {
-                // navigation?.navigate('HomeRoutes');
-                // handleSubmit();
-              }}
-              style={{
-                backgroundColor: GColors.secondaryColor,
-                borderRadius: 100,
-                height: 56,
-                justifyContent: 'center',
-                alignItems: 'center',
-                marginVertical: 24,
-              }}>
-              <Text
-                style={{
-                  fontFamily: GFonts.PoppinsSemiBold,
-                  fontSize: 16,
-                  color: 'white',
-                }}>
-                Send Verification Code
-              </Text>
-            </TouchableOpacity>
-          </View>
+          </TouchableOpacity>
         </View>
-      </ScrollView>
+      </View>
     </View>
   );
 };
