@@ -1,0 +1,287 @@
+import {
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import React from 'react';
+import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
+import {GColors} from '../../styles/GColors';
+import {GFonts} from '../../styles/GFonts';
+import {NavigProps} from '../../interfaces/NaviProps';
+import NormalButton from '../../components/common/NormalButton';
+
+const VerifyEmailScreen = ({navigation}: NavigProps<null>) => {
+  const [pin, setPin] = React.useState('');
+  const textInputRef = React.useRef<TextInput>(null);
+  const handlePress = () => {
+    if (textInputRef.current) {
+      textInputRef.current.focus();
+    }
+  };
+  React.useEffect(() => {
+    textInputRef.current?.focus();
+  }, []);
+
+  const handlePinChange = (input: string) => {
+    // Ensure only numbers are entered and limit to 6 digits
+    const filteredInput = input.replace(/[^0-9]/g, '').slice(0, 6);
+    setPin(filteredInput);
+  };
+
+  return (
+    <View
+      style={{
+        height: '100%',
+        backgroundColor: 'white',
+      }}>
+      <BackButtonWithTitle
+        navigation={navigation}
+        containerStyle={{
+          marginTop: 10,
+        }}
+        // offBack
+        // thirdColl
+        // title="Welcome Back !"
+        offTitle
+        titleStyle={{
+          fontSize: 24,
+          // marginTop: 10,
+          color: GColors.textColor.blackNormal,
+          fontFamily: GFonts.PoppinsSemiBold,
+        }}
+      />
+
+      <View
+        style={{
+          marginHorizontal: '5%',
+
+          flex: 1,
+          //   alignItems: 'center',
+          justifyContent: 'center',
+          marginBottom: 80,
+        }}>
+        <View>
+          <Text
+            style={{
+              fontSize: 24,
+              fontFamily: GFonts.PoppinsSemiBold,
+              color: GColors.textColor.blackNormal,
+              textAlign: 'center',
+              marginBottom: 16,
+            }}>
+            Enter 6 digits code
+          </Text>
+          <Text
+            style={{
+              fontSize: 14,
+              fontFamily: GFonts.Poppins,
+              color: GColors.textColor.blacklight,
+              textAlign: 'center',
+              marginBottom: 31,
+              width: '100%',
+            }}>
+            Enter the 6 digits code that you received on yor email
+          </Text>
+        </View>
+        <View
+          style={{
+            gap: 8,
+            marginVertical: 15,
+          }}>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              backgroundColor: 'white',
+            }}>
+            <Pressable
+              onPress={() => handlePress()}
+              style={{
+                backgroundColor: '#FBF5EB',
+                borderRadius: 5,
+                height: 54,
+                width: 41,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <Text
+                style={{
+                  fontSize: 24,
+                  color: '#636363',
+                  fontFamily: GFonts.Poppins,
+                }}>
+                {pin[0] ? pin[0] : ''}
+              </Text>
+            </Pressable>
+            <Pressable
+              onPress={() => handlePress()}
+              style={{
+                backgroundColor: '#FBF5EB',
+                borderRadius: 5,
+                height: 54,
+                width: 41,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <Text
+                style={{
+                  fontSize: 24,
+                  color: '#636363',
+                  fontFamily: GFonts.Poppins,
+                }}>
+                {pin[1] ? pin[1] : ''}
+              </Text>
+            </Pressable>
+            <Pressable
+              onPress={() => handlePress()}
+              style={{
+                backgroundColor: '#FBF5EB',
+                borderRadius: 5,
+                height: 54,
+                width: 41,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <Text
+                style={{
+                  fontSize: 24,
+                  color: '#636363',
+                  fontFamily: GFonts.Poppins,
+                }}>
+                {pin[2] ? pin[2] : ''}
+              </Text>
+            </Pressable>
+            <Pressable
+              onPress={() => handlePress()}
+              style={{
+                backgroundColor: '#FBF5EB',
+                borderRadius: 5,
+                height: 54,
+                width: 41,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <Text
+                style={{
+                  fontSize: 24,
+                  color: '#636363',
+                  fontFamily: GFonts.Poppins,
+                }}>
+                {pin[3] ? pin[3] : ''}
+              </Text>
+            </Pressable>
+            <Pressable
+              onPress={() => handlePress()}
+              style={{
+                backgroundColor: '#FBF5EB',
+                borderRadius: 5,
+                height: 54,
+                width: 41,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <Text
+                style={{
+                  fontSize: 24,
+                  color: '#636363',
+                  fontFamily: GFonts.Poppins,
+                }}>
+                {pin[4] ? pin[4] : ''}
+              </Text>
+            </Pressable>
+            <Pressable
+              onPress={() => handlePress()}
+              style={{
+                backgroundColor: '#FBF5EB',
+                borderRadius: 5,
+                height: 54,
+                width: 41,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <Text
+                style={{
+                  fontSize: 24,
+                  color: '#636363',
+                  fontFamily: GFonts.Poppins,
+                }}>
+                {pin[5] ? pin[5] : ''}
+              </Text>
+            </Pressable>
+          </View>
+        </View>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+          }}>
+          <Text
+            style={{
+              fontSize: 13,
+              fontFamily: GFonts.Poppins,
+              color: GColors.textColor.blacklight,
+              marginTop: 31,
+            }}>
+            I didn't find confirmation code,{' '}
+          </Text>
+          <TouchableOpacity
+            style={{
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginTop: 25,
+            }}>
+            <Text
+              style={{
+                color: GColors.secondaryColor,
+                borderBottomColor: GColors.secondaryColor,
+                borderBottomWidth: 1,
+              }}>
+              Send Again
+            </Text>
+          </TouchableOpacity>
+        </View>
+        <View>
+          <NormalButton
+            title="Confirm"
+            marginVertical={31}
+            onPress={() => {
+              navigation?.navigate('ResetPassword');
+            }}
+          />
+        </View>
+      </View>
+
+      <TextInput
+        ref={textInputRef}
+        keyboardType="numeric"
+        style={{
+          position: 'absolute',
+          top: -500,
+        }}
+        onEndEditing={() => {
+          if (pin.length === 6) {
+            // navigation?.navigate('');
+          }
+        }}
+        onChangeText={handlePinChange}
+        maxLength={6}
+      />
+    </View>
+  );
+};
+
+export default VerifyEmailScreen;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});

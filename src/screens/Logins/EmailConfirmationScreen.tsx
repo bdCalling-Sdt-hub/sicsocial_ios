@@ -39,7 +39,7 @@ const EmailConfirmationScreen = ({navigation}: NavigProps<null>) => {
       <View
         style={{
           marginHorizontal: '5%',
-          gap: 24,
+          gap: 25,
           flex: 1,
           //   alignItems: 'center',
           justifyContent: 'center',
@@ -94,7 +94,7 @@ const EmailConfirmationScreen = ({navigation}: NavigProps<null>) => {
         <View>
           <TouchableOpacity
             onPress={() => {
-              // navigation?.navigate('HomeRoutes');
+              navigation?.navigate('VerifyEmail');
               // handleSubmit();
             }}
             style={{

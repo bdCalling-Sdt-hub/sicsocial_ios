@@ -232,8 +232,8 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
               <View>
                 <TouchableOpacity
                   onPress={() => {
-                    // navigation?.navigate('HomeRoutes');
-                    handleSubmit();
+                    navigation?.navigate('EmailConfirmation');
+                    // handleSubmit();
                   }}
                   style={{
                     backgroundColor: GColors.secondaryColor,

@@ -12,36 +12,34 @@ import {
   createBottomTabNavigator,
   BottomTabBarProps,
 } from '@react-navigation/bottom-tabs';
-import HomeScreen from '../screens/HomeScreen';
 import LinearGradient from 'react-native-linear-gradient';
 import {GColors} from '../styles/GColors';
+import HomeScreen from '../screens/home/HomeScreen';
 
 const Tab = createBottomTabNavigator();
 
-
 const routeAssets = [
   {
-    name : "Home",
-    icon_fill : require("../assets/icons/bottomBar/home_fill.png"),
-    icon_outline : require("../assets/icons/bottomBar/home_outline.png")
+    name: 'Home',
+    icon_fill: require('../assets/icons/bottomBar/home_fill.png'),
+    icon_outline: require('../assets/icons/bottomBar/home_outline.png'),
   },
   {
-    name : "Users",
-    icon_fill : require("../assets/icons/bottomBar/add_user_fill.png"),
-    icon_outline : require("../assets/icons/bottomBar/add_user_outline.png")
+    name: 'Users',
+    icon_fill: require('../assets/icons/bottomBar/add_user_fill.png'),
+    icon_outline: require('../assets/icons/bottomBar/add_user_outline.png'),
   },
   {
-    name : "Chats",
-    icon_fill : require("../assets/icons/bottomBar/chat_fill.png"),
-    icon_outline : require("../assets/icons/bottomBar/chat_outline.png")
+    name: 'Chats',
+    icon_fill: require('../assets/icons/bottomBar/chat_fill.png'),
+    icon_outline: require('../assets/icons/bottomBar/chat_outline.png'),
   },
   {
-    name : "UserProfile",
-    icon_fill : require("../assets/icons/bottomBar/user_profile_fill.png"),
-    icon_outline : require("../assets/icons/bottomBar/user_profile_outline.png")
-  }
-]
-
+    name: 'UserProfile',
+    icon_fill: require('../assets/icons/bottomBar/user_profile_fill.png'),
+    icon_outline: require('../assets/icons/bottomBar/user_profile_outline.png'),
+  },
+];
 
 const MyTabBar: React.FC<BottomTabBarProps> = ({
   state,
@@ -52,6 +50,7 @@ const MyTabBar: React.FC<BottomTabBarProps> = ({
     <LinearGradient
       colors={[
         'rgba(255,255,255,0.0)',
+        'rgba(255,255,255,1)',
         'rgba(255,255,255,1)',
         'rgba(255,255,255,1)',
         'rgba(255,255,255,1)',
@@ -94,7 +93,10 @@ const MyTabBar: React.FC<BottomTabBarProps> = ({
           });
         };
 
-        console.log(routeAssets.find((item=>item.name === route.name && item.icon_fill))?.icon_fill);
+        console.log(
+          routeAssets.find(item => item.name === route.name && item.icon_fill)
+            ?.icon_fill,
+        );
 
         return (
           <TouchableOpacity
@@ -106,21 +108,26 @@ const MyTabBar: React.FC<BottomTabBarProps> = ({
             onPress={onPress}
             onLongPress={onLongPress}
             style={{
-            
-           width : 50,
-           height : 50,
-            gap : 15,
-            justifyContent : 'center',
-            // alignItems : "center"
+              width: 50,
+              height: 50,
+              gap: 15,
+              justifyContent: 'center',
+              // alignItems : "center"
             }}>
             <Image
-              source={ isFocused ? routeAssets.find((item=>item.name === route.name ))?.icon_fill :routeAssets.find((item=>item.name === route.name))?.icon_outline } // Replace with your icon source
+              source={
+                isFocused
+                  ? routeAssets.find(item => item.name === route.name)
+                      ?.icon_fill
+                  : routeAssets.find(item => item.name === route.name)
+                      ?.icon_outline
+              } // Replace with your icon source
               style={styles.tabIcon}
             />
             <View
               style={{
                 borderBottomWidth: 3,
-                borderBottomColor: isFocused ? '#DBB162' : "white",
+                borderBottomColor: isFocused ? '#DBB162' : 'white',
               }}
             />
           </TouchableOpacity>
@@ -143,13 +150,13 @@ const BottomBarRoutes: React.FC = () => {
       tabBar={props => <MyTabBar {...props} />}
       screenOptions={{
         tabBarStyle: styles.tabBar,
-        headerShown : false
+        headerShown: false,
       }}>
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Users" component={HomeScreen} />
       <Tab.Screen name="Chats" component={HomeScreen} />
       <Tab.Screen name="UserProfile" component={HomeScreen} />
-    
+
       {/* Add more Tab.Screen components as needed */}
     </Tab.Navigator>
   );
@@ -179,7 +186,7 @@ const styles = StyleSheet.create({
   tabIcon: {
     width: 24,
     height: 24,
-    alignSelf : "center"
+    alignSelf: 'center',
   },
   tabBar: {
     position: 'absolute',
