@@ -1,7 +1,15 @@
 import {View, Text, Appearance} from 'react-native';
 import React, {createContext, useState} from 'react';
 
-const ContextProvider = createContext<any>(null);
+interface ProviderProps {
+  isDark?: boolean;
+  setDark?: Function | any;
+}
+
+export const ContextProvider = createContext<ProviderProps>({
+  isDark: false,
+  setDark: () => {},
+});
 
 interface ContextApiProps {
   children: React.ReactNode;

@@ -3,7 +3,11 @@ import React from 'react';
 
 const SearchScreen = () => {
   return (
-    <View>
+    <View
+      style={{
+        height: '100%',
+        backgroundColor: 'white',
+      }}>
       <Text>SearchScreen</Text>
     </View>
   );

@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React from 'react';
+import React, {useContext} from 'react';
 import {GFonts} from '../../styles/GFonts';
 import {GColors} from '../../styles/GColors';
 import LinearGradient from 'react-native-linear-gradient';
@@ -20,17 +20,20 @@ import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
 
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Clipboard from '@react-native-clipboard/clipboard';
-import {Link} from '@react-navigation/native';
+import {Link, useTheme} from '@react-navigation/native';
 import {NavigProps} from '../../interfaces/NaviProps';
+import {ContextProvider} from '../../context/ContextApi';
 
 const HomeScreen = ({navigation}: NavigProps<null>) => {
   const [modalVisible, setModalVisible] = React.useState(false);
+  const {isDark, setDark} = useContext(ContextProvider);
+  console.log(isDark);
   return (
     <View
       style={{
         height: '100%',
         // backgroundColor: 'gray',
-        backgroundColor: GColors.white,
+        backgroundColor: 'white',
       }}>
       {/*=============== border cover ================== */}
       <View
@@ -116,6 +119,7 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
           <TouchableOpacity
             onPress={() => {
               navigation?.navigate('Notifications');
+              // setDark(!isDark);
             }}>
             <Image source={require('../../assets/icons/bell/bell.png')} />
           </TouchableOpacity>

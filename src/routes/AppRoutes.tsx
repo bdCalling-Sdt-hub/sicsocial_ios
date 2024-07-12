@@ -1,7 +1,11 @@
 // In App.js in a new project
 
 import * as React from 'react';
-import {NavigationContainer} from '@react-navigation/native';
+import {
+  DarkTheme,
+  DefaultTheme,
+  NavigationContainer,
+} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
 import SplashScreen from '../screens/SplashScreen';
@@ -18,13 +22,16 @@ import DonationScreen from '../screens/donation/DonationScreen';
 import NotificationsScreen from '../screens/notification/NotificationsScreen';
 import PaymentsScreen from '../screens/payments/PaymentsScreen';
 import SearchScreen from '../screens/search/SearchScreen';
+import {useColorScheme} from 'react-native';
 
 const Stack = createNativeStackNavigator();
 
 const Routes = () => {
+  const scheme = useColorScheme();
+  const MyTheme = scheme === 'dark' ? DarkTheme : DefaultTheme;
   return (
     <GestureHandlerRootView>
-      <NavigationContainer>
+      <NavigationContainer theme={MyTheme}>
         <Stack.Navigator
           screenOptions={{
             headerShown: false,
