@@ -237,8 +237,8 @@ const VerifyEmailScreen = ({navigation}: NavigProps<null>) => {
             }}>
             <Text
               style={{
-                color: GColors.secondaryColor,
-                borderBottomColor: GColors.secondaryColor,
+                color: GColors.primaryColor,
+                borderBottomColor: GColors.primaryColor,
                 borderBottomWidth: 1,
               }}>
               Send Again

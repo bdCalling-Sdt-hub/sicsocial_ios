@@ -95,7 +95,7 @@ const ResetPasswordScreen = ({navigation}: NavigProps<null>) => {
                   value="Gabrail10"
                   style={{
                     fontFamily: GFonts.Poppins,
-                    backgroundColor: GColors.primaryColor,
+                    backgroundColor: GColors.secondaryColor,
                     borderRadius: 100,
                     fontSize: 14,
                     paddingHorizontal: 20,
@@ -138,7 +138,7 @@ const ResetPasswordScreen = ({navigation}: NavigProps<null>) => {
                   value="Gabrail10"
                   style={{
                     fontFamily: GFonts.Poppins,
-                    backgroundColor: GColors.primaryColor,
+                    backgroundColor: GColors.secondaryColor,
                     borderRadius: 100,
                     fontSize: 14,
                     paddingHorizontal: 20,
@@ -170,7 +170,7 @@ const ResetPasswordScreen = ({navigation}: NavigProps<null>) => {
                     // handleSubmit();
                   }}
                   style={{
-                    backgroundColor: GColors.secondaryColor,
+                    backgroundColor: GColors.primaryColor,
                     borderRadius: 100,
                     height: 56,
                     justifyContent: 'center',

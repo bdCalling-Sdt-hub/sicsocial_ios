@@ -11,6 +11,10 @@ interface VerifyEmailProps {
   title?: string;
   marginVertical?: number;
   onPress?: () => void;
+  hight?: number;
+  textSize?: number;
+  outLine?: boolean;
+  width?: string | number;
 }
 
 const NormalButton = ({
@@ -20,25 +24,38 @@ const NormalButton = ({
   title,
   marginVertical,
   onPress,
+  hight,
+  textSize,
+  outLine,
+  width,
 }: VerifyEmailProps) => {
   return (
     <TouchableOpacity
       onPress={onPress}
       style={{
-        backgroundColor: backGroundColor
+        backgroundColor: outLine
+          ? 'white'
+          : backGroundColor
           ? backGroundColor
-          : GColors.secondaryColor,
+          : GColors.primaryColor,
         borderRadius: 100,
-        height: 56,
+        borderWidth: outLine ? 1 : 0,
+        borderColor: outLine ? GColors.primaryColor : 'white',
+        height: hight ? hight : 56,
         justifyContent: 'center',
         alignItems: 'center',
         marginVertical: marginVertical ? marginVertical : 0,
+        width: width ? width : '100%',
       }}>
       <Text
         style={{
           fontFamily: GFonts.PoppinsSemiBold,
-          fontSize: 16,
-          color: textColor ? textColor : 'white',
+          fontSize: textSize ? textSize : 16,
+          color: outLine
+            ? GColors.primaryColor
+            : textColor
+            ? textColor
+            : 'white',
         }}>
         {title}
       </Text>

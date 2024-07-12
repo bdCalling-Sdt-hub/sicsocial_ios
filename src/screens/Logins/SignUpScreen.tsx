@@ -77,7 +77,7 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
                   value="Asadullah"
                   style={{
                     fontFamily: GFonts.Poppins,
-                    backgroundColor: GColors.primaryColor,
+                    backgroundColor: GColors.secondaryColor,
                     borderRadius: 100,
                     fontSize: 14,
                     paddingHorizontal: 20,
@@ -105,7 +105,7 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
                   value="Gabrail101@gmail.com"
                   style={{
                     fontFamily: GFonts.Poppins,
-                    backgroundColor: GColors.primaryColor,
+                    backgroundColor: GColors.secondaryColor,
                     borderRadius: 100,
                     fontSize: 14,
                     paddingHorizontal: 20,
@@ -133,7 +133,7 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
                   value="+99000000000000"
                   style={{
                     fontFamily: GFonts.Poppins,
-                    backgroundColor: GColors.primaryColor,
+                    backgroundColor: GColors.secondaryColor,
                     borderRadius: 100,
                     fontSize: 14,
                     paddingHorizontal: 20,
@@ -161,7 +161,7 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
                   value="Gabrail10"
                   style={{
                     fontFamily: GFonts.Poppins,
-                    backgroundColor: GColors.primaryColor,
+                    backgroundColor: GColors.secondaryColor,
                     borderRadius: 100,
                     fontSize: 14,
                     paddingHorizontal: 20,
@@ -204,7 +204,7 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
                   value="Gabrail10"
                   style={{
                     fontFamily: GFonts.Poppins,
-                    backgroundColor: GColors.primaryColor,
+                    backgroundColor: GColors.secondaryColor,
                     borderRadius: 100,
                     fontSize: 14,
                     paddingHorizontal: 20,
@@ -236,7 +236,7 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
                     // handleSubmit();
                   }}
                   style={{
-                    backgroundColor: GColors.secondaryColor,
+                    backgroundColor: GColors.primaryColor,
                     borderRadius: 100,
                     height: 56,
                     justifyContent: 'center',

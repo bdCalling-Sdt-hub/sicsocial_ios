@@ -81,7 +81,7 @@ const LoginScreen = ({navigation}: NavigProps<null>) => {
                   value="Gabrail101@gmail.com"
                   style={{
                     fontFamily: GFonts.Poppins,
-                    backgroundColor: GColors.primaryColor,
+                    backgroundColor: GColors.secondaryColor,
                     borderRadius: 100,
                     fontSize: 14,
                     paddingHorizontal: 20,
@@ -109,7 +109,7 @@ const LoginScreen = ({navigation}: NavigProps<null>) => {
                   value="Gabrail101@gmail.com"
                   style={{
                     fontFamily: GFonts.Poppins,
-                    backgroundColor: GColors.primaryColor,
+                    backgroundColor: GColors.secondaryColor,
                     borderRadius: 100,
                     fontSize: 14,
                     paddingHorizontal: 20,
@@ -192,9 +192,9 @@ const LoginScreen = ({navigation}: NavigProps<null>) => {
                     style={{
                       fontFamily: GFonts.Poppins,
                       fontSize: 12,
-                      color: GColors.secondaryColor,
+                      color: GColors.primaryColor,
                       borderBottomWidth: 0.4,
-                      borderBottomColor: GColors.secondaryColor,
+                      borderBottomColor: GColors.primaryColor,
                       lineHeight: 14,
                     }}>
                     Forgot Password?
@@ -208,7 +208,7 @@ const LoginScreen = ({navigation}: NavigProps<null>) => {
                     navigation?.navigate('HomeRoutes');
                   }}
                   style={{
-                    backgroundColor: GColors.secondaryColor,
+                    backgroundColor: GColors.primaryColor,
                     borderRadius: 100,
                     height: 56,
                     justifyContent: 'center',

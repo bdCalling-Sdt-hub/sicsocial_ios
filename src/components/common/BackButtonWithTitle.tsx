@@ -10,6 +10,7 @@ interface BackButtonWithTitleProps extends NavigProps<null> {
   BackButtonStyle?: {};
   titleStyle?: {};
   thirdColl?: boolean;
+  forthColl?: boolean;
   offBack?: boolean;
   offTitle?: boolean;
 }
@@ -23,6 +24,7 @@ const BackButtonWithTitle = ({
   titleStyle,
   thirdColl,
   offTitle,
+  forthColl,
 }: BackButtonWithTitleProps) => {
   return (
     <View
@@ -47,6 +49,7 @@ const BackButtonWithTitle = ({
 
       <View>{offTitle || <Text style={titleStyle}>{title}</Text>}</View>
       {thirdColl && <View></View>}
+      {forthColl && <View></View>}
     </View>
   );
 };

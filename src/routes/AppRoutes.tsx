@@ -13,8 +13,72 @@ import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import VerifyEmailScreen from '../screens/Logins/VerifyEmailScreen';
 import ResetPasswordScreen from '../screens/Logins/ResetPasswordScreen';
 import VerifySuccessfulScreen from '../screens/Logins/VerifySuccessfulScreen';
+import ContextApi from '../context/ContextApi';
+import DonationScreen from '../screens/donation/DonationScreen';
+import NotificationsScreen from '../screens/notification/NotificationsScreen';
+import PaymentsScreen from '../screens/payments/PaymentsScreen';
+import SearchScreen from '../screens/search/SearchScreen';
 
 const Stack = createNativeStackNavigator();
+
+const Routes = () => {
+  return (
+    <GestureHandlerRootView>
+      <NavigationContainer>
+        <Stack.Navigator
+          screenOptions={{
+            headerShown: false,
+            statusBarAnimation: 'fade',
+            statusBarColor: 'white',
+            statusBarStyle: 'dark',
+          }}>
+          {/* <Stack.Screen name="Splash" component={SplashScreen} /> */}
+          <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="SignUp" component={SignUpScreen} />
+          <Stack.Screen name="HomeRoutes" component={BottomBarRoutes} />
+          <Stack.Screen
+            name="EmailConfirmation"
+            component={EmailConfirmationScreen}
+          />
+          <Stack.Screen name="VerifyEmail" component={VerifyEmailScreen} />
+          <Stack.Screen name="ResetPassword" component={ResetPasswordScreen} />
+          <Stack.Screen
+            name="VerifySuccessful"
+            component={VerifySuccessfulScreen}
+          />
+          <Stack.Screen
+            name="donation"
+            component={DonationScreen}
+            options={{
+              animation: 'ios',
+            }}
+          />
+          <Stack.Screen
+            name="Notifications"
+            component={NotificationsScreen}
+            options={{
+              animation: 'ios',
+            }}
+          />
+          <Stack.Screen
+            name="Payments"
+            component={PaymentsScreen}
+            options={{
+              animation: 'ios',
+            }}
+          />
+          <Stack.Screen
+            name="Search"
+            component={SearchScreen}
+            options={{
+              animation: 'ios',
+            }}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </GestureHandlerRootView>
+  );
+};
 
 function AppRoutes() {
   const [isSplash, setIsSplash] = React.useState(true);
@@ -24,35 +88,9 @@ function AppRoutes() {
       {isSplash ? (
         <SplashScreen setIsSplash={setIsSplash} />
       ) : (
-        <GestureHandlerRootView>
-          <NavigationContainer>
-            <Stack.Navigator
-              screenOptions={{
-                headerShown: false,
-                statusBarAnimation: 'fade',
-                statusBarColor: 'white',
-                statusBarStyle: 'dark',
-              }}>
-              {/* <Stack.Screen name="Splash" component={SplashScreen} /> */}
-              <Stack.Screen name="HomeRoutes" component={BottomBarRoutes} />
-              <Stack.Screen name="Login" component={LoginScreen} />
-              <Stack.Screen name="SignUp" component={SignUpScreen} />
-              <Stack.Screen
-                name="EmailConfirmation"
-                component={EmailConfirmationScreen}
-              />
-              <Stack.Screen name="VerifyEmail" component={VerifyEmailScreen} />
-              <Stack.Screen
-                name="ResetPassword"
-                component={ResetPasswordScreen}
-              />
-              <Stack.Screen
-                name="VerifySuccessful"
-                component={VerifySuccessfulScreen}
-              />
-            </Stack.Navigator>
-          </NavigationContainer>
-        </GestureHandlerRootView>
+        <ContextApi>
+          <Routes />
+        </ContextApi>
       )}
     </>
   );
