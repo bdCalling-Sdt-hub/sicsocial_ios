@@ -13,8 +13,8 @@ import {
   BottomTabBarProps,
 } from '@react-navigation/bottom-tabs';
 import LinearGradient from 'react-native-linear-gradient';
-import {GColors} from '../styles/GColors';
 import HomeScreen from '../screens/home/HomeScreen';
+import {useContextApi, useStyles} from '../context/ContextApi';
 
 const Tab = createBottomTabNavigator();
 
@@ -46,16 +46,11 @@ const MyTabBar: React.FC<BottomTabBarProps> = ({
   descriptors,
   navigation,
 }) => {
+  const {colors} = useStyles();
+  const {isDark} = useContextApi();
   return (
     <LinearGradient
-      colors={[
-        'rgba(255,255,255,0.0)',
-        'rgba(255,255,255,1)',
-        'rgba(255,255,255,1)',
-        'rgba(255,255,255,1)',
-        'rgba(255,255,255,1)',
-        'rgba(255,255,255,1)',
-      ]}
+      colors={colors.gradient.variantOne}
       style={[
         styles.tabBarContainer,
         {
@@ -126,7 +121,7 @@ const MyTabBar: React.FC<BottomTabBarProps> = ({
             />
             <View
               style={{
-                borderBottomWidth: 3,
+                borderBottomWidth: isFocused ? 3 : 0,
                 borderBottomColor: isFocused ? '#DBB162' : 'white',
               }}
             />

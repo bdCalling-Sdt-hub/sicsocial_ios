@@ -17,7 +17,7 @@ import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import VerifyEmailScreen from '../screens/Logins/VerifyEmailScreen';
 import ResetPasswordScreen from '../screens/Logins/ResetPasswordScreen';
 import VerifySuccessfulScreen from '../screens/Logins/VerifySuccessfulScreen';
-import ContextApi from '../context/ContextApi';
+import ContextApi, {useContextApi, useStyles} from '../context/ContextApi';
 import DonationScreen from '../screens/donation/DonationScreen';
 import NotificationsScreen from '../screens/notification/NotificationsScreen';
 import PaymentsScreen from '../screens/payments/PaymentsScreen';
@@ -27,17 +27,17 @@ import {useColorScheme} from 'react-native';
 const Stack = createNativeStackNavigator();
 
 const Routes = () => {
-  const scheme = useColorScheme();
-  const MyTheme = scheme === 'dark' ? DarkTheme : DefaultTheme;
+  const {colors} = useStyles();
+  const {isDark} = useContextApi();
   return (
     <GestureHandlerRootView>
-      <NavigationContainer theme={MyTheme}>
+      <NavigationContainer>
         <Stack.Navigator
           screenOptions={{
             headerShown: false,
             statusBarAnimation: 'fade',
-            statusBarColor: 'white',
-            statusBarStyle: 'dark',
+            statusBarColor: colors.bg,
+            statusBarStyle: isDark ? 'light' : 'dark',
           }}>
           {/* <Stack.Screen name="Splash" component={SplashScreen} /> */}
           <Stack.Screen name="Login" component={LoginScreen} />
@@ -57,28 +57,28 @@ const Routes = () => {
             name="donation"
             component={DonationScreen}
             options={{
-              animation: 'ios',
+              animation: 'slide_from_right',
             }}
           />
           <Stack.Screen
             name="Notifications"
             component={NotificationsScreen}
             options={{
-              animation: 'ios',
+              animation: 'slide_from_right',
             }}
           />
           <Stack.Screen
             name="Payments"
             component={PaymentsScreen}
             options={{
-              animation: 'ios',
+              animation: 'slide_from_right',
             }}
           />
           <Stack.Screen
             name="Search"
             component={SearchScreen}
             options={{
-              animation: 'ios',
+              animation: 'slide_from_right',
             }}
           />
         </Stack.Navigator>
@@ -91,15 +91,9 @@ function AppRoutes() {
   const [isSplash, setIsSplash] = React.useState(true);
 
   return (
-    <>
-      {isSplash ? (
-        <SplashScreen setIsSplash={setIsSplash} />
-      ) : (
-        <ContextApi>
-          <Routes />
-        </ContextApi>
-      )}
-    </>
+    <ContextApi>
+      {isSplash ? <SplashScreen setIsSplash={setIsSplash} /> : <Routes />}
+    </ContextApi>
   );
 }
 

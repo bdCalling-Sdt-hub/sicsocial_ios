@@ -9,16 +9,17 @@ import {
 } from 'react-native';
 import React from 'react';
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
-import {GColors} from '../../styles/GColors';
-import {GFonts} from '../../styles/GFonts';
+
 import {NavigProps} from '../../interfaces/NaviProps';
 import {Formik} from 'formik';
 import Feather from 'react-native-vector-icons/Feather';
 import NormalButton from '../../components/common/NormalButton';
 import CustomModal from '../../components/common/customModal/CustomModal';
 import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
+import {useStyles} from '../../context/ContextApi';
 
 const PaymentsScreen = ({navigation}: NavigProps<null>) => {
+  const {colors, font} = useStyles();
   const [modalVisible, setModalVisible] = React.useState(false);
   const [paymentModal, setPaymentModal] = React.useState(false);
   const [paymentSSModal, setPaymentSSModal] = React.useState(false);
@@ -38,8 +39,8 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
         title="Donation informations"
         titleStyle={{
           fontSize: 20,
-          color: GColors.textColor.blackNormal,
-          fontFamily: GFonts.PoppinsSemiBold,
+          color: colors.textColor.primaryColor,
+          fontFamily: font.PoppinsSemiBold,
         }}
       />
       <ScrollView keyboardShouldPersistTaps="always">
@@ -65,7 +66,7 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
                 }}>
                 <Text
                   style={{
-                    fontFamily: GFonts.Poppins,
+                    fontFamily: font.Poppins,
                     fontSize: 14,
                     color: '#A1A1A1',
                   }}>
@@ -74,8 +75,8 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
                 <TextInput
                   value="Asadullah"
                   style={{
-                    fontFamily: GFonts.Poppins,
-                    backgroundColor: GColors.secondaryColor,
+                    fontFamily: font.Poppins,
+                    backgroundColor: colors.secondaryColor,
                     borderRadius: 100,
                     fontSize: 14,
                     paddingHorizontal: 20,
@@ -93,7 +94,7 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
                 }}>
                 <Text
                   style={{
-                    fontFamily: GFonts.Poppins,
+                    fontFamily: font.Poppins,
                     fontSize: 14,
                     color: '#A1A1A1',
                   }}>
@@ -102,8 +103,8 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
                 <TextInput
                   value="Gabrail101@gmail.com"
                   style={{
-                    fontFamily: GFonts.Poppins,
-                    backgroundColor: GColors.secondaryColor,
+                    fontFamily: font.Poppins,
+                    backgroundColor: colors.secondaryColor,
                     borderRadius: 100,
                     fontSize: 14,
                     paddingHorizontal: 20,
@@ -121,7 +122,7 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
                 }}>
                 <Text
                   style={{
-                    fontFamily: GFonts.Poppins,
+                    fontFamily: font.Poppins,
                     fontSize: 14,
                     color: '#A1A1A1',
                   }}>
@@ -130,8 +131,8 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
                 <TextInput
                   value="+99000000000000"
                   style={{
-                    fontFamily: GFonts.Poppins,
-                    backgroundColor: GColors.secondaryColor,
+                    fontFamily: font.Poppins,
+                    backgroundColor: colors.secondaryColor,
                     borderRadius: 100,
                     fontSize: 14,
                     paddingHorizontal: 20,
@@ -149,7 +150,7 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
                 }}>
                 <Text
                   style={{
-                    fontFamily: GFonts.Poppins,
+                    fontFamily: font.Poppins,
                     fontSize: 14,
                     color: '#A1A1A1',
                   }}>
@@ -158,8 +159,8 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
                 <TextInput
                   value="Gabrail10"
                   style={{
-                    fontFamily: GFonts.Poppins,
-                    backgroundColor: GColors.secondaryColor,
+                    fontFamily: font.Poppins,
+                    backgroundColor: colors.secondaryColor,
                     borderRadius: 100,
                     fontSize: 14,
                     paddingHorizontal: 20,
@@ -177,7 +178,7 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
                 }}>
                 <Text
                   style={{
-                    fontFamily: GFonts.Poppins,
+                    fontFamily: font.Poppins,
                     fontSize: 14,
                     color: '#A1A1A1',
                   }}>
@@ -185,8 +186,8 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
                 </Text>
                 <TextInput
                   style={{
-                    fontFamily: GFonts.Poppins,
-                    backgroundColor: GColors.secondaryColor,
+                    fontFamily: font.Poppins,
+                    backgroundColor: colors.secondaryColor,
                     borderRadius: 100,
                     fontSize: 14,
                     paddingHorizontal: 20,
@@ -228,8 +229,8 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
               textAlign: 'center',
               fontSize: 16,
               marginVertical: 10,
-              color: GColors.textColor.blackNormal,
-              fontFamily: GFonts.PoppinsSemiBold,
+              color: colors.textColor.secondaryColor,
+              fontFamily: font.PoppinsSemiBold,
             }}>
             Plus confirm your informatins
           </Text>
@@ -248,17 +249,17 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
               }}>
               <Text
                 style={{
-                  fontFamily: GFonts.PoppinsMedium,
+                  fontFamily: font.PoppinsMedium,
                   fontSize: 14,
-                  color: GColors.textColor.blacklight,
+                  color: colors.textColor.neutralColor,
                 }}>
                 Name :
               </Text>
               <Text
                 style={{
-                  fontFamily: GFonts.Poppins,
+                  fontFamily: font.Poppins,
                   fontSize: 14,
-                  color: GColors.textColor.blacklight,
+                  color: colors.textColor.neutralColor,
                 }}>
                 Asadullah
               </Text>
@@ -270,17 +271,17 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
               }}>
               <Text
                 style={{
-                  fontFamily: GFonts.PoppinsMedium,
+                  fontFamily: font.PoppinsMedium,
                   fontSize: 14,
-                  color: GColors.textColor.blacklight,
+                  color: colors.textColor.neutralColor,
                 }}>
                 Email :
               </Text>
               <Text
                 style={{
-                  fontFamily: GFonts.Poppins,
+                  fontFamily: font.Poppins,
                   fontSize: 14,
-                  color: GColors.textColor.blacklight,
+                  color: colors.textColor.neutralColor,
                 }}>
                 Gabrail101@gmail.com
               </Text>
@@ -292,17 +293,17 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
               }}>
               <Text
                 style={{
-                  fontFamily: GFonts.PoppinsMedium,
+                  fontFamily: font.PoppinsMedium,
                   fontSize: 14,
-                  color: GColors.textColor.blacklight,
+                  color: colors.textColor.neutralColor,
                 }}>
                 Contact no:
               </Text>
               <Text
                 style={{
-                  fontFamily: GFonts.Poppins,
+                  fontFamily: font.Poppins,
                   fontSize: 14,
-                  color: GColors.textColor.blacklight,
+                  color: colors.textColor.neutralColor,
                 }}>
                 +09999999
               </Text>
@@ -314,17 +315,17 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
               }}>
               <Text
                 style={{
-                  fontFamily: GFonts.PoppinsMedium,
+                  fontFamily: font.PoppinsMedium,
                   fontSize: 14,
-                  color: GColors.textColor.blacklight,
+                  color: colors.textColor.neutralColor,
                 }}>
                 Address:
               </Text>
               <Text
                 style={{
-                  fontFamily: GFonts.Poppins,
+                  fontFamily: font.Poppins,
                   fontSize: 14,
-                  color: GColors.textColor.blacklight,
+                  color: colors.textColor.neutralColor,
                   textTransform: 'capitalize',
                   width: '80%',
                 }}>
@@ -338,17 +339,17 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
               }}>
               <Text
                 style={{
-                  fontFamily: GFonts.PoppinsMedium,
+                  fontFamily: font.PoppinsMedium,
                   fontSize: 14,
-                  color: GColors.textColor.blacklight,
+                  color: colors.textColor.neutralColor,
                 }}>
                 Donation :
               </Text>
               <Text
                 style={{
-                  fontFamily: GFonts.PoppinsMedium,
+                  fontFamily: font.PoppinsMedium,
                   fontSize: 14,
-                  color: GColors.textColor.blacklight,
+                  color: colors.textColor.neutralColor,
                 }}>
                 $200
               </Text>
@@ -387,8 +388,8 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
             style={{
               textAlign: 'center',
               fontSize: 16,
-              color: GColors.white,
-              fontFamily: GFonts.Poppins,
+              color: colors.white,
+              fontFamily: font.Poppins,
             }}>
             Add your payment information
           </Text>
@@ -412,7 +413,7 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
               }}>
               <Text
                 style={{
-                  fontFamily: GFonts.PoppinsMedium,
+                  fontFamily: font.PoppinsMedium,
                   fontSize: 14,
                   color: '#C0C0C0',
                   paddingLeft: 2,
@@ -421,7 +422,7 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
               </Text>
               <TextInput
                 style={{
-                  color: GColors.white,
+                  color: colors.white,
                   height: 40,
                 }}
                 placeholderTextColor={'white'}
@@ -442,7 +443,7 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
                 }}>
                 <Text
                   style={{
-                    fontFamily: GFonts.PoppinsMedium,
+                    fontFamily: font.PoppinsMedium,
                     fontSize: 14,
                     color: '#C0C0C0',
                     paddingLeft: 2,
@@ -451,7 +452,7 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
                 </Text>
                 <TextInput
                   style={{
-                    color: GColors.white,
+                    color: colors.white,
                     height: 40,
                   }}
                   placeholderTextColor={'white'}
@@ -471,7 +472,7 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
                 }}>
                 <Text
                   style={{
-                    fontFamily: GFonts.PoppinsMedium,
+                    fontFamily: font.PoppinsMedium,
                     fontSize: 14,
                     color: '#C0C0C0',
                     paddingLeft: 2,
@@ -480,7 +481,7 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
                 </Text>
                 <TextInput
                   style={{
-                    color: GColors.white,
+                    color: colors.white,
                     height: 40,
                   }}
                   placeholderTextColor={'white'}
@@ -508,7 +509,7 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
               }}>
               <Text
                 style={{
-                  fontFamily: GFonts.PoppinsMedium,
+                  fontFamily: font.PoppinsMedium,
                   fontSize: 14,
                   color: '#C0C0C0',
                   paddingLeft: 2,
@@ -517,7 +518,7 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
               </Text>
               <TextInput
                 style={{
-                  color: GColors.white,
+                  color: colors.white,
                   height: 40,
                 }}
                 placeholderTextColor={'white'}
@@ -538,7 +539,7 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
               }}>
               <Text
                 style={{
-                  fontFamily: GFonts.PoppinsMedium,
+                  fontFamily: font.PoppinsMedium,
                   fontSize: 14,
                   color: '#C0C0C0',
                   paddingLeft: 2,
@@ -547,7 +548,7 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
               </Text>
               <TextInput
                 style={{
-                  color: GColors.white,
+                  color: colors.white,
                   height: 40,
                 }}
                 placeholderTextColor={'white'}
@@ -587,7 +588,7 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
               fontSize: 18,
               marginVertical: 10,
               color: '#F27405',
-              fontFamily: GFonts.PoppinsSemiBold,
+              fontFamily: font.PoppinsSemiBold,
               marginTop: 30,
             }}>
             Congratulations !
@@ -601,9 +602,9 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
             }}>
             <Text
               style={{
-                fontFamily: GFonts.Poppins,
+                fontFamily: font.Poppins,
                 fontSize: 13,
-                color: GColors.textColor.blacklight,
+                color: colors.textColor.neutralColor,
                 textAlign: 'justify',
               }}>
               Asadullah , your donation is completed verify your email for
@@ -617,17 +618,17 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
               }}>
               <Text
                 style={{
-                  fontFamily: GFonts.PoppinsMedium,
+                  fontFamily: font.PoppinsMedium,
                   fontSize: 13,
-                  color: GColors.textColor.blacklight,
+                  color: colors.textColor.neutralColor,
                 }}>
                 Email :
               </Text>
               <Text
                 style={{
-                  fontFamily: GFonts.Poppins,
+                  fontFamily: font.Poppins,
                   fontSize: 14,
-                  color: GColors.textColor.blacklight,
+                  color: colors.textColor.neutralColor,
                 }}>
                 Gabrail101@gmail.com
               </Text>
@@ -641,17 +642,17 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
               }}>
               <Text
                 style={{
-                  fontFamily: GFonts.PoppinsMedium,
+                  fontFamily: font.PoppinsMedium,
                   fontSize: 13,
-                  color: GColors.textColor.blacklight,
+                  color: colors.textColor.neutralColor,
                 }}>
                 Address:
               </Text>
               <Text
                 style={{
-                  fontFamily: GFonts.Poppins,
+                  fontFamily: font.Poppins,
                   fontSize: 13,
-                  color: GColors.textColor.blacklight,
+                  color: colors.textColor.neutralColor,
                   textTransform: 'capitalize',
                   width: '80%',
                 }}>
@@ -667,17 +668,17 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
               }}>
               <Text
                 style={{
-                  fontFamily: GFonts.PoppinsMedium,
+                  fontFamily: font.PoppinsMedium,
                   fontSize: 20,
-                  color: GColors.green['#00B047'],
+                  color: colors.green['#00B047'],
                 }}>
                 Dontion amount :
               </Text>
               <Text
                 style={{
-                  fontFamily: GFonts.PoppinsMedium,
+                  fontFamily: font.PoppinsMedium,
                   fontSize: 20,
-                  color: GColors.green['#00B047'],
+                  color: colors.green['#00B047'],
                 }}>
                 $800
               </Text>

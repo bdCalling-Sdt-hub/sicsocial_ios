@@ -8,21 +8,21 @@ import {
 } from 'react-native';
 import React from 'react';
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
-import {GColors} from '../../styles/GColors';
-import {GFonts} from '../../styles/GFonts';
+
 import {NavigProps} from '../../interfaces/NaviProps';
 import {Formik} from 'formik';
 import Feather from 'react-native-vector-icons/Feather';
+import {useStyles} from '../../context/ContextApi';
 
 const SignUpScreen = ({navigation}: NavigProps<null>) => {
+  const {colors, font} = useStyles();
   const [isShow, setIsShow] = React.useState(false);
   const [check, setCheck] = React.useState(false);
-
   return (
     <View
       style={{
         height: '100%',
-        backgroundColor: 'white',
+        backgroundColor: colors.bg,
       }}>
       <BackButtonWithTitle
         navigation={navigation}
@@ -30,8 +30,8 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
         title="Sign Up !"
         titleStyle={{
           fontSize: 24,
-          color: GColors.textColor.blackNormal,
-          fontFamily: GFonts.PoppinsSemiBold,
+          color: colors.textColor.secondaryColor,
+          fontFamily: font.PoppinsSemiBold,
         }}
       />
       <ScrollView>
@@ -40,7 +40,7 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
             style={{
               textAlign: 'center',
               color: '#5C5C5C',
-              fontFamily: GFonts.Poppins,
+              fontFamily: font.Poppins,
             }}>
             Please Enter Your Personal Data
           </Text>
@@ -67,7 +67,7 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
                 }}>
                 <Text
                   style={{
-                    fontFamily: GFonts.Poppins,
+                    fontFamily: font.Poppins,
                     fontSize: 14,
                     color: '#A1A1A1',
                   }}>
@@ -76,12 +76,13 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
                 <TextInput
                   value="Asadullah"
                   style={{
-                    fontFamily: GFonts.Poppins,
-                    backgroundColor: GColors.secondaryColor,
+                    fontFamily: font.Poppins,
+                    backgroundColor: colors.secondaryColor,
                     borderRadius: 100,
                     fontSize: 14,
                     paddingHorizontal: 20,
                     height: 56,
+                    color: colors.textColor.neutralColor,
                   }}
                   placeholder="type "
                   onChangeText={handleChange('name')}
@@ -95,7 +96,7 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
                 }}>
                 <Text
                   style={{
-                    fontFamily: GFonts.Poppins,
+                    fontFamily: font.Poppins,
                     fontSize: 14,
                     color: '#A1A1A1',
                   }}>
@@ -104,12 +105,13 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
                 <TextInput
                   value="Gabrail101@gmail.com"
                   style={{
-                    fontFamily: GFonts.Poppins,
-                    backgroundColor: GColors.secondaryColor,
+                    fontFamily: font.Poppins,
+                    backgroundColor: colors.secondaryColor,
                     borderRadius: 100,
                     fontSize: 14,
                     paddingHorizontal: 20,
                     height: 56,
+                    color: colors.textColor.neutralColor,
                   }}
                   placeholder="type "
                   onChangeText={handleChange('email')}
@@ -123,7 +125,7 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
                 }}>
                 <Text
                   style={{
-                    fontFamily: GFonts.Poppins,
+                    fontFamily: font.Poppins,
                     fontSize: 14,
                     color: '#A1A1A1',
                   }}>
@@ -132,12 +134,13 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
                 <TextInput
                   value="+99000000000000"
                   style={{
-                    fontFamily: GFonts.Poppins,
-                    backgroundColor: GColors.secondaryColor,
+                    fontFamily: font.Poppins,
+                    backgroundColor: colors.secondaryColor,
                     borderRadius: 100,
                     fontSize: 14,
                     paddingHorizontal: 20,
                     height: 56,
+                    color: colors.textColor.neutralColor,
                   }}
                   placeholder="type "
                   onChangeText={handleChange('contract')}
@@ -151,7 +154,7 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
                 }}>
                 <Text
                   style={{
-                    fontFamily: GFonts.Poppins,
+                    fontFamily: font.Poppins,
                     fontSize: 14,
                     color: '#A1A1A1',
                   }}>
@@ -160,12 +163,13 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
                 <TextInput
                   value="Gabrail10"
                   style={{
-                    fontFamily: GFonts.Poppins,
-                    backgroundColor: GColors.secondaryColor,
+                    fontFamily: font.Poppins,
+                    backgroundColor: colors.secondaryColor,
                     borderRadius: 100,
                     fontSize: 14,
                     paddingHorizontal: 20,
                     height: 56,
+                    color: colors.textColor.neutralColor,
                   }}
                   placeholder="type "
                   secureTextEntry={!isShow}
@@ -182,9 +186,17 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
                     padding: 10,
                   }}>
                   {isShow ? (
-                    <Feather name="eye" size={24} />
+                    <Feather
+                      name="eye"
+                      size={24}
+                      color={colors.textColor.neutralColor}
+                    />
                   ) : (
-                    <Feather name="eye-off" size={24} />
+                    <Feather
+                      name="eye-off"
+                      size={24}
+                      color={colors.textColor.neutralColor}
+                    />
                   )}
                 </TouchableOpacity>
               </View>
@@ -194,7 +206,7 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
                 }}>
                 <Text
                   style={{
-                    fontFamily: GFonts.Poppins,
+                    fontFamily: font.Poppins,
                     fontSize: 14,
                     color: '#A1A1A1',
                   }}>
@@ -203,12 +215,13 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
                 <TextInput
                   value="Gabrail10"
                   style={{
-                    fontFamily: GFonts.Poppins,
-                    backgroundColor: GColors.secondaryColor,
+                    fontFamily: font.Poppins,
+                    backgroundColor: colors.secondaryColor,
                     borderRadius: 100,
                     fontSize: 14,
                     paddingHorizontal: 20,
                     height: 56,
+                    color: colors.textColor.neutralColor,
                   }}
                   placeholder="type "
                   secureTextEntry={!isShow}
@@ -222,9 +235,17 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
                     padding: 10,
                   }}>
                   {isShow ? (
-                    <Feather name="eye" size={24} />
+                    <Feather
+                      name="eye"
+                      size={24}
+                      color={colors.textColor.neutralColor}
+                    />
                   ) : (
-                    <Feather name="eye-off" size={24} />
+                    <Feather
+                      name="eye-off"
+                      size={24}
+                      color={colors.textColor.neutralColor}
+                    />
                   )}
                 </TouchableOpacity>
               </View>
@@ -236,7 +257,7 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
                     // handleSubmit();
                   }}
                   style={{
-                    backgroundColor: GColors.primaryColor,
+                    backgroundColor: colors.primaryColor,
                     borderRadius: 100,
                     height: 56,
                     justifyContent: 'center',
@@ -245,7 +266,7 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
                   }}>
                   <Text
                     style={{
-                      fontFamily: GFonts.PoppinsSemiBold,
+                      fontFamily: font.PoppinsSemiBold,
                       fontSize: 16,
                       color: 'white',
                     }}>

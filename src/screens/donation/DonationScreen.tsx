@@ -7,12 +7,11 @@ import {
   View,
 } from 'react-native';
 import React from 'react';
-import {GColors} from '../../styles/GColors';
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
-import {GFonts} from '../../styles/GFonts';
 import {NavigProps} from '../../interfaces/NaviProps';
 import {FlatList} from 'react-native-gesture-handler';
 import NormalButton from '../../components/common/NormalButton';
+import {useStyles} from '../../context/ContextApi';
 
 const data = [
   {
@@ -30,20 +29,21 @@ const data = [
 ];
 
 const DonationScreen = ({navigation}: NavigProps<null>) => {
+  const {colors, font} = useStyles();
   const [selectItem, setSelectItem] = React.useState<number>(0);
   return (
     <View
       style={{
         height: '100%',
-        backgroundColor: GColors.white,
+        backgroundColor: colors.bg,
       }}>
       <BackButtonWithTitle
         title="Integrity Donation"
         navigation={navigation}
         titleStyle={{
           fontSize: 20,
-          color: GColors.textColor.blackNormal,
-          fontFamily: GFonts.PoppinsSemiBold,
+          color: colors.textColor.secondaryColor,
+          fontFamily: font.PoppinsSemiBold,
         }}
         thirdColl
       />
@@ -62,8 +62,8 @@ const DonationScreen = ({navigation}: NavigProps<null>) => {
             style={{
               backgroundColor:
                 item.index === selectItem
-                  ? GColors.primaryColor
-                  : GColors.secondaryColor,
+                  ? colors.primaryColor
+                  : colors.secondaryColor,
               paddingHorizontal: 15,
               paddingVertical: 10,
               borderRadius: 10,
@@ -74,7 +74,7 @@ const DonationScreen = ({navigation}: NavigProps<null>) => {
               style={{
                 fontSize: 14,
                 color: item.index === selectItem ? 'white' : '#767676',
-                fontFamily: GFonts.Poppins,
+                fontFamily: font.Poppins,
               }}>
               {item.item.text}
             </Text>
@@ -107,8 +107,8 @@ const DonationScreen = ({navigation}: NavigProps<null>) => {
               <Text
                 style={{
                   fontSize: 16,
-                  fontFamily: GFonts.PoppinsSemiBold,
-                  color: GColors.textColor.blacklight,
+                  fontFamily: font.PoppinsSemiBold,
+                  color: colors.textColor.light,
                   marginBottom: 16,
                 }}>
                 Donation for childrens
@@ -118,7 +118,8 @@ const DonationScreen = ({navigation}: NavigProps<null>) => {
                   textAlign: 'justify',
                   lineHeight: 20,
                   letterSpacing: 0.3,
-                  fontFamily: GFonts.Poppins,
+                  fontFamily: font.Poppins,
+                  color: colors.textColor.light,
                 }}>
                 {`Integrity Donation is a concept or practice where individuals or organizations contribute resources, usually financial, in a manner that is ethical, transparent, and aligned with the principles of integrity. Here are some details that typically characterize Integrity Donations:
 
@@ -144,8 +145,8 @@ Legal Compliance: All donations comply with the relevant laws and regulations in
             <Text
               style={{
                 fontSize: 16,
-                fontFamily: GFonts.PoppinsSemiBold,
-                color: GColors.textColor.blacklight,
+                fontFamily: font.PoppinsSemiBold,
+                color: colors.textColor.light,
                 marginBottom: 16,
                 textAlign: 'justify',
               }}>
@@ -156,7 +157,8 @@ Legal Compliance: All donations comply with the relevant laws and regulations in
                 textAlign: 'justify',
                 lineHeight: 20,
                 letterSpacing: 0.3,
-                fontFamily: GFonts.Poppins,
+                fontFamily: font.Poppins,
+                color: colors.textColor.light,
               }}>
               {`Integrity Donation is a concept or practice where individuals or organizations contribute resources, usually financial, in a manner that is ethical, transparent, and aligned with the principles of integrity. Here are some details that typically characterize Integrity Donations:
 
@@ -179,8 +181,8 @@ Legal Compliance: All donations comply with the relevant laws and regulations in
             <Text
               style={{
                 fontSize: 16,
-                fontFamily: GFonts.PoppinsSemiBold,
-                color: GColors.textColor.blacklight,
+                fontFamily: font.PoppinsSemiBold,
+                color: colors.textColor.light,
                 marginBottom: 16,
               }}>
               Terms & conditions for donations
@@ -190,7 +192,8 @@ Legal Compliance: All donations comply with the relevant laws and regulations in
                 textAlign: 'justify',
                 lineHeight: 20,
                 letterSpacing: 0.3,
-                fontFamily: GFonts.Poppins,
+                fontFamily: font.Poppins,
+                color: colors.textColor.light,
               }}>
               {`Integrity Donation is a concept or practice where individuals or organizations contribute resources, usually financial, in a manner that is ethical, transparent, and aligned with the principles of integrity. Here are some details that typically characterize Integrity Donations:
 
@@ -224,7 +227,7 @@ Legal Compliance: All donations comply with the relevant laws and regulations in
         <NormalButton
           title="Donate here"
           textColor="white"
-          backGroundColor={GColors.primaryColor}
+          backGroundColor={colors.primaryColor}
           onPress={() => {
             navigation?.navigate('Payments');
           }}

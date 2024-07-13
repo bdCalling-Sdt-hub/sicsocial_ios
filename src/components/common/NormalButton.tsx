@@ -1,8 +1,7 @@
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React from 'react';
-import {GColors} from '../../styles/GColors';
-import {GFonts} from '../../styles/GFonts';
 import {NavigProps} from '../../interfaces/NaviProps';
+import {useStyles} from '../../context/ContextApi';
 
 interface VerifyEmailProps {
   routeText?: string;
@@ -29,6 +28,7 @@ const NormalButton = ({
   outLine,
   width,
 }: VerifyEmailProps) => {
+  const {colors, font} = useStyles();
   return (
     <TouchableOpacity
       onPress={onPress}
@@ -37,10 +37,10 @@ const NormalButton = ({
           ? 'white'
           : backGroundColor
           ? backGroundColor
-          : GColors.primaryColor,
+          : colors.primaryColor,
         borderRadius: 100,
         borderWidth: outLine ? 1 : 0,
-        borderColor: outLine ? GColors.primaryColor : 'white',
+        borderColor: outLine ? colors.primaryColor : 'white',
         height: hight ? hight : 56,
         justifyContent: 'center',
         alignItems: 'center',
@@ -49,10 +49,10 @@ const NormalButton = ({
       }}>
       <Text
         style={{
-          fontFamily: GFonts.PoppinsSemiBold,
+          fontFamily: font.PoppinsSemiBold,
           fontSize: textSize ? textSize : 16,
           color: outLine
-            ? GColors.primaryColor
+            ? colors.primaryColor
             : textColor
             ? textColor
             : 'white',

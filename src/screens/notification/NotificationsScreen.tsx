@@ -1,18 +1,19 @@
 import {Image, ScrollView, StyleSheet, Text, View} from 'react-native';
 import React from 'react';
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
-import {GColors} from '../../styles/GColors';
-import {GFonts} from '../../styles/GFonts';
+
 import {NavigProps} from '../../interfaces/NaviProps';
 import {FlatList} from 'react-native-gesture-handler';
 import NotificationCard from '../../components/notificaiton/NotificationCard';
+import {useStyles} from '../../context/ContextApi';
 
 const NotificationsScreen = ({navigation}: NavigProps<null>) => {
+  const {colors, font} = useStyles();
   return (
     <View
       style={{
         height: '100%',
-        backgroundColor: 'white',
+        backgroundColor: colors.bg,
       }}>
       <BackButtonWithTitle
         title="Activities"
@@ -23,8 +24,8 @@ const NotificationsScreen = ({navigation}: NavigProps<null>) => {
         navigation={navigation}
         titleStyle={{
           fontSize: 20,
-          color: GColors.textColor.blackMediumLight,
-          fontFamily: GFonts.PoppinsSemiBold,
+          color: colors.textColor.primaryColor,
+          fontFamily: font.PoppinsSemiBold,
         }}
       />
 

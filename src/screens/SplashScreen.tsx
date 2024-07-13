@@ -2,6 +2,7 @@ import {ImageBackground, StatusBar, StyleSheet, Text, View} from 'react-native';
 import React, {SetStateAction} from 'react';
 import LottieView from 'lottie-react-native';
 import {NavigProps} from '../interfaces/NaviProps';
+import {useStyles} from '../context/ContextApi';
 
 interface SplashProps extends NavigProps<null> {
   setIsSplash: React.Dispatch<SetStateAction<boolean>>;
@@ -9,6 +10,8 @@ interface SplashProps extends NavigProps<null> {
 }
 
 const SplashScreen = ({navigation, setIsSplash}: SplashProps) => {
+  const {colors} = useStyles();
+
   return (
     <View
       style={{
@@ -41,6 +44,7 @@ const SplashScreen = ({navigation, setIsSplash}: SplashProps) => {
           }}
         />
       </ImageBackground>
+      <StatusBar backgroundColor={colors.bg} barStyle="default" />
     </View>
   );
 };

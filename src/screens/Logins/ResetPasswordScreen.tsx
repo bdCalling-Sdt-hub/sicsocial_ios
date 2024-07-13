@@ -8,13 +8,14 @@ import {
 } from 'react-native';
 import React from 'react';
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
-import {GColors} from '../../styles/GColors';
-import {GFonts} from '../../styles/GFonts';
+
 import {NavigProps} from '../../interfaces/NaviProps';
 import {Formik} from 'formik';
 import Feather from 'react-native-vector-icons/Feather';
+import {useStyles} from '../../context/ContextApi';
 
 const ResetPasswordScreen = ({navigation}: NavigProps<null>) => {
+  const {colors, font} = useStyles();
   const [isShow, setIsShow] = React.useState(false);
   const [check, setCheck] = React.useState(false);
 
@@ -22,7 +23,7 @@ const ResetPasswordScreen = ({navigation}: NavigProps<null>) => {
     <View
       style={{
         height: '100%',
-        backgroundColor: 'white',
+        backgroundColor: colors.bg,
       }}>
       <BackButtonWithTitle
         navigation={navigation}
@@ -30,8 +31,8 @@ const ResetPasswordScreen = ({navigation}: NavigProps<null>) => {
         // title="Sign Up !"
         titleStyle={{
           fontSize: 24,
-          color: GColors.textColor.blackNormal,
-          fontFamily: GFonts.PoppinsSemiBold,
+          color: colors.textColor.secondaryColor,
+          fontFamily: font.PoppinsSemiBold,
         }}
       />
 
@@ -50,8 +51,8 @@ const ResetPasswordScreen = ({navigation}: NavigProps<null>) => {
           <Text
             style={{
               fontSize: 24,
-              fontFamily: GFonts.PoppinsSemiBold,
-              color: GColors.textColor.blackNormal,
+              fontFamily: font.PoppinsSemiBold,
+              color: colors.textColor.secondaryColor,
               textAlign: 'center',
             }}>
             Reset Password !
@@ -59,8 +60,8 @@ const ResetPasswordScreen = ({navigation}: NavigProps<null>) => {
           <Text
             style={{
               fontSize: 14,
-              fontFamily: GFonts.Poppins,
-              color: GColors.textColor.blacklight,
+              fontFamily: font.Poppins,
+              color: colors.textColor.light,
               textAlign: 'center',
             }}>
             Please Enter Your Personal Data
@@ -85,7 +86,7 @@ const ResetPasswordScreen = ({navigation}: NavigProps<null>) => {
                 }}>
                 <Text
                   style={{
-                    fontFamily: GFonts.Poppins,
+                    fontFamily: font.Poppins,
                     fontSize: 14,
                     color: '#A1A1A1',
                   }}>
@@ -94,12 +95,13 @@ const ResetPasswordScreen = ({navigation}: NavigProps<null>) => {
                 <TextInput
                   value="Gabrail10"
                   style={{
-                    fontFamily: GFonts.Poppins,
-                    backgroundColor: GColors.secondaryColor,
+                    fontFamily: font.Poppins,
+                    backgroundColor: colors.secondaryColor,
                     borderRadius: 100,
                     fontSize: 14,
                     paddingHorizontal: 20,
                     height: 56,
+                    color: colors.textColor.neutralColor,
                   }}
                   placeholder="type "
                   secureTextEntry={!isShow}
@@ -128,7 +130,7 @@ const ResetPasswordScreen = ({navigation}: NavigProps<null>) => {
                 }}>
                 <Text
                   style={{
-                    fontFamily: GFonts.Poppins,
+                    fontFamily: font.Poppins,
                     fontSize: 14,
                     color: '#A1A1A1',
                   }}>
@@ -137,12 +139,13 @@ const ResetPasswordScreen = ({navigation}: NavigProps<null>) => {
                 <TextInput
                   value="Gabrail10"
                   style={{
-                    fontFamily: GFonts.Poppins,
-                    backgroundColor: GColors.secondaryColor,
+                    fontFamily: font.Poppins,
+                    backgroundColor: colors.secondaryColor,
                     borderRadius: 100,
                     fontSize: 14,
                     paddingHorizontal: 20,
                     height: 56,
+                    color: colors.textColor.neutralColor,
                   }}
                   placeholder="type "
                   secureTextEntry={!isShow}
@@ -170,7 +173,7 @@ const ResetPasswordScreen = ({navigation}: NavigProps<null>) => {
                     // handleSubmit();
                   }}
                   style={{
-                    backgroundColor: GColors.primaryColor,
+                    backgroundColor: colors.primaryColor,
                     borderRadius: 100,
                     height: 56,
                     justifyContent: 'center',
@@ -179,7 +182,7 @@ const ResetPasswordScreen = ({navigation}: NavigProps<null>) => {
                   }}>
                   <Text
                     style={{
-                      fontFamily: GFonts.PoppinsSemiBold,
+                      fontFamily: font.PoppinsSemiBold,
                       fontSize: 16,
                       color: 'white',
                     }}>

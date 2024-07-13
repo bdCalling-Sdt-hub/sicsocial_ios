@@ -8,9 +8,9 @@ import {
 } from 'react-native';
 import React from 'react';
 import {NavigProps} from '../../interfaces/NaviProps';
-import {GColors} from '../../styles/GColors';
-import {GFonts} from '../../styles/GFonts';
+
 import {SvgXml} from 'react-native-svg';
+import {useStyles} from '../../context/ContextApi';
 
 interface ConversationalCardProps extends NavigProps<null> {
   conversationTitle?: string;
@@ -24,6 +24,7 @@ interface ConversationalCardProps extends NavigProps<null> {
   cardStyle?: 'book' | 'two' | 'single' | 'many';
   onPress?: () => void;
   disabled?: boolean;
+  isReply?: boolean;
 }
 
 const ConversationalCard = ({
@@ -39,7 +40,9 @@ const ConversationalCard = ({
   cardStyle,
   disabled,
   onPress,
+  isReply,
 }: ConversationalCardProps) => {
+  const {colors, font} = useStyles();
   return (
     <>
       {/*========================== conversation card start ======================= */}
@@ -52,7 +55,7 @@ const ConversationalCard = ({
         }}>
         <View
           style={{
-            backgroundColor: GColors.secondaryColor,
+            backgroundColor: colors.secondaryColor,
             paddingHorizontal: 16,
             paddingVertical: 10,
             borderRadius: 16,
@@ -71,17 +74,17 @@ const ConversationalCard = ({
                 }}>
                 <Text
                   style={{
-                    fontFamily: GFonts.PoppinsSemiBold,
+                    fontFamily: font.PoppinsSemiBold,
                     fontSize: 17,
-                    color: GColors.textColor.blackSemiBold,
+                    color: colors.textColor.secondaryColor,
                   }}>
                   {conversationTitle ? conversationTitle : 'empty'}
                 </Text>
                 <Text
                   style={{
-                    fontFamily: GFonts.Poppins,
+                    fontFamily: font.Poppins,
                     fontSize: 12,
-                    color: GColors.textColor.blackSemiBold,
+                    color: colors.textColor.secondaryColor,
                   }}>
                   {lastMessage ? lastMessage : 'empty'}
                 </Text>
@@ -98,7 +101,7 @@ const ConversationalCard = ({
                       borderRadius: 100,
                       justifyContent: 'center',
                       alignItems: 'center',
-                      backgroundColor: GColors.primaryColor,
+                      backgroundColor: colors.primaryColor,
                       flexDirection: 'row',
                       gap: 4,
                       paddingHorizontal: 8,
@@ -123,9 +126,9 @@ const ConversationalCard = ({
 
                     <Text
                       style={{
-                        fontFamily: GFonts.Poppins,
+                        fontFamily: font.Poppins,
                         fontSize: 12,
-                        color: GColors.white,
+                        color: colors.white,
                       }}>
                       Share
                     </Text>
@@ -137,7 +140,7 @@ const ConversationalCard = ({
                       borderRadius: 100,
                       justifyContent: 'center',
                       alignItems: 'center',
-                      backgroundColor: GColors.green['#00B047'],
+                      backgroundColor: colors.green['#00B047'],
                       flexDirection: 'row',
                       gap: 4,
                       paddingHorizontal: 8,
@@ -153,9 +156,9 @@ const ConversationalCard = ({
                     />
                     <Text
                       style={{
-                        fontFamily: GFonts.Poppins,
+                        fontFamily: font.Poppins,
                         fontSize: 12,
-                        color: GColors.white,
+                        color: colors.white,
                       }}>
                       View details
                     </Text>
@@ -195,16 +198,16 @@ const ConversationalCard = ({
                     }}>
                     <Text
                       style={{
-                        fontFamily: GFonts.PoppinsMedium,
+                        fontFamily: font.PoppinsMedium,
                         fontSize: 12,
-                        color: GColors.textColor.blackSemiBold,
+                        color: colors.textColor.secondaryColor,
                       }}>
                       {conversationTitle ? conversationTitle : 'empty'}
                     </Text>
                     {cardStyle === 'book' ? (
                       <Text
                         style={{
-                          fontFamily: GFonts.PoppinsMedium,
+                          fontFamily: font.PoppinsMedium,
                           fontSize: 13,
                           color: '#8C5719',
                         }}>
@@ -215,9 +218,9 @@ const ConversationalCard = ({
                     ) : (
                       <Text
                         style={{
-                          fontFamily: GFonts.PoppinsMedium,
+                          fontFamily: font.PoppinsMedium,
                           fontSize: 13,
-                          color: GColors.textColor.blackMediumLight,
+                          color: colors.textColor.neutralColor,
                         }}>
                         {conversationSubtitle ? conversationSubtitle : 'empty '}
                       </Text>
@@ -225,7 +228,7 @@ const ConversationalCard = ({
                   </View>
                   <Text
                     style={{
-                      fontFamily: GFonts.PoppinsMedium,
+                      fontFamily: font.PoppinsMedium,
                       fontSize: 13,
                       color: '#6B4213',
                     }}>
@@ -233,9 +236,11 @@ const ConversationalCard = ({
                   </Text>
                   <Text
                     style={{
-                      fontFamily: GFonts.Poppins,
+                      fontFamily: isReply ? font.PoppinsSemiBold : font.Poppins,
                       fontSize: 13,
-                      color: GColors.textColor.blackMediumLight,
+                      color: isReply
+                        ? colors.textColor.neutralColor
+                        : colors.textColor.neutralColor,
                     }}
                     numberOfLines={2}>
                     {lastMessage ? lastMessage : 'empty'}
@@ -482,9 +487,9 @@ const ConversationalCard = ({
                       source={require('../../assets/icons/unknown/rectangle.png')}>
                       <Text
                         style={{
-                          fontFamily: GFonts.Poppins,
+                          fontFamily: font.Poppins,
                           fontSize: 14,
-                          color: GColors.textColor.blacklight,
+                          color: colors.textColor.light,
                           textAlign: 'center',
                         }}>
                         8+

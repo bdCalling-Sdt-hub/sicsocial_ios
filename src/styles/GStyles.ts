@@ -2,7 +2,28 @@ export const GColors = {
   primaryColor: '#D29E3B',
   secondaryColor: '#FBF5EB',
   neutralColor: '#DBB162',
+  light: {
+    bg: '#FFFFFF',
+    primaryColor: '#D29E3B',
+    secondaryColor: '#FBF5EB',
+    neutralColor: '#DBB162',
+    textColor: {
+      redLight: '#720B24',
+      blackSemiBold: '#151515',
+      blackNormal: '#333333',
+      blacklight: '#767676',
+      blackMediumLight: '#5C5C5C',
+    },
+    orange: '#FF6D00',
+    green: {
+      '#00B047': '#00B047',
+      '#00C208': '#00C208',
+    },
+    blue: '#4289FF',
+    white: '#FFFFFF',
+  },
   darkMode: {
+    bg: '#222222',
     primaryColor: '#222222',
     secondaryColor: '#333333',
     neutralColor: '#444444',

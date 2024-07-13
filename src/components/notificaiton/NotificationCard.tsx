@@ -1,8 +1,8 @@
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React from 'react';
-import {GFonts} from '../../styles/GFonts';
-import {GColors} from '../../styles/GColors';
+
 import {NavigProps} from '../../interfaces/NaviProps';
+import {useStyles} from '../../context/ContextApi';
 
 interface NotificationCardProps extends NavigProps<null> {
   title?: string;
@@ -18,10 +18,11 @@ const NotificationCard = ({
   navigation,
   img,
 }: NotificationCardProps) => {
+  const {colors, font} = useStyles();
   return (
     <TouchableOpacity
       style={{
-        backgroundColor: GColors.secondaryColor,
+        backgroundColor: colors.secondaryColor,
         borderRadius: 8,
         paddingHorizontal: 12,
         paddingVertical: 8,
@@ -60,16 +61,16 @@ const NotificationCard = ({
           </View>
           <Text
             style={{
-              fontFamily: GFonts.PoppinsSemiBold,
+              fontFamily: font.PoppinsSemiBold,
               fontSize: 14,
-              color: '#333333',
+              color: colors.textColor.secondaryColor,
             }}>
             {title ? title : 'give title'}
           </Text>
         </View>
         <Text
           style={{
-            fontFamily: GFonts.Poppins,
+            fontFamily: font.Poppins,
             fontSize: 12,
             color: '#5C5C5C',
             marginVertical: 8,
@@ -80,7 +81,7 @@ const NotificationCard = ({
       <View>
         <Text
           style={{
-            fontFamily: GFonts.Poppins,
+            fontFamily: font.Poppins,
             fontSize: 11,
             color: '#767676',
             marginTop: 8,
