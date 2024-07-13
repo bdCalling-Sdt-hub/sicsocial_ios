@@ -15,6 +15,7 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import HomeScreen from '../screens/home/HomeScreen';
 import {useContextApi, useStyles} from '../context/ContextApi';
+import FriendsScreen from '../screens/friends/FriendsScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -25,7 +26,7 @@ const routeAssets = [
     icon_outline: require('../assets/icons/bottomBar/home_outline.png'),
   },
   {
-    name: 'Users',
+    name: 'Friends',
     icon_fill: require('../assets/icons/bottomBar/add_user_fill.png'),
     icon_outline: require('../assets/icons/bottomBar/add_user_outline.png'),
   },
@@ -148,7 +149,7 @@ const BottomBarRoutes: React.FC = () => {
         headerShown: false,
       }}>
       <Tab.Screen name="Home" component={HomeScreen} />
-      <Tab.Screen name="Users" component={HomeScreen} />
+      <Tab.Screen name="Friends" component={FriendsScreen} />
       <Tab.Screen name="Chats" component={HomeScreen} />
       <Tab.Screen name="UserProfile" component={HomeScreen} />
 

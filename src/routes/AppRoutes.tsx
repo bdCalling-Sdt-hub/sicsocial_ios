@@ -23,6 +23,8 @@ import NotificationsScreen from '../screens/notification/NotificationsScreen';
 import PaymentsScreen from '../screens/payments/PaymentsScreen';
 import SearchScreen from '../screens/search/SearchScreen';
 import {useColorScheme} from 'react-native';
+import FriendsScreen from '../screens/friends/FriendsScreen';
+import FriendsProfile from '../screens/friends/FriendsProfile';
 
 const Stack = createNativeStackNavigator();
 
@@ -42,7 +44,6 @@ const Routes = () => {
           {/* <Stack.Screen name="Splash" component={SplashScreen} /> */}
           <Stack.Screen name="Login" component={LoginScreen} />
           <Stack.Screen name="SignUp" component={SignUpScreen} />
-          <Stack.Screen name="HomeRoutes" component={BottomBarRoutes} />
           <Stack.Screen
             name="EmailConfirmation"
             component={EmailConfirmationScreen}
@@ -53,6 +54,9 @@ const Routes = () => {
             name="VerifySuccessful"
             component={VerifySuccessfulScreen}
           />
+
+          {/*=================== under the home ====================== */}
+          <Stack.Screen name="HomeRoutes" component={BottomBarRoutes} />
           <Stack.Screen
             name="donation"
             component={DonationScreen}
@@ -81,6 +85,19 @@ const Routes = () => {
               animation: 'slide_from_right',
             }}
           />
+
+          {/*======================== Home end ============================ */}
+
+          {/*======================== Friend start ============================ */}
+
+          <Stack.Screen
+            name="FriendsProfile"
+            component={FriendsProfile}
+            options={{
+              animation: 'slide_from_right',
+            }}
+          />
+          {/*======================== Friend end ============================ */}
         </Stack.Navigator>
       </NavigationContainer>
     </GestureHandlerRootView>

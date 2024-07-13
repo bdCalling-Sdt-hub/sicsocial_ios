@@ -84,7 +84,11 @@ const SearchScreen = ({navigation}: NavigProps<null>) => {
           />
         </View>
       </View>
-      <View>
+      <View
+        style={{
+          borderBottomWidth: 1,
+          borderBlockColor: 'rgba(217, 217, 217, 1)',
+        }}>
         <FlatList
           showsHorizontalScrollIndicator={false}
           keyboardShouldPersistTaps="always"
@@ -136,6 +140,69 @@ const SearchScreen = ({navigation}: NavigProps<null>) => {
           paddingHorizontal: '4%',
           // marginVertical: 10,
         }}>
+        <TouchableOpacity
+          style={{
+            height: 90,
+            width: '100%',
+            backgroundColor: colors.incompleteProfile,
+            marginVertical: 10,
+            borderRadius: 8,
+            elevation: 1,
+            padding: 16,
+          }}>
+          <View
+            style={{
+              flexDirection: 'row',
+              gap: 8,
+            }}>
+            <Image source={require('../../assets/icons/happy/wish.png')} />
+            <Text
+              style={{
+                fontFamily: font.PoppinsSemiBold,
+                fontSize: 14,
+                color: colors.textColor.secondaryColor,
+              }}>
+              Finish setting up your Sic profile
+            </Text>
+          </View>
+          <View
+            style={{
+              flex: 1,
+              // alignItems: 'flex-end',
+              justifyContent: 'flex-end',
+            }}>
+            <View
+              style={{
+                backgroundColor: colors.bg,
+                height: 5,
+                borderRadius: 100,
+              }}>
+              <View
+                style={{
+                  backgroundColor: colors.green['#00B047'],
+                  height: 5,
+                  borderRadius: 100,
+                  width: '70%',
+                }}></View>
+            </View>
+          </View>
+          <View
+            style={{
+              position: 'absolute',
+              right: 20,
+              bottom: 0,
+              top: 0,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+            <SvgXml
+              xml={`<svg width="10" height="16" viewBox="0 0 10 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M9.1589 8.57065C9.46982 8.25973 9.46982 7.74027 9.1589 7.42855L1.98493 0.236178C1.67002 -0.078726 1.15933 -0.078726 0.845227 0.236178C0.530323 0.551083 0.530323 1.06257 0.845227 1.37747L7.44932 7.99997L0.844429 14.6217C0.529525 14.9374 0.529525 15.4481 0.844429 15.7638C1.15933 16.0787 1.67002 16.0787 1.98413 15.7638L9.1589 8.57065Z" fill="black"/>
+</svg>
+`}
+            />
+          </View>
+        </TouchableOpacity>
         <NotificationCard
           content="Send you friend request"
           title="Hilari help"

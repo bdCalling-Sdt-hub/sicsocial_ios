@@ -31,7 +31,7 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
     <View
       style={{
         height: '100%',
-        backgroundColor: 'white',
+        backgroundColor: colors.bg,
       }}>
       <BackButtonWithTitle
         navigation={navigation}
@@ -81,6 +81,7 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
                     fontSize: 14,
                     paddingHorizontal: 20,
                     height: 56,
+                    color: colors.textColor.neutralColor,
                   }}
                   placeholder="type "
                   onChangeText={handleChange('name')}
@@ -109,6 +110,7 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
                     fontSize: 14,
                     paddingHorizontal: 20,
                     height: 56,
+                    color: colors.textColor.neutralColor,
                   }}
                   placeholder="type "
                   onChangeText={handleChange('email')}
@@ -137,6 +139,7 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
                     fontSize: 14,
                     paddingHorizontal: 20,
                     height: 56,
+                    color: colors.textColor.neutralColor,
                   }}
                   placeholder="type "
                   onChangeText={handleChange('contract')}
@@ -165,6 +168,7 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
                     fontSize: 14,
                     paddingHorizontal: 20,
                     height: 56,
+                    color: colors.textColor.neutralColor,
                   }}
                   placeholder="type "
                   onChangeText={handleChange('address')}
@@ -192,8 +196,10 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
                     fontSize: 14,
                     paddingHorizontal: 20,
                     height: 56,
+                    color: colors.textColor.neutralColor,
                   }}
                   placeholder="$ "
+                  placeholderTextColor={colors.textColor.neutralColor}
                   keyboardType="decimal-pad"
                 />
               </View>
@@ -217,6 +223,7 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
         modalVisible={modalVisible}
         Radius={15}
         width={'80%'}
+        containerColor={colors.bg}
         height={'43%'}
         backButton
         appearance>
@@ -573,6 +580,7 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
       <CustomModal
         setModalVisible={setPaymentSSModal}
         modalVisible={paymentSSModal}
+        containerColor={colors.bg}
         Radius={15}
         width={'80%'}
         height={'40%'}

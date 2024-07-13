@@ -16,6 +16,7 @@ type CustomModalProps = {
   center?: string;
   appearance?: boolean;
   backButton?: boolean;
+  containerColor?: string;
 };
 
 const CustomModal = ({
@@ -31,6 +32,7 @@ const CustomModal = ({
   center,
   appearance: normal,
   backButton,
+  containerColor,
 }: CustomModalProps) => {
   return (
     <Modal
@@ -53,7 +55,7 @@ const CustomModal = ({
             borderRadius: Radius ? 9 : 0,
             borderTopRightRadius: onlyTopRadius && 9,
             borderTopLeftRadius: onlyTopRadius && 9,
-            backgroundColor: 'white',
+            backgroundColor: containerColor ? containerColor : 'white',
             height: height ? height : '50%',
             width: width ? width : '90%',
             padding: 10,

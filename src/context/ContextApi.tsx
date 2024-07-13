@@ -80,6 +80,11 @@ export const useStyles = () => {
       primaryColor: isDark ? '#D29E3B' : '#D29E3B',
       secondaryColor: isDark ? '#333333' : '#FBF5EB',
       neutralColor: isDark ? '#444444' : '#DBB162',
+      btn: {
+        variantOne: isDark ? '#5C5C5C' : '#FBF5EB',
+        variantTwo: isDark ? '#333333' : 'rgba(240, 240, 240, 1)',
+        normal: isDark ? '#333333' : 'white',
+      },
       textColor: {
         primaryColor: isDark ? '#FFFFFF' : '#151515',
         secondaryColor: isDark ? '#E6E6E6' : '#333333',
@@ -96,13 +101,17 @@ export const useStyles = () => {
       blue: '#4289FF',
       white: '#FFFFFF',
       search: isDark ? '#5C5C5C' : '#F4F4F4',
+      friedCardBg: isDark ? '#444444' : 'rgba(247, 247, 247, 1)',
+      incompleteProfile: isDark ? '#333333' : '#f1e7e9',
+      normal: isDark ? '#333333' : '#ffffff',
+      redis: 'rgba(142, 60, 80, 1)',
     },
   };
 };
 
 const ContextApi = ({children}: ContextApiProps) => {
   const darkMode = Appearance.getColorScheme();
-  const [isDark, setDark] = useState(true);
+  const [isDark, setDark] = useState(darkMode === 'dark' ? true : false);
   const shearValue = {isDark, setDark};
   return (
     <ContextProvider.Provider value={shearValue}>

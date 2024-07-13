@@ -34,7 +34,7 @@ const NormalButton = ({
       onPress={onPress}
       style={{
         backgroundColor: outLine
-          ? 'white'
+          ? colors.secondaryColor
           : backGroundColor
           ? backGroundColor
           : colors.primaryColor,
