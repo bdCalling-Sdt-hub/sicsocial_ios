@@ -25,6 +25,7 @@ import SearchScreen from '../screens/search/SearchScreen';
 import {useColorScheme} from 'react-native';
 import FriendsScreen from '../screens/friends/FriendsScreen';
 import FriendsProfile from '../screens/friends/FriendsProfile';
+import MassageScreen from '../screens/message/MassageScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -93,6 +94,13 @@ const Routes = () => {
           <Stack.Screen
             name="FriendsProfile"
             component={FriendsProfile}
+            options={{
+              animation: 'slide_from_right',
+            }}
+          />
+          <Stack.Screen
+            name="Messages"
+            component={MassageScreen}
             options={{
               animation: 'slide_from_right',
             }}
