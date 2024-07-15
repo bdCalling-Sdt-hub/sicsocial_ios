@@ -48,8 +48,8 @@ const ModalOfBottom = ({
 
   useEffect(() => {
     containerOpacityValue.value = withDelay(
-      150,
-      withTiming('rgba(0, 0, 0,0.4)'),
+      100,
+      withTiming('rgba(0, 0, 0,0.3)'),
     );
     return () => {
       containerOpacityValue.value = containerOpacityValue.value = '#00000000';
@@ -57,18 +57,14 @@ const ModalOfBottom = ({
   }, [modalVisible]);
 
   return (
-    <Modal
-      animationType={'slide'}
-      animated
-      transparent={true}
-      visible={modalVisible}>
+    <Modal animationType={'slide'} transparent={true} visible={modalVisible}>
       <Pressable
         disabled={normal || false}
-        onPress={() => {
-          containerOpacityValue.value = withDelay(0, withTiming('#00000000'));
-          setTimeout(() => {
-            setModalVisible(false);
-          }, 100);
+        onPressIn={() => {
+          containerOpacityValue.value = withTiming('#00000000');
+        }}
+        onPressOut={() => {
+          setModalVisible(false);
         }}>
         <Animated.View
           style={{
