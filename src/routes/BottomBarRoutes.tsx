@@ -17,6 +17,7 @@ import HomeScreen from '../screens/home/HomeScreen';
 import {useContextApi, useStyles} from '../context/ContextApi';
 import FriendsScreen from '../screens/friends/FriendsScreen';
 import MassageScreen from '../screens/message/MassageScreen';
+import ProfileScreen from '../screens/profile/ProfileScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -152,7 +153,7 @@ const BottomBarRoutes: React.FC = () => {
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Friends" component={FriendsScreen} />
       <Tab.Screen name="Chats" component={MassageScreen} />
-      <Tab.Screen name="UserProfile" component={HomeScreen} />
+      <Tab.Screen name="UserProfile" component={ProfileScreen} />
 
       {/* Add more Tab.Screen components as needed */}
     </Tab.Navigator>

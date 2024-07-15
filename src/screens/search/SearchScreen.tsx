@@ -96,7 +96,8 @@ const SearchScreen = ({navigation}: NavigProps<null>) => {
           contentContainerStyle={{
             gap: 45,
             paddingHorizontal: 20,
-            paddingVertical: 15,
+            paddingTop: 20,
+            paddingBottom: 15,
           }}
           data={data}
           renderItem={item => (

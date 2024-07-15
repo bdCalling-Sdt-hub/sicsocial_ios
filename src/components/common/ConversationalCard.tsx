@@ -21,7 +21,7 @@ interface ConversationalCardProps extends NavigProps<null> {
   onDonationShearPress?: () => void;
   onDonationViewDetailsPress?: () => void;
   conversationStyle?: 'donation' | 'normal';
-  cardStyle?: 'book' | 'two' | 'single' | 'many';
+  cardStyle?: 'book' | 'two' | 'single' | 'three' | 'many';
   onPress?: () => void;
   disabled?: boolean;
   isReply?: boolean;
@@ -495,6 +495,116 @@ const ConversationalCard = ({
                         8+
                       </Text>
                     </ImageBackground>
+                  </View>
+                </>
+              )}
+              {cardStyle === 'three' && (
+                <>
+                  <View
+                    style={{
+                      // height: 76,
+
+                      borderRadius: 24,
+                      elevation: 2,
+                      top: 8,
+                      position: 'absolute',
+                      right: 50,
+                      zIndex: 3,
+                      transform: [
+                        {
+                          rotate: '15deg',
+                        },
+                        {
+                          translateX: 40,
+                        },
+                        {
+                          translateY: 0,
+                        },
+                      ],
+                    }}>
+                    <Image
+                      resizeMode="cover"
+                      style={{
+                        height: 60,
+                        width: 60,
+                        borderRadius: 24,
+                        borderColor: 'white',
+                        borderWidth: 2,
+                      }}
+                      source={{
+                        uri: 'https://s3-alpha-sig.figma.com/img/7568/3fd5/7261c2ae940abab762a6e0130b36b3a9?Expires=1721606400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=AykSrcYr~WEBIHMW4WezFwp74XIKqwz1DXFJPi-jBgpPa0w-AKmFioPrvXMG08QXjqfFJ7xtZ25idfjkopahkcvMKxIXm4TY4TBZFWD~2ZCGL4jbefjiM0ufmw09012~6B89nl~j6xWjd9ggQilJal8vQ8KUcmdm-KyxNUlAA0yT-JwjW~4Hx9gzTiaI8mXu9SmdrwivuQtAmxDNBHcx0hvDb7l8zrX95Hww4mVqCT-z3AbxnyyzEvIgAivaXFHPvNFXDdOp23QKhDg~zKX5ZObnIYL7uNdvhuAZWiwbKxUOSag8laDRybIo8hjF63zSi6rL9nm7x5pUOleZgtmDfQ__',
+                      }}
+                    />
+                  </View>
+                  <View
+                    style={{
+                      // height: 76,
+
+                      borderRadius: 24,
+                      elevation: 2,
+                      top: 8,
+                      position: 'absolute',
+                      right: 50,
+                      zIndex: 2,
+                      transform: [
+                        {
+                          rotate: '-8deg',
+                        },
+                        {
+                          translateX: -5,
+                        },
+                        {
+                          translateY: 0,
+                        },
+                      ],
+                    }}>
+                    <Image
+                      resizeMode="cover"
+                      style={{
+                        height: 60,
+                        width: 60,
+                        borderRadius: 24,
+                        borderColor: 'white',
+                        borderWidth: 2,
+                      }}
+                      source={{
+                        uri: 'https://s3-alpha-sig.figma.com/img/3d5c/b72f/ae1e058c2ed75ab981a9f8bb62e96a13?Expires=1722211200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=jLVk4o9pF4TeqOoV6dal-2dmplZtYv2Bpb-hXF4aMiRb~HXQjEkUC0VCXl88DEjxnYOB1illOoGLzsFKq6DDz9G2W5NJrdRRnVGg18HjwOfA30g9F2Q9XIr7qhWuuN6h7u7kJKoyfRgN7xn8VssMnZg1G8n3ezbyrnvyAqD62W-CQlvlFjUXyQjVkMQevpvRNbr81nXUMRf5uk75P~agZaNEoy8cmdLKigAxlkG~mTodT4jPGFEB3Y1JjCEVXCq-W-7gnICrmvmL9e2OZ-DHmquJCvsosY8uVYCwflJN7~5hJygfZ9pMJXBxnqgv9bCJ-DQwMaZHekWOdpMErwyw7Q__',
+                      }}
+                    />
+                  </View>
+
+                  <View
+                    style={{
+                      borderRadius: 24,
+                      top: 0,
+                      position: 'absolute',
+                      right: 50,
+
+                      transform: [
+                        {
+                          rotate: '-25deg',
+                        },
+                        {
+                          translateX: -45,
+                        },
+                        {
+                          translateY: -3,
+                        },
+                      ],
+                    }}>
+                    <Image
+                      resizeMode="cover"
+                      style={{
+                        height: 60,
+                        width: 60,
+                        borderRadius: 24,
+                        borderColor: 'white',
+                        borderWidth: 2,
+                      }}
+                      source={{
+                        uri: 'https://s3-alpha-sig.figma.com/img/bdc6/db2a/3a906b3de8eaa53e14582edf5c918b5d?Expires=1721606400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=U7P8CfaZR8VN~AB1t4yamhll4GWaFTFOGHWe5KuCLxDNe4~p9UhUbNtg9VA8aaFLDKPmwuByzP7CpTyF1KFHwPwChykfMqAhFl6iJGCErm9vbcCeYixeYDT1QE1JWrVlT5y4YfuzY2H1hH9V0dHwAzKAc8hMALmYPIoMNsqxZICi6T0PjW0ATcq~eeOYXaxtY9S30thVMs3WHidear3kaHFhkU-MO7VCCQVDbjVzVvy~PWSw-QZcZiqNvkC-lm0DLJlzBtuVkjIlOgoW2JTZqVMcaNUau2ybiuv2uIAR~tRoO18JRvqWgC55EfDQZ1lvwk1mAkeoSHqBPHP954d7kQ__',
+                      }}
+                    />
                   </View>
                 </>
               )}

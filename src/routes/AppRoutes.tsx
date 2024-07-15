@@ -26,6 +26,9 @@ import {useColorScheme} from 'react-native';
 import FriendsScreen from '../screens/friends/FriendsScreen';
 import FriendsProfile from '../screens/friends/FriendsProfile';
 import MassageScreen from '../screens/message/MassageScreen';
+import ShareBooksScreen from '../screens/sharebooks/ShareBooksScreen';
+import BookShareScreen from '../screens/sharebooks/BookShareScreen';
+import ProfileScreen from '../screens/profile/ProfileScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -86,7 +89,20 @@ const Routes = () => {
               animation: 'slide_from_right',
             }}
           />
-
+          <Stack.Screen
+            name="ShareBooks"
+            component={ShareBooksScreen}
+            options={{
+              animation: 'slide_from_right',
+            }}
+          />
+          <Stack.Screen
+            name="BookShare"
+            component={BookShareScreen}
+            options={{
+              animation: 'slide_from_right',
+            }}
+          />
           {/*======================== Home end ============================ */}
 
           {/*======================== Friend start ============================ */}
@@ -98,6 +114,7 @@ const Routes = () => {
               animation: 'slide_from_right',
             }}
           />
+
           <Stack.Screen
             name="Messages"
             component={MassageScreen}
@@ -106,6 +123,15 @@ const Routes = () => {
             }}
           />
           {/*======================== Friend end ============================ */}
+          {/*======================== Profile start ============================ */}
+          <Stack.Screen
+            name="Profile"
+            component={ProfileScreen}
+            options={{
+              animation: 'slide_from_right',
+            }}
+          />
+          {/*======================== Profile end ============================ */}
         </Stack.Navigator>
       </NavigationContainer>
     </GestureHandlerRootView>

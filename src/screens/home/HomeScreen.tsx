@@ -17,7 +17,7 @@ import {
 import React, {useContext, useEffect} from 'react';
 import * as Animatable from 'react-native-animatable';
 import LinearGradient from 'react-native-linear-gradient';
-import {ScrollView} from 'react-native-gesture-handler';
+import {ScrollView, TextInput} from 'react-native-gesture-handler';
 import {SvgUri, SvgXml} from 'react-native-svg';
 import ConversationalCard from '../../components/common/ConversationalCard';
 import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
@@ -30,8 +30,10 @@ import {ContextProvider, useStyles} from '../../context/ContextApi';
 import Animated, {
   Easing,
   interpolate,
+  ReduceMotion,
   useAnimatedStyle,
   useSharedValue,
+  withDelay,
   withTiming,
 } from 'react-native-reanimated';
 import Carousel, {
@@ -39,6 +41,7 @@ import Carousel, {
   TAnimationStyle,
 } from 'react-native-reanimated-carousel';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import {AnimatedCircularProgress} from 'react-native-circular-progress';
 
 const data = [
   {
@@ -112,10 +115,13 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
   const [modalVisible, setModalVisible] = React.useState(false);
   const [conversationalModal, setConversationalModal] = React.useState(false);
   const [imageModal, setImageModal] = React.useState(false);
+  const [textInputModal, setTextInputModal] = React.useState(false);
   const [activeIndex, setActiveIndex] = React.useState(0);
   const [activeIndexBigButton, setActiveIndexBigButton] = React.useState(0);
   const [recordOn, setRecordOn] = React.useState(false);
+  const [recordOnDone, setRecordOnDone] = React.useState(false);
   const [imageAssets, setImageAssets] = React.useState<any>({});
+  const textInputRef = React.useRef<TextInput>(null);
 
   const modalWidth = useSharedValue(height * 0.116);
   const modalHight = useSharedValue(width * 0.244);
@@ -124,6 +130,7 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
   const topBorderRadius = useSharedValue(100);
   const backgroundColor = useSharedValue('rgba(219, 177, 98, 1)');
   const opacityDown = useSharedValue(0.2);
+  const letsBorderAnimationValue = useSharedValue(23);
 
   const handleOpen = () => {
     setConversationalModal(true);
@@ -270,6 +277,12 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
     };
   });
 
+  const letsBorderAnimationValueStyle = useAnimatedStyle(() => {
+    return {
+      borderWidth: letsBorderAnimationValue.value,
+    };
+  });
+
   const handleImagePick = async (option: 'camera' | 'library') => {
     try {
       if (option === 'camera') {
@@ -310,6 +323,12 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
   const recodingOn = () => {
     recordingAnimation.value = withTiming('100%', {duration: 10000});
   };
+
+  useEffect(() => {
+    if (textInputModal) {
+      setTimeout(() => textInputRef.current?.focus(), 10);
+    }
+  }, [textInputModal]);
 
   return (
     <View
@@ -465,7 +484,7 @@ is recognize for SIC "
         />
         <ConversationalCard
           conversationStyle="normal"
-          cardStyle="many"
+          cardStyle="three"
           conversationTitle="COFFE HOUSE"
           conversationSubtitle="join room"
           lastMessageTime="8:10 am"
@@ -743,10 +762,14 @@ is recognize for SIC "
               }}
               loop
               snapEnabled
+              defaultIndex={0}
               pagingEnabled
               data={data}
               onSnapToItem={(index: number) => {
                 setActiveIndexBigButton(index);
+                setRecordOn(false);
+                setRecordOnDone(false);
+                letsBorderAnimationValue.value = 25;
               }}
               renderItem={({index, item, animationValue}) => (
                 <TouchableOpacity
@@ -755,9 +778,36 @@ is recognize for SIC "
                       // handleImagePick('camera');
                       setImageModal(!imageModal);
                     }
+                    if (item.name === 'Share Books') {
+                      // all modal false
+                      setModalVisible(false);
+                      setConversationalModal(false);
+                      setImageModal(false);
+                      setTextInputModal(false);
+                      navigation?.navigate('ShareBooks');
+                    }
                     if (item.name === 'Let’s talk') {
                       // handleImagePick('camera');
                       setRecordOn(!recordOn);
+                      letsBorderAnimationValue.value =
+                        letsBorderAnimationValue.value === 8
+                          ? withTiming(25, {
+                              duration: 200,
+                              easing: Easing.ease,
+                            })
+                          : withTiming(8, {
+                              duration: 200,
+                            });
+                      recordOnDone && setRecordOnDone(!recordOnDone);
+                    }
+                    if (item.name === 'Type a message') {
+                      setTextInputModal(!textInputModal);
+
+                      setConversationalModal(false);
+                    }
+                    if (item.name === 'Join your room') {
+                    }
+                    if (item.name === 'New Face Dwn') {
                     }
                   }}
                   style={{
@@ -787,53 +837,134 @@ is recognize for SIC "
                       {activeIndexBigButton === index && item?.name}
                     </Animated.Text>
                   </View>
-                  {item.name === 'Let’s talk' && recordOn ? (
-                    <Animated.View
-                      // onPress={() => {
-                      //   handleOpen();
-                      // }}
+                  {activeIndexBigButton === index &&
+                  item.name === 'Let’s talk' &&
+                  recordOn ? (
+                    <>
+                      {recordOnDone ? (
+                        <Animated.View
+                          // onPress={() => {
+                          //   handleOpen();
+                          // }}
 
-                      style={[
-                        {
-                          paddingHorizontal: '4%',
-                          paddingVertical: 16,
-                          backgroundColor: colors.white,
-                          // borderBottomWidth: 1,
-                          width: 90,
-                          height: 90,
-                          borderColor: colors.primaryColor,
-                          borderWidth: 3,
-                          borderRadius: 100,
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                          // elevation: 2,
-                        },
-                        opacityStyle,
-                      ]}>
-                      <View
-                        style={{
-                          // width: 28,
-                          // height: 28,
-                          // padding: 1,
-                          borderRadius: 100,
-                          // elevation: 2,
-                          borderColor: '#F7CC7F',
-                          borderWidth: 4,
-                          padding: 8,
-                          elevation: 7,
-                          shadowColor: '#52006A',
-                        }}>
-                        <Image
-                          resizeMode="contain"
-                          style={{
-                            width: 28,
-                            height: 28,
-                            borderRadius: 100,
-                          }}
-                          source={require('../../assets/icons/modalIcons/microphoneSendary.png')}
-                        />
-                      </View>
-                    </Animated.View>
+                          style={[
+                            {
+                              paddingHorizontal: '4%',
+                              paddingVertical: 16,
+                              backgroundColor: colors.green['#00C208'],
+                              // borderBottomWidth: 1,
+                              width: 90,
+                              height: 90,
+                              // borderColor: colors.primaryColor,
+                              // borderWidth: 5,
+                              borderRadius: 100,
+                              // shadowOpacity: 0.4,
+
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                              // elevation: 2,
+                            },
+                            opacityStyle,
+                          ]}>
+                          <View
+                            style={{
+                              // width: 28,
+                              // height: 28,
+                              // padding: 1,
+                              borderRadius: 100,
+                              // elevation: 2,
+                              // borderColor: '#F7CC7F',
+                              // borderWidth: 8,
+                              shadowRadius: 10,
+                              padding: 8,
+                              // elevation: 2,
+                              shadowColor: '#52006A',
+                              // backgroundColor: colors.white,
+                            }}>
+                            <Image
+                              resizeMode="contain"
+                              style={{
+                                width: 50,
+                                height: 50,
+                                borderRadius: 100,
+                              }}
+                              source={require('../../assets/icons/modalIcons/rightTik.png')}
+                            />
+                          </View>
+                        </Animated.View>
+                      ) : (
+                        <Animated.View
+                          // onPress={() => {
+                          //   handleOpen();
+                          // }}
+
+                          style={[
+                            {
+                              paddingHorizontal: '4%',
+                              paddingVertical: 16,
+                              // backgroundColor: colors.white,
+                              // borderBottomWidth: 1,
+                              width: 90,
+                              height: 90,
+                              // borderColor: colors.primaryColor,
+                              // borderWidth: 5,
+                              borderRadius: 100,
+                              // shadowOpacity: 0.4,
+
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                              // elevation: 2,
+                            },
+                            opacityStyle,
+                          ]}>
+                          <AnimatedCircularProgress
+                            size={100}
+                            width={6}
+                            rotation={10}
+                            fill={100}
+                            lineCap="round"
+                            style={{
+                              borderRadius: 100,
+                              position: 'absolute',
+                            }}
+                            duration={10000}
+                            tintColor={colors.neutralColor}
+                            onAnimationComplete={() => {
+                              setRecordOnDone(true);
+                            }}
+                            // backgroundColor={'rgba(0,0,0,.4)'}
+                          />
+                          <Animated.View
+                            style={[
+                              {
+                                // width: 28,
+                                // height: 28,
+                                // padding: 1,
+                                borderRadius: 100,
+                                // elevation: 2,
+                                borderColor: '#F7CC7F',
+
+                                shadowRadius: 100,
+                                padding: 8,
+                                elevation: 2,
+                                shadowColor: '#52006A',
+                                backgroundColor: colors.white,
+                              },
+                              letsBorderAnimationValueStyle,
+                            ]}>
+                            <Image
+                              resizeMode="contain"
+                              style={{
+                                width: 28,
+                                height: 28,
+                                borderRadius: 100,
+                              }}
+                              source={require('../../assets/icons/modalIcons/microphoneSendary.png')}
+                            />
+                          </Animated.View>
+                        </Animated.View>
+                      )}
+                    </>
                   ) : (
                     <Animated.View
                       // onPress={() => {
@@ -921,6 +1052,57 @@ is recognize for SIC "
           </TouchableOpacity>
         </View>
       </ModalOfBottom>
+      <ModalOfBottom
+        modalVisible={textInputModal}
+        setModalVisible={setTextInputModal}
+        onlyTopRadius={20}
+        height={'17%'}
+        containerColor={colors.bg}>
+        <View
+          style={{
+            gap: 10,
+          }}>
+          <View
+            style={{
+              // borderWidth: 1,
+              // borderColor: colors.primaryColor,
+              flexDirection: 'row',
+              gap: 10,
+            }}>
+            <TextInput
+              ref={textInputRef}
+              placeholder="Type your message"
+              style={{
+                backgroundColor: '#F1F1F1',
+                borderRadius: 100,
+                paddingHorizontal: 15,
+                paddingVertical: 10,
+                flex: 1,
+              }}
+            />
+            <TouchableOpacity
+              onPress={() => {
+                setTextInputModal(false);
+              }}
+              style={{
+                height: 40,
+                width: 40,
+                backgroundColor: colors.primaryColor,
+                borderRadius: 100,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <SvgXml
+                xml={`<svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M21.2151 10.9951C21.2151 11.7251 20.7441 12.3751 19.9251 12.7851L3.50513 20.9951C3.10513 21.1951 2.71513 21.2951 2.35513 21.2951C1.83413 21.2951 1.37513 21.0751 1.08413 20.6861C0.835133 20.3451 0.595133 19.7551 0.885133 18.7951L2.73513 12.6251C2.79513 12.4451 2.83513 12.2261 2.85513 11.9951L12.9851 11.9951C13.5351 11.9951 13.9851 11.5451 13.9851 10.9951C13.9851 10.4451 13.5351 9.99509 12.9851 9.99509L2.85513 9.99509C2.83413 9.76509 2.79413 9.54509 2.73513 9.36509L0.885133 3.19509C0.595133 2.23509 0.835133 1.64509 1.08513 1.30509C1.57513 0.645087 2.50513 0.495087 3.50513 0.995087L19.9261 9.20509C20.7451 9.61509 21.2151 10.2651 21.2151 10.9951Z" fill="#FCFCFC"/>
+</svg>
+`}
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
+      </ModalOfBottom>
+
       <View
         style={{
           height: '7.2%',
