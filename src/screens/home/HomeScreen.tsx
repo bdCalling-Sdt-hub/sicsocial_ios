@@ -438,6 +438,7 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
           gap: 16,
           paddingTop: 16,
           paddingBottom: 16,
+          paddingHorizontal: '5%',
         }}>
         {/*========================== conversation card start ======================= */}
 

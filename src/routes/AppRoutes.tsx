@@ -29,6 +29,8 @@ import MassageScreen from '../screens/message/MassageScreen';
 import ShareBooksScreen from '../screens/sharebooks/ShareBooksScreen';
 import BookShareScreen from '../screens/sharebooks/BookShareScreen';
 import ProfileScreen from '../screens/profile/ProfileScreen';
+import SettingScreen from '../screens/profile/SettingScreen';
+import ProfileEditScreen from '../screens/profile/ProfileEditScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -127,6 +129,20 @@ const Routes = () => {
           <Stack.Screen
             name="Profile"
             component={ProfileScreen}
+            options={{
+              animation: 'slide_from_right',
+            }}
+          />
+          <Stack.Screen
+            name="Settings"
+            component={SettingScreen}
+            options={{
+              animation: 'slide_from_right',
+            }}
+          />
+          <Stack.Screen
+            name="ProfileEdit"
+            component={ProfileEditScreen}
             options={{
               animation: 'slide_from_right',
             }}

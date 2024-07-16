@@ -25,6 +25,7 @@ interface ConversationalCardProps extends NavigProps<null> {
   onPress?: () => void;
   disabled?: boolean;
   isReply?: boolean;
+  paddingHorizontal?: string;
 }
 
 const ConversationalCard = ({
@@ -41,6 +42,7 @@ const ConversationalCard = ({
   disabled,
   onPress,
   isReply,
+  paddingHorizontal,
 }: ConversationalCardProps) => {
   const {colors, font} = useStyles();
   return (
@@ -51,7 +53,7 @@ const ConversationalCard = ({
         disabled={disabled}
         onPress={onPress}
         style={{
-          paddingHorizontal: '4%',
+          paddingHorizontal: paddingHorizontal ? paddingHorizontal : '0%',
         }}>
         <View
           style={{

@@ -54,7 +54,7 @@ const FriendCard = ({
           style={{
             height: 370,
             width: 300,
-            backgroundColor: colors.friedCardBg,
+            backgroundColor: colors.cardBg,
             borderRadius: 42,
             paddingHorizontal: 42,
             paddingVertical: 24,
