@@ -31,6 +31,7 @@ import BookShareScreen from '../screens/sharebooks/BookShareScreen';
 import ProfileScreen from '../screens/profile/ProfileScreen';
 import SettingScreen from '../screens/profile/SettingScreen';
 import ProfileEditScreen from '../screens/profile/ProfileEditScreen';
+import InterestScreen from '../screens/Logins/InterestScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -101,6 +102,13 @@ const Routes = () => {
           <Stack.Screen
             name="BookShare"
             component={BookShareScreen}
+            options={{
+              animation: 'slide_from_right',
+            }}
+          />
+          <Stack.Screen
+            name="Interest"
+            component={InterestScreen}
             options={{
               animation: 'slide_from_right',
             }}

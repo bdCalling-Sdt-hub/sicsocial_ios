@@ -13,10 +13,85 @@ import {useStyles} from '../../context/ContextApi';
 import {NavigProps} from '../../interfaces/NaviProps';
 import {SvgXml} from 'react-native-svg';
 import {Image} from 'react-native-animatable';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
 
 const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
   const {colors, font} = useStyles();
+  const [imageModal, setImageModal] = React.useState(false);
+
+  const [userInfo, setUserInfo] = React.useState({
+    profile_image:
+      'https://s3-alpha-sig.figma.com/img/7568/3fd5/7261c2ae940abab762a6e0130b36b3a9?Expires=1722211200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=cFUHzqdrtnlQwoWrpZH3cEN3l6xK-td4O8Ou0NjKpIJfS95qBc3POqPV16UtDzMsQv4pJpDOc0nSt7v89PfMPkTH0NE-u210Yvl~WpsOc42Fv7NrF3M2BzXE5lP-Cq~dlKC5WO7Q1qHHlhKqJRymhlI0RpAmji98KpUK4aujRcr2vCZ8yiVAgh68Qr724OEpmZ8ZpYBBhScsuqJOujG-On6-ZN9VOkU7stmdmBqvZZBJkksF6yvRCTap-jjHtc8OypX-7Zm2npxUJLn9isCm9xLuEKRRcDS4YY0cWh87AtGMG~ZfM-yOMNGnPkhgM3vef1Us4k6X3R9BDsWfIkDUFw__',
+    bio: 'Hello everyone , I am so simple person. i am working as a ux ui designer. ',
+    details: {
+      name: 'Asadullah',
+      email: 'Gabrail101@gmail.com',
+      contact_no: '+9900000000000',
+      live_in: 'Bangladesh',
+      occupations: 'Business',
+      organization_company: 'google',
+      studied_at: 'DIU',
+      relationship_status: 'Single',
+    },
+    link: 'https://www.instagram.com/as.ad1679...',
+    interests: [],
+  });
+
+  const [imageAssets, setImageAssets] = React.useState<any>({});
+
   const [privateProfile, setPrivateProfile] = useState(false);
+  const [edit, setEdit] = useState({
+    bio: false,
+    details: false,
+    link: false,
+    interests: false,
+    private_profile: false,
+  });
+
+  const handleImagePick = async (option: 'camera' | 'library') => {
+    try {
+      if (option === 'camera') {
+        const result = await launchCamera({
+          mediaType: 'photo',
+          maxWidth: 500,
+          maxHeight: 500,
+          quality: 0.5,
+          includeBase64: true,
+        });
+
+        if (!result.didCancel) {
+          setUserInfo({
+            ...userInfo,
+            profile_image: result?.assets![0].uri as string,
+          });
+          setImageModal(false);
+          // console.log(result);
+        }
+      }
+      if (option === 'library') {
+        const result = await launchImageLibrary({
+          mediaType: 'photo',
+          maxWidth: 500,
+          maxHeight: 500,
+          quality: 0.5,
+          includeBase64: true,
+        });
+
+        if (!result.didCancel) {
+          setUserInfo({
+            ...userInfo,
+            profile_image: result?.assets![0].uri as string,
+          });
+          setImageModal(false);
+          // console.log(result);
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <View
       style={{
@@ -37,6 +112,7 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
         }}
       />
       <ScrollView
+        keyboardShouldPersistTaps="always"
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           paddingHorizontal: '4%',
@@ -67,6 +143,9 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
               Take Photo
             </Text>
             <TouchableOpacity
+              onPress={() => {
+                setImageModal(!imageModal);
+              }}
               style={{
                 flexDirection: 'row',
                 alignItems: 'center',
@@ -112,7 +191,7 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
                   borderColor: colors.white,
                 }}
                 source={{
-                  uri: 'https://s3-alpha-sig.figma.com/img/7568/3fd5/7261c2ae940abab762a6e0130b36b3a9?Expires=1722211200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=cFUHzqdrtnlQwoWrpZH3cEN3l6xK-td4O8Ou0NjKpIJfS95qBc3POqPV16UtDzMsQv4pJpDOc0nSt7v89PfMPkTH0NE-u210Yvl~WpsOc42Fv7NrF3M2BzXE5lP-Cq~dlKC5WO7Q1qHHlhKqJRymhlI0RpAmji98KpUK4aujRcr2vCZ8yiVAgh68Qr724OEpmZ8ZpYBBhScsuqJOujG-On6-ZN9VOkU7stmdmBqvZZBJkksF6yvRCTap-jjHtc8OypX-7Zm2npxUJLn9isCm9xLuEKRRcDS4YY0cWh87AtGMG~ZfM-yOMNGnPkhgM3vef1Us4k6X3R9BDsWfIkDUFw__',
+                  uri: userInfo.profile_image,
                 }}
               />
             </View>
@@ -143,27 +222,55 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
               Bio
             </Text>
             <TouchableOpacity
+              onPress={() => {
+                setEdit({...edit, bio: true});
+              }}
               style={{
                 flexDirection: 'row',
                 alignItems: 'center',
-
+                height: 30,
                 gap: 8,
               }}>
-              <SvgXml
-                xml={`<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+              {edit.bio ? (
+                <TouchableOpacity
+                  onPress={() => {
+                    setEdit({...edit, bio: false});
+                  }}
+                  style={{
+                    borderWidth: 1,
+                    borderColor: colors.redis,
+                    paddingHorizontal: 5,
+                    paddingVertical: 3,
+                    borderRadius: 10,
+                  }}>
+                  <Text
+                    style={{
+                      fontSize: 12,
+                      fontFamily: font.Poppins,
+                      color: colors.textColor.rare,
+                    }}>
+                    Updated
+                  </Text>
+                </TouchableOpacity>
+              ) : (
+                <>
+                  <SvgXml
+                    xml={`<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M11.2656 14H2.73438C1.22661 14 0 12.7734 0 11.2656V2.73438C0 1.22664 1.22661 0 2.73438 0H8.03991C8.34195 0 8.58679 0.244836 8.58679 0.546875C8.58679 0.848914 8.34195 1.09375 8.03991 1.09375H2.73438C1.82973 1.09375 1.09375 1.82973 1.09375 2.73438V11.2656C1.09375 12.1703 1.82973 12.9062 2.73438 12.9062H11.2656C12.1703 12.9062 12.9062 12.1703 12.9062 11.2656V5.96009C12.9062 5.65805 13.1511 5.41321 13.4531 5.41321C13.7552 5.41321 14 5.65805 14 5.96009V11.2656C14 12.7734 12.7734 14 11.2656 14Z" fill="${colors.textColor.rare}"/>
 <path d="M13.1341 0.867234C12.2812 0.0143278 10.8934 0.0143278 10.0405 0.867234L4.08749 6.82024C3.08485 7.82285 2.65227 9.25154 2.93035 10.6419C2.97364 10.8584 3.14284 11.0277 3.35932 11.0709C4.74305 11.3477 6.17365 10.9212 7.18108 9.9138L13.1341 3.9608C13.987 3.10792 13.987 1.72014 13.1341 0.867234ZM12.3607 3.18743L6.40766 9.14044C5.75469 9.79344 4.8582 10.1202 3.95079 10.0505C3.88093 9.14334 4.20783 8.24666 4.86088 7.59363L9.49362 2.96089L9.88034 3.34761C10.0939 3.56117 10.4402 3.56122 10.6537 3.34761C10.8673 3.13406 10.8673 2.78778 10.6538 2.57422L10.267 2.1875L10.8139 1.64062C11.2404 1.21417 11.9343 1.21417 12.3607 1.64062C12.7871 2.06708 12.7871 2.76098 12.3607 3.18743Z" fill="${colors.textColor.rare}"/>
 </svg>
 `}
-              />
-              <Text
-                style={{
-                  fontSize: 14,
-                  fontFamily: font.Poppins,
-                  color: colors.textColor.rare,
-                }}>
-                Edit
-              </Text>
+                  />
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      fontFamily: font.Poppins,
+                      color: colors.textColor.rare,
+                    }}>
+                    Edit
+                  </Text>
+                </>
+              )}
             </TouchableOpacity>
           </View>
           <Text
@@ -181,10 +288,13 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
               paddingTop: 16,
             }}>
             <TextInput
+              editable={edit.bio}
+              onChangeText={text => setUserInfo({...userInfo, bio: text})}
               multiline={true}
               verticalAlign="top"
               textAlignVertical="top"
               numberOfLines={4}
+              value={userInfo.bio}
               style={{
                 height: 80,
                 padding: 12,
@@ -192,7 +302,7 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
                 borderRadius: 16,
               }}
               placeholderTextColor={colors.textColor.neutralColor}
-              placeholder="Describe yourself..."
+              placeholder={edit.bio ? 'Describe yourself...' : userInfo.bio}
             />
           </View>
         </View>
@@ -221,27 +331,55 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
               Details
             </Text>
             <TouchableOpacity
+              onPress={() => {
+                setEdit({...edit, details: true});
+              }}
               style={{
                 flexDirection: 'row',
                 alignItems: 'center',
-
+                height: 30,
                 gap: 8,
               }}>
-              <SvgXml
-                xml={`<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+              {edit.details ? (
+                <TouchableOpacity
+                  onPress={() => {
+                    setEdit({...edit, details: false});
+                  }}
+                  style={{
+                    borderWidth: 1,
+                    borderColor: colors.redis,
+                    paddingHorizontal: 5,
+                    paddingVertical: 3,
+                    borderRadius: 10,
+                  }}>
+                  <Text
+                    style={{
+                      fontSize: 12,
+                      fontFamily: font.Poppins,
+                      color: colors.textColor.rare,
+                    }}>
+                    Updated
+                  </Text>
+                </TouchableOpacity>
+              ) : (
+                <>
+                  <SvgXml
+                    xml={`<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M11.2656 14H2.73438C1.22661 14 0 12.7734 0 11.2656V2.73438C0 1.22664 1.22661 0 2.73438 0H8.03991C8.34195 0 8.58679 0.244836 8.58679 0.546875C8.58679 0.848914 8.34195 1.09375 8.03991 1.09375H2.73438C1.82973 1.09375 1.09375 1.82973 1.09375 2.73438V11.2656C1.09375 12.1703 1.82973 12.9062 2.73438 12.9062H11.2656C12.1703 12.9062 12.9062 12.1703 12.9062 11.2656V5.96009C12.9062 5.65805 13.1511 5.41321 13.4531 5.41321C13.7552 5.41321 14 5.65805 14 5.96009V11.2656C14 12.7734 12.7734 14 11.2656 14Z" fill="${colors.textColor.rare}"/>
 <path d="M13.1341 0.867234C12.2812 0.0143278 10.8934 0.0143278 10.0405 0.867234L4.08749 6.82024C3.08485 7.82285 2.65227 9.25154 2.93035 10.6419C2.97364 10.8584 3.14284 11.0277 3.35932 11.0709C4.74305 11.3477 6.17365 10.9212 7.18108 9.9138L13.1341 3.9608C13.987 3.10792 13.987 1.72014 13.1341 0.867234ZM12.3607 3.18743L6.40766 9.14044C5.75469 9.79344 4.8582 10.1202 3.95079 10.0505C3.88093 9.14334 4.20783 8.24666 4.86088 7.59363L9.49362 2.96089L9.88034 3.34761C10.0939 3.56117 10.4402 3.56122 10.6537 3.34761C10.8673 3.13406 10.8673 2.78778 10.6538 2.57422L10.267 2.1875L10.8139 1.64062C11.2404 1.21417 11.9343 1.21417 12.3607 1.64062C12.7871 2.06708 12.7871 2.76098 12.3607 3.18743Z" fill="${colors.textColor.rare}"/>
 </svg>
 `}
-              />
-              <Text
-                style={{
-                  fontSize: 14,
-                  fontFamily: font.Poppins,
-                  color: colors.textColor.rare,
-                }}>
-                Edit
-              </Text>
+                  />
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      fontFamily: font.Poppins,
+                      color: colors.textColor.rare,
+                    }}>
+                    Edit
+                  </Text>
+                </>
+              )}
             </TouchableOpacity>
           </View>
           <View
@@ -249,228 +387,496 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
               gap: 16,
               marginTop: 15,
             }}>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}>
-              <Text
+            {edit.details ? (
+              <View
                 style={{
-                  fontSize: 12,
-                  color: colors.textColor.neutralColor,
-                  fontFamily: font.Poppins,
+                  gap: 10,
                 }}>
-                Name
-              </Text>
-              <Text
-                style={{
-                  fontSize: 12,
-                  color: colors.textColor.neutralColor,
-                  fontFamily: font.Poppins,
-                }}>
-                Asadullah
-              </Text>
-            </View>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}>
-              <Text
-                style={{
-                  fontSize: 12,
-                  color: colors.textColor.neutralColor,
-                  fontFamily: font.Poppins,
-                }}>
-                E-mail
-              </Text>
-              <Text
-                style={{
-                  fontSize: 12,
-                  color: colors.textColor.neutralColor,
-                  fontFamily: font.Poppins,
-                }}>
-                Gabrail101@gmail.com
-              </Text>
-            </View>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}>
-              <Text
-                style={{
-                  fontSize: 12,
-                  color: colors.textColor.neutralColor,
-                  fontFamily: font.Poppins,
-                }}>
-                Contact no
-              </Text>
-              <Text
-                style={{
-                  fontSize: 12,
-                  color: colors.textColor.neutralColor,
-                  fontFamily: font.Poppins,
-                }}>
-                +9900000000000
-              </Text>
-            </View>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}>
-              <Text
-                style={{
-                  fontSize: 12,
-                  color: colors.textColor.neutralColor,
-                  fontFamily: font.Poppins,
-                }}>
-                Lives in
-              </Text>
-              <Text
-                style={{
-                  fontSize: 12,
-                  color: colors.textColor.neutralColor,
-                  fontFamily: font.Poppins,
-                }}>
-                Bangladesh
-              </Text>
-            </View>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}>
-              <Text
-                style={{
-                  fontSize: 12,
-                  color: colors.textColor.neutralColor,
-                  fontFamily: font.Poppins,
-                }}>
-                Bangladesh
-              </Text>
-              <Text
-                style={{
-                  fontSize: 12,
-                  color: colors.textColor.neutralColor,
-                  fontFamily: font.Poppins,
-                }}>
-                Business
-              </Text>
-            </View>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}>
-              <Text
-                style={{
-                  fontSize: 12,
-                  color: colors.textColor.neutralColor,
-                  fontFamily: font.Poppins,
-                }}>
-                Organization/Company
-              </Text>
-              <Text
-                style={{
-                  fontSize: 12,
-                  color: colors.textColor.neutralColor,
-                  fontFamily: font.Poppins,
-                }}>
-                google
-              </Text>
-            </View>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}>
-              <Text
-                style={{
-                  fontSize: 12,
-                  color: colors.textColor.neutralColor,
-                  fontFamily: font.Poppins,
-                }}>
-                google
-              </Text>
-              <Text
-                style={{
-                  fontSize: 12,
-                  color: colors.textColor.neutralColor,
-                  fontFamily: font.Poppins,
-                }}>
-                DIU
-              </Text>
-            </View>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}>
-              <Text
-                style={{
-                  fontSize: 12,
-                  color: colors.textColor.neutralColor,
-                  fontFamily: font.Poppins,
-                }}>
-                Relationship status
-              </Text>
-              <Text
-                style={{
-                  fontSize: 12,
-                  color: colors.textColor.neutralColor,
-                  fontFamily: font.Poppins,
-                }}>
-                Single
-              </Text>
-            </View>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                marginVertical: 15,
-              }}>
-              <Text
-                style={{
-                  fontSize: 16,
-                  color: colors.textColor.light,
-                  fontFamily: font.PoppinsMedium,
-                }}>
-                Private profile
-              </Text>
-              <Pressable
-                onPress={() => setPrivateProfile(!privateProfile)}
-                style={{
-                  width: 50,
-                  height: 20,
-                  borderRadius: 10,
-                  backgroundColor: privateProfile
-                    ? colors.secondaryColor
-                    : 'rgba(217, 217, 217, 1)',
-                  justifyContent: 'center',
-                  alignItems: privateProfile ? 'flex-end' : 'flex-start',
-                }}>
+                <View>
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      color: 'rgba(161, 161, 161, 1)',
+                      fontFamily: font.PoppinsMedium,
+                      // marginHorizontal: 5,
+                    }}>
+                    Name
+                  </Text>
+                  <TextInput
+                    placeholder="name"
+                    placeholderTextColor={'rgba(200, 200, 200, 1)'}
+                    style={{
+                      // borderWidth: 1,
+                      backgroundColor: colors.secondaryColor,
+                      paddingHorizontal: 20,
+
+                      marginVertical: 8,
+                      borderRadius: 100,
+                      fontFamily: font.Poppins,
+                      height: 45,
+                      color: colors.textColor.neutralColor,
+                      fontSize: 14,
+                    }}
+                    value={userInfo?.details?.name}
+                    onChangeText={text =>
+                      setUserInfo({
+                        ...userInfo,
+                        details: {...userInfo.details, name: text as string},
+                      })
+                    }
+                  />
+                </View>
+                <View>
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      color: 'rgba(161, 161, 161, 1)',
+                      fontFamily: font.PoppinsMedium,
+                      // marginHorizontal: 5,
+                    }}>
+                    Contact no
+                  </Text>
+                  <TextInput
+                    placeholder="contact no"
+                    placeholderTextColor={'rgba(200, 200, 200, 1)'}
+                    style={{
+                      // borderWidth: 1,
+                      backgroundColor: colors.secondaryColor,
+                      paddingHorizontal: 20,
+
+                      marginVertical: 8,
+                      borderRadius: 100,
+                      fontFamily: font.Poppins,
+                      height: 45,
+                      color: colors.textColor.neutralColor,
+                      fontSize: 14,
+                    }}
+                    value={userInfo?.details?.contact_no}
+                    onChangeText={text =>
+                      setUserInfo({
+                        ...userInfo,
+                        details: {
+                          ...userInfo.details,
+                          contact_no: text as string,
+                        },
+                      })
+                    }
+                  />
+                </View>
+
+                <View>
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      color: 'rgba(161, 161, 161, 1)',
+                      fontFamily: font.PoppinsMedium,
+                      // marginHorizontal: 5,
+                    }}>
+                    Lives in
+                  </Text>
+                  <TextInput
+                    placeholder="lives"
+                    placeholderTextColor={'rgba(200, 200, 200, 1)'}
+                    style={{
+                      // borderWidth: 1,
+                      backgroundColor: colors.secondaryColor,
+                      paddingHorizontal: 20,
+
+                      marginVertical: 8,
+                      borderRadius: 100,
+                      fontFamily: font.Poppins,
+                      height: 45,
+                      color: colors.textColor.neutralColor,
+                      fontSize: 14,
+                    }}
+                    value={userInfo?.details?.live_in}
+                    onChangeText={text =>
+                      setUserInfo({
+                        ...userInfo,
+                        details: {...userInfo.details, live_in: text as string},
+                      })
+                    }
+                  />
+                </View>
+                <View>
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      color: 'rgba(161, 161, 161, 1)',
+                      fontFamily: font.PoppinsMedium,
+                      // marginHorizontal: 5,
+                    }}>
+                    Occupations
+                  </Text>
+                  <TextInput
+                    placeholder="occupations "
+                    placeholderTextColor={'rgba(200, 200, 200, 1)'}
+                    style={{
+                      // borderWidth: 1,
+                      backgroundColor: colors.secondaryColor,
+                      paddingHorizontal: 20,
+
+                      marginVertical: 8,
+                      borderRadius: 100,
+                      fontFamily: font.Poppins,
+                      height: 45,
+                      color: colors.textColor.neutralColor,
+                      fontSize: 14,
+                    }}
+                    value={userInfo?.details?.occupations}
+                    onChangeText={text =>
+                      setUserInfo({
+                        ...userInfo,
+                        details: {
+                          ...userInfo.details,
+                          occupations: text as string,
+                        },
+                      })
+                    }
+                  />
+                </View>
+                <View>
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      color: 'rgba(161, 161, 161, 1)',
+                      fontFamily: font.PoppinsMedium,
+                      // marginHorizontal: 5,
+                    }}>
+                    Organization/Company
+                  </Text>
+                  <TextInput
+                    placeholder="organization/company "
+                    placeholderTextColor={'rgba(200, 200, 200, 1)'}
+                    style={{
+                      // borderWidth: 1,
+                      backgroundColor: colors.secondaryColor,
+                      paddingHorizontal: 20,
+
+                      marginVertical: 8,
+                      borderRadius: 100,
+                      fontFamily: font.Poppins,
+                      height: 45,
+                      color: colors.textColor.neutralColor,
+                      fontSize: 14,
+                    }}
+                    value={userInfo?.details?.organization_company}
+                    onChangeText={text =>
+                      setUserInfo({
+                        ...userInfo,
+                        details: {
+                          ...userInfo.details,
+                          organization_company: text as string,
+                        },
+                      })
+                    }
+                  />
+                </View>
+                <View>
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      color: 'rgba(161, 161, 161, 1)',
+                      fontFamily: font.PoppinsMedium,
+                      // marginHorizontal: 5,
+                    }}>
+                    Studied at
+                  </Text>
+                  <TextInput
+                    placeholder="studied at"
+                    placeholderTextColor={'rgba(200, 200, 200, 1)'}
+                    style={{
+                      // borderWidth: 1,
+                      backgroundColor: colors.secondaryColor,
+                      paddingHorizontal: 20,
+
+                      marginVertical: 8,
+                      borderRadius: 100,
+                      fontFamily: font.Poppins,
+                      height: 45,
+                      color: colors.textColor.neutralColor,
+                      fontSize: 14,
+                    }}
+                    value={userInfo?.details?.studied_at}
+                    onChangeText={text =>
+                      setUserInfo({
+                        ...userInfo,
+                        details: {
+                          ...userInfo.details,
+                          studied_at: text as string,
+                        },
+                      })
+                    }
+                  />
+                </View>
+                <View>
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      color: 'rgba(161, 161, 161, 1)',
+                      fontFamily: font.PoppinsMedium,
+                      // marginHorizontal: 5,
+                    }}>
+                    Relationship status
+                  </Text>
+                  <TextInput
+                    placeholder="relationship status"
+                    placeholderTextColor={'rgba(200, 200, 200, 1)'}
+                    style={{
+                      // borderWidth: 1,
+                      backgroundColor: colors.secondaryColor,
+                      paddingHorizontal: 20,
+
+                      marginVertical: 8,
+                      borderRadius: 100,
+                      fontFamily: font.Poppins,
+                      height: 45,
+                      color: colors.textColor.neutralColor,
+                      fontSize: 14,
+                    }}
+                    value={userInfo?.details?.relationship_status}
+                    onChangeText={text =>
+                      setUserInfo({
+                        ...userInfo,
+                        details: {
+                          ...userInfo.details,
+                          relationship_status: text as string,
+                        },
+                      })
+                    }
+                  />
+                </View>
+              </View>
+            ) : (
+              <>
                 <View
                   style={{
-                    width: 25,
-                    height: 25,
-                    borderRadius: 100,
-                    backgroundColor: privateProfile
-                      ? colors.redis
-                      : 'rgba(238, 238, 238, 1)',
-                  }}></View>
-              </Pressable>
-            </View>
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                  }}>
+                  <Text
+                    style={{
+                      fontSize: 12,
+                      color: colors.textColor.neutralColor,
+                      fontFamily: font.Poppins,
+                    }}>
+                    Name
+                  </Text>
+                  <Text
+                    style={{
+                      fontSize: 12,
+                      color: colors.textColor.neutralColor,
+                      fontFamily: font.Poppins,
+                    }}>
+                    {userInfo.details.name}
+                  </Text>
+                </View>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                  }}>
+                  <Text
+                    style={{
+                      fontSize: 12,
+                      color: colors.textColor.neutralColor,
+                      fontFamily: font.Poppins,
+                    }}>
+                    E-mail
+                  </Text>
+                  <Text
+                    style={{
+                      fontSize: 12,
+                      color: colors.textColor.neutralColor,
+                      fontFamily: font.Poppins,
+                    }}>
+                    {userInfo.details.email}
+                  </Text>
+                </View>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                  }}>
+                  <Text
+                    style={{
+                      fontSize: 12,
+                      color: colors.textColor.neutralColor,
+                      fontFamily: font.Poppins,
+                    }}>
+                    Contact no
+                  </Text>
+                  <Text
+                    style={{
+                      fontSize: 12,
+                      color: colors.textColor.neutralColor,
+                      fontFamily: font.Poppins,
+                    }}>
+                    {userInfo.details.contact_no}
+                  </Text>
+                </View>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                  }}>
+                  <Text
+                    style={{
+                      fontSize: 12,
+                      color: colors.textColor.neutralColor,
+                      fontFamily: font.Poppins,
+                    }}>
+                    Lives in
+                  </Text>
+                  <Text
+                    style={{
+                      fontSize: 12,
+                      color: colors.textColor.neutralColor,
+                      fontFamily: font.Poppins,
+                    }}>
+                    {userInfo.details.live_in}
+                  </Text>
+                </View>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                  }}>
+                  <Text
+                    style={{
+                      fontSize: 12,
+                      color: colors.textColor.neutralColor,
+                      fontFamily: font.Poppins,
+                    }}>
+                    Occupations
+                  </Text>
+                  <Text
+                    style={{
+                      fontSize: 12,
+                      color: colors.textColor.neutralColor,
+                      fontFamily: font.Poppins,
+                    }}>
+                    {userInfo.details.occupations}
+                  </Text>
+                </View>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                  }}>
+                  <Text
+                    style={{
+                      fontSize: 12,
+                      color: colors.textColor.neutralColor,
+                      fontFamily: font.Poppins,
+                    }}>
+                    Organization/Company
+                  </Text>
+                  <Text
+                    style={{
+                      fontSize: 12,
+                      color: colors.textColor.neutralColor,
+                      fontFamily: font.Poppins,
+                    }}>
+                    {userInfo.details.organization_company}
+                  </Text>
+                </View>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                  }}>
+                  <Text
+                    style={{
+                      fontSize: 12,
+                      color: colors.textColor.neutralColor,
+                      fontFamily: font.Poppins,
+                    }}>
+                    Studied at
+                  </Text>
+                  <Text
+                    style={{
+                      fontSize: 12,
+                      color: colors.textColor.neutralColor,
+                      fontFamily: font.Poppins,
+                    }}>
+                    {userInfo.details.studied_at}
+                  </Text>
+                </View>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                  }}>
+                  <Text
+                    style={{
+                      fontSize: 12,
+                      color: colors.textColor.neutralColor,
+                      fontFamily: font.Poppins,
+                    }}>
+                    Relationship status
+                  </Text>
+                  <Text
+                    style={{
+                      fontSize: 12,
+                      color: colors.textColor.neutralColor,
+                      fontFamily: font.Poppins,
+                    }}>
+                    {userInfo.details.relationship_status}
+                  </Text>
+                </View>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginVertical: 15,
+                  }}>
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      color: colors.textColor.light,
+                      fontFamily: font.PoppinsMedium,
+                    }}>
+                    Private profile
+                  </Text>
+                  <Pressable
+                    onPress={() =>
+                      setEdit({...edit, private_profile: !edit.private_profile})
+                    }
+                    style={{
+                      width: 50,
+                      height: 20,
+                      borderRadius: 10,
+                      backgroundColor: privateProfile
+                        ? colors.secondaryColor
+                        : 'rgba(217, 217, 217, 1)',
+                      justifyContent: 'center',
+                      alignItems: edit.private_profile
+                        ? 'flex-end'
+                        : 'flex-start',
+                    }}>
+                    <View
+                      style={{
+                        width: 25,
+                        height: 25,
+                        borderRadius: 100,
+                        backgroundColor: edit.private_profile
+                          ? colors.redis
+                          : 'rgba(238, 238, 238, 1)',
+                      }}></View>
+                  </Pressable>
+                </View>
+              </>
+            )}
           </View>
         </View>
         <View
@@ -498,27 +904,55 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
               Link
             </Text>
             <TouchableOpacity
+              onPress={() => {
+                setEdit({...edit, link: true});
+              }}
               style={{
                 flexDirection: 'row',
                 alignItems: 'center',
-
+                height: 30,
                 gap: 8,
               }}>
-              <SvgXml
-                xml={`<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+              {edit.link ? (
+                <TouchableOpacity
+                  onPress={() => {
+                    setEdit({...edit, link: false});
+                  }}
+                  style={{
+                    borderWidth: 1,
+                    borderColor: colors.redis,
+                    paddingHorizontal: 5,
+                    paddingVertical: 3,
+                    borderRadius: 10,
+                  }}>
+                  <Text
+                    style={{
+                      fontSize: 12,
+                      fontFamily: font.Poppins,
+                      color: colors.textColor.rare,
+                    }}>
+                    Updated
+                  </Text>
+                </TouchableOpacity>
+              ) : (
+                <>
+                  <SvgXml
+                    xml={`<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M11.2656 14H2.73438C1.22661 14 0 12.7734 0 11.2656V2.73438C0 1.22664 1.22661 0 2.73438 0H8.03991C8.34195 0 8.58679 0.244836 8.58679 0.546875C8.58679 0.848914 8.34195 1.09375 8.03991 1.09375H2.73438C1.82973 1.09375 1.09375 1.82973 1.09375 2.73438V11.2656C1.09375 12.1703 1.82973 12.9062 2.73438 12.9062H11.2656C12.1703 12.9062 12.9062 12.1703 12.9062 11.2656V5.96009C12.9062 5.65805 13.1511 5.41321 13.4531 5.41321C13.7552 5.41321 14 5.65805 14 5.96009V11.2656C14 12.7734 12.7734 14 11.2656 14Z" fill="${colors.textColor.rare}"/>
 <path d="M13.1341 0.867234C12.2812 0.0143278 10.8934 0.0143278 10.0405 0.867234L4.08749 6.82024C3.08485 7.82285 2.65227 9.25154 2.93035 10.6419C2.97364 10.8584 3.14284 11.0277 3.35932 11.0709C4.74305 11.3477 6.17365 10.9212 7.18108 9.9138L13.1341 3.9608C13.987 3.10792 13.987 1.72014 13.1341 0.867234ZM12.3607 3.18743L6.40766 9.14044C5.75469 9.79344 4.8582 10.1202 3.95079 10.0505C3.88093 9.14334 4.20783 8.24666 4.86088 7.59363L9.49362 2.96089L9.88034 3.34761C10.0939 3.56117 10.4402 3.56122 10.6537 3.34761C10.8673 3.13406 10.8673 2.78778 10.6538 2.57422L10.267 2.1875L10.8139 1.64062C11.2404 1.21417 11.9343 1.21417 12.3607 1.64062C12.7871 2.06708 12.7871 2.76098 12.3607 3.18743Z" fill="${colors.textColor.rare}"/>
 </svg>
 `}
-              />
-              <Text
-                style={{
-                  fontSize: 14,
-                  fontFamily: font.Poppins,
-                  color: colors.textColor.rare,
-                }}>
-                Edit
-              </Text>
+                  />
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      fontFamily: font.Poppins,
+                      color: colors.textColor.rare,
+                    }}>
+                    Edit
+                  </Text>
+                </>
+              )}
             </TouchableOpacity>
           </View>
           <View
@@ -549,19 +983,11 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
 `}
             />
 
-            <Text
-              style={{
-                fontSize: 12,
-                fontFamily: font.Poppins,
-                color: colors.textColor.neutralColor,
-                opacity: 0.7,
-              }}>
-              https://www.instagram.com/as.ad1679...
-            </Text>
-
-            {/* <TextInput
-              placeholder="https://www.instagram.com/as.ad1679..."
-            /> */}
+            <TextInput
+              editable={edit.link}
+              placeholder="https://www.instagram.com/example"
+              value={userInfo?.link}
+            />
           </View>
         </View>
         <View
@@ -589,6 +1015,9 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
               Interest
             </Text>
             <TouchableOpacity
+              onPress={() => {
+                navigation?.navigate('Interest');
+              }}
               style={{
                 flexDirection: 'row',
                 alignItems: 'center',
@@ -676,6 +1105,51 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
           </View>
         </View>
       </ScrollView>
+
+      <ModalOfBottom
+        modalVisible={imageModal}
+        setModalVisible={setImageModal}
+        onlyTopRadius={20}
+        height={'20%'}
+        containerColor={colors.bg}>
+        <View
+          style={{
+            gap: 10,
+          }}>
+          <TouchableOpacity
+            onPress={() => {
+              handleImagePick('camera');
+            }}
+            style={{
+              paddingVertical: 5,
+            }}>
+            <Text
+              style={{
+                fontFamily: font.PoppinsMedium,
+                fontSize: 14,
+                color: colors.textColor.neutralColor,
+              }}>
+              Take Photo
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              handleImagePick('library');
+            }}
+            style={{
+              paddingVertical: 5,
+            }}>
+            <Text
+              style={{
+                fontFamily: font.PoppinsMedium,
+                fontSize: 14,
+                color: colors.textColor.neutralColor,
+              }}>
+              Image form gallery
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </ModalOfBottom>
     </View>
   );
 };

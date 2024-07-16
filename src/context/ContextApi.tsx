@@ -109,6 +109,9 @@ export const useStyles = () => {
       incompleteProfile: isDark ? '#333333' : '#f1e7e9',
       normal: isDark ? '#333333' : '#ffffff',
       redis: 'rgba(142, 60, 80, 1)',
+      gray: {
+        variant: isDark ? 'rgba(144, 144, 144, 1)' : 'rgba(244, 244, 244, 1)',
+      },
     },
   };
 };

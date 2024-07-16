@@ -6,6 +6,7 @@ import Animated, {
   withTiming,
   Easing,
   withDelay,
+  useAnimatedStyle,
 } from 'react-native-reanimated';
 
 type CustomModalProps = {
@@ -44,36 +45,52 @@ const ModalOfBottom = ({
   backButtonColor,
   containerColor,
 }: CustomModalProps) => {
-  const containerOpacityValue = useSharedValue('#00000000');
+  const containerColorValue = useSharedValue('transparent');
 
   useEffect(() => {
-    containerOpacityValue.value = withDelay(
-      100,
-      withTiming('rgba(0, 0, 0,0.3)'),
-    );
+    if (modalVisible) {
+      setTimeout(() => {
+        containerColorValue.value = withTiming('rgba(0,0,0,0.2)');
+      }, 200);
+    }
     return () => {
-      containerOpacityValue.value = containerOpacityValue.value = '#00000000';
+      containerColorValue.value = withTiming('transparent');
     };
   }, [modalVisible]);
 
+  const modalAnimationStyle = useAnimatedStyle(() => {
+    return {
+      backgroundColor: containerColorValue.value,
+    };
+  });
+
   return (
-    <Modal animationType={'slide'} transparent={true} visible={modalVisible}>
+    <Modal
+      animationType={'slide'}
+      animated
+      transparent={true}
+      visible={modalVisible}>
       <Pressable
         disabled={normal || false}
         onPressIn={() => {
-          containerOpacityValue.value = withTiming('#00000000');
+          containerColorValue.value = withTiming('transparent');
         }}
         onPressOut={() => {
-          setModalVisible(false);
+          setTimeout(() => {
+            setModalVisible(false);
+          }, 50);
         }}>
         <Animated.View
-          style={{
-            justifyContent: containerAlign ? containerAlign : 'flex-end',
-            alignItems: 'center',
-            backgroundColor: containerOpacityValue,
-            height: '100%',
-            width: '100%',
-          }}>
+          style={[
+            {
+              justifyContent: containerAlign ? containerAlign : 'flex-end',
+              alignItems: 'center',
+
+              height: '100%',
+              width: '100%',
+            },
+            modalAnimationStyle,
+          ]}>
           <Pressable
             style={{
               borderRadius: Radius ? 9 : 0,
@@ -89,13 +106,12 @@ const ModalOfBottom = ({
             {backButton && (
               <TouchableOpacity
                 onPress={() => {
-                  containerOpacityValue.value = withDelay(
-                    0,
-                    withTiming('#00000000'),
-                  );
+                  containerColorValue.value = withTiming('transparent');
+                }}
+                onPressOut={() => {
                   setTimeout(() => {
                     setModalVisible(false);
-                  }, 100);
+                  }, 50);
                 }}
                 style={{
                   position: 'absolute',

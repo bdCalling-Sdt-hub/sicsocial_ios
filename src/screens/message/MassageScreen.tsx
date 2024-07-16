@@ -180,7 +180,7 @@ const MassageScreen = ({navigation}: NavigProps<null>) => {
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="always"
         contentContainerStyle={{
-          gap: 16,
+          gap: 10,
           // paddingHorizontal: 20,
           paddingBottom: 25,
           paddingTop: 15,
