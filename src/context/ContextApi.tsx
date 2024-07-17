@@ -37,6 +37,11 @@ export const useStyles = () => {
       PoppinsMedium: 'Poppins-Medium',
       PoppinsLight: 'Poppins-Light',
       PoppinsExtraLight: 'Poppins-ExtraLight',
+      BodoniModaSC_Italic_VariableFont: 'BodoniModaSC-Italic-VariableFont',
+      BodoniModaSC_VariableFont: 'BodoniModaSC-VariableFont',
+      Rowdies_Bold: 'Rowdies-Bold',
+      Rowdies_Light: 'Rowdies-Light',
+      Rowdies_Regular: 'Rowdies-Regular',
     },
     colors: {
       bg: isDark ? '#222222' : '#FFFFFF',
@@ -92,6 +97,7 @@ export const useStyles = () => {
         white: isDark ? 'white' : 'white',
         light: isDark ? '#767676' : '#5C5C5C',
         rare: isDark ? '#D29E3B' : '#720B24',
+        gray: isDark ? '#E6E6E6' : 'rgba(161, 161, 161, 1)',
       },
       orange: '#F27405',
       green: {
@@ -109,6 +115,7 @@ export const useStyles = () => {
       incompleteProfile: isDark ? '#333333' : '#f1e7e9',
       normal: isDark ? '#333333' : '#ffffff',
       redis: 'rgba(142, 60, 80, 1)',
+      redisLight: 'rgba(241, 231, 233, 1)',
       gray: {
         variant: isDark ? 'rgba(144, 144, 144, 1)' : 'rgba(244, 244, 244, 1)',
       },

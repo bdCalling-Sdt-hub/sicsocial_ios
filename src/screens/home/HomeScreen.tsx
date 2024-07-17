@@ -467,6 +467,18 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
         <ConversationalCard
           conversationStyle="normal"
           cardStyle="two"
+          // havNotUser
+          conversationTitle="Khushi Aktar"
+          isReply
+          conversationSubtitle="replied in chat"
+          lastMessageTime="9:30 am"
+          lastMessage="Hello asad vai, i`m 
+coming from Banasri"
+        />
+        <ConversationalCard
+          conversationStyle="normal"
+          cardStyle="two"
+          havNotUser
           conversationTitle="Khushi Aktar"
           isReply
           conversationSubtitle="replied in chat"
@@ -493,7 +505,18 @@ is recognize for SIC "
         />
         <ConversationalCard
           conversationStyle="normal"
-          cardStyle="many"
+          cardStyle="four"
+          conversationTitle="COFFE HOUSE"
+          conversationSubtitle="join room"
+          lastMessageTime="8:10 am"
+          lastMessage="Hello Asadullah some books
+is recognize for SIC "
+        />
+        <ConversationalCard
+          conversationStyle="normal"
+          cardStyle="three"
+          manyPeople
+          havNotUser
           conversationTitle="COFFE HOUSE"
           conversationSubtitle="join room"
           lastMessageTime="8:10 am"
@@ -501,15 +524,8 @@ is recognize for SIC "
         />
         <ConversationalCard
           conversationStyle="normal"
-          cardStyle="many"
-          conversationTitle="COFFE HOUSE"
-          conversationSubtitle="join room"
-          lastMessageTime="8:10 am"
-          lastMessage="nadin invite you in room"
-        />
-        <ConversationalCard
-          conversationStyle="normal"
-          cardStyle="many"
+          cardStyle="three"
+          havNotUser
           conversationTitle="COFFE HOUSE"
           conversationSubtitle="join room"
           lastMessageTime="8:10 am"

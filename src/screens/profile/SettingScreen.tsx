@@ -1,51 +1,61 @@
-import {FlatList, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {
+  FlatList,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableHighlight,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import React from 'react';
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
 import {useContextApi, useStyles} from '../../context/ContextApi';
 import {NavigProps} from '../../interfaces/NaviProps';
 import {SvgXml} from 'react-native-svg';
-import {Icon} from 'react-native-vector-icons/Icon';
+import Entypo from 'react-native-vector-icons/Entypo';
+import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
 
 const settingsData = [
   {
     id: 1,
     name: 'Manage Account',
-    option: 'icon',
+    option: 'manage_account',
   },
   {
     id: 2,
     name: 'FAQ',
-    option: 'icon',
+    option: 'faq',
   },
   {
     id: 3,
     name: 'Terms & Conditions',
-    option: 'icon',
+    option: 'terms_and_conditions',
   },
   {
     id: 4,
     name: 'Privacy Policy',
-    option: 'icon',
+    option: 'privacy_policy',
   },
   {
     id: 5,
     name: 'Sic guidelines',
-    option: 'icon',
+    option: 'sic_guidelines',
   },
   {
     id: 6,
     name: 'About Sic',
-    option: 'icon',
+    option: 'about_sic',
   },
   {
     id: 7,
     name: 'Integrity Donation',
-    option: 'icon',
+    option: 'integrity_donation',
   },
   {
     id: 8,
     name: 'Your feedback',
-    option: 'icon',
+    option: 'your_feedback',
   },
   {
     id: 9,
@@ -55,24 +65,60 @@ const settingsData = [
   {
     id: 10,
     name: 'Language',
-    option: 'icon',
+    option: 'language',
+  },
+];
+
+const Languages = [
+  //  list 20 country codes and langues
+  {
+    id: 1,
+    code: 'en',
+    name: 'English',
   },
   {
-    id: 11,
-    name: 'Change Password',
-    option: 'icon',
+    id: 2,
+    name: 'Spanish',
+    code: 'sp',
   },
   {
-    id: 12,
-    name: 'Delete Account',
-    option: 'icon',
+    id: 3,
+    name: 'Chinese',
+    code: 'ch',
+  },
+  {
+    id: 4,
+    name: 'Korean',
+    code: 'ko',
+  },
+  {
+    id: 5,
+    name: 'Vietnamese',
+    code: 'vi',
+  },
+  {
+    id: 6,
+    name: 'Arabic',
+    code: 'ar',
+  },
+  {
+    id: 7,
+    name: 'French',
+    code: 'fr',
+  },
+  {
+    id: 8,
+    name: 'Russian',
+    code: 'ru',
   },
 ];
 
 const SettingScreen = ({navigation}: NavigProps<null>) => {
   const {colors, font} = useStyles();
   const {isDark, setDark} = useContextApi();
-
+  const [languageModal, setLanguageModal] = React.useState(false);
+  const [selectedLanguage, setSelectedLanguage] = React.useState<any[]>();
+  console.log(selectedLanguage);
   return (
     <View
       style={{
@@ -103,7 +149,39 @@ const SettingScreen = ({navigation}: NavigProps<null>) => {
         }}
         renderItem={item => {
           return (
-            <View
+            <TouchableOpacity
+              onPress={() => {
+                if (item?.item.option === 'manage_account') {
+                  navigation?.navigate('ManageAccounts');
+                }
+                if (item.item.option === 'dark_mode') {
+                  setDark(!isDark);
+                }
+                if (item.item.option === 'language') {
+                  setLanguageModal(!languageModal);
+                }
+                if (item.item.option === 'faq') {
+                  navigation?.navigate('FAQ');
+                }
+                if (item.item.option === 'terms_and_conditions') {
+                  navigation?.navigate('TermsAndConditions');
+                }
+                if (item.item.option === 'privacy_policy') {
+                  navigation?.navigate('PrivacyPolicy');
+                }
+                if (item.item.option === 'sic_guidelines') {
+                  navigation?.navigate('SicGuidelines');
+                }
+                if (item.item.option === 'about_sic') {
+                  navigation?.navigate('AboutSic');
+                }
+                if (item.item.option === 'integrity_donation') {
+                  navigation?.navigate('donation');
+                }
+                if (item.item.option === 'your_feedback') {
+                  navigation?.navigate('Feedback');
+                }
+              }}
               style={{
                 backgroundColor: colors.secondaryColor,
                 paddingHorizontal: 20,
@@ -154,10 +232,100 @@ const SettingScreen = ({navigation}: NavigProps<null>) => {
 `}
                 />
               )}
-            </View>
+            </TouchableOpacity>
           );
         }}
       />
+
+      <ModalOfBottom
+        setModalVisible={setLanguageModal}
+        modalVisible={languageModal}
+        onlyTopRadius={10}
+        backButton
+        height={'80%'}>
+        <View>
+          <Text
+            style={{
+              fontSize: 16,
+              fontWeight: 'bold',
+              // paddingTop: 10,
+              paddingBottom: 10,
+              // paddingHorizontal: 20,
+              color: colors.textColor.light,
+              fontFamily: font.Poppins,
+            }}>
+            Language
+          </Text>
+          <ScrollView
+            style={
+              {
+                // gap: 10,
+              }
+            }>
+            {Languages.map(lang => (
+              <TouchableOpacity
+                key={lang.id}
+                onPress={() => {
+                  // change language
+                  // navigation?.navigate('Home');
+                  // setLanguageModal(false);
+                  if (selectedLanguage?.includes(lang.name)) {
+                    setSelectedLanguage(
+                      selectedLanguage?.filter(item => item !== lang.name),
+                    );
+                  } else {
+                    setSelectedLanguage(
+                      selectedLanguage
+                        ? [...selectedLanguage, lang?.name as string]
+                        : [lang.name],
+                    );
+                  }
+                }}
+                style={{
+                  backgroundColor: colors.bg,
+                  // paddingHorizontal: 20,
+                  paddingVertical: 15,
+                  borderRadius: 10,
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginVertical: 10,
+                  // elevation: 1,
+                }}>
+                <Text
+                  style={{
+                    fontSize: 14,
+                    color: colors.textColor.light,
+                    fontFamily: font.Poppins,
+                  }}>
+                  {lang.name}
+                </Text>
+                <View
+                  style={{
+                    borderRadius: 10,
+                    borderColor: 'gray',
+                    borderWidth: 1,
+                    width: 20,
+                    height: 20,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}>
+                  {selectedLanguage?.includes(lang.name) && (
+                    <View
+                      style={{
+                        width: 16,
+                        height: 16,
+                        borderRadius: 100,
+                        backgroundColor: '#000000',
+                      }}
+                    />
+                  )}
+                </View>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </View>
+      </ModalOfBottom>
     </View>
   );
 };

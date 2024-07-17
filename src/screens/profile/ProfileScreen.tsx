@@ -359,6 +359,7 @@ const ProfileScreen = ({navigation}: NavigProps<null>) => {
               Friends
             </Text>
             <TouchableOpacity
+              onPress={() => navigation?.navigate('MyAllFriends')}
               style={{
                 // borderBottomColor: colors.textColor.rare,
                 // borderBottomWidth: 1,
@@ -397,7 +398,9 @@ const ProfileScreen = ({navigation}: NavigProps<null>) => {
             renderItem={item => (
               <View style={{gap: 6}}>
                 <TouchableOpacity
-                  onPress={() => {}}
+                  onPress={() => {
+                    navigation?.navigate('FriendsProfile');
+                  }}
                   style={{
                     backgroundColor: colors.secondaryColor,
                     // paddingVertical: 5,
@@ -466,6 +469,9 @@ const ProfileScreen = ({navigation}: NavigProps<null>) => {
               Face Down
             </Text>
             <TouchableOpacity
+              onPress={() => {
+                navigation?.navigate('ViewAllFaceDown');
+              }}
               style={{
                 // borderBottomColor: colors.textColor.rare,
                 // borderBottomWidth: 1,
@@ -487,7 +493,7 @@ const ProfileScreen = ({navigation}: NavigProps<null>) => {
             horizontal
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={{
-              gap: 16,
+              gap: 20,
               paddingRight: 20,
               paddingHorizontal: '5%',
             }}
@@ -639,7 +645,7 @@ is recognize for SIC "
           />
           <ConversationalCard
             conversationStyle="normal"
-            cardStyle="many"
+            cardStyle="three"
             conversationTitle="COFFE HOUSE"
             conversationSubtitle="join room"
             lastMessageTime="8:10 am"
@@ -647,7 +653,7 @@ is recognize for SIC "
           />
           <ConversationalCard
             conversationStyle="normal"
-            cardStyle="many"
+            cardStyle="three"
             conversationTitle="COFFE HOUSE"
             conversationSubtitle="join room"
             lastMessageTime="8:10 am"
@@ -655,7 +661,7 @@ is recognize for SIC "
           />
           <ConversationalCard
             conversationStyle="normal"
-            cardStyle="many"
+            cardStyle="three"
             conversationTitle="COFFE HOUSE"
             conversationSubtitle="join room"
             lastMessageTime="8:10 am"

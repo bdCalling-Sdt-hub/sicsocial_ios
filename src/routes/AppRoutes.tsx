@@ -32,6 +32,17 @@ import ProfileScreen from '../screens/profile/ProfileScreen';
 import SettingScreen from '../screens/profile/SettingScreen';
 import ProfileEditScreen from '../screens/profile/ProfileEditScreen';
 import InterestScreen from '../screens/Logins/InterestScreen';
+import ManageAccounts from '../screens/profile/settings/ManageAccoutns';
+import DeleteAccount from '../screens/Logins/DeleteAccount';
+import ChangePassword from '../screens/Logins/ChnagePassword';
+import FAQScreen from '../screens/profile/settings/FAQScreen';
+import TermsAndConditions from '../screens/profile/settings/TermsAndConditions';
+import PrivacyPolicyScreen from '../screens/profile/settings/PrivacyPolicyScreen';
+import SicGuidelinesScreen from '../screens/profile/settings/SicGuidelinesScreen';
+import AboutSicScreen from '../screens/profile/settings/AboutSicScreen';
+import FeedBackScreen from '../screens/profile/settings/FeedBackScreen';
+import MyAllFriends from '../screens/profile/MyAllFriends';
+import ViewAllFaceDown from '../screens/profile/ViewAllFaceDown';
 
 const Stack = createNativeStackNavigator();
 
@@ -57,10 +68,12 @@ const Routes = () => {
           />
           <Stack.Screen name="VerifyEmail" component={VerifyEmailScreen} />
           <Stack.Screen name="ResetPassword" component={ResetPasswordScreen} />
+          <Stack.Screen name="ChangePassword" component={ChangePassword} />
           <Stack.Screen
             name="VerifySuccessful"
             component={VerifySuccessfulScreen}
           />
+          <Stack.Screen name="DeleteAccount" component={DeleteAccount} />
 
           {/*=================== under the home ====================== */}
           <Stack.Screen name="HomeRoutes" component={BottomBarRoutes} />
@@ -151,6 +164,70 @@ const Routes = () => {
           <Stack.Screen
             name="ProfileEdit"
             component={ProfileEditScreen}
+            options={{
+              animation: 'slide_from_right',
+            }}
+          />
+          <Stack.Screen
+            name="ManageAccounts"
+            component={ManageAccounts}
+            options={{
+              animation: 'slide_from_right',
+            }}
+          />
+          <Stack.Screen
+            name="FAQ"
+            component={FAQScreen}
+            options={{
+              animation: 'slide_from_right',
+            }}
+          />
+          <Stack.Screen
+            name="TermsAndConditions"
+            component={TermsAndConditions}
+            options={{
+              animation: 'slide_from_right',
+            }}
+          />
+          <Stack.Screen
+            name="PrivacyPolicy"
+            component={PrivacyPolicyScreen}
+            options={{
+              animation: 'slide_from_right',
+            }}
+          />
+          <Stack.Screen
+            name="SicGuidelines"
+            component={SicGuidelinesScreen}
+            options={{
+              animation: 'slide_from_right',
+            }}
+          />
+          <Stack.Screen
+            name="AboutSic"
+            component={AboutSicScreen}
+            options={{
+              animation: 'slide_from_right',
+            }}
+          />
+
+          <Stack.Screen
+            name="Feedback"
+            component={FeedBackScreen}
+            options={{
+              animation: 'slide_from_right',
+            }}
+          />
+          <Stack.Screen
+            name="MyAllFriends"
+            component={MyAllFriends}
+            options={{
+              animation: 'slide_from_right',
+            }}
+          />
+          <Stack.Screen
+            name="ViewAllFaceDown"
+            component={ViewAllFaceDown}
             options={{
               animation: 'slide_from_right',
             }}

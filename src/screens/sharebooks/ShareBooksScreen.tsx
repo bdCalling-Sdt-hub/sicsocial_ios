@@ -8,7 +8,7 @@ import {
   useWindowDimensions,
   View,
 } from 'react-native';
-import React from 'react';
+import React, {useState} from 'react';
 import {useStyles} from '../../context/ContextApi';
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
 import {SvgXml} from 'react-native-svg';
@@ -86,6 +86,7 @@ const ShareBooksScreen = ({navigation}: NavigProps<null>) => {
   const {colors, font} = useStyles();
   const [selectItem, setSelectIItem] = React.useState<number>(1);
   const {height, width} = useWindowDimensions();
+
   return (
     <View
       style={{

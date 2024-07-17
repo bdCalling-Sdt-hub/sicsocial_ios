@@ -37,7 +37,13 @@
 		927601424D5C446C93D9B2CC /* RussoOne-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0C061DF7E28C427AA82073EB /* RussoOne-Regular.ttf */; };
 		BDEBB47BB9A04E7593F36350 /* Sarina-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2990AEF1AA6C43AF979C5B4D /* Sarina-Regular.ttf */; };
 		67F2027FBB87449D8DE4DCAD /* SuezOne-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 81202B0A4DF64942A94894BC /* SuezOne-Regular.ttf */; };
-		981708E3C12543D192086150 /* OFL.txt in Resources */ = {isa = PBXBuildFile; fileRef = FCC6DE1F5A154057910CAF40 /* OFL.txt */; };
+		4218AE1D1DE9463F9208F25F /* BodoniModaSC-Italic-VariableFont.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 14929382DA2E46DD81B09E4D /* BodoniModaSC-Italic-VariableFont.ttf */; };
+		6109D26339754920A99BDEC1 /* BodoniModaSC-VariableFont.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EB9F3245DE3546F0B408593E /* BodoniModaSC-VariableFont.ttf */; };
+		0D79566678B24C61B915ADD0 /* OFL.txt in Resources */ = {isa = PBXBuildFile; fileRef = 5970AB8DE94840A8894B348E /* OFL.txt */; };
+		5A1A14DB998447D3A0BB246C /* README.txt in Resources */ = {isa = PBXBuildFile; fileRef = 934F9941858843868F2E7FAE /* README.txt */; };
+		1918BFC8B8F64019A108D8DF /* Rowdies-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 76AF8780A26C43C789CF2D7C /* Rowdies-Bold.ttf */; };
+		6E9042F7776A49CAA2A4CB49 /* Rowdies-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6CAB6864614C4D889F7E5EAE /* Rowdies-Light.ttf */; };
+		B7D9F315895C4BC8AE1835F0 /* Rowdies-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3C07CE5CCB2D4300B857A966 /* Rowdies-Regular.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -91,7 +97,13 @@
 		0C061DF7E28C427AA82073EB /* RussoOne-Regular.ttf */ = {isa = PBXFileReference; name = "RussoOne-Regular.ttf"; path = "../src/assets/fonts/RussoOne-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		2990AEF1AA6C43AF979C5B4D /* Sarina-Regular.ttf */ = {isa = PBXFileReference; name = "Sarina-Regular.ttf"; path = "../src/assets/fonts/Sarina-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		81202B0A4DF64942A94894BC /* SuezOne-Regular.ttf */ = {isa = PBXFileReference; name = "SuezOne-Regular.ttf"; path = "../src/assets/fonts/SuezOne-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		FCC6DE1F5A154057910CAF40 /* OFL.txt */ = {isa = PBXFileReference; name = "OFL.txt"; path = "../src/assets/fonts/OFL.txt"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		14929382DA2E46DD81B09E4D /* BodoniModaSC-Italic-VariableFont.ttf */ = {isa = PBXFileReference; name = "BodoniModaSC-Italic-VariableFont.ttf"; path = "../src/assets/fonts/BodoniModaSC-Italic-VariableFont.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		EB9F3245DE3546F0B408593E /* BodoniModaSC-VariableFont.ttf */ = {isa = PBXFileReference; name = "BodoniModaSC-VariableFont.ttf"; path = "../src/assets/fonts/BodoniModaSC-VariableFont.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		5970AB8DE94840A8894B348E /* OFL.txt */ = {isa = PBXFileReference; name = "OFL.txt"; path = "../src/assets/fonts/OFL.txt"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		934F9941858843868F2E7FAE /* README.txt */ = {isa = PBXFileReference; name = "README.txt"; path = "../src/assets/fonts/README.txt"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		76AF8780A26C43C789CF2D7C /* Rowdies-Bold.ttf */ = {isa = PBXFileReference; name = "Rowdies-Bold.ttf"; path = "../src/assets/fonts/Rowdies-Bold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		6CAB6864614C4D889F7E5EAE /* Rowdies-Light.ttf */ = {isa = PBXFileReference; name = "Rowdies-Light.ttf"; path = "../src/assets/fonts/Rowdies-Light.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		3C07CE5CCB2D4300B857A966 /* Rowdies-Regular.ttf */ = {isa = PBXFileReference; name = "Rowdies-Regular.ttf"; path = "../src/assets/fonts/Rowdies-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -223,7 +235,13 @@
 				0C061DF7E28C427AA82073EB /* RussoOne-Regular.ttf */,
 				2990AEF1AA6C43AF979C5B4D /* Sarina-Regular.ttf */,
 				81202B0A4DF64942A94894BC /* SuezOne-Regular.ttf */,
-				FCC6DE1F5A154057910CAF40 /* OFL.txt */,
+				14929382DA2E46DD81B09E4D /* BodoniModaSC-Italic-VariableFont.ttf */,
+				EB9F3245DE3546F0B408593E /* BodoniModaSC-VariableFont.ttf */,
+				5970AB8DE94840A8894B348E /* OFL.txt */,
+				934F9941858843868F2E7FAE /* README.txt */,
+				76AF8780A26C43C789CF2D7C /* Rowdies-Bold.ttf */,
+				6CAB6864614C4D889F7E5EAE /* Rowdies-Light.ttf */,
+				3C07CE5CCB2D4300B857A966 /* Rowdies-Regular.ttf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -347,7 +365,13 @@
 				927601424D5C446C93D9B2CC /* RussoOne-Regular.ttf in Resources */,
 				BDEBB47BB9A04E7593F36350 /* Sarina-Regular.ttf in Resources */,
 				67F2027FBB87449D8DE4DCAD /* SuezOne-Regular.ttf in Resources */,
-				981708E3C12543D192086150 /* OFL.txt in Resources */,
+				4218AE1D1DE9463F9208F25F /* BodoniModaSC-Italic-VariableFont.ttf in Resources */,
+				6109D26339754920A99BDEC1 /* BodoniModaSC-VariableFont.ttf in Resources */,
+				0D79566678B24C61B915ADD0 /* OFL.txt in Resources */,
+				5A1A14DB998447D3A0BB246C /* README.txt in Resources */,
+				1918BFC8B8F64019A108D8DF /* Rowdies-Bold.ttf in Resources */,
+				6E9042F7776A49CAA2A4CB49 /* Rowdies-Light.ttf in Resources */,
+				B7D9F315895C4BC8AE1835F0 /* Rowdies-Regular.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

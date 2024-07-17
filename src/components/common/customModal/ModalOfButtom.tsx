@@ -105,7 +105,7 @@ const ModalOfBottom = ({
             }}>
             {backButton && (
               <TouchableOpacity
-                onPress={() => {
+                onPressIn={() => {
                   containerColorValue.value = withTiming('transparent');
                 }}
                 onPressOut={() => {

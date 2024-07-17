@@ -18,6 +18,8 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import InterestCard from '../../components/interest/InterestCard';
+import NormalButton from '../../components/common/NormalButton';
+import {NavigProps} from '../../interfaces/NaviProps';
 
 const data = [
   {
@@ -286,7 +288,7 @@ const data = [
   },
 ];
 
-const InterestScreen = () => {
+const InterestScreen = ({navigation}: NavigProps<null>) => {
   const {colors, font} = useStyles();
   // Your code here...
   const [selectItem, setSelectItem] = React.useState(0);
@@ -321,6 +323,37 @@ const InterestScreen = () => {
           return <InterestCard item={item.item} />;
         }}
       />
+      <View
+        style={{
+          paddingHorizontal: '4%',
+          marginBottom: 20,
+        }}>
+        <NormalButton
+          title="Continue"
+          onPress={() => {
+            navigation?.navigate('HomeRoutes');
+          }}
+        />
+        <TouchableOpacity
+          onPress={() => {
+            navigation?.navigate('HomeRoutes');
+          }}
+          style={{
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <Text
+            style={{
+              textDecorationLine: 'underline',
+              color: colors.blue,
+              fontSize: 16,
+              fontFamily: font.Poppins,
+              marginVertical: 10,
+            }}>
+            Skip
+          </Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };

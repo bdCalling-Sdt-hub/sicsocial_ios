@@ -52,7 +52,7 @@ const FriendCard = ({
         }}>
         <View
           style={{
-            height: 370,
+            height: 380,
             width: 300,
             backgroundColor: colors.cardBg,
             borderRadius: 42,
@@ -190,7 +190,8 @@ const FriendCard = ({
                 padding: 1,
                 justifyContent: 'center',
                 alignItems: 'center',
-                elevation: 2,
+                elevation: 5,
+                // shadowColor: colors.redis,
               }}>
               <SvgXml
                 xml={`<svg width="24" height="22" viewBox="0 0 24 22" fill="none" xmlns="http://www.w3.org/2000/svg">

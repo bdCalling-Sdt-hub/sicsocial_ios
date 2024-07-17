@@ -222,7 +222,7 @@ const FriendsScreen = ({navigation}: NavigProps<null>) => {
         </TouchableOpacity>
       </View>
 
-      <View style={{flex: 1, marginTop: '8%', position: 'relative'}}>
+      <View style={{flex: 1, marginTop: '10%', position: 'relative'}}>
         <TouchableOpacity
           onPress={() => onLeftSwipe()}
           style={{

@@ -11,6 +11,7 @@ import {useStyles} from '../../context/ContextApi';
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
 import {NavigProps} from '../../interfaces/NaviProps';
 import {Books} from './ShareBooksScreen';
+import ConversationCarousal from '../../components/common/ConversationCarousal/ConversationCarousal';
 
 const BookShareScreen = ({navigation, route}: NavigProps<Books>) => {
   const {colors, font} = useStyles();
@@ -82,7 +83,7 @@ const BookShareScreen = ({navigation, route}: NavigProps<Books>) => {
           </Text>
         </TouchableOpacity>
       </View>
-      <View
+      {/* <View
         style={{
           marginHorizontal: '5%',
           flexDirection: 'row',
@@ -210,6 +211,17 @@ const BookShareScreen = ({navigation, route}: NavigProps<Books>) => {
             </View>
           </View>
         </TouchableOpacity>
+      </View> */}
+      <View
+        style={{
+          flex: 1,
+          // alignItems: 'flex-end',
+          // justifyContent: 'flex-end',
+          position: 'absolute',
+          bottom: '10%',
+          backgroundColor: colors.bg,
+        }}>
+        <ConversationCarousal live room faceDown type navigation={navigation} />
       </View>
     </View>
   );

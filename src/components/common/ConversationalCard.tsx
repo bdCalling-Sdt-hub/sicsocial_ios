@@ -21,11 +21,13 @@ interface ConversationalCardProps extends NavigProps<null> {
   onDonationShearPress?: () => void;
   onDonationViewDetailsPress?: () => void;
   conversationStyle?: 'donation' | 'normal';
-  cardStyle?: 'book' | 'two' | 'single' | 'three' | 'many';
+  cardStyle?: 'book' | 'two' | 'single' | 'three' | 'four';
+  havNotUser?: boolean;
   onPress?: () => void;
   disabled?: boolean;
   isReply?: boolean;
   paddingHorizontal?: string;
+  manyPeople?: boolean;
 }
 
 const ConversationalCard = ({
@@ -43,6 +45,8 @@ const ConversationalCard = ({
   onPress,
   isReply,
   paddingHorizontal,
+  havNotUser,
+  manyPeople,
 }: ConversationalCardProps) => {
   const {colors, font} = useStyles();
   return (
@@ -65,6 +69,7 @@ const ConversationalCard = ({
             justifyContent: 'space-between',
             alignItems: 'center',
             elevation: 2,
+            height: 120,
           }}>
           {/*================= donation card Start ============= */}
           {conversationStyle === 'donation' && (
@@ -314,7 +319,8 @@ const ConversationalCard = ({
 
                       borderRadius: 28,
                       elevation: 2,
-
+                      justifyContent: 'center',
+                      alignItems: 'center',
                       position: 'absolute',
                       right: 40,
                       zIndex: 2,
@@ -349,168 +355,81 @@ const ConversationalCard = ({
                       // height: 76,
 
                       borderRadius: 28,
-                      elevation: 2,
-
+                      elevation: havNotUser ? 0 : 2,
+                      bottom: havNotUser ? 10 : 25,
                       position: 'absolute',
-                      right: 40,
+                      right: havNotUser ? 40 : 40,
                       // zIndex: 2,
                       transform: [
                         {
-                          rotate: '-15deg',
+                          rotate: havNotUser ? '10deg' : '-15deg',
                         },
                         {
-                          translateX: -25,
-                        },
-                        {
-                          translateY: 0,
-                        },
-                      ],
-                    }}>
-                    <Image
-                      resizeMode="cover"
-                      style={{
-                        height: 70,
-                        width: 70,
-                        borderRadius: 28,
-                        borderColor: 'white',
-                        borderWidth: 2,
-                      }}
-                      source={{
-                        uri: 'https://s3-alpha-sig.figma.com/img/bdc6/db2a/3a906b3de8eaa53e14582edf5c918b5d?Expires=1721606400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=U7P8CfaZR8VN~AB1t4yamhll4GWaFTFOGHWe5KuCLxDNe4~p9UhUbNtg9VA8aaFLDKPmwuByzP7CpTyF1KFHwPwChykfMqAhFl6iJGCErm9vbcCeYixeYDT1QE1JWrVlT5y4YfuzY2H1hH9V0dHwAzKAc8hMALmYPIoMNsqxZICi6T0PjW0ATcq~eeOYXaxtY9S30thVMs3WHidear3kaHFhkU-MO7VCCQVDbjVzVvy~PWSw-QZcZiqNvkC-lm0DLJlzBtuVkjIlOgoW2JTZqVMcaNUau2ybiuv2uIAR~tRoO18JRvqWgC55EfDQZ1lvwk1mAkeoSHqBPHP954d7kQ__',
-                      }}
-                    />
-                  </View>
-                </>
-              )}
-              {cardStyle === 'many' && (
-                <>
-                  <View
-                    style={{
-                      // height: 76,
-
-                      borderRadius: 24,
-                      elevation: 2,
-                      top: 8,
-                      position: 'absolute',
-                      right: 50,
-                      zIndex: 3,
-                      transform: [
-                        {
-                          rotate: '15deg',
-                        },
-                        {
-                          translateX: 40,
+                          translateX: havNotUser ? -25 : -25,
                         },
                         {
                           translateY: 0,
                         },
                       ],
                     }}>
-                    <Image
-                      resizeMode="cover"
-                      style={{
-                        height: 60,
-                        width: 60,
-                        borderRadius: 24,
-                        borderColor: 'white',
-                        borderWidth: 2,
-                      }}
-                      source={{
-                        uri: 'https://s3-alpha-sig.figma.com/img/7568/3fd5/7261c2ae940abab762a6e0130b36b3a9?Expires=1721606400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=AykSrcYr~WEBIHMW4WezFwp74XIKqwz1DXFJPi-jBgpPa0w-AKmFioPrvXMG08QXjqfFJ7xtZ25idfjkopahkcvMKxIXm4TY4TBZFWD~2ZCGL4jbefjiM0ufmw09012~6B89nl~j6xWjd9ggQilJal8vQ8KUcmdm-KyxNUlAA0yT-JwjW~4Hx9gzTiaI8mXu9SmdrwivuQtAmxDNBHcx0hvDb7l8zrX95Hww4mVqCT-z3AbxnyyzEvIgAivaXFHPvNFXDdOp23QKhDg~zKX5ZObnIYL7uNdvhuAZWiwbKxUOSag8laDRybIo8hjF63zSi6rL9nm7x5pUOleZgtmDfQ__',
-                      }}
-                    />
-                  </View>
-                  <View
-                    style={{
-                      // height: 76,
-
-                      borderRadius: 24,
-                      elevation: 2,
-                      top: 8,
-                      position: 'absolute',
-                      right: 50,
-                      zIndex: 2,
-                      transform: [
-                        {
-                          rotate: '-8deg',
-                        },
-                        {
-                          translateX: -5,
-                        },
-                        {
-                          translateY: 0,
-                        },
-                      ],
-                    }}>
-                    <Image
-                      resizeMode="cover"
-                      style={{
-                        height: 60,
-                        width: 60,
-                        borderRadius: 24,
-                        borderColor: 'white',
-                        borderWidth: 2,
-                      }}
-                      source={{
-                        uri: 'https://s3-alpha-sig.figma.com/img/bdc6/db2a/3a906b3de8eaa53e14582edf5c918b5d?Expires=1721606400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=U7P8CfaZR8VN~AB1t4yamhll4GWaFTFOGHWe5KuCLxDNe4~p9UhUbNtg9VA8aaFLDKPmwuByzP7CpTyF1KFHwPwChykfMqAhFl6iJGCErm9vbcCeYixeYDT1QE1JWrVlT5y4YfuzY2H1hH9V0dHwAzKAc8hMALmYPIoMNsqxZICi6T0PjW0ATcq~eeOYXaxtY9S30thVMs3WHidear3kaHFhkU-MO7VCCQVDbjVzVvy~PWSw-QZcZiqNvkC-lm0DLJlzBtuVkjIlOgoW2JTZqVMcaNUau2ybiuv2uIAR~tRoO18JRvqWgC55EfDQZ1lvwk1mAkeoSHqBPHP954d7kQ__',
-                      }}
-                    />
-                  </View>
-
-                  <View
-                    style={{
-                      borderRadius: 24,
-                      top: 8,
-                      position: 'absolute',
-                      right: 50,
-
-                      transform: [
-                        {
-                          rotate: '-15deg',
-                        },
-                        {
-                          translateX: -35,
-                        },
-                        {
-                          translateY: 0,
-                        },
-                      ],
-                    }}>
-                    <ImageBackground
-                      resizeMode="cover"
-                      style={{
-                        borderRadius: 24,
-
-                        height: 70,
-                        width: 70,
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                      }}
-                      source={require('../../assets/icons/unknown/rectangle.png')}>
-                      <Text
+                    {havNotUser ? (
+                      <ImageBackground
+                        resizeMode="cover"
                         style={{
-                          fontFamily: font.Poppins,
-                          fontSize: 14,
-                          color: colors.textColor.light,
-                          textAlign: 'center',
-                        }}>
-                        8+
-                      </Text>
-                    </ImageBackground>
+                          borderRadius: 24,
+
+                          height: 80,
+                          width: 80,
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                        }}
+                        source={require('../../assets/icons/unknown/rectangle.png')}>
+                        {/* <Text
+                          style={{
+                            fontFamily: font.Poppins,
+                            fontSize: 14,
+                            color: colors.textColor.light,
+                            textAlign: 'center',
+                          }}>
+                          8+
+                        </Text> */}
+                        <SvgXml
+                          xml={`<svg width="23" height="24" viewBox="0 0 23 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M20.9955 11.3524L13.9713 13.2345L15.9 20.4326L12.214 21.4202L10.2853 14.2221L3.26108 16.1043L2.3666 12.766L9.39081 10.8839L7.46209 3.68582L11.1481 2.69816L13.0768 9.89624L20.101 8.01411L20.9955 11.3524Z" fill="#767676"/>
+  </svg>
+  `}
+                        />
+                      </ImageBackground>
+                    ) : (
+                      <Image
+                        resizeMode="cover"
+                        style={{
+                          height: 70,
+                          width: 70,
+                          borderRadius: 28,
+                          borderColor: 'white',
+                          borderWidth: 2,
+                        }}
+                        source={{
+                          uri: 'https://s3-alpha-sig.figma.com/img/d067/c913/ad868d019f92ce267e6de23af3413e5b?Expires=1722211200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=pMfG6YS9I8ruMTaTRqegPV9zZCyzJf~VintWAZomMQnoTSOB9r4vUqRwLPv6QY8UI0ayslqETesPz1z608PL7Lar8-2OFbc56ajfs0Cd0~Oj2IqJmrBLGw6KNarGTI7iBGxg70mDxP5kJQQZGT0sYE0Sd02zOzMoEpcyAxxAQUKlAGkTJocs3DSzvA-3CCCfxvT2qe3qytPeU6v8du6tQgae7mnGcqPOah-VRkMnVjpZ5NXf0fHqtpgHVzEbCRbuQBObOqRLrc-89S7ihmEEysndEuAwU~U9bfmvholer8U4ygOM-VmKm4tcibG6THnu35W3dfic90~qZ6PgubDTeA__',
+                        }}
+                      />
+                    )}
                   </View>
                 </>
               )}
+
               {cardStyle === 'three' && (
-                <>
+                <View>
                   <View
                     style={{
                       // height: 76,
 
                       borderRadius: 24,
                       elevation: 2,
-                      top: 8,
+                      bottom: -25,
                       position: 'absolute',
-                      right: 50,
+                      right: 40,
                       zIndex: 3,
                       transform: [
                         {
@@ -518,9 +437,6 @@ const ConversationalCard = ({
                         },
                         {
                           translateX: 40,
-                        },
-                        {
-                          translateY: 0,
                         },
                       ],
                     }}>
@@ -544,9 +460,9 @@ const ConversationalCard = ({
 
                       borderRadius: 24,
                       elevation: 2,
-                      top: 8,
+                      bottom: -25,
                       position: 'absolute',
-                      right: 50,
+                      right: 35,
                       zIndex: 2,
                       transform: [
                         {
@@ -554,9 +470,6 @@ const ConversationalCard = ({
                         },
                         {
                           translateX: -5,
-                        },
-                        {
-                          translateY: 0,
                         },
                       ],
                     }}>
@@ -578,37 +491,226 @@ const ConversationalCard = ({
                   <View
                     style={{
                       borderRadius: 24,
-                      top: 0,
+                      bottom: havNotUser || manyPeople ? -30 : -20,
                       position: 'absolute',
-                      right: 50,
+                      right: havNotUser || manyPeople ? 40 : 50,
 
                       transform: [
                         {
-                          rotate: '-25deg',
+                          rotate:
+                            havNotUser || manyPeople ? '-15deg' : '-28deg',
                         },
                         {
-                          translateX: -45,
+                          translateX: havNotUser || manyPeople ? -32 : -32,
+                        },
+                      ],
+                    }}>
+                    {manyPeople ? (
+                      <ImageBackground
+                        resizeMode="cover"
+                        style={{
+                          borderRadius: 24,
+
+                          height: 70,
+                          width: 70,
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                        }}
+                        source={require('../../assets/icons/unknown/rectangle.png')}>
+                        <Text
+                          style={{
+                            fontFamily: font.Poppins,
+                            fontSize: 14,
+                            color: colors.textColor.light,
+                            textAlign: 'center',
+                          }}>
+                          8+
+                        </Text>
+                      </ImageBackground>
+                    ) : havNotUser ? (
+                      <ImageBackground
+                        resizeMode="cover"
+                        style={{
+                          borderRadius: 24,
+
+                          height: 70,
+                          width: 70,
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                        }}
+                        source={require('../../assets/icons/unknown/rectangle.png')}>
+                        <SvgXml
+                          xml={`<svg width="23" height="24" viewBox="0 0 23 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M20.9955 11.3524L13.9713 13.2345L15.9 20.4326L12.214 21.4202L10.2853 14.2221L3.26108 16.1043L2.3666 12.766L9.39081 10.8839L7.46209 3.68582L11.1481 2.69816L13.0768 9.89624L20.101 8.01411L20.9955 11.3524Z" fill="#767676"/>
+  </svg>
+  `}
+                        />
+                      </ImageBackground>
+                    ) : (
+                      <Image
+                        resizeMode="cover"
+                        style={{
+                          height: 59,
+                          width: 59,
+                          borderRadius: 24,
+                          borderColor: 'white',
+                          borderWidth: 2,
+                        }}
+                        source={{
+                          uri: 'https://s3-alpha-sig.figma.com/img/bdc6/db2a/3a906b3de8eaa53e14582edf5c918b5d?Expires=1721606400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=U7P8CfaZR8VN~AB1t4yamhll4GWaFTFOGHWe5KuCLxDNe4~p9UhUbNtg9VA8aaFLDKPmwuByzP7CpTyF1KFHwPwChykfMqAhFl6iJGCErm9vbcCeYixeYDT1QE1JWrVlT5y4YfuzY2H1hH9V0dHwAzKAc8hMALmYPIoMNsqxZICi6T0PjW0ATcq~eeOYXaxtY9S30thVMs3WHidear3kaHFhkU-MO7VCCQVDbjVzVvy~PWSw-QZcZiqNvkC-lm0DLJlzBtuVkjIlOgoW2JTZqVMcaNUau2ybiuv2uIAR~tRoO18JRvqWgC55EfDQZ1lvwk1mAkeoSHqBPHP954d7kQ__',
+                        }}
+                      />
+                    )}
+                  </View>
+                </View>
+              )}
+              {cardStyle === 'four' && (
+                <View>
+                  <View
+                    style={{
+                      // height: 76,
+
+                      borderRadius: 24,
+                      elevation: 2,
+                      bottom: 6,
+                      position: 'absolute',
+                      right: 40,
+                      zIndex: 3,
+                      transform: [
+                        {
+                          rotate: '20deg',
                         },
                         {
-                          translateY: -3,
+                          translateX: 40,
+                        },
+                        {
+                          translateY: -4,
                         },
                       ],
                     }}>
                     <Image
                       resizeMode="cover"
                       style={{
-                        height: 60,
-                        width: 60,
+                        height: 50,
+                        width: 50,
                         borderRadius: 24,
                         borderColor: 'white',
                         borderWidth: 2,
                       }}
                       source={{
-                        uri: 'https://s3-alpha-sig.figma.com/img/bdc6/db2a/3a906b3de8eaa53e14582edf5c918b5d?Expires=1721606400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=U7P8CfaZR8VN~AB1t4yamhll4GWaFTFOGHWe5KuCLxDNe4~p9UhUbNtg9VA8aaFLDKPmwuByzP7CpTyF1KFHwPwChykfMqAhFl6iJGCErm9vbcCeYixeYDT1QE1JWrVlT5y4YfuzY2H1hH9V0dHwAzKAc8hMALmYPIoMNsqxZICi6T0PjW0ATcq~eeOYXaxtY9S30thVMs3WHidear3kaHFhkU-MO7VCCQVDbjVzVvy~PWSw-QZcZiqNvkC-lm0DLJlzBtuVkjIlOgoW2JTZqVMcaNUau2ybiuv2uIAR~tRoO18JRvqWgC55EfDQZ1lvwk1mAkeoSHqBPHP954d7kQ__',
+                        uri: 'https://s3-alpha-sig.figma.com/img/3d5c/b72f/ae1e058c2ed75ab981a9f8bb62e96a13?Expires=1722211200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=jLVk4o9pF4TeqOoV6dal-2dmplZtYv2Bpb-hXF4aMiRb~HXQjEkUC0VCXl88DEjxnYOB1illOoGLzsFKq6DDz9G2W5NJrdRRnVGg18HjwOfA30g9F2Q9XIr7qhWuuN6h7u7kJKoyfRgN7xn8VssMnZg1G8n3ezbyrnvyAqD62W-CQlvlFjUXyQjVkMQevpvRNbr81nXUMRf5uk75P~agZaNEoy8cmdLKigAxlkG~mTodT4jPGFEB3Y1JjCEVXCq-W-7gnICrmvmL9e2OZ-DHmquJCvsosY8uVYCwflJN7~5hJygfZ9pMJXBxnqgv9bCJ-DQwMaZHekWOdpMErwyw7Q__ ',
                       }}
                     />
                   </View>
-                </>
+                  <View
+                    style={{
+                      // height: 76,
+
+                      borderRadius: 24,
+                      elevation: 2,
+                      bottom: 0,
+                      position: 'absolute',
+                      right: 40,
+                      zIndex: 2,
+                      transform: [
+                        {
+                          rotate: '-20deg',
+                        },
+                        {
+                          translateX: -11,
+                        },
+                        {
+                          translateY: 0,
+                        },
+                      ],
+                    }}>
+                    <Image
+                      resizeMode="cover"
+                      style={{
+                        height: 50,
+                        width: 50,
+                        borderRadius: 24,
+                        borderColor: 'white',
+                        borderWidth: 2,
+                      }}
+                      source={{
+                        uri: 'https://s3-alpha-sig.figma.com/img/5fc3/1b93/51ad46951bbdc28be4cf7e384964f309?Expires=1722211200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=FJKQ4JDHq7fDtJt6jEsH7glxmDccJ5HatfcwiFw3TbVa-VN~8rkANOPPr5pIkHLoKZiOcpDH6raOnLcsP6CGAU3OUFf~i44uGB6LtF6iHJJdKMpiqZ1qlkMDdIjFQeUnxxad9bY8-9GP2FEJcVsVGytftI1EbO6S2nsTALArS5x8XkZ3IIhPtchbqrRkeJp4B47ShM-fnm-Z0zvb3oQB8nG1y8h~TJ1R2zLFr1kQjdjUt9KEpAdOVLSEJhmeGLcacSYi5KufaCprhJ86VA8htXlsYf5KvEgBb2O9k0gr1hTHR3ODYi3~t8J0OdLYYyQUx19taYJgeTXiFQpKLgZ~~g__',
+                      }}
+                    />
+                  </View>
+                  <View
+                    style={{
+                      // height: 76,
+
+                      borderRadius: 24,
+                      elevation: 2,
+                      bottom: 6,
+                      position: 'absolute',
+                      right: 40,
+                      zIndex: 3,
+                      transform: [
+                        {
+                          rotate: '20deg',
+                        },
+                        {
+                          translateX: 50,
+                        },
+                        {
+                          translateY: 37,
+                        },
+                      ],
+                    }}>
+                    <Image
+                      resizeMode="cover"
+                      style={{
+                        height: 50,
+                        width: 50,
+                        borderRadius: 24,
+                        borderColor: 'white',
+                        borderWidth: 2,
+                      }}
+                      source={{
+                        uri: 'https://s3-alpha-sig.figma.com/img/7568/3fd5/7261c2ae940abab762a6e0130b36b3a9?Expires=1721606400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=AykSrcYr~WEBIHMW4WezFwp74XIKqwz1DXFJPi-jBgpPa0w-AKmFioPrvXMG08QXjqfFJ7xtZ25idfjkopahkcvMKxIXm4TY4TBZFWD~2ZCGL4jbefjiM0ufmw09012~6B89nl~j6xWjd9ggQilJal8vQ8KUcmdm-KyxNUlAA0yT-JwjW~4Hx9gzTiaI8mXu9SmdrwivuQtAmxDNBHcx0hvDb7l8zrX95Hww4mVqCT-z3AbxnyyzEvIgAivaXFHPvNFXDdOp23QKhDg~zKX5ZObnIYL7uNdvhuAZWiwbKxUOSag8laDRybIo8hjF63zSi6rL9nm7x5pUOleZgtmDfQ__',
+                      }}
+                    />
+                  </View>
+                  <View
+                    style={{
+                      // height: 76,
+
+                      borderRadius: 24,
+                      elevation: 2,
+                      bottom: 0,
+                      position: 'absolute',
+                      right: 40,
+                      zIndex: 2,
+                      transform: [
+                        {
+                          rotate: '-20deg',
+                        },
+                        {
+                          translateX: -20,
+                        },
+                        {
+                          translateY: 40,
+                        },
+                      ],
+                    }}>
+                    <Image
+                      resizeMode="cover"
+                      style={{
+                        height: 50,
+                        width: 50,
+                        borderRadius: 24,
+                        borderColor: 'white',
+                        borderWidth: 2,
+                      }}
+                      source={{
+                        uri: 'https://s3-alpha-sig.figma.com/img/d067/c913/ad868d019f92ce267e6de23af3413e5b?Expires=1722211200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=pMfG6YS9I8ruMTaTRqegPV9zZCyzJf~VintWAZomMQnoTSOB9r4vUqRwLPv6QY8UI0ayslqETesPz1z608PL7Lar8-2OFbc56ajfs0Cd0~Oj2IqJmrBLGw6KNarGTI7iBGxg70mDxP5kJQQZGT0sYE0Sd02zOzMoEpcyAxxAQUKlAGkTJocs3DSzvA-3CCCfxvT2qe3qytPeU6v8du6tQgae7mnGcqPOah-VRkMnVjpZ5NXf0fHqtpgHVzEbCRbuQBObOqRLrc-89S7ihmEEysndEuAwU~U9bfmvholer8U4ygOM-VmKm4tcibG6THnu35W3dfic90~qZ6PgubDTeA__',
+                      }}
+                    />
+                  </View>
+                </View>
               )}
             </>
           )}
