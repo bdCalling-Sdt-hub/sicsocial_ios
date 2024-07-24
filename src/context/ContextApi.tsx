@@ -44,7 +44,8 @@ export const useStyles = () => {
       Rowdies_Regular: 'Rowdies-Regular',
     },
     colors: {
-      bg: isDark ? '#222222' : '#FFFFFF',
+      // bg: isDark ? '#222222' : '#FFFFFF',
+      bg: isDark ? '#222222' : 'rgba(253, 253, 253, 1)',
       gradient: {
         variantOne: isDark
           ? [
@@ -83,6 +84,7 @@ export const useStyles = () => {
             ],
       },
       primaryColor: isDark ? '#D29E3B' : '#D29E3B',
+
       secondaryColor: isDark ? '#333333' : '#FBF5EB',
       neutralColor: isDark ? '#444444' : '#DBB162',
       btn: {
@@ -118,6 +120,7 @@ export const useStyles = () => {
       redisLight: 'rgba(241, 231, 233, 1)',
       gray: {
         variant: isDark ? 'rgba(144, 144, 144, 1)' : 'rgba(244, 244, 244, 1)',
+        variantTwo: isDark ? 'rgba(144, 144, 144, 1)' : '#D9D9D9',
       },
     },
   };

@@ -470,8 +470,6 @@ is recognize for SIC "
             <TouchableOpacity
               onPress={() => {
                 setConfirmationModal(false);
-                setIsFriend(false);
-                setModalVisible(false);
               }}
               style={{
                 borderRadius: 100,
@@ -494,6 +492,7 @@ is recognize for SIC "
             <TouchableOpacity
               onPress={() => {
                 setIsFriend(false);
+                setModalVisible(false);
                 setConfirmationModal(false);
               }}
               style={{

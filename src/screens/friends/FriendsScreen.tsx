@@ -208,7 +208,7 @@ const FriendsScreen = ({navigation}: NavigProps<null>) => {
             justifyContent: 'center',
             alignItems: 'center',
             borderRadius: 100,
-            elevation: isRequest ? 2 : 0,
+            elevation: isRequest ? 0 : 2,
           }}>
           <Text
             style={{

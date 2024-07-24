@@ -183,6 +183,7 @@ const MyAllFriends = ({navigation}: NavigProps<null>) => {
                         fontFamily: font.PoppinsBold,
                         color: getRandomColor(),
                         textAlign: 'center',
+                        marginTop: 5,
                       }}>
                       {item.item.name?.slice(0, 1)}
                     </Text>

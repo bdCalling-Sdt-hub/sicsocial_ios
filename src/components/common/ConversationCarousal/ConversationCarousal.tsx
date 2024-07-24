@@ -8,7 +8,7 @@ import {
   useWindowDimensions,
   View,
 } from 'react-native';
-import React from 'react';
+import React, {Dispatch, SetStateAction} from 'react';
 import Animated, {
   interpolate,
   useAnimatedStyle,
@@ -74,6 +74,8 @@ interface ConversationCarousalProps extends NavigProps<null> {
   faceDown?: boolean;
   room?: boolean;
   record?: boolean;
+  onSendTextMessage?: () => void;
+  setTextMessage?: Dispatch<SetStateAction<string>>;
 }
 
 const ConversationCarousal = ({
@@ -86,6 +88,8 @@ const ConversationCarousal = ({
   room,
   route,
   type,
+  onSendTextMessage,
+  setTextMessage,
 }: ConversationCarousalProps) => {
   const absoluteData = [];
 
@@ -180,28 +184,34 @@ const ConversationCarousal = ({
     (value: number) => {
       'worklet';
 
-      const itemGap = interpolate(
-        value,
-        [-3, -2, -1, 0, 1, 2],
-        [30, 40, 50, 0, -50, -40],
-      );
+      // const itemGap = interpolate(
+      //   value,
+      //   [-2, -2, -1, 0, 1, 2],
+      //   [30, 40, 50, 0, -50, -40],
+      // );
+      const itemGap = interpolate(value, [-2, -1, 0, 1], [40, 50, 0, -50]);
+      // const itemGap = interpolate(value, [-1, 0, 1], [50, 0, -50]);
 
+      // const translateX =
+      //   interpolate(value, [-1, 0, 1], [-itemSize, 0, itemSize]) +
+      //   centerOffset -
+      //   itemGap;
       const translateX =
         interpolate(value, [-1, 0, 1], [-itemSize, 0, itemSize]) +
         centerOffset -
         itemGap;
 
-      const translateY = interpolate(
-        value,
-        [-1, -0, 0, 0, 1],
-        [10, -5, -10, -5, 20],
-      );
+      // const translateY = interpolate(
+      //   value,
+      //   [-1, -0, 0, 0, 1],
+      //   [10, -5, -10, -5, 20],
+      // );
 
-      const scale = interpolate(
-        value,
-        [-1, -0.5, 0, 0.5, 1],
-        [0.8, 0.85, 1.1, 0.85, 0.8],
-      );
+      // const scale = interpolate(
+      //   value,
+      //   [-1, -0.5, 0, 0.5, 1],
+      //   [0.8, 0.85, 1.1, 0.85, 0.8],
+      // );
 
       const opacity = interpolate(value, [-1, 0, 1], [0.4, 1, 0.4]);
 
@@ -212,10 +222,10 @@ const ConversationCarousal = ({
           {
             translateX,
           },
-          {
-            translateY,
-          },
-          {scale},
+          // {
+          //   translateY,
+          // },
+          // {scale},
         ],
       };
     },
@@ -229,7 +239,8 @@ const ConversationCarousal = ({
         height={itemSize}
         style={{
           width: width,
-          height: height * 0.2,
+          height: height * 0.121,
+          alignItems: 'center',
         }}
         loop
         snapEnabled
@@ -289,10 +300,10 @@ const ConversationCarousal = ({
             style={{
               width: 95,
               height: 95,
-              // justifyContent: 'center',
+              justifyContent: 'center',
               alignItems: 'center',
             }}>
-            <View
+            {/* <View
               style={{
                 height: 50,
                 justifyContent: 'center',
@@ -311,7 +322,7 @@ const ConversationCarousal = ({
                 ]}>
                 {activeIndexBigButton === index && item?.name}
               </Animated.Text>
-            </View>
+            </View> */}
             {activeIndexBigButton === index &&
             item.name === 'Let’s talk' &&
             recordOn ? (
@@ -539,6 +550,7 @@ const ConversationCarousal = ({
             <TextInput
               ref={textInputRef}
               placeholder="Type your message"
+              onChangeText={text => setTextMessage && setTextMessage(text)}
               style={{
                 backgroundColor: '#F1F1F1',
                 borderRadius: 100,
@@ -550,6 +562,7 @@ const ConversationCarousal = ({
             <TouchableOpacity
               onPress={() => {
                 setTextInputModal(false);
+                onSendTextMessage && onSendTextMessage();
               }}
               style={{
                 height: 40,

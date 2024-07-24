@@ -43,6 +43,8 @@ import AboutSicScreen from '../screens/profile/settings/AboutSicScreen';
 import FeedBackScreen from '../screens/profile/settings/FeedBackScreen';
 import MyAllFriends from '../screens/profile/MyAllFriends';
 import ViewAllFaceDown from '../screens/profile/ViewAllFaceDown';
+import MakeGroupScreen from '../screens/message/MakeGroupScreen';
+import NormalConversationScreen from '../screens/message/NormalConversationScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -138,6 +140,9 @@ const Routes = () => {
             }}
           />
 
+          {/*======================== Friend end ============================ */}
+
+          {/*============================ message screens start ====================*/}
           <Stack.Screen
             name="Messages"
             component={MassageScreen}
@@ -145,7 +150,25 @@ const Routes = () => {
               animation: 'slide_from_right',
             }}
           />
-          {/*======================== Friend end ============================ */}
+
+          <Stack.Screen
+            name="MakeGroup"
+            component={MakeGroupScreen}
+            options={{
+              animation: 'slide_from_right',
+            }}
+          />
+
+          <Stack.Screen
+            name="NormalConversation"
+            component={NormalConversationScreen}
+            options={{
+              animation: 'slide_from_right',
+            }}
+          />
+
+          {/*============================ message screens end ====================*/}
+
           {/*======================== Profile start ============================ */}
           <Stack.Screen
             name="Profile"
