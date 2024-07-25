@@ -76,6 +76,7 @@ interface ConversationCarousalProps extends NavigProps<null> {
   room?: boolean;
   record?: boolean;
   onSendTextMessage?: () => void;
+  onSendImageMessage?: () => void;
   setTextMessage?: Dispatch<SetStateAction<string>>;
   setImageAssets?: Dispatch<SetStateAction<any>>;
 }
@@ -156,6 +157,7 @@ const ConversationCarousal = ({
         if (!result.didCancel) {
           setImageAssets && setImageAssets(result?.assets![0].uri);
           // console.log(result);
+          onSendTextMessage && onSendImageMessage();
         }
       }
       if (option === 'library') {
@@ -170,6 +172,7 @@ const ConversationCarousal = ({
         if (!result.didCancel) {
           setImageAssets && setImageAssets(result?.assets![0].uri);
           // console.log(result);
+          onSendTextMessage && onSendImageMessage();
         }
       }
     } catch (error) {

@@ -127,7 +127,7 @@ const NormalConversationScreen = ({navigation}: NavigProps<null>) => {
   ]);
   const [volume, setVolume] = React.useState<number>(1);
   const [newMessages, setNewMessages] = React.useState<string>('');
-  const [newImage, setNewImage] = React.useState<{}>();
+  const [newImage, setNewImage] = React.useState<string>();
   const [modalVisible, setModalVisible] = React.useState(false);
   const [confirmationModal, setConfirmationModal] = React.useState(false);
 
@@ -297,7 +297,7 @@ const NormalConversationScreen = ({navigation}: NavigProps<null>) => {
                         <View style={{}}>
                           {item.item.image && (
                             <Image
-                              source={item.item.image}
+                              source={{uri: item.item.image}}
                               style={{
                                 marginBottom: 20,
                                 aspectRatio: 1,
@@ -414,6 +414,24 @@ const NormalConversationScreen = ({navigation}: NavigProps<null>) => {
           type
           record
           books
+          setImageAssets={setNewImage}
+          onSendImageMessage={() => {
+            console.log('ok');
+            setMessages([
+              ...messages,
+              {
+                id: messages.length + 1,
+                text: newMessages,
+                createdAt: new Date(),
+                image: newImage,
+                user: {
+                  _id: 1,
+                  name: 'Amina',
+                  avatar: require('../../assets/tempAssets/3a906b3de8eaa53e14582edf5c918b5d.jpg'),
+                },
+              },
+            ]);
+          }}
           setTextMessage={setNewMessages}
           onSendTextMessage={() => {
             setMessages([
@@ -423,6 +441,7 @@ const NormalConversationScreen = ({navigation}: NavigProps<null>) => {
 
                 text: newMessages,
                 createdAt: new Date(),
+                image: newImage,
                 user: {
                   _id: 1,
                   name: 'Amina',
