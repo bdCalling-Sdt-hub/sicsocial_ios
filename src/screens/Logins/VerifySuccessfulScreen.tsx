@@ -1,10 +1,10 @@
 import {Image, StyleSheet, Text, View} from 'react-native';
 import React from 'react';
-import {GFonts} from '../../styles/GFonts';
-import {GColors} from '../../styles/GColors';
 import {NavigProps} from '../../interfaces/NaviProps';
+import {useStyles} from '../../context/ContextApi';
 
 const VerifySuccessfulScreen = ({navigation}: NavigProps<null>) => {
+  const {colors, font} = useStyles();
   setTimeout(() => {
     navigation?.navigate('HomeRoutes'); // Navigate to Home Screen when 2 seconds are passed.
   }, 2000);
@@ -12,7 +12,7 @@ const VerifySuccessfulScreen = ({navigation}: NavigProps<null>) => {
   return (
     <View
       style={{
-        backgroundColor: 'white',
+        backgroundColor: colors.bg,
         height: '100%',
         justifyContent: 'center',
         alignItems: 'center',
@@ -27,9 +27,9 @@ const VerifySuccessfulScreen = ({navigation}: NavigProps<null>) => {
         <View>
           <Text
             style={{
-              fontFamily: GFonts.PoppinsMedium,
+              fontFamily: font.PoppinsMedium,
               fontSize: 16,
-              color: GColors.textColor.blackNormal,
+              color: colors.textColor.secondaryColor,
               marginBottom: 12,
             }}>
             Your account is ready

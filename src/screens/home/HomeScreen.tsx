@@ -1,43 +1,362 @@
 import {
+  Alert,
+  FlatList,
   Image,
   ImageBackground,
+  Linking,
+  Modal,
+  Pressable,
   StyleSheet,
   Text,
+  ToastAndroid,
+  TouchableNativeFeedback,
   TouchableOpacity,
+  useWindowDimensions,
   View,
 } from 'react-native';
-import React from 'react';
-import {GFonts} from '../../styles/GFonts';
-import {GColors} from '../../styles/GColors';
+import React, {useContext, useEffect} from 'react';
+import * as Animatable from 'react-native-animatable';
 import LinearGradient from 'react-native-linear-gradient';
-import {ScrollView} from 'react-native-gesture-handler';
+import {ScrollView, TextInput} from 'react-native-gesture-handler';
 import {SvgUri, SvgXml} from 'react-native-svg';
+import ConversationalCard from '../../components/common/ConversationalCard';
+import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
 
-const HomeScreen = () => {
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import Clipboard from '@react-native-clipboard/clipboard';
+import {Link, useTheme} from '@react-navigation/native';
+import {NavigProps} from '../../interfaces/NaviProps';
+import {ContextProvider, useStyles} from '../../context/ContextApi';
+import Animated, {
+  Easing,
+  interpolate,
+  ReduceMotion,
+  useAnimatedStyle,
+  useSharedValue,
+  withDelay,
+  withTiming,
+} from 'react-native-reanimated';
+import Carousel, {
+  ICarouselInstance,
+  TAnimationStyle,
+} from 'react-native-reanimated-carousel';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import {AnimatedCircularProgress} from 'react-native-circular-progress';
+
+const data = [
+  {
+    id: 1,
+    name: 'Let’s talk',
+
+    activeImage: require('../../assets/icons/modalIcons/microphoneWhite.png'),
+    unActive: require('../../assets/icons/modalIcons/microphoneGray.png'),
+  },
+  {
+    id: 2,
+    name: 'Share Books',
+    activeImage: require('../../assets/icons/modalIcons/boogWhite.png'),
+    unActive: require('../../assets/icons/modalIcons/bookgray.png'),
+  },
+  {
+    id: 3,
+    name: 'Share photo',
+    activeImage: require('../../assets/icons/modalIcons/photoWhite.png'),
+    unActive: require('../../assets/icons/modalIcons/photoGray.png'),
+  },
+  {
+    id: 3,
+    name: 'Type a message',
+    activeImage: require('../../assets/icons/modalIcons/typeWhite.png'),
+    unActive: require('../../assets/icons/modalIcons/typeGray.png'),
+  },
+  {
+    id: 4,
+    name: 'Join your room',
+    activeImage: require('../../assets/icons/modalIcons/networkingWhite.png'),
+    unActive: require('../../assets/icons/modalIcons/networkingGray.png'),
+  },
+  {
+    id: 5,
+    name: 'New Face Dwn',
+    activeImage: require('../../assets/icons/modalIcons/oneBook.png'),
+    unActive: require('../../assets/icons/modalIcons/oneBook.png'),
+  },
+];
+
+const items = [
+  {
+    id: 1,
+    title: 'Public',
+    activeImg: require('../../assets/icons/modalIcons/earthyGray.png'),
+    unActive: require('../../assets/icons/modalIcons/earthBlack.png'),
+  },
+  {
+    id: 2,
+    title: 'Friends',
+    activeImg: require('../../assets/icons/modalIcons/shearFriendBlack.png'),
+    unActive: require('../../assets/icons/modalIcons/shearFriendGray.png'),
+  },
+  {
+    id: 3,
+    title: 'Chosen buddies',
+    activeImg: require('../../assets/icons/modalIcons/shearFriendBlack.png'),
+    unActive: require('../../assets/icons/modalIcons/shearFriendGray.png'),
+  },
+  {
+    id: 3,
+    title: 'Asadullah face',
+    house: true,
+  },
+];
+
+const HomeScreen = ({navigation}: NavigProps<null>) => {
+  const {height, width} = useWindowDimensions();
+  const {colors, font} = useStyles();
+  const [modalVisible, setModalVisible] = React.useState(false);
+  const [conversationalModal, setConversationalModal] = React.useState(false);
+  const [imageModal, setImageModal] = React.useState(false);
+  const [textInputModal, setTextInputModal] = React.useState(false);
+  const [activeIndex, setActiveIndex] = React.useState(0);
+  const [activeIndexBigButton, setActiveIndexBigButton] = React.useState(0);
+  const [recordOn, setRecordOn] = React.useState(false);
+  const [recordOnDone, setRecordOnDone] = React.useState(false);
+  const [imageAssets, setImageAssets] = React.useState<any>({});
+  const textInputRef = React.useRef<TextInput>(null);
+
+  const modalWidth = useSharedValue(height * 0.116);
+  const modalHight = useSharedValue(width * 0.244);
+  const marginBottom = useSharedValue(65);
+  const borderRadius = useSharedValue(100);
+  const topBorderRadius = useSharedValue(100);
+  const backgroundColor = useSharedValue('rgba(219, 177, 98, 1)');
+  const opacityDown = useSharedValue(0.2);
+  const letsBorderAnimationValue = useSharedValue(23);
+
+  const handleOpen = () => {
+    setConversationalModal(true);
+    modalWidth.value = withTiming(width * 1.6, {duration: 200});
+    modalHight.value = withTiming(height * 0.75, {duration: 200});
+    marginBottom.value = withTiming(-200, {duration: 200});
+    borderRadius.value = withTiming(2000, {duration: 200});
+    backgroundColor.value = withTiming(colors.bg, {
+      duration: 600,
+      easing: Easing.cubic,
+    });
+    // topBorderRadius.value = withTiming(100, {duration: 200});
+    opacityDown.value = withTiming(1, {duration: 300});
+  };
+  const handleClose = () => {
+    opacityDown.value = withTiming(0, {duration: 300});
+    modalWidth.value = withTiming(height * 0.116, {duration: 200});
+    modalHight.value = withTiming(width * 0.244, {duration: 200});
+    marginBottom.value = withTiming(65, {duration: 200});
+    borderRadius.value = withTiming(100, {duration: 200});
+    backgroundColor.value = withTiming('rgba(219, 177, 98, 1)', {
+      duration: 300,
+      easing: Easing.ease,
+    });
+    topBorderRadius.value = withTiming(100, {duration: 200});
+    setTimeout(() => {
+      setConversationalModal(false);
+    }, 150);
+  };
+
+  const styleOnModal = useAnimatedStyle(() => {
+    return {
+      width: modalWidth.value,
+      height: modalHight.value,
+      borderRadius: borderRadius.value,
+      marginVertical: marginBottom.value,
+      backgroundColor: backgroundColor.value,
+
+      // borderTopRightRadius: topBorderRadius.value,
+      // borderTopLeftRadius: topBorderRadius.value,
+      // borderTopEndRadius: topBorderRadius.value,
+      // borderTopStartRadius: topBorderRadius.value,
+    };
+  });
+
+  const itemSize = 80;
+  const itemSizeSmall = 60;
+  const centerOffset = width / 2 - itemSize / 2;
+
+  const animationStyle1: TAnimationStyle = React.useCallback(
+    (value: number) => {
+      'worklet';
+
+      const itemGap = interpolate(
+        value,
+        [-3, -2, -1, 0, 1, 2],
+        [10, 30, 20, 0, -10, -0],
+      );
+
+      const translateX =
+        interpolate(value, [-1, 0, 1], [-itemSizeSmall, 0, itemSizeSmall]) +
+        centerOffset -
+        itemGap;
+
+      const translateY = interpolate(
+        value,
+        [-1, -0, 0, 0, 1],
+        [20, 10, 0, 10, 20],
+      );
+
+      const scale = interpolate(
+        value,
+        [-1, -0.5, 0, 0.5, 1],
+        [0.8, 0.85, 1.1, 0.85, 0.8],
+      );
+
+      const opacity = interpolate(value, [-1, 0, 1], [0.1, 1, 0.6]);
+
+      return {
+        opacity,
+
+        transform: [
+          {
+            translateX,
+          },
+          {
+            translateY,
+          },
+          {scale},
+        ],
+      };
+    },
+    [centerOffset],
+  );
+  const animationStyle: TAnimationStyle = React.useCallback(
+    (value: number) => {
+      'worklet';
+
+      const itemGap = interpolate(
+        value,
+        [-3, -2, -1, 0, 1, 2],
+        [30, 40, 50, 0, -50, -40],
+      );
+
+      const translateX =
+        interpolate(value, [-1, 0, 1], [-itemSize, 0, itemSize]) +
+        centerOffset -
+        itemGap;
+
+      const translateY = interpolate(
+        value,
+        [-1, -0, 0, 0, 1],
+        [10, -10, -10, -10, 20],
+      );
+
+      const scale = interpolate(
+        value,
+        [-1, -0.5, 0, 0.5, 1],
+        [0.8, 0.85, 1.1, 0.85, 0.8],
+      );
+
+      const opacity = interpolate(value, [-1, 0, 1], [0.4, 1, 0.4]);
+
+      return {
+        opacity,
+
+        transform: [
+          {
+            translateX,
+          },
+          {
+            translateY,
+          },
+          {scale},
+        ],
+      };
+    },
+    [centerOffset],
+  );
+
+  const opacityStyle = useAnimatedStyle(() => {
+    return {
+      opacity: opacityDown.value,
+    };
+  });
+
+  const letsBorderAnimationValueStyle = useAnimatedStyle(() => {
+    return {
+      borderWidth: letsBorderAnimationValue.value,
+    };
+  });
+
+  const handleImagePick = async (option: 'camera' | 'library') => {
+    try {
+      if (option === 'camera') {
+        const result = await launchCamera({
+          mediaType: 'photo',
+          maxWidth: 500,
+          maxHeight: 500,
+          quality: 0.5,
+          includeBase64: true,
+        });
+
+        if (!result.didCancel) {
+          setImageAssets(result?.assets![0].uri);
+          // console.log(result);
+        }
+      }
+      if (option === 'library') {
+        const result = await launchImageLibrary({
+          mediaType: 'photo',
+          maxWidth: 500,
+          maxHeight: 500,
+          quality: 0.5,
+          includeBase64: true,
+        });
+
+        if (!result.didCancel) {
+          setImageAssets(result?.assets![0].uri);
+          // console.log(result);
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const recordingAnimation = useSharedValue('0%');
+
+  const recodingOn = () => {
+    recordingAnimation.value = withTiming('100%', {duration: 10000});
+  };
+
+  useEffect(() => {
+    if (textInputModal) {
+      setTimeout(() => textInputRef.current?.focus(), 10);
+    }
+  }, [textInputModal]);
+
   return (
     <View
       style={{
         height: '100%',
         // backgroundColor: 'gray',
-        backgroundColor: GColors.white,
+        backgroundColor: colors.bg,
       }}>
+      {/*=============== border cover ================== */}
+      <View
+        style={{
+          height: '7.2%',
+        }}
+      />
       {/*==================== profile card start ===================  */}
+
       <LinearGradient
-        colors={[
-          'rgba(255,255,255,1)',
-          'rgba(255,255,255,1)',
-          'rgba(255,255,255,1)',
-          'rgba(255,255,255,1)',
-          'rgba(255,255,255,1)',
-          'rgba(255,255,255,0.0)',
-        ]}
+        colors={colors.gradient.variantTwo}
         style={{
           height: 80,
+          width: '100%',
           paddingHorizontal: '4%',
           padding: 8,
           flexDirection: 'row',
           justifyContent: 'space-between',
           alignItems: 'center',
+          position: 'absolute',
+          zIndex: 99999,
         }}>
         <View
           style={{
@@ -64,7 +383,7 @@ const HomeScreen = () => {
             }}>
             <Text
               style={{
-                fontFamily: GFonts.Poppins,
+                fontFamily: font.Poppins,
                 fontSize: 12,
                 color: '#720B24',
               }}>
@@ -72,9 +391,9 @@ const HomeScreen = () => {
             </Text>
             <Text
               style={{
-                fontFamily: GFonts.PoppinsSemiBold,
+                fontFamily: font.PoppinsSemiBold,
                 fontSize: 16,
-                color: GColors.textColor.blackSemiBold,
+                color: colors.textColor.primaryColor,
               }}>
               Asadullah
             </Text>
@@ -86,263 +405,151 @@ const HomeScreen = () => {
             gap: 19,
             alignItems: 'center',
           }}>
-          <TouchableOpacity>
-            <Image source={require('../../assets/icons/search/search.png')} />
+          <TouchableOpacity
+            onPress={() => {
+              navigation?.navigate('Search');
+            }}>
+            <SvgXml
+              xml={`<svg width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M16.031 14.6168L20.3137 18.8995L18.8995 20.3137L14.6168 16.031C13.0769 17.263 11.124 18 9 18C4.032 18 0 13.968 0 9C0 4.032 4.032 0 9 0C13.968 0 18 4.032 18 9C18 11.124 17.263 13.0769 16.031 14.6168ZM14.0247 13.8748C15.2475 12.6146 16 10.8956 16 9C16 5.1325 12.8675 2 9 2C5.1325 2 2 5.1325 2 9C2 12.8675 5.1325 16 9 16C10.8956 16 12.6146 15.2475 13.8748 14.0247L14.0247 13.8748Z" fill="${colors.textColor.neutralColor}"/>
+</svg>
+`}
+            />
           </TouchableOpacity>
-          <TouchableOpacity>
-            <Image source={require('../../assets/icons/bell/bell.png')} />
+          <TouchableOpacity
+            onPress={() => {
+              navigation?.navigate('Notifications');
+              // setDark(!isDark);
+            }}>
+            <SvgXml
+              xml={`<svg width="18" height="22" viewBox="0 0 18 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M17 17.5H1L1.39999 16.9667L1.5 16.8334V16.6667V8C1.5 3.85786 4.85786 0.5 9 0.5C13.1422 0.5 16.5 3.85786 16.5 8V16.6667V16.8334L16.6 16.9667L17 17.5ZM17 17.5L17 17.5L17 17.5L17 17.5L17 17.5L17 17.5ZM2.5 16V16.5H3H15H15.5V16V8C15.5 4.41015 12.5898 1.5 9 1.5C5.41015 1.5 2.5 4.41015 2.5 8V16ZM10.937 19.5C10.715 20.3626 9.93191 21 9 21C8.06809 21 7.28504 20.3626 7.06301 19.5H10.937Z" fill="${colors.textColor.neutralColor}" stroke="${colors.textColor.neutralColor}"/>
+</svg>
+`}
+            />
           </TouchableOpacity>
         </View>
       </LinearGradient>
-      {/*==================== profile card end ===================  */}
-      {/*==================== Body part Start ===================  */}
 
+      {/*==================== profile card end ===================  */}
       <ScrollView
+        showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           gap: 16,
           paddingTop: 16,
           paddingBottom: 16,
+          paddingHorizontal: '5%',
         }}>
         {/*========================== conversation card start ======================= */}
 
-        {/*================= donation card ============= */}
-        <View
-          style={{
-            paddingHorizontal: '4%',
-          }}>
-          <View
-            style={{
-              backgroundColor: GColors.secondaryColor,
-              paddingHorizontal: 16,
-              paddingVertical: 10,
-              borderRadius: 16,
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              elevation: 3,
-            }}>
-            <View
-              style={{
-                gap: 4,
-                marginRight: 1,
-              }}>
-              <Text
-                style={{
-                  fontFamily: GFonts.PoppinsSemiBold,
-                  fontSize: 17,
-                  color: GColors.textColor.blackSemiBold,
-                }}>
-                Hello Asadullah
-              </Text>
-              <Text
-                style={{
-                  fontFamily: GFonts.Poppins,
-                  fontSize: 12,
-                  color: GColors.textColor.blackSemiBold,
-                }}>
-                Contribute and share with others.
-              </Text>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  gap: 13,
-                  marginTop: 5,
-                }}>
-                <TouchableOpacity
-                  style={{
-                    height: 32,
-                    borderRadius: 100,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    backgroundColor: GColors.primaryColor,
-                    flexDirection: 'row',
-                    gap: 4,
-                    paddingHorizontal: 8,
-                    paddingVertical: 6,
-                  }}>
-                  {/* <Image
-                    source={require('../../assets/icons/shear/shear.png')}
-                  /> */}
-                  <SvgXml
-                    xml={`<svg
-                    width="12"
-                    height="12"
-                    viewBox="0 0 12 12"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <path
-                      d="M9.25368 8.07175C8.67873 8.07175 8.16072 8.32004 7.80119 8.71499L4.56747 6.71219C4.6538 6.49118 4.70168 6.25113 4.70168 6C4.70168 5.74878 4.6538 5.50873 4.56747 5.28782L7.80119 3.28492C8.16072 3.67988 8.67873 3.92826 9.25368 3.92826C10.3367 3.92826 11.2178 3.04716 11.2178 1.96409C11.2178 0.881025 10.3367 1.52588e-05 9.25368 1.52588e-05C8.17061 1.52588e-05 7.28951 0.881117 7.28951 1.96418C7.28951 2.21531 7.33748 2.45536 7.42372 2.67637L4.19009 4.67917C3.83056 4.28422 3.31256 4.03583 2.73761 4.03583C1.65454 4.03583 0.773438 4.91703 0.773438 6C0.773438 7.08307 1.65454 7.96417 2.73761 7.96417C3.31256 7.96417 3.83056 7.71588 4.19009 7.32083L7.42372 9.32364C7.33748 9.54464 7.28951 9.78469 7.28951 10.0359C7.28951 11.1189 8.17061 12 9.25368 12C10.3367 12 11.2178 11.1189 11.2178 10.0359C11.2178 8.95285 10.3367 8.07175 9.25368 8.07175ZM8.00572 1.96418C8.00572 1.27607 8.56557 0.716231 9.25368 0.716231C9.94178 0.716231 10.5016 1.27607 10.5016 1.96418C10.5016 2.65229 9.94178 3.21214 9.25368 3.21214C8.56557 3.21214 8.00572 2.65229 8.00572 1.96418ZM2.73761 7.24796C2.04941 7.24796 1.48956 6.68811 1.48956 6C1.48956 5.31189 2.04941 4.75205 2.73761 4.75205C3.42571 4.75205 3.98547 5.31189 3.98547 6C3.98547 6.68811 3.42571 7.24796 2.73761 7.24796ZM8.00572 10.0358C8.00572 9.34771 8.56557 8.78787 9.25368 8.78787C9.94178 8.78787 10.5016 9.34771 10.5016 10.0358C10.5016 10.7239 9.94178 11.2838 9.25368 11.2838C8.56557 11.2838 8.00572 10.7239 8.00572 10.0358Z"
-                      fill="#F4F4F4"
-                    />
-                  </svg>`}
-                  />
-
-                  <Text
-                    style={{
-                      fontFamily: GFonts.Poppins,
-                      fontSize: 12,
-                      color: GColors.white,
-                    }}>
-                    Share
-                  </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={{
-                    height: 32,
-                    borderRadius: 100,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    backgroundColor: GColors.green['#00B047'],
-                    flexDirection: 'row',
-                    gap: 4,
-                    paddingHorizontal: 8,
-                    paddingVertical: 6,
-                  }}>
-                  <Image
-                    resizeMode="center"
-                    style={{
-                      width: 20,
-                      height: 20,
-                    }}
-                    source={require('../../assets/icons/donation/donation.png')}
-                  />
-                  <Text
-                    style={{
-                      fontFamily: GFonts.Poppins,
-                      fontSize: 12,
-                      color: GColors.white,
-                    }}>
-                    View details
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-
-            <View style={{elevation: 5}}>
-              <ImageBackground
-                resizeMode="cover"
-                style={{
-                  height: 100,
-                  width: 88,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}
-                source={require('../../assets/icons/donation/donationImage.png')}
-              />
-            </View>
-          </View>
-        </View>
-
-        {/*==================== normal card===================  */}
-        <View
-          style={{
-            paddingHorizontal: '4%',
-          }}>
-          <View
-            style={{
-              backgroundColor: GColors.secondaryColor,
-              paddingHorizontal: 16,
-              paddingVertical: 10,
-              borderRadius: 16,
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              elevation: 3,
-            }}>
-            <View
-              style={{
-                gap: 4,
-                width: '60%',
-              }}>
-              <View
-                style={{
-                  gap: 2,
-                }}>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    gap: 5,
-                  }}>
-                  <Text
-                    style={{
-                      fontFamily: GFonts.PoppinsMedium,
-                      fontSize: 12,
-                      color: GColors.textColor.blackSemiBold,
-                    }}>
-                    You
-                  </Text>
-                  <Text
-                    style={{
-                      fontFamily: GFonts.PoppinsMedium,
-                      fontSize: 13,
-                      color: GColors.textColor.blackMediumLight,
-                    }}>
-                    Start a chat
-                  </Text>
-                </View>
-                <Text
-                  style={{
-                    fontFamily: GFonts.PoppinsMedium,
-                    fontSize: 13,
-                    color: GColors.textColor.redLight,
-                  }}>
-                  9:30 am
-                </Text>
-                <Text
-                  style={{
-                    fontFamily: GFonts.Poppins,
-                    fontSize: 13,
-                    color: GColors.textColor.blackMediumLight,
-                  }}
-                  numberOfLines={2}>
-                  All of my friends pleas Share your story my friends
-                </Text>
-              </View>
-            </View>
-            <View
-              style={{
-                // height: 76,
-
-                borderRadius: 35,
-                elevation: 1,
-                justifyContent: 'center',
-                alignItems: 'center',
-                padding: 1,
-              }}>
-              <Image
-                resizeMode="cover"
-                style={{
-                  height: 80,
-                  width: 80,
-                  borderRadius: 35,
-                  borderColor: 'white',
-                  borderWidth: 2,
-                }}
-                source={{
-                  uri: 'https://s3-alpha-sig.figma.com/img/7568/3fd5/7261c2ae940abab762a6e0130b36b3a9?Expires=1721606400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=AykSrcYr~WEBIHMW4WezFwp74XIKqwz1DXFJPi-jBgpPa0w-AKmFioPrvXMG08QXjqfFJ7xtZ25idfjkopahkcvMKxIXm4TY4TBZFWD~2ZCGL4jbefjiM0ufmw09012~6B89nl~j6xWjd9ggQilJal8vQ8KUcmdm-KyxNUlAA0yT-JwjW~4Hx9gzTiaI8mXu9SmdrwivuQtAmxDNBHcx0hvDb7l8zrX95Hww4mVqCT-z3AbxnyyzEvIgAivaXFHPvNFXDdOp23QKhDg~zKX5ZObnIYL7uNdvhuAZWiwbKxUOSag8laDRybIo8hjF63zSi6rL9nm7x5pUOleZgtmDfQ__',
-                }}
-              />
-            </View>
-          </View>
-        </View>
-
-        {/*========================== conversation card end ======================= */}
+        <ConversationalCard
+          disabled
+          conversationStyle="donation"
+          conversationTitle="Hello Asadullah"
+          // conversationSubtitle="Contribute and share with others."
+          lastMessage="Contribute and share with others."
+          onDonationShearPress={() => {
+            setModalVisible(true);
+          }}
+          onDonationViewDetailsPress={() => {
+            navigation?.navigate('donation');
+          }}
+        />
+        <ConversationalCard
+          conversationStyle="normal"
+          cardStyle="single"
+          conversationTitle="You"
+          conversationSubtitle="Start a chat"
+          lastMessageTime="9:30 am"
+          lastMessage="All of my friends pleas 
+            Share your story my friends"
+        />
+        <ConversationalCard
+          conversationStyle="normal"
+          cardStyle="two"
+          // havNotUser
+          conversationTitle="Khushi Aktar"
+          isReply
+          conversationSubtitle="replied in chat"
+          lastMessageTime="9:30 am"
+          lastMessage="Hello asad vai, i`m 
+coming from Banasri"
+        />
+        <ConversationalCard
+          conversationStyle="normal"
+          cardStyle="two"
+          havNotUser
+          conversationTitle="Khushi Aktar"
+          isReply
+          conversationSubtitle="replied in chat"
+          lastMessageTime="9:30 am"
+          lastMessage="Hello asad vai, i`m 
+coming from Banasri"
+        />
+        <ConversationalCard
+          conversationStyle="normal"
+          cardStyle="book"
+          conversationTitle="SIC Discussion"
+          conversationSubtitle="recommendations"
+          lastMessageTime="9:30 am"
+          lastMessage="Hello Asadullah some books
+is recognize for SIC "
+        />
+        <ConversationalCard
+          conversationStyle="normal"
+          cardStyle="three"
+          conversationTitle="COFFE HOUSE"
+          conversationSubtitle="join room"
+          lastMessageTime="8:10 am"
+          lastMessage="nadin invite you in room"
+        />
+        <ConversationalCard
+          conversationStyle="normal"
+          cardStyle="four"
+          conversationTitle="COFFE HOUSE"
+          conversationSubtitle="join room"
+          lastMessageTime="8:10 am"
+          lastMessage="Hello Asadullah some books
+is recognize for SIC "
+        />
+        <ConversationalCard
+          conversationStyle="normal"
+          cardStyle="three"
+          manyPeople
+          havNotUser
+          conversationTitle="COFFE HOUSE"
+          conversationSubtitle="join room"
+          lastMessageTime="8:10 am"
+          lastMessage="nadin invite you in room"
+        />
+        <ConversationalCard
+          conversationStyle="normal"
+          cardStyle="three"
+          havNotUser
+          conversationTitle="COFFE HOUSE"
+          conversationSubtitle="join room"
+          lastMessageTime="8:10 am"
+          lastMessage="nadin invite you in room"
+        />
       </ScrollView>
+      {/*==================== Body part Start ===================  */}
 
       <View
         style={{
           position: 'absolute',
           bottom: 65,
-          zIndex: +100,
-          width: '100%',
-          justifyContent: 'center',
-          alignItems: 'center',
+          borderRadius: 100,
+          // width: '100%',
+          alignSelf: 'center',
         }}>
         <TouchableOpacity
+          onPress={() => {
+            handleOpen();
+          }}
           style={{
             paddingHorizontal: '4%',
             paddingVertical: 16,
-            backgroundColor: GColors.primaryColor,
+            backgroundColor: colors.primaryColor,
             // borderBottomWidth: 1,
             width: 100,
             height: 100,
@@ -356,7 +563,568 @@ const HomeScreen = () => {
           />
         </TouchableOpacity>
       </View>
+
+      <ModalOfBottom
+        modalVisible={modalVisible}
+        setModalVisible={setModalVisible}
+        onlyTopRadius={20}
+        backButton
+        height={'30%'}>
+        <View>
+          <Text
+            style={{
+              textAlign: 'center',
+              fontSize: 20,
+              fontFamily: font.PoppinsSemiBold,
+              color: colors.textColor.neutralColor,
+            }}>
+            Share Integrity Donation
+          </Text>
+          <TouchableOpacity
+            style={{}}
+            onPress={() => {
+              Linking.openURL('https://www.sic.com/donation');
+            }}>
+            <Text
+              style={{
+                fontFamily: font.Poppins,
+                fontSize: 12,
+                color: colors.blue,
+                marginTop: '10%',
+              }}>
+              https://www.sic.com/donation
+            </Text>
+          </TouchableOpacity>
+          <View
+            style={{
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginTop: '10%',
+            }}>
+            <TouchableOpacity
+              onPress={() => {
+                Clipboard.setString('https://www.sic.com/donation');
+                ToastAndroid.showWithGravity(
+                  'link copy to https://www.sic.com/donation',
+                  ToastAndroid.SHORT,
+                  ToastAndroid.CENTER,
+                );
+              }}
+              style={{
+                flexDirection: 'row',
+                gap: 8,
+                width: 84,
+                justifyContent: 'center',
+                alignItems: 'center',
+                padding: 8,
+                elevation: 2,
+                backgroundColor: colors.white,
+                borderRadius: 100,
+              }}>
+              <MaterialCommunityIcons name="content-copy" size={15} />
+              <Text>Copy</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </ModalOfBottom>
       {/*==================== Body part end ===================  */}
+
+      {/*===================== modal main part start ================ */}
+      <Modal
+        animationType={'fade'}
+        transparent={true}
+        visible={conversationalModal}
+        onDismiss={() => {
+          setModalVisible(false);
+        }}>
+        <Pressable
+          onPress={() => {
+            handleClose();
+          }}
+          style={{
+            flex: 1,
+            justifyContent: 'flex-end',
+            alignItems: 'center',
+            height: height,
+            backgroundColor: 'rgba(0, 0, 0, 0.2)',
+          }}>
+          <Animated.View
+            style={[
+              styleOnModal,
+
+              {
+                alignItems: 'center',
+              },
+              // opacityStyle,
+            ]}></Animated.View>
+
+          <Pressable
+            style={{
+              position: 'absolute',
+              // bottom: '15%',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: height * 0.45,
+              gap: -10,
+              zIndex: 99999,
+            }}>
+            <Carousel
+              style={{
+                width: width,
+                height: height * 0.3,
+              }}
+              width={itemSize}
+              height={itemSize}
+              snapEnabled
+              pagingEnabled
+              data={items}
+              onSnapToItem={(index: number) => {
+                setActiveIndex(index);
+              }}
+              renderItem={({index, item, animationValue}) => (
+                <TouchableOpacity
+                  style={{
+                    width: 100,
+                    height: 100,
+                    // justifyContent: 'center',
+                    alignItems: 'center',
+                  }}>
+                  <Animated.View
+                    // onPress={() => {
+                    //   handleOpen();
+                    // }}
+
+                    style={[
+                      {
+                        paddingHorizontal: '4%',
+                        paddingVertical: 16,
+                        backgroundColor: '#ECF3FF',
+                        // borderBottomWidth: 1,
+                        width: 50,
+                        height: 50,
+                        // borderColor: '#E2E2E2',
+                        borderRadius: 100,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        // elevation: 2,
+                      },
+                      opacityStyle,
+                    ]}>
+                    <View>
+                      {item.house ? (
+                        <View
+                          style={{
+                            width: 50,
+                            height: 50,
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                          }}>
+                          <Text
+                            style={{
+                              fontSize: 30,
+                              position: 'relative',
+                              fontFamily: font.Poppins,
+                              color: '#FFD40E',
+                              textAlign: 'center',
+                            }}>
+                            {item.title.slice(0, 1)}
+                          </Text>
+                        </View>
+                      ) : (
+                        <Animated.Image
+                          style={[
+                            {
+                              width: 24,
+                              height: 24,
+                              resizeMode: 'contain',
+                            },
+                            opacityStyle,
+                          ]}
+                          source={item.activeImg}
+                        />
+                      )}
+
+                      {/* {activeIndex === index ? (
+                          <SvgXml xml={item.activeImage} />
+                        ) : (
+                          <SvgXml xml={item.unActive} />
+                        )} */}
+                    </View>
+                  </Animated.View>
+                  {activeIndex === index && (
+                    <Animated.Text
+                      style={[
+                        {
+                          marginVertical: 10,
+                          textAlign: 'center',
+                          fontSize: 11,
+                          fontFamily: font.PoppinsMedium,
+                          color: colors.textColor.neutralColor,
+                        },
+                        opacityStyle,
+                      ]}>
+                      {item.title}
+                    </Animated.Text>
+                  )}
+                </TouchableOpacity>
+              )}
+              customAnimation={animationStyle1}
+            />
+            <Carousel
+              width={itemSize}
+              height={itemSize}
+              style={{
+                width: width,
+                height: height * 0.3,
+              }}
+              loop
+              snapEnabled
+              defaultIndex={0}
+              pagingEnabled
+              data={data}
+              onSnapToItem={(index: number) => {
+                setActiveIndexBigButton(index);
+                setRecordOn(false);
+                setRecordOnDone(false);
+                letsBorderAnimationValue.value = 25;
+              }}
+              renderItem={({index, item, animationValue}) => (
+                <TouchableOpacity
+                  onPress={() => {
+                    if (item.name === 'Share photo') {
+                      // handleImagePick('camera');
+                      setImageModal(!imageModal);
+                    }
+                    if (item.name === 'Share Books') {
+                      // all modal false
+                      setModalVisible(false);
+                      setConversationalModal(false);
+                      setImageModal(false);
+                      setTextInputModal(false);
+                      navigation?.navigate('ShareBooks');
+                    }
+                    if (item.name === 'Let’s talk') {
+                      // handleImagePick('camera');
+                      setRecordOn(!recordOn);
+                      letsBorderAnimationValue.value =
+                        letsBorderAnimationValue.value === 8
+                          ? withTiming(25, {
+                              duration: 200,
+                              easing: Easing.ease,
+                            })
+                          : withTiming(8, {
+                              duration: 200,
+                            });
+                      recordOnDone && setRecordOnDone(!recordOnDone);
+                    }
+                    if (item.name === 'Type a message') {
+                      setTextInputModal(!textInputModal);
+
+                      setConversationalModal(false);
+                    }
+                    if (item.name === 'Join your room') {
+                    }
+                    if (item.name === 'New Face Dwn') {
+                    }
+                  }}
+                  style={{
+                    width: 95,
+                    height: 95,
+                    // justifyContent: 'center',
+                    alignItems: 'center',
+                  }}>
+                  <View
+                    style={{
+                      height: 50,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      width: 150,
+                      // backgroundColor: 'red',
+                    }}>
+                    <Animated.Text
+                      style={[
+                        {
+                          textAlign: 'center',
+                          fontSize: 14,
+                          fontFamily: font.PoppinsMedium,
+                          color: colors.textColor.neutralColor,
+                        },
+                        opacityStyle,
+                      ]}>
+                      {activeIndexBigButton === index && item?.name}
+                    </Animated.Text>
+                  </View>
+                  {activeIndexBigButton === index &&
+                  item.name === 'Let’s talk' &&
+                  recordOn ? (
+                    <>
+                      {recordOnDone ? (
+                        <Animated.View
+                          // onPress={() => {
+                          //   handleOpen();
+                          // }}
+
+                          style={[
+                            {
+                              paddingHorizontal: '4%',
+                              paddingVertical: 16,
+                              backgroundColor: colors.green['#00C208'],
+                              // borderBottomWidth: 1,
+                              width: 90,
+                              height: 90,
+                              // borderColor: colors.primaryColor,
+                              // borderWidth: 5,
+                              borderRadius: 100,
+                              // shadowOpacity: 0.4,
+
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                              // elevation: 2,
+                            },
+                            opacityStyle,
+                          ]}>
+                          <View
+                            style={{
+                              // width: 28,
+                              // height: 28,
+                              // padding: 1,
+                              borderRadius: 100,
+                              // elevation: 2,
+                              // borderColor: '#F7CC7F',
+                              // borderWidth: 8,
+                              shadowRadius: 10,
+                              padding: 8,
+                              // elevation: 2,
+                              shadowColor: '#52006A',
+                              // backgroundColor: colors.white,
+                            }}>
+                            <Image
+                              resizeMode="contain"
+                              style={{
+                                width: 50,
+                                height: 50,
+                                borderRadius: 100,
+                              }}
+                              source={require('../../assets/icons/modalIcons/rightTik.png')}
+                            />
+                          </View>
+                        </Animated.View>
+                      ) : (
+                        <Animated.View
+                          // onPress={() => {
+                          //   handleOpen();
+                          // }}
+
+                          style={[
+                            {
+                              paddingHorizontal: '4%',
+                              paddingVertical: 16,
+                              // backgroundColor: colors.white,
+                              // borderBottomWidth: 1,
+                              width: 90,
+                              height: 90,
+                              // borderColor: colors.primaryColor,
+                              // borderWidth: 5,
+                              borderRadius: 100,
+                              // shadowOpacity: 0.4,
+
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                              // elevation: 2,
+                            },
+                            opacityStyle,
+                          ]}>
+                          <AnimatedCircularProgress
+                            size={100}
+                            width={6}
+                            rotation={10}
+                            fill={100}
+                            lineCap="round"
+                            style={{
+                              borderRadius: 100,
+                              position: 'absolute',
+                            }}
+                            duration={10000}
+                            tintColor={colors.neutralColor}
+                            onAnimationComplete={() => {
+                              setRecordOnDone(true);
+                            }}
+                            // backgroundColor={'rgba(0,0,0,.4)'}
+                          />
+                          <Animated.View
+                            style={[
+                              {
+                                // width: 28,
+                                // height: 28,
+                                // padding: 1,
+                                borderRadius: 100,
+                                // elevation: 2,
+                                borderColor: '#F7CC7F',
+
+                                shadowRadius: 100,
+                                padding: 8,
+                                elevation: 2,
+                                shadowColor: '#52006A',
+                                backgroundColor: colors.white,
+                              },
+                              letsBorderAnimationValueStyle,
+                            ]}>
+                            <Image
+                              resizeMode="contain"
+                              style={{
+                                width: 28,
+                                height: 28,
+                                borderRadius: 100,
+                              }}
+                              source={require('../../assets/icons/modalIcons/microphoneSendary.png')}
+                            />
+                          </Animated.View>
+                        </Animated.View>
+                      )}
+                    </>
+                  ) : (
+                    <Animated.View
+                      // onPress={() => {
+                      //   handleOpen();
+                      // }}
+
+                      style={[
+                        {
+                          paddingHorizontal: '4%',
+                          paddingVertical: 16,
+                          backgroundColor: colors.primaryColor,
+                          // borderBottomWidth: 1,
+                          width: 90,
+                          height: 90,
+                          // borderColor: '#E2E2E2',
+                          borderRadius: 100,
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          // elevation: 2,
+                        },
+                        opacityStyle,
+                      ]}>
+                      <Animatable.View duration={100}>
+                        <Image
+                          resizeMode="contain"
+                          style={{
+                            width: 28,
+                            height: 28,
+                          }}
+                          source={item?.activeImage}
+                        />
+                      </Animatable.View>
+                    </Animated.View>
+                  )}
+                </TouchableOpacity>
+              )}
+              customAnimation={animationStyle}
+            />
+          </Pressable>
+        </Pressable>
+      </Modal>
+      {/*===================== modal main part end ================ */}
+
+      <ModalOfBottom
+        modalVisible={imageModal}
+        setModalVisible={setImageModal}
+        onlyTopRadius={20}
+        height={'20%'}
+        containerColor={colors.bg}>
+        <View
+          style={{
+            gap: 10,
+          }}>
+          <TouchableOpacity
+            onPress={() => {
+              handleImagePick('camera');
+            }}
+            style={{
+              paddingVertical: 5,
+            }}>
+            <Text
+              style={{
+                fontFamily: font.PoppinsMedium,
+                fontSize: 14,
+                color: colors.textColor.neutralColor,
+              }}>
+              Take Photo
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              handleImagePick('library');
+            }}
+            style={{
+              paddingVertical: 5,
+            }}>
+            <Text
+              style={{
+                fontFamily: font.PoppinsMedium,
+                fontSize: 14,
+                color: colors.textColor.neutralColor,
+              }}>
+              Image form gallery
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </ModalOfBottom>
+      <ModalOfBottom
+        modalVisible={textInputModal}
+        setModalVisible={setTextInputModal}
+        onlyTopRadius={20}
+        height={'17%'}
+        containerColor={colors.bg}>
+        <View
+          style={{
+            gap: 10,
+          }}>
+          <View
+            style={{
+              // borderWidth: 1,
+              // borderColor: colors.primaryColor,
+              flexDirection: 'row',
+              gap: 10,
+            }}>
+            <TextInput
+              ref={textInputRef}
+              placeholder="Type your message"
+              style={{
+                backgroundColor: '#F1F1F1',
+                borderRadius: 100,
+                paddingHorizontal: 15,
+                paddingVertical: 10,
+                flex: 1,
+              }}
+            />
+            <TouchableOpacity
+              onPress={() => {
+                setTextInputModal(false);
+              }}
+              style={{
+                height: 40,
+                width: 40,
+                backgroundColor: colors.primaryColor,
+                borderRadius: 100,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <SvgXml
+                xml={`<svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M21.2151 10.9951C21.2151 11.7251 20.7441 12.3751 19.9251 12.7851L3.50513 20.9951C3.10513 21.1951 2.71513 21.2951 2.35513 21.2951C1.83413 21.2951 1.37513 21.0751 1.08413 20.6861C0.835133 20.3451 0.595133 19.7551 0.885133 18.7951L2.73513 12.6251C2.79513 12.4451 2.83513 12.2261 2.85513 11.9951L12.9851 11.9951C13.5351 11.9951 13.9851 11.5451 13.9851 10.9951C13.9851 10.4451 13.5351 9.99509 12.9851 9.99509L2.85513 9.99509C2.83413 9.76509 2.79413 9.54509 2.73513 9.36509L0.885133 3.19509C0.595133 2.23509 0.835133 1.64509 1.08513 1.30509C1.57513 0.645087 2.50513 0.495087 3.50513 0.995087L19.9261 9.20509C20.7451 9.61509 21.2151 10.2651 21.2151 10.9951Z" fill="#FCFCFC"/>
+</svg>
+`}
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
+      </ModalOfBottom>
+
+      <View
+        style={{
+          height: '7.2%',
+        }}
+      />
     </View>
   );
 };

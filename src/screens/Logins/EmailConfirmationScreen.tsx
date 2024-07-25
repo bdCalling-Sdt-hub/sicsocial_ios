@@ -8,16 +8,16 @@ import {
 } from 'react-native';
 import React from 'react';
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
-import {GColors} from '../../styles/GColors';
-import {GFonts} from '../../styles/GFonts';
 import {NavigProps} from '../../interfaces/NaviProps';
+import {useStyles} from '../../context/ContextApi';
 
 const EmailConfirmationScreen = ({navigation}: NavigProps<null>) => {
+  const {colors, font} = useStyles();
   return (
     <View
       style={{
         height: '100%',
-        backgroundColor: 'white',
+        backgroundColor: colors.bg,
       }}>
       <BackButtonWithTitle
         navigation={navigation}
@@ -31,8 +31,8 @@ const EmailConfirmationScreen = ({navigation}: NavigProps<null>) => {
         titleStyle={{
           fontSize: 24,
           // marginTop: 10,
-          color: GColors.textColor.blackNormal,
-          fontFamily: GFonts.PoppinsSemiBold,
+          color: colors.textColor.secondaryColor,
+          fontFamily: font.PoppinsSemiBold,
         }}
       />
 
@@ -49,8 +49,8 @@ const EmailConfirmationScreen = ({navigation}: NavigProps<null>) => {
           <Text
             style={{
               fontSize: 24,
-              fontFamily: GFonts.PoppinsSemiBold,
-              color: GColors.textColor.blackNormal,
+              fontFamily: font.PoppinsSemiBold,
+              color: colors.textColor.secondaryColor,
               textAlign: 'center',
             }}>
             Email Confirmation
@@ -58,8 +58,8 @@ const EmailConfirmationScreen = ({navigation}: NavigProps<null>) => {
           <Text
             style={{
               fontSize: 14,
-              fontFamily: GFonts.Poppins,
-              color: GColors.textColor.blacklight,
+              fontFamily: font.Poppins,
+              color: colors.textColor.neutralColor,
               textAlign: 'center',
             }}>
             Enter Your email for verification.
@@ -71,7 +71,7 @@ const EmailConfirmationScreen = ({navigation}: NavigProps<null>) => {
           }}>
           <Text
             style={{
-              fontFamily: GFonts.Poppins,
+              fontFamily: font.Poppins,
               fontSize: 14,
               color: '#A1A1A1',
             }}>
@@ -80,12 +80,13 @@ const EmailConfirmationScreen = ({navigation}: NavigProps<null>) => {
           <TextInput
             value="Gabrail101@gmail.com"
             style={{
-              fontFamily: GFonts.Poppins,
-              backgroundColor: GColors.primaryColor,
+              fontFamily: font.Poppins,
+              backgroundColor: colors.secondaryColor,
               borderRadius: 100,
               fontSize: 14,
               paddingHorizontal: 20,
               height: 56,
+              color: colors.textColor.neutralColor,
             }}
             placeholder="type "
           />
@@ -98,7 +99,7 @@ const EmailConfirmationScreen = ({navigation}: NavigProps<null>) => {
               // handleSubmit();
             }}
             style={{
-              backgroundColor: GColors.secondaryColor,
+              backgroundColor: colors.primaryColor,
               borderRadius: 100,
               height: 56,
               justifyContent: 'center',
@@ -107,7 +108,7 @@ const EmailConfirmationScreen = ({navigation}: NavigProps<null>) => {
             }}>
             <Text
               style={{
-                fontFamily: GFonts.PoppinsSemiBold,
+                fontFamily: font.PoppinsSemiBold,
                 fontSize: 16,
                 color: 'white',
               }}>

@@ -9,12 +9,12 @@ import {
 } from 'react-native';
 import React from 'react';
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
-import {GColors} from '../../styles/GColors';
-import {GFonts} from '../../styles/GFonts';
 import {NavigProps} from '../../interfaces/NaviProps';
 import NormalButton from '../../components/common/NormalButton';
+import {useStyles} from '../../context/ContextApi';
 
 const VerifyEmailScreen = ({navigation}: NavigProps<null>) => {
+  const {colors, font} = useStyles();
   const [pin, setPin] = React.useState('');
   const textInputRef = React.useRef<TextInput>(null);
   const handlePress = () => {
@@ -36,7 +36,7 @@ const VerifyEmailScreen = ({navigation}: NavigProps<null>) => {
     <View
       style={{
         height: '100%',
-        backgroundColor: 'white',
+        backgroundColor: colors.bg,
       }}>
       <BackButtonWithTitle
         navigation={navigation}
@@ -50,8 +50,8 @@ const VerifyEmailScreen = ({navigation}: NavigProps<null>) => {
         titleStyle={{
           fontSize: 24,
           // marginTop: 10,
-          color: GColors.textColor.blackNormal,
-          fontFamily: GFonts.PoppinsSemiBold,
+          color: colors.textColor.secondaryColor,
+          fontFamily: font.PoppinsSemiBold,
         }}
       />
 
@@ -68,8 +68,8 @@ const VerifyEmailScreen = ({navigation}: NavigProps<null>) => {
           <Text
             style={{
               fontSize: 24,
-              fontFamily: GFonts.PoppinsSemiBold,
-              color: GColors.textColor.blackNormal,
+              fontFamily: font.PoppinsSemiBold,
+              color: colors.textColor.secondaryColor,
               textAlign: 'center',
               marginBottom: 16,
             }}>
@@ -78,8 +78,8 @@ const VerifyEmailScreen = ({navigation}: NavigProps<null>) => {
           <Text
             style={{
               fontSize: 14,
-              fontFamily: GFonts.Poppins,
-              color: GColors.textColor.blacklight,
+              fontFamily: font.Poppins,
+              color: colors.textColor.neutralColor,
               textAlign: 'center',
               marginBottom: 31,
               width: '100%',
@@ -97,7 +97,7 @@ const VerifyEmailScreen = ({navigation}: NavigProps<null>) => {
               flexDirection: 'row',
               justifyContent: 'space-between',
               alignItems: 'center',
-              backgroundColor: 'white',
+              backgroundColor: colors.bg,
             }}>
             <Pressable
               onPress={() => handlePress()}
@@ -113,7 +113,7 @@ const VerifyEmailScreen = ({navigation}: NavigProps<null>) => {
                 style={{
                   fontSize: 24,
                   color: '#636363',
-                  fontFamily: GFonts.Poppins,
+                  fontFamily: font.Poppins,
                 }}>
                 {pin[0] ? pin[0] : ''}
               </Text>
@@ -132,7 +132,7 @@ const VerifyEmailScreen = ({navigation}: NavigProps<null>) => {
                 style={{
                   fontSize: 24,
                   color: '#636363',
-                  fontFamily: GFonts.Poppins,
+                  fontFamily: font.Poppins,
                 }}>
                 {pin[1] ? pin[1] : ''}
               </Text>
@@ -151,7 +151,7 @@ const VerifyEmailScreen = ({navigation}: NavigProps<null>) => {
                 style={{
                   fontSize: 24,
                   color: '#636363',
-                  fontFamily: GFonts.Poppins,
+                  fontFamily: font.Poppins,
                 }}>
                 {pin[2] ? pin[2] : ''}
               </Text>
@@ -170,7 +170,7 @@ const VerifyEmailScreen = ({navigation}: NavigProps<null>) => {
                 style={{
                   fontSize: 24,
                   color: '#636363',
-                  fontFamily: GFonts.Poppins,
+                  fontFamily: font.Poppins,
                 }}>
                 {pin[3] ? pin[3] : ''}
               </Text>
@@ -189,7 +189,7 @@ const VerifyEmailScreen = ({navigation}: NavigProps<null>) => {
                 style={{
                   fontSize: 24,
                   color: '#636363',
-                  fontFamily: GFonts.Poppins,
+                  fontFamily: font.Poppins,
                 }}>
                 {pin[4] ? pin[4] : ''}
               </Text>
@@ -208,7 +208,7 @@ const VerifyEmailScreen = ({navigation}: NavigProps<null>) => {
                 style={{
                   fontSize: 24,
                   color: '#636363',
-                  fontFamily: GFonts.Poppins,
+                  fontFamily: font.Poppins,
                 }}>
                 {pin[5] ? pin[5] : ''}
               </Text>
@@ -223,8 +223,8 @@ const VerifyEmailScreen = ({navigation}: NavigProps<null>) => {
           <Text
             style={{
               fontSize: 13,
-              fontFamily: GFonts.Poppins,
-              color: GColors.textColor.blacklight,
+              fontFamily: font.Poppins,
+              color: colors.textColor.light,
               marginTop: 31,
             }}>
             I didn't find confirmation code,{' '}
@@ -237,8 +237,8 @@ const VerifyEmailScreen = ({navigation}: NavigProps<null>) => {
             }}>
             <Text
               style={{
-                color: GColors.secondaryColor,
-                borderBottomColor: GColors.secondaryColor,
+                color: colors.primaryColor,
+                borderBottomColor: colors.primaryColor,
                 borderBottomWidth: 1,
               }}>
               Send Again

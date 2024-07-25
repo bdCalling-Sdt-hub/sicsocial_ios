@@ -1,8 +1,7 @@
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React from 'react';
-import {GColors} from '../../styles/GColors';
-import {GFonts} from '../../styles/GFonts';
 import {NavigProps} from '../../interfaces/NaviProps';
+import {useStyles} from '../../context/ContextApi';
 
 interface VerifyEmailProps {
   routeText?: string;
@@ -11,6 +10,10 @@ interface VerifyEmailProps {
   title?: string;
   marginVertical?: number;
   onPress?: () => void;
+  hight?: number;
+  textSize?: number;
+  outLine?: boolean;
+  width?: string | number;
 }
 
 const NormalButton = ({
@@ -20,25 +23,39 @@ const NormalButton = ({
   title,
   marginVertical,
   onPress,
+  hight,
+  textSize,
+  outLine,
+  width,
 }: VerifyEmailProps) => {
+  const {colors, font} = useStyles();
   return (
     <TouchableOpacity
       onPress={onPress}
       style={{
-        backgroundColor: backGroundColor
+        backgroundColor: outLine
+          ? colors.secondaryColor
+          : backGroundColor
           ? backGroundColor
-          : GColors.secondaryColor,
+          : colors.primaryColor,
         borderRadius: 100,
-        height: 56,
+        borderWidth: outLine ? 1 : 0,
+        borderColor: outLine ? colors.primaryColor : 'white',
+        height: hight ? hight : 56,
         justifyContent: 'center',
         alignItems: 'center',
         marginVertical: marginVertical ? marginVertical : 0,
+        width: width ? width : '100%',
       }}>
       <Text
         style={{
-          fontFamily: GFonts.PoppinsSemiBold,
-          fontSize: 16,
-          color: textColor ? textColor : 'white',
+          fontFamily: font.PoppinsSemiBold,
+          fontSize: textSize ? textSize : 16,
+          color: outLine
+            ? colors.primaryColor
+            : textColor
+            ? textColor
+            : 'white',
         }}>
         {title}
       </Text>

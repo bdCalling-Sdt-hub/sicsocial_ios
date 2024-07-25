@@ -2,8 +2,16 @@
   "migIndex": 1,
   "data": [
     {
+      "path": "src/assets/fonts/BodoniModaSC-Italic-VariableFont.ttf",
+      "sha1": "7170b6054a0483a3b237a3137fa8abeed97c5fc8"
+    },
+    {
+      "path": "src/assets/fonts/BodoniModaSC-VariableFont.ttf",
+      "sha1": "7439a179d4d0fc5a0bfd4143144ca5c571495100"
+    },
+    {
       "path": "src/assets/fonts/OFL.txt",
-      "sha1": "2f96ea445de5dd20c494576a9c227221d214ff95"
+      "sha1": "a27a92fcf979404e5848e642f9b88783848f739d"
     },
     {
       "path": "src/assets/fonts/Poppins-Black.ttf",
@@ -80,6 +88,22 @@
     {
       "path": "src/assets/fonts/ProstoOne-Regular.ttf",
       "sha1": "b18ae80cb7d295f5b5a674abd45e4538d8d6deaf"
+    },
+    {
+      "path": "src/assets/fonts/README.txt",
+      "sha1": "3e522183f8c42f7fba64dfa99afcf9c4f7308605"
+    },
+    {
+      "path": "src/assets/fonts/Rowdies-Bold.ttf",
+      "sha1": "febaeb3ad737aae56f4db17b1303471a305872a5"
+    },
+    {
+      "path": "src/assets/fonts/Rowdies-Light.ttf",
+      "sha1": "c20a32b1a8b59f0f6d167bff53c9eda05fc87976"
+    },
+    {
+      "path": "src/assets/fonts/Rowdies-Regular.ttf",
+      "sha1": "2f7b1ab72139c78cfe7abbd49fab9b1bebf44d57"
     },
     {
       "path": "src/assets/fonts/RussoOne-Regular.ttf",

@@ -13,8 +13,11 @@ import {
   BottomTabBarProps,
 } from '@react-navigation/bottom-tabs';
 import LinearGradient from 'react-native-linear-gradient';
-import {GColors} from '../styles/GColors';
 import HomeScreen from '../screens/home/HomeScreen';
+import {useContextApi, useStyles} from '../context/ContextApi';
+import FriendsScreen from '../screens/friends/FriendsScreen';
+import MassageScreen from '../screens/message/MassageScreen';
+import ProfileScreen from '../screens/profile/ProfileScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -25,7 +28,7 @@ const routeAssets = [
     icon_outline: require('../assets/icons/bottomBar/home_outline.png'),
   },
   {
-    name: 'Users',
+    name: 'Friends',
     icon_fill: require('../assets/icons/bottomBar/add_user_fill.png'),
     icon_outline: require('../assets/icons/bottomBar/add_user_outline.png'),
   },
@@ -46,16 +49,11 @@ const MyTabBar: React.FC<BottomTabBarProps> = ({
   descriptors,
   navigation,
 }) => {
+  const {colors} = useStyles();
+  const {isDark} = useContextApi();
   return (
     <LinearGradient
-      colors={[
-        'rgba(255,255,255,0.0)',
-        'rgba(255,255,255,1)',
-        'rgba(255,255,255,1)',
-        'rgba(255,255,255,1)',
-        'rgba(255,255,255,1)',
-        'rgba(255,255,255,1)',
-      ]}
+      colors={colors.gradient.variantOne}
       style={[
         styles.tabBarContainer,
         {
@@ -126,7 +124,7 @@ const MyTabBar: React.FC<BottomTabBarProps> = ({
             />
             <View
               style={{
-                borderBottomWidth: 3,
+                borderBottomWidth: isFocused ? 3 : 0,
                 borderBottomColor: isFocused ? '#DBB162' : 'white',
               }}
             />
@@ -153,9 +151,9 @@ const BottomBarRoutes: React.FC = () => {
         headerShown: false,
       }}>
       <Tab.Screen name="Home" component={HomeScreen} />
-      <Tab.Screen name="Users" component={HomeScreen} />
-      <Tab.Screen name="Chats" component={HomeScreen} />
-      <Tab.Screen name="UserProfile" component={HomeScreen} />
+      <Tab.Screen name="Friends" component={FriendsScreen} />
+      <Tab.Screen name="Chats" component={MassageScreen} />
+      <Tab.Screen name="UserProfile" component={ProfileScreen} />
 
       {/* Add more Tab.Screen components as needed */}
     </Tab.Navigator>

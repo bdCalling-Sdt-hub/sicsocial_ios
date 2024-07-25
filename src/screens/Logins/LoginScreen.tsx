@@ -8,14 +8,15 @@ import {
 } from 'react-native';
 import React from 'react';
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
-import {GColors} from '../../styles/GColors';
-import {GFonts} from '../../styles/GFonts';
 import {NavigProps} from '../../interfaces/NaviProps';
 
 import Feather from 'react-native-vector-icons/Feather';
 import {Formik} from 'formik';
+import {useStyles} from '../../context/ContextApi';
 
 const LoginScreen = ({navigation}: NavigProps<null>) => {
+  const {colors, font} = useStyles();
+
   const [isShow, setIsShow] = React.useState(false);
   const [check, setCheck] = React.useState(false);
 
@@ -23,7 +24,7 @@ const LoginScreen = ({navigation}: NavigProps<null>) => {
     <View
       style={{
         height: '100%',
-        backgroundColor: 'white',
+        backgroundColor: colors.bg,
       }}>
       <BackButtonWithTitle
         navigation={navigation}
@@ -36,8 +37,8 @@ const LoginScreen = ({navigation}: NavigProps<null>) => {
         titleStyle={{
           fontSize: 24,
           // marginTop: 10,
-          color: GColors.textColor.blackNormal,
-          fontFamily: GFonts.PoppinsSemiBold,
+          color: colors.textColor.secondaryColor,
+          fontFamily: font.PoppinsSemiBold,
         }}
       />
       <ScrollView>
@@ -46,7 +47,7 @@ const LoginScreen = ({navigation}: NavigProps<null>) => {
             style={{
               textAlign: 'center',
               color: '#5C5C5C',
-              fontFamily: GFonts.Poppins,
+              fontFamily: font.Poppins,
             }}>
             Please log in to continue
           </Text>
@@ -71,7 +72,7 @@ const LoginScreen = ({navigation}: NavigProps<null>) => {
                 }}>
                 <Text
                   style={{
-                    fontFamily: GFonts.Poppins,
+                    fontFamily: font.Poppins,
                     fontSize: 14,
                     color: '#A1A1A1',
                   }}>
@@ -80,13 +81,15 @@ const LoginScreen = ({navigation}: NavigProps<null>) => {
                 <TextInput
                   value="Gabrail101@gmail.com"
                   style={{
-                    fontFamily: GFonts.Poppins,
-                    backgroundColor: GColors.primaryColor,
+                    fontFamily: font.Poppins,
+                    backgroundColor: colors.secondaryColor,
                     borderRadius: 100,
                     fontSize: 14,
                     paddingHorizontal: 20,
                     height: 56,
+                    color: colors.textColor.neutralColor,
                   }}
+                  placeholderTextColor={colors.textColor.light}
                   placeholder="type "
                   onChangeText={handleChange('email')}
                   onBlur={handleBlur('email')}
@@ -99,7 +102,7 @@ const LoginScreen = ({navigation}: NavigProps<null>) => {
                 }}>
                 <Text
                   style={{
-                    fontFamily: GFonts.Poppins,
+                    fontFamily: font.Poppins,
                     fontSize: 14,
                     color: '#A1A1A1',
                   }}>
@@ -107,13 +110,15 @@ const LoginScreen = ({navigation}: NavigProps<null>) => {
                 </Text>
                 <TextInput
                   value="Gabrail101@gmail.com"
+                  placeholderTextColor={colors.textColor.light}
                   style={{
-                    fontFamily: GFonts.Poppins,
-                    backgroundColor: GColors.primaryColor,
+                    fontFamily: font.Poppins,
+                    backgroundColor: colors.secondaryColor,
                     borderRadius: 100,
                     fontSize: 14,
                     paddingHorizontal: 20,
                     height: 56,
+                    color: colors.textColor.neutralColor,
                   }}
                   placeholder="type "
                   secureTextEntry={!isShow}
@@ -169,14 +174,14 @@ const LoginScreen = ({navigation}: NavigProps<null>) => {
                     {check && (
                       <Feather
                         name="check"
-                        color={GColors.green['#00C208']}
+                        color={colors.green['#00C208']}
                         size={18}
                       />
                     )}
                   </View>
                   <Text
                     style={{
-                      fontFamily: GFonts.Poppins,
+                      fontFamily: font.Poppins,
                       fontSize: 12,
                       color: '#A1A1A1',
                     }}>
@@ -190,11 +195,11 @@ const LoginScreen = ({navigation}: NavigProps<null>) => {
                   }}>
                   <Text
                     style={{
-                      fontFamily: GFonts.Poppins,
+                      fontFamily: font.Poppins,
                       fontSize: 12,
-                      color: GColors.secondaryColor,
+                      color: colors.primaryColor,
                       borderBottomWidth: 0.4,
-                      borderBottomColor: GColors.secondaryColor,
+                      borderBottomColor: colors.primaryColor,
                       lineHeight: 14,
                     }}>
                     Forgot Password?
@@ -208,7 +213,7 @@ const LoginScreen = ({navigation}: NavigProps<null>) => {
                     navigation?.navigate('HomeRoutes');
                   }}
                   style={{
-                    backgroundColor: GColors.secondaryColor,
+                    backgroundColor: colors.primaryColor,
                     borderRadius: 100,
                     height: 56,
                     justifyContent: 'center',
@@ -217,7 +222,7 @@ const LoginScreen = ({navigation}: NavigProps<null>) => {
                   }}>
                   <Text
                     style={{
-                      fontFamily: GFonts.PoppinsSemiBold,
+                      fontFamily: font.PoppinsSemiBold,
                       fontSize: 16,
                       color: 'white',
                     }}>
@@ -234,7 +239,7 @@ const LoginScreen = ({navigation}: NavigProps<null>) => {
                 }}>
                 <Text
                   style={{
-                    fontFamily: GFonts.Poppins,
+                    fontFamily: font.Poppins,
                     fontSize: 14,
                     color: '#A1A1A1',
                   }}>
@@ -246,7 +251,7 @@ const LoginScreen = ({navigation}: NavigProps<null>) => {
                   }}>
                   <Text
                     style={{
-                      fontFamily: GFonts.PoppinsSemiBold,
+                      fontFamily: font.PoppinsSemiBold,
                       fontSize: 14,
                       color: '#A15C6C',
                     }}>
