@@ -7,8 +7,13 @@ import {SvgXml} from 'react-native-svg';
 import {useStyles} from '../../context/ContextApi';
 import LinearGradient from 'react-native-linear-gradient';
 
-interface IConversationHeaderProps extends NavigProps<null> {}
-const ConversationHeader = ({navigation}: IConversationHeaderProps) => {
+interface IConversationHeaderProps extends NavigProps<null> {
+  optionOnPress?: () => void;
+}
+const ConversationHeader = ({
+  navigation,
+  optionOnPress,
+}: IConversationHeaderProps) => {
   const {colors, font} = useStyles();
   return (
     <LinearGradient
@@ -71,7 +76,7 @@ const ConversationHeader = ({navigation}: IConversationHeaderProps) => {
         </View>
       </View>
 
-      <TouchableOpacity onPress={() => {}}>
+      <TouchableOpacity onPress={optionOnPress}>
         <SvgXml
           xml={`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g clip-path="url(#clip0_854_4542)">

@@ -23,27 +23,32 @@ const friends = [
   {
     id: 1,
     name: 'Amina',
-    img: 'https://s3-alpha-sig.figma.com/img/d067/c913/ad868d019f92ce267e6de23af3413e5b?Expires=1722211200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=pMfG6YS9I8ruMTaTRqegPV9zZCyzJf~VintWAZomMQnoTSOB9r4vUqRwLPv6QY8UI0ayslqETesPz1z608PL7Lar8-2OFbc56ajfs0Cd0~Oj2IqJmrBLGw6KNarGTI7iBGxg70mDxP5kJQQZGT0sYE0Sd02zOzMoEpcyAxxAQUKlAGkTJocs3DSzvA-3CCCfxvT2qe3qytPeU6v8du6tQgae7mnGcqPOah-VRkMnVjpZ5NXf0fHqtpgHVzEbCRbuQBObOqRLrc-89S7ihmEEysndEuAwU~U9bfmvholer8U4ygOM-VmKm4tcibG6THnu35W3dfic90~qZ6PgubDTeA__',
+    img: require('../../assets/tempAssets/3a906b3de8eaa53e14582edf5c918b5d.jpg'),
+    lastMessage: 'Assalamuallikum, how are...',
   },
   {
     id: 2,
     name: 'Arif',
-    img: 'https://s3-alpha-sig.figma.com/img/9716/358a/4005b22a3c1c23d7c04f6c9fdbd85468?Expires=1722211200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=R0fZk1NMkvTlpscVfHGRkuxmA0WPSUHxnjjahouowZtMyO2zTQLVQWtQgO5CV-jIHc4FxwKNAvxQ4kF9MNIVKv3rbY5gasYFGGkWV9iC1RhsHhQsl4cgx4inlsmKWKR8ASralsW4NFtkdgJmeQqj8pzr9lwos2Myau-V8E7Lu~4AdYTnB8tzwMHTXExT5Gq7gNyLO8phSWGKz8ypqApNmXW07JIEEQRgXzwi6LziAmz2K8gwo~tPigEHOV2SBEPmohzZfN7dQMZ14N8381ffBEjZDdnU91StpIrb7ujFkdTZ7D89zp5bLJe0OvJvyytdTMaCgu9jH5KkAkLu6O1VSA__',
+    img: require('../../assets/tempAssets/4005b22a3c1c23d7c04f6c9fdbd85468.jpg'),
+    lastMessage: 'Sir you are great.',
   },
   {
     id: 3,
     name: 'Rahman',
-    img: 'https://s3-alpha-sig.figma.com/img/9986/6959/bdf7eaf41f82746f243dbd6e48280274?Expires=1722211200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=HX3IUfbKT1pMyV2gAuqyw6BHCsIgjv3oU5mGebbHO-NUN5aQ8xzjQg1ik64StQGU83KiAb5dNDn2H67ucbdJL5owREIPgnnB7SUcdmIhwqATJapicXc~9YwihUpyPqX0Dal8olXXiOOyoEuOgTvn2ESQ8Niczdk7HUyRHvg-YPNFB~IMokYDNNbL3Q0Gf7YW5qwz9kvXuHRLRxDOGhM7uluPikOFEc4dwCMXSpRw9gtDRysLCgpw-d8uaNrrycr6wHaj4xmXsMbQK4Ab1o574QhxVNOWI96uSnCeqz7eucLtT4ae48RM~zfw2Fm6KVCZZOzNuItANqsckVKErFFPFQ__',
+    img: require('../../assets/tempAssets/51ad46951bbdc28be4cf7e384964f309.jpg'),
+    lastMessage: 'Brother eid mubarak',
   },
   {
     id: 4,
     name: 'Mithila',
-    img: 'https://s3-alpha-sig.figma.com/img/f6e4/02df/f94d91c8643f6698b126e7dec5854350?Expires=1722211200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=k7v0uQVh16IKwhhv6osti-H5bNgrXgvhzRnK8t6MEh~6evr2xHt424jE0k-6pG07rFxn2nHbasep7JnO4hmcHTETHSxACMhS4NqSFzUStvGLXGJac1dlhOk~SzAfsxlQyg00CW04UfLwlAIvhkxWq9GqNKxD5SdWsQcb~3QuyDJkmDbL~2khOGXOmyyF0LXGN0IQKWnk-lZGAaUi6B3T0RAagiLtLfbfsz5hxKbOaAoORpMikvNh2KEgAzE-WKT-wd-s9ViRstMmwDiLBfutf6c~1DdFtvrbl08ubQQMjOedgB9kvfM4KUaThqYsiR055O~hdNUTmbpceCtn3p335A__',
+    img: require('../../assets/tempAssets/691af02d3a7ca8be2811716f82d9212b.jpg'),
+    lastMessage: 'you: I’m feeling good',
   },
   {
     id: 5,
     name: 'Samina',
-    img: 'https://s3-alpha-sig.figma.com/img/5188/bcdf/33f7c5aeefcef842ee93a1ac6a6adbf2?Expires=1722211200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=PUNxQ~JFdcS4isYPyniSMfTbHWf3xQWusm-s4BPolkLzwvduedhU0H5DpNNQy0Bv5dUrflpN057ed2t9d6k-kvAuHUM4iMWMVfSN2JhZIGiA7NT086HyhzR5TtsqfAPZyFmMR1x2YDUEraBXyx54SQQNij2gYYv9BOEM1loaqtCpCQK4BVSqNm7UTMalsPdMOfZqNfIuopEeUIvPxN6yWmo-3Ft~P9NCgssr-DbDa6rXVPdn-Xi6v-VKX-J6QX8XDU85fynMicraPvh8btHGoyFTelIs9OrOOhWU8xLXldr30N0bFZUGFcmtFwHhAprRY5dSBPxLTXwPzi7Yr6tLTA__',
+    img: require('../../assets/tempAssets/7261c2ae940abab762a6e0130b36b3a9.jpg'),
+    lastMessage: 'you: I’m feeling good',
   },
 ];
 
@@ -51,17 +56,17 @@ const FaceDown = [
   {
     id: 1,
     name: 'Asad Face',
-    img: 'https://s3-alpha-sig.figma.com/img/a963/5111/9298a7b25821b6b5a2ef8104464db1a4?Expires=1722211200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=lNBH6-vX8Uo3rPHZWapkYFBzIL0qKJ9cBRxc~W9GSjQyKr2xeY9ifz9oYdWdT0FobcK-Tx9BRQotPDOwS3Of0lm4ewfAGW4Qc05mwqygaK6q1j9kZKGjHgPOArJ5We~Oza55jWQ4cPS8NFBvj6FNOMFyyb9ASAxPHHxKX99or6Po2zoHQm-L4KS3JJ84YuINCBQi8pJLDvCiOHPGOIZRnjC8zlibDpD6J69aDBs7sOOpjT~1yLY4xfST7lXkYD-6HJLm50vRvFhzuhMstffm0TOKBcPyiUrujsvXo~L4RvXtBO5Uf6EqIB1O-n5bU43UgqaYC73yz0bpEIXn98QT5Q__',
+    img: require('../../assets/tempAssets/face1.jpg'),
   },
   {
     id: 2,
     name: 'Cricket club',
-    img: 'https://s3-alpha-sig.figma.com/img/f1c1/7d5e/4d68c81ba9bf66877ac4f8230081fe0c?Expires=1722211200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=oGcr0K97wQ3MhTQX4oLbQ4P5cnISeUeLYLQ5rlQXWv-cK~B1~ZKb1qbZARsDypCYlGuiVHyOn1jmWSD142DEYANqeCD4Ud-KH858xCvBRwnymOeE3CrT7wAXjyoFn~NqGQqEe0F1Q0J1ZpP~DEAyvU3mibobfE--klTq1fzIQW~4-kJwmQ5KmY913uOSKyuF8VkcQK5eraMrYzFBe4j1KGfRnbaxr~S5h~5~cUSx7mFl1E~dgStVcSbth~RAa0Vqw~14-Z9uCBZw1ReodXrQ0RgC37wnAi6NE8bfMML265U7uuH2ckcAexJHQ3BoVE34bxbZwBpJ78g6Ns4W4I26oQ__',
+    img: require('../../assets/tempAssets/face2.png'),
   },
   {
     id: 3,
     name: 'T20 2024',
-    img: 'https://s3-alpha-sig.figma.com/img/4f46/2122/9d05939f0d46d30b533001f66200dd39?Expires=1722211200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=AchyR3o5rmcHB1xpVUqJlnBpoyDjrOe6H4LoLAB94QW7zbRdPuXI-7gry4M~5a7JI0bzpdfw2ZVYR2FkHLSxLwk3QHlpfsWwZQQUee4QKJtw5Qmnh-riKwUTz2XbUMGCxbrIgvicz79uWS18CaTkkzNksq1FK9pu11Mdt11k9j5ryXqf8ME9UGiapujlz4OdIoursN~8yhs0VC4RQVHmzm0ZBs44YNND75o2EYBOdVtVc1zuqRiYTeVUthfmZsn3gqKb304XTlNwPCDTqmRORXXb6c07O3u0upCI-vDYQwtukrdUq3aNVE00qTcXtDJ2pER-bdiiIV1g41TJczqDmw__',
+    img: require('../../assets/tempAssets/face3.png'),
   },
 ];
 
@@ -430,9 +435,7 @@ const ProfileScreen = ({navigation}: NavigProps<null>) => {
                       borderRadius: 30,
                       resizeMode: 'contain',
                     }}
-                    source={{
-                      uri: item.item.img,
-                    }}
+                    source={item.item.img}
                   />
                 </TouchableOpacity>
                 <Text
@@ -552,9 +555,7 @@ const ProfileScreen = ({navigation}: NavigProps<null>) => {
                       borderRadius: 20,
                       resizeMode: 'stretch',
                     }}
-                    source={{
-                      uri: item.item.img,
-                    }}
+                    source={item.item.img}
                   />
                 </TouchableOpacity>
                 <Text

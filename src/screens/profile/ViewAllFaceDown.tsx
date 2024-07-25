@@ -16,23 +16,21 @@ const MyFaceDown = [
   {
     id: 1,
     name: 'Asad Face',
-    img: 'https://s3-alpha-sig.figma.com/img/a963/5111/9298a7b25821b6b5a2ef8104464db1a4?Expires=1722211200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=lNBH6-vX8Uo3rPHZWapkYFBzIL0qKJ9cBRxc~W9GSjQyKr2xeY9ifz9oYdWdT0FobcK-Tx9BRQotPDOwS3Of0lm4ewfAGW4Qc05mwqygaK6q1j9kZKGjHgPOArJ5We~Oza55jWQ4cPS8NFBvj6FNOMFyyb9ASAxPHHxKX99or6Po2zoHQm-L4KS3JJ84YuINCBQi8pJLDvCiOHPGOIZRnjC8zlibDpD6J69aDBs7sOOpjT~1yLY4xfST7lXkYD-6HJLm50vRvFhzuhMstffm0TOKBcPyiUrujsvXo~L4RvXtBO5Uf6EqIB1O-n5bU43UgqaYC73yz0bpEIXn98QT5Q__',
+    img: require('../../assets/tempAssets/face1.jpg'),
   },
 ];
-
 const FaceDown = [
   {
     id: 2,
     name: 'Cricket club',
-    img: 'https://s3-alpha-sig.figma.com/img/f1c1/7d5e/4d68c81ba9bf66877ac4f8230081fe0c?Expires=1722211200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=oGcr0K97wQ3MhTQX4oLbQ4P5cnISeUeLYLQ5rlQXWv-cK~B1~ZKb1qbZARsDypCYlGuiVHyOn1jmWSD142DEYANqeCD4Ud-KH858xCvBRwnymOeE3CrT7wAXjyoFn~NqGQqEe0F1Q0J1ZpP~DEAyvU3mibobfE--klTq1fzIQW~4-kJwmQ5KmY913uOSKyuF8VkcQK5eraMrYzFBe4j1KGfRnbaxr~S5h~5~cUSx7mFl1E~dgStVcSbth~RAa0Vqw~14-Z9uCBZw1ReodXrQ0RgC37wnAi6NE8bfMML265U7uuH2ckcAexJHQ3BoVE34bxbZwBpJ78g6Ns4W4I26oQ__',
+    img: require('../../assets/tempAssets/face2.png'),
   },
   {
     id: 3,
     name: 'T20 2024',
-    img: 'https://s3-alpha-sig.figma.com/img/4f46/2122/9d05939f0d46d30b533001f66200dd39?Expires=1722211200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=AchyR3o5rmcHB1xpVUqJlnBpoyDjrOe6H4LoLAB94QW7zbRdPuXI-7gry4M~5a7JI0bzpdfw2ZVYR2FkHLSxLwk3QHlpfsWwZQQUee4QKJtw5Qmnh-riKwUTz2XbUMGCxbrIgvicz79uWS18CaTkkzNksq1FK9pu11Mdt11k9j5ryXqf8ME9UGiapujlz4OdIoursN~8yhs0VC4RQVHmzm0ZBs44YNND75o2EYBOdVtVc1zuqRiYTeVUthfmZsn3gqKb304XTlNwPCDTqmRORXXb6c07O3u0upCI-vDYQwtukrdUq3aNVE00qTcXtDJ2pER-bdiiIV1g41TJczqDmw__',
+    img: require('../../assets/tempAssets/face3.png'),
   },
 ];
-
 const ViewAllFaceDown = ({navigation}: NavigProps<null>) => {
   const {colors, font} = useStyles();
   return (
@@ -135,9 +133,7 @@ const ViewAllFaceDown = ({navigation}: NavigProps<null>) => {
                       borderRadius: 20,
                       resizeMode: 'stretch',
                     }}
-                    source={{
-                      uri: item.item.img,
-                    }}
+                    source={item.item.img}
                   />
                 </TouchableOpacity>
                 <Text
@@ -196,9 +192,7 @@ const ViewAllFaceDown = ({navigation}: NavigProps<null>) => {
                       borderRadius: 20,
                       resizeMode: 'stretch',
                     }}
-                    source={{
-                      uri: item.item.img,
-                    }}
+                    source={item.item.img}
                   />
                 </TouchableOpacity>
                 <Text

@@ -275,9 +275,7 @@ const ConversationalCard = ({
                         borderColor: 'white',
                         borderWidth: 2,
                       }}
-                      source={{
-                        uri: 'https://s3-alpha-sig.figma.com/img/ac94/a291/488b4f850f0251fe5ba556fe9da20e2e?Expires=1721606400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=jvqyY37wXUBOJcEy7EXQ8zdp9yDNmY7DqXGHguzffSo8IrFa-TkhBmNgIKzce4E1yoObV~sZOid2Ut2swzyc8uTQeDbcn-~A7PcykFSOiY4J58I9kZnN4dDP6GyWBU9CxHRi0~8Kg-iPyOI5mYvCIeRetxaOprZVfGr3Q-Fy0F2ClSyHwgpGovuVoTJES3vJA~nZLXz5Z-hmUnXqTKquljM6erQRmzx~MfPOtmJJRPW3yvKvqg~vqsmaTuyRuUloUtT5Vv74l4dh2oOdpxIrg0NAu5Wca5Kxm8ND92cjFPi2MUZQr6OXrD90dEU0965XT-qFU3Vvv5-iCXEj5TcvUA__',
-                      }}
+                      source={require('../../assets/tempAssets/book.jpg')}
                     />
                   </View>
                 </>
@@ -304,9 +302,7 @@ const ConversationalCard = ({
                         borderColor: 'white',
                         borderWidth: 2,
                       }}
-                      source={{
-                        uri: 'https://s3-alpha-sig.figma.com/img/7568/3fd5/7261c2ae940abab762a6e0130b36b3a9?Expires=1721606400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=AykSrcYr~WEBIHMW4WezFwp74XIKqwz1DXFJPi-jBgpPa0w-AKmFioPrvXMG08QXjqfFJ7xtZ25idfjkopahkcvMKxIXm4TY4TBZFWD~2ZCGL4jbefjiM0ufmw09012~6B89nl~j6xWjd9ggQilJal8vQ8KUcmdm-KyxNUlAA0yT-JwjW~4Hx9gzTiaI8mXu9SmdrwivuQtAmxDNBHcx0hvDb7l8zrX95Hww4mVqCT-z3AbxnyyzEvIgAivaXFHPvNFXDdOp23QKhDg~zKX5ZObnIYL7uNdvhuAZWiwbKxUOSag8laDRybIo8hjF63zSi6rL9nm7x5pUOleZgtmDfQ__',
-                      }}
+                      source={require('../../assets/tempAssets/4005b22a3c1c23d7c04f6c9fdbd85468.jpg')}
                     />
                   </View>
                 </>
@@ -345,9 +341,7 @@ const ConversationalCard = ({
                         borderColor: 'white',
                         borderWidth: 2,
                       }}
-                      source={{
-                        uri: 'https://s3-alpha-sig.figma.com/img/7568/3fd5/7261c2ae940abab762a6e0130b36b3a9?Expires=1721606400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=AykSrcYr~WEBIHMW4WezFwp74XIKqwz1DXFJPi-jBgpPa0w-AKmFioPrvXMG08QXjqfFJ7xtZ25idfjkopahkcvMKxIXm4TY4TBZFWD~2ZCGL4jbefjiM0ufmw09012~6B89nl~j6xWjd9ggQilJal8vQ8KUcmdm-KyxNUlAA0yT-JwjW~4Hx9gzTiaI8mXu9SmdrwivuQtAmxDNBHcx0hvDb7l8zrX95Hww4mVqCT-z3AbxnyyzEvIgAivaXFHPvNFXDdOp23QKhDg~zKX5ZObnIYL7uNdvhuAZWiwbKxUOSag8laDRybIo8hjF63zSi6rL9nm7x5pUOleZgtmDfQ__',
-                      }}
+                      source={require('../../assets/tempAssets/51ad46951bbdc28be4cf7e384964f309.jpg')}
                     />
                   </View>
                   <View
@@ -410,9 +404,7 @@ const ConversationalCard = ({
                           borderColor: 'white',
                           borderWidth: 2,
                         }}
-                        source={{
-                          uri: 'https://s3-alpha-sig.figma.com/img/d067/c913/ad868d019f92ce267e6de23af3413e5b?Expires=1722211200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=pMfG6YS9I8ruMTaTRqegPV9zZCyzJf~VintWAZomMQnoTSOB9r4vUqRwLPv6QY8UI0ayslqETesPz1z608PL7Lar8-2OFbc56ajfs0Cd0~Oj2IqJmrBLGw6KNarGTI7iBGxg70mDxP5kJQQZGT0sYE0Sd02zOzMoEpcyAxxAQUKlAGkTJocs3DSzvA-3CCCfxvT2qe3qytPeU6v8du6tQgae7mnGcqPOah-VRkMnVjpZ5NXf0fHqtpgHVzEbCRbuQBObOqRLrc-89S7ihmEEysndEuAwU~U9bfmvholer8U4ygOM-VmKm4tcibG6THnu35W3dfic90~qZ6PgubDTeA__',
-                        }}
+                        source={require('../../assets/tempAssets/691af02d3a7ca8be2811716f82d9212b.jpg')}
                       />
                     )}
                   </View>
@@ -449,9 +441,7 @@ const ConversationalCard = ({
                         borderColor: 'white',
                         borderWidth: 2,
                       }}
-                      source={{
-                        uri: 'https://s3-alpha-sig.figma.com/img/7568/3fd5/7261c2ae940abab762a6e0130b36b3a9?Expires=1721606400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=AykSrcYr~WEBIHMW4WezFwp74XIKqwz1DXFJPi-jBgpPa0w-AKmFioPrvXMG08QXjqfFJ7xtZ25idfjkopahkcvMKxIXm4TY4TBZFWD~2ZCGL4jbefjiM0ufmw09012~6B89nl~j6xWjd9ggQilJal8vQ8KUcmdm-KyxNUlAA0yT-JwjW~4Hx9gzTiaI8mXu9SmdrwivuQtAmxDNBHcx0hvDb7l8zrX95Hww4mVqCT-z3AbxnyyzEvIgAivaXFHPvNFXDdOp23QKhDg~zKX5ZObnIYL7uNdvhuAZWiwbKxUOSag8laDRybIo8hjF63zSi6rL9nm7x5pUOleZgtmDfQ__',
-                      }}
+                      source={require('../../assets/tempAssets/7261c2ae940abab762a6e0130b36b3a9.jpg')}
                     />
                   </View>
                   <View
@@ -482,9 +472,7 @@ const ConversationalCard = ({
                         borderColor: 'white',
                         borderWidth: 2,
                       }}
-                      source={{
-                        uri: 'https://s3-alpha-sig.figma.com/img/3d5c/b72f/ae1e058c2ed75ab981a9f8bb62e96a13?Expires=1722211200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=jLVk4o9pF4TeqOoV6dal-2dmplZtYv2Bpb-hXF4aMiRb~HXQjEkUC0VCXl88DEjxnYOB1illOoGLzsFKq6DDz9G2W5NJrdRRnVGg18HjwOfA30g9F2Q9XIr7qhWuuN6h7u7kJKoyfRgN7xn8VssMnZg1G8n3ezbyrnvyAqD62W-CQlvlFjUXyQjVkMQevpvRNbr81nXUMRf5uk75P~agZaNEoy8cmdLKigAxlkG~mTodT4jPGFEB3Y1JjCEVXCq-W-7gnICrmvmL9e2OZ-DHmquJCvsosY8uVYCwflJN7~5hJygfZ9pMJXBxnqgv9bCJ-DQwMaZHekWOdpMErwyw7Q__',
-                      }}
+                      source={require('../../assets/tempAssets/86efa3df337e8c215dd8095476bb6513.jpg')}
                     />
                   </View>
 
@@ -556,9 +544,7 @@ const ConversationalCard = ({
                           borderColor: 'white',
                           borderWidth: 2,
                         }}
-                        source={{
-                          uri: 'https://s3-alpha-sig.figma.com/img/bdc6/db2a/3a906b3de8eaa53e14582edf5c918b5d?Expires=1721606400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=U7P8CfaZR8VN~AB1t4yamhll4GWaFTFOGHWe5KuCLxDNe4~p9UhUbNtg9VA8aaFLDKPmwuByzP7CpTyF1KFHwPwChykfMqAhFl6iJGCErm9vbcCeYixeYDT1QE1JWrVlT5y4YfuzY2H1hH9V0dHwAzKAc8hMALmYPIoMNsqxZICi6T0PjW0ATcq~eeOYXaxtY9S30thVMs3WHidear3kaHFhkU-MO7VCCQVDbjVzVvy~PWSw-QZcZiqNvkC-lm0DLJlzBtuVkjIlOgoW2JTZqVMcaNUau2ybiuv2uIAR~tRoO18JRvqWgC55EfDQZ1lvwk1mAkeoSHqBPHP954d7kQ__',
-                        }}
+                        source={require('../../assets/tempAssets/ad868d019f92ce267e6de23af3413e5b.jpg')}
                       />
                     )}
                   </View>
@@ -597,9 +583,7 @@ const ConversationalCard = ({
                         borderColor: 'white',
                         borderWidth: 2,
                       }}
-                      source={{
-                        uri: 'https://s3-alpha-sig.figma.com/img/3d5c/b72f/ae1e058c2ed75ab981a9f8bb62e96a13?Expires=1722211200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=jLVk4o9pF4TeqOoV6dal-2dmplZtYv2Bpb-hXF4aMiRb~HXQjEkUC0VCXl88DEjxnYOB1illOoGLzsFKq6DDz9G2W5NJrdRRnVGg18HjwOfA30g9F2Q9XIr7qhWuuN6h7u7kJKoyfRgN7xn8VssMnZg1G8n3ezbyrnvyAqD62W-CQlvlFjUXyQjVkMQevpvRNbr81nXUMRf5uk75P~agZaNEoy8cmdLKigAxlkG~mTodT4jPGFEB3Y1JjCEVXCq-W-7gnICrmvmL9e2OZ-DHmquJCvsosY8uVYCwflJN7~5hJygfZ9pMJXBxnqgv9bCJ-DQwMaZHekWOdpMErwyw7Q__ ',
-                      }}
+                      source={require('../../assets/tempAssets/ae1e058c2ed75ab981a9f8bb62e96a13.jpg')}
                     />
                   </View>
                   <View
@@ -633,9 +617,7 @@ const ConversationalCard = ({
                         borderColor: 'white',
                         borderWidth: 2,
                       }}
-                      source={{
-                        uri: 'https://s3-alpha-sig.figma.com/img/5fc3/1b93/51ad46951bbdc28be4cf7e384964f309?Expires=1722211200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=FJKQ4JDHq7fDtJt6jEsH7glxmDccJ5HatfcwiFw3TbVa-VN~8rkANOPPr5pIkHLoKZiOcpDH6raOnLcsP6CGAU3OUFf~i44uGB6LtF6iHJJdKMpiqZ1qlkMDdIjFQeUnxxad9bY8-9GP2FEJcVsVGytftI1EbO6S2nsTALArS5x8XkZ3IIhPtchbqrRkeJp4B47ShM-fnm-Z0zvb3oQB8nG1y8h~TJ1R2zLFr1kQjdjUt9KEpAdOVLSEJhmeGLcacSYi5KufaCprhJ86VA8htXlsYf5KvEgBb2O9k0gr1hTHR3ODYi3~t8J0OdLYYyQUx19taYJgeTXiFQpKLgZ~~g__',
-                      }}
+                      source={require('../../assets/tempAssets/bdf7eaf41f82746f243dbd6e48280274.jpg')}
                     />
                   </View>
                   <View
@@ -669,9 +651,7 @@ const ConversationalCard = ({
                         borderColor: 'white',
                         borderWidth: 2,
                       }}
-                      source={{
-                        uri: 'https://s3-alpha-sig.figma.com/img/7568/3fd5/7261c2ae940abab762a6e0130b36b3a9?Expires=1721606400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=AykSrcYr~WEBIHMW4WezFwp74XIKqwz1DXFJPi-jBgpPa0w-AKmFioPrvXMG08QXjqfFJ7xtZ25idfjkopahkcvMKxIXm4TY4TBZFWD~2ZCGL4jbefjiM0ufmw09012~6B89nl~j6xWjd9ggQilJal8vQ8KUcmdm-KyxNUlAA0yT-JwjW~4Hx9gzTiaI8mXu9SmdrwivuQtAmxDNBHcx0hvDb7l8zrX95Hww4mVqCT-z3AbxnyyzEvIgAivaXFHPvNFXDdOp23QKhDg~zKX5ZObnIYL7uNdvhuAZWiwbKxUOSag8laDRybIo8hjF63zSi6rL9nm7x5pUOleZgtmDfQ__',
-                      }}
+                      source={require('../../assets/tempAssets/f94d91c8643f6698b126e7dec5854350.jpg')}
                     />
                   </View>
                   <View
@@ -705,9 +685,7 @@ const ConversationalCard = ({
                         borderColor: 'white',
                         borderWidth: 2,
                       }}
-                      source={{
-                        uri: 'https://s3-alpha-sig.figma.com/img/d067/c913/ad868d019f92ce267e6de23af3413e5b?Expires=1722211200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=pMfG6YS9I8ruMTaTRqegPV9zZCyzJf~VintWAZomMQnoTSOB9r4vUqRwLPv6QY8UI0ayslqETesPz1z608PL7Lar8-2OFbc56ajfs0Cd0~Oj2IqJmrBLGw6KNarGTI7iBGxg70mDxP5kJQQZGT0sYE0Sd02zOzMoEpcyAxxAQUKlAGkTJocs3DSzvA-3CCCfxvT2qe3qytPeU6v8du6tQgae7mnGcqPOah-VRkMnVjpZ5NXf0fHqtpgHVzEbCRbuQBObOqRLrc-89S7ihmEEysndEuAwU~U9bfmvholer8U4ygOM-VmKm4tcibG6THnu35W3dfic90~qZ6PgubDTeA__',
-                      }}
+                      source={require('../../assets/tempAssets/ad868d019f92ce267e6de23af3413e5b.jpg')}
                     />
                   </View>
                 </View>

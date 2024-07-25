@@ -90,9 +90,7 @@ const FriendCard = ({
                   borderWidth: 1,
                   borderColor: colors.textColor.white,
                 }}
-                source={{
-                  uri: item?.image,
-                }}
+                source={item?.image}
               />
             </View>
             <Text

@@ -1,6 +1,7 @@
 import {
   Easing,
   Image,
+  Keyboard,
   StyleSheet,
   Text,
   TextInput,
@@ -8,7 +9,7 @@ import {
   useWindowDimensions,
   View,
 } from 'react-native';
-import React, {Dispatch, SetStateAction} from 'react';
+import React, {Dispatch, SetStateAction, useEffect} from 'react';
 import Animated, {
   interpolate,
   useAnimatedStyle,
@@ -76,6 +77,7 @@ interface ConversationCarousalProps extends NavigProps<null> {
   record?: boolean;
   onSendTextMessage?: () => void;
   setTextMessage?: Dispatch<SetStateAction<string>>;
+  setImageAssets?: Dispatch<SetStateAction<any>>;
 }
 
 const ConversationCarousal = ({
@@ -90,6 +92,7 @@ const ConversationCarousal = ({
   type,
   onSendTextMessage,
   setTextMessage,
+  setImageAssets,
 }: ConversationCarousalProps) => {
   const absoluteData = [];
 
@@ -125,12 +128,12 @@ const ConversationCarousal = ({
   const [activeIndexBigButton, setActiveIndexBigButton] = React.useState(0);
   const [recordOn, setRecordOn] = React.useState(false);
   const [recordOnDone, setRecordOnDone] = React.useState(false);
-  const [imageAssets, setImageAssets] = React.useState<any>({});
+
   const textInputRef = React.useRef<TextInput>(null);
 
   const letsBorderAnimationValue = useSharedValue(23);
 
-  const itemSize = 80;
+  const itemSize = 100;
   const centerOffset = width / 2 - itemSize / 2;
 
   const letsBorderAnimationValueStyle = useAnimatedStyle(() => {
@@ -151,7 +154,7 @@ const ConversationCarousal = ({
         });
 
         if (!result.didCancel) {
-          setImageAssets(result?.assets![0].uri);
+          setImageAssets && setImageAssets(result?.assets![0].uri);
           // console.log(result);
         }
       }
@@ -165,7 +168,7 @@ const ConversationCarousal = ({
         });
 
         if (!result.didCancel) {
-          setImageAssets(result?.assets![0].uri);
+          setImageAssets && setImageAssets(result?.assets![0].uri);
           // console.log(result);
         }
       }
@@ -189,7 +192,7 @@ const ConversationCarousal = ({
       //   [-2, -2, -1, 0, 1, 2],
       //   [30, 40, 50, 0, -50, -40],
       // );
-      const itemGap = interpolate(value, [-2, -1, 0, 1], [40, 50, 0, -50]);
+      const itemGap = interpolate(value, [-2, -1, 0, 1], [40, 30, 0, -30]);
       // const itemGap = interpolate(value, [-1, 0, 1], [50, 0, -50]);
 
       // const translateX =
@@ -232,6 +235,12 @@ const ConversationCarousal = ({
     [centerOffset],
   );
 
+  useEffect(() => {
+    setTimeout(() => {
+      textInputRef.current?.focus();
+    }, 100);
+  }, [textInputModal]);
+
   return (
     <>
       <Carousel
@@ -239,8 +248,9 @@ const ConversationCarousal = ({
         height={itemSize}
         style={{
           width: width,
-          height: height * 0.121,
+          height: height * 0.158,
           alignItems: 'center',
+          // paddingVertical: 10,
         }}
         loop
         snapEnabled
@@ -289,8 +299,6 @@ const ConversationCarousal = ({
               }
               if (item.name === 'Type a message') {
                 setTextInputModal(!textInputModal);
-
-                setConversationalModal(false);
               }
               if (item.name === 'Join your room') {
               }
@@ -402,7 +410,7 @@ const ConversationCarousal = ({
                       },
                     ]}>
                     <AnimatedCircularProgress
-                      size={100}
+                      size={95}
                       width={6}
                       rotation={10}
                       fill={100}
@@ -499,6 +507,7 @@ const ConversationCarousal = ({
           <TouchableOpacity
             onPress={() => {
               handleImagePick('camera');
+              setImageModal(!imageModal);
             }}
             style={{
               paddingVertical: 5,
@@ -515,6 +524,7 @@ const ConversationCarousal = ({
           <TouchableOpacity
             onPress={() => {
               handleImagePick('library');
+              setImageModal(!imageModal);
             }}
             style={{
               paddingVertical: 5,

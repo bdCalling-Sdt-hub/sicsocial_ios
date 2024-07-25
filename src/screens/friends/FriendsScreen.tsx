@@ -20,8 +20,7 @@ const data = [
   {
     id: 1,
     name: 'Mithila',
-    image:
-      'https://s3-alpha-sig.figma.com/img/f6e4/02df/f94d91c8643f6698b126e7dec5854350?Expires=1721606400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=cz4Qczd8u0VDld~tiTdDzpKyOyxcx0QKLi091Vwp7yLsWKwyX0kwvBwFi3CE~mjA1B7~52uARqrujtEPoas1jL07XHeld9MAk-bvMtOR199vh~BxYYw9hY0-XMtCz8NOw-gemuWJpZqKNq2B71gEBIZh5TR4A1VFtOFZwwVP5KaJVlrWAyXCv384mXBcpTrsSICu768Vjcu65nYevf9JiULhGtrft9MZdYjncJo5QIc1Dq~dnjWcEKfIUFTt8YItfJfxDEWxrPmLzv2uG3UjAP16rEmEsmOdNgJlbmHEqu0jB2fxIpTX2woIB75iUqgnTLjpjgxtwp-5PgStdX7P3Q__',
+    image: require('../../assets/tempAssets/3a906b3de8eaa53e14582edf5c918b5d.jpg'),
     status: 'active',
     distance: '2.5 km away',
     lastSeen: '5 minutes ago',
@@ -29,16 +28,14 @@ const data = [
   {
     id: 2,
     name: 'Jane Smith',
-    image:
-      'https://s3-alpha-sig.figma.com/img/7568/3fd5/7261c2ae940abab762a6e0130b36b3a9?Expires=1721606400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=AykSrcYr~WEBIHMW4WezFwp74XIKqwz1DXFJPi-jBgpPa0w-AKmFioPrvXMG08QXjqfFJ7xtZ25idfjkopahkcvMKxIXm4TY4TBZFWD~2ZCGL4jbefjiM0ufmw09012~6B89nl~j6xWjd9ggQilJal8vQ8KUcmdm-KyxNUlAA0yT-JwjW~4Hx9gzTiaI8mXu9SmdrwivuQtAmxDNBHcx0hvDb7l8zrX95Hww4mVqCT-z3AbxnyyzEvIgAivaXFHPvNFXDdOp23QKhDg~zKX5ZObnIYL7uNdvhuAZWiwbKxUOSag8laDRybIo8hjF63zSi6rL9nm7x5pUOleZgtmDfQ__',
+    image: require('../../assets/tempAssets/4005b22a3c1c23d7c04f6c9fdbd85468.jpg'),
     status: 'active',
     distance: '3.2 km away',
   },
   {
     id: 3,
     name: 'Mike Johnson',
-    image:
-      'https://s3-alpha-sig.figma.com/img/232a/14a1/9c4d361cb9f54e38261e75afcd23b9b1?Expires=1721606400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=ZLPs-zutgw9XEVkqkH3AD0ZdZH7gULFeRdEzAHMyZrIBlQLWiGXPxqhj1mphCvDyzfNhgsxeGdLM6P~pbNviUtDFKjU3gE8cVmJMgyklqS5V1ZD58vHt~YIL7Sup55jaPGOduoQoNhBC4qBr9Le5wI7o7rZZ2LOShyQw45t8W52NY~826X0BbUOE0y6lryrch-zxntX0wxHom9nz5qdplP~FvPWiKSwYnPh~f~3gQ2xBtdPAeqbRfLx4lUIyM6NV2c1W2tDQvIrnfkBRlUjMRVLR0Sis3pf5NNmHUHy953Q54xPJDvCjsIa4JnVn5RS3Hds3oq~JjHQyNWaktcCi3Q__',
+    image: require('../../assets/tempAssets/691af02d3a7ca8be2811716f82d9212b.jpg'),
     status: 'active',
     distance: '4.5 km away',
   },
