@@ -44,6 +44,51 @@ const friends = [
     name: 'Samina',
     img: require('../../assets/tempAssets/7261c2ae940abab762a6e0130b36b3a9.jpg'),
     lastMessage: 'you: I’m feeling good',
+    group: false,
+  },
+];
+const Conversations = [
+  {
+    id: 1,
+    name: 'Amina',
+    img: require('../../assets/tempAssets/3a906b3de8eaa53e14582edf5c918b5d.jpg'),
+    lastMessage: 'Assalamuallikum, how are...',
+    group: false,
+  },
+  {
+    id: 2,
+    name: 'Arif',
+    img: require('../../assets/tempAssets/4005b22a3c1c23d7c04f6c9fdbd85468.jpg'),
+    lastMessage: 'Sir you are great.',
+    group: false,
+  },
+  {
+    id: 40,
+    name: 'Nadir Mithila Khusi Asad',
+    img: require('../../assets/tempAssets/4005b22a3c1c23d7c04f6c9fdbd85468.jpg'),
+    lastMessage: 'Replied to Khusi aktar',
+    group: true,
+  },
+  {
+    id: 3,
+    name: 'Rahman',
+    img: require('../../assets/tempAssets/51ad46951bbdc28be4cf7e384964f309.jpg'),
+    lastMessage: 'Brother eid mubarak',
+    group: false,
+  },
+  {
+    id: 4,
+    name: 'Mithila',
+    img: require('../../assets/tempAssets/691af02d3a7ca8be2811716f82d9212b.jpg'),
+    lastMessage: 'you: I’m feeling good',
+    group: false,
+  },
+  {
+    id: 5,
+    name: 'Samina',
+    img: require('../../assets/tempAssets/7261c2ae940abab762a6e0130b36b3a9.jpg'),
+    lastMessage: 'you: I’m feeling good',
+    group: false,
   },
 ];
 
@@ -186,6 +231,7 @@ const MassageScreen = ({navigation}: NavigProps<null>) => {
                     right: 0,
                     zIndex: +1,
                     bottom: 5,
+                    elevation: 2,
                   }}
                 />
                 <Image
@@ -194,6 +240,8 @@ const MassageScreen = ({navigation}: NavigProps<null>) => {
                     height: 65,
                     borderRadius: 30,
                     resizeMode: 'contain',
+                    borderColor: 'rgba(255,255,255,1)',
+                    borderWidth: 2,
                   }}
                   source={item.item.img}
                 />
@@ -221,18 +269,22 @@ const MassageScreen = ({navigation}: NavigProps<null>) => {
           paddingBottom: 25,
           paddingTop: 15,
         }}
-        data={friends}
+        data={Conversations}
         renderItem={item => (
           <>
             <MessageCard
               onPress={() => {
-                navigation?.navigate('NormalConversation');
+                if (item?.item.group) {
+                  navigation?.navigate('GroupConversation');
+                } else {
+                  navigation?.navigate('NormalConversation');
+                }
               }}
               img={item.item.img}
               lastMessage={item.item?.lastMessage}
               lastTime="9:51 am"
               name={item.item.name}
-              people="one"
+              people={item.item.group ? 'two' : 'one'}
             />
           </>
         )}
@@ -307,6 +359,7 @@ const MassageScreen = ({navigation}: NavigProps<null>) => {
           <TouchableOpacity
             onPress={() => {
               setModalVisible(false);
+
               navigation?.navigate('FriendsProfile');
             }}
             style={{

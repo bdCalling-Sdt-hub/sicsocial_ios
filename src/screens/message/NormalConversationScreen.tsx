@@ -23,15 +23,16 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-interface messagePros {
+export interface messagePros {
   id: number;
   text?: string;
   createdAt?: Date;
+  bookImage?: string;
   image?: string | null;
   user: {
     _id: number;
     name: string;
-    avatar: string | null;
+    avatar: string;
   };
 }
 
@@ -125,9 +126,10 @@ const NormalConversationScreen = ({navigation}: NavigProps<null>) => {
     //   },
     // },
   ]);
+
   const [volume, setVolume] = React.useState<number>(1);
   const [newMessages, setNewMessages] = React.useState<string>('');
-  const [newImage, setNewImage] = React.useState<string>();
+  const [newImage, setNewImage] = React.useState<string>('');
   const [modalVisible, setModalVisible] = React.useState(false);
   const [confirmationModal, setConfirmationModal] = React.useState(false);
 
@@ -142,6 +144,10 @@ const NormalConversationScreen = ({navigation}: NavigProps<null>) => {
       opacity: animateOpacity.value,
     };
   });
+  console.log(messages);
+  console.log(messages.length);
+
+  const currentUser = messages.find(message => message.user._id === 1)?.user;
 
   return (
     <View
@@ -156,6 +162,21 @@ const NormalConversationScreen = ({navigation}: NavigProps<null>) => {
         }}
       />
       <ConversationHeader
+        icon={`<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_527_1901)">
+<path d="M13.5058 2.90655C12.7431 2.08066 11.8041 1.43713 10.7587 1.02372C9.71324 0.610321 8.58811 0.43766 7.46681 0.518554C5.55516 0.679892 3.77507 1.55762 2.48319 2.97588C1.19131 4.39414 0.483045 6.24819 0.500308 8.16655V15.0001C0.500283 15.0989 0.529579 15.1956 0.584491 15.2778C0.639403 15.3601 0.717465 15.4242 0.808808 15.4621C0.869474 15.4873 0.934581 15.5003 1.00031 15.5001C1.13291 15.5 1.26006 15.4473 1.35381 15.3536L2.53581 14.1721C2.68001 14.0312 2.86983 13.9465 3.071 13.9333C3.27217 13.9201 3.47143 13.9792 3.63281 14.1001C5.14317 15.1854 7.00292 15.6708 8.85104 15.4621C10.6992 15.2534 12.4038 14.3654 13.6341 12.9706C14.8644 11.5758 15.5325 9.77358 15.5088 7.91386C15.4851 6.05414 14.7712 4.26957 13.5058 2.90655ZM14.4268 8.99305C14.2575 10.0909 13.8096 11.1271 13.1259 12.0026C12.4422 12.8782 11.5455 13.5639 10.5215 13.9943C9.49741 14.4248 8.38011 14.5856 7.27621 14.4614C6.17231 14.3373 5.11866 13.9323 4.21581 13.2851C3.89704 13.0548 3.51403 12.9305 3.12081 12.9296C2.88078 12.9292 2.64304 12.9763 2.4213 13.0682C2.19956 13.1601 1.9982 13.295 1.82881 13.4651L1.50031 13.7931V8.16655C1.48243 6.50123 2.09445 4.89065 3.21377 3.65747C4.3331 2.42429 5.87704 1.65958 7.53631 1.51655C8.51056 1.44725 9.48791 1.59824 10.3958 1.95832C11.3037 2.31841 12.1189 2.87833 12.7808 3.59655C13.4428 4.31476 13.9344 5.17282 14.2194 6.10705C14.5043 7.04128 14.5752 8.02768 14.4268 8.99305Z" fill="#DBB162"/>
+<rect x="4.66699" y="6" width="1.33333" height="3.33333" rx="0.666667" fill="#DBB162"/>
+<rect x="7.33398" y="4" width="1.33333" height="7.33333" rx="0.666667" fill="#DBB162"/>
+<rect x="10" y="5.33337" width="1.33333" height="4.66667" rx="0.666667" fill="#DBB162"/>
+</g>
+<defs>
+<clipPath id="clip0_527_1901">
+<rect width="16" height="16" fill="white"/>
+</clipPath>
+</defs>
+</svg>
+`}
+        title="Voice Message"
         optionOnPress={() => {
           setModalVisible(true);
         }}
@@ -166,7 +187,7 @@ const NormalConversationScreen = ({navigation}: NavigProps<null>) => {
         style={[
           {
             paddingHorizontal: 15,
-            backgroundColor: 'white',
+            backgroundColor: colors.bg,
             width: '100%',
             paddingVertical: 10,
             position: 'absolute',
@@ -252,9 +273,9 @@ const NormalConversationScreen = ({navigation}: NavigProps<null>) => {
           height: height * 0.6,
         }}
         onContentSizeChange={(w: number, h: number) => {
-          console.log(height * 0.6);
+          // console.log(height * 0.6);
           if (height * 0.7 < h) {
-            animatePosition.value = withTiming(-(height * 0.07), {
+            animatePosition.value = withTiming(-(height * 0.3), {
               duration: 500,
             });
           }
@@ -269,20 +290,49 @@ const NormalConversationScreen = ({navigation}: NavigProps<null>) => {
                 paddingHorizontal: 15,
               }}>
               {/* create card  */}
-              {item.item.user._id === 1 ? (
+
+              <View
+                style={{
+                  alignItems:
+                    item.item.user._id === currentUser?._id
+                      ? 'flex-end'
+                      : 'flex-start',
+                  marginTop: 20,
+                }}>
                 <View
                   style={{
-                    alignItems: 'flex-end',
-                    marginTop: 20,
+                    borderRadius: 10,
+                    paddingHorizontal: 10,
+                    paddingVertical: 10,
+                    maxWidth: '90%',
+                    minWidth: '50%',
+                    backgroundColor:
+                      item.item.user._id === currentUser?._id
+                        ? colors.secondaryColor
+                        : colors.redisExtraLight,
+                    flexDirection: 'row',
                   }}>
+                  {item.item.user._id !== currentUser?._id && (
+                    <View>
+                      <Image
+                        source={item.item.user.avatar}
+                        style={{
+                          width: 45,
+                          height: 45,
+                          borderRadius: 50,
+                        }}
+                      />
+                    </View>
+                  )}
+
                   <View
                     style={{
                       borderRadius: 10,
                       paddingHorizontal: 10,
-                      paddingVertical: 10,
+                      // paddingVertical: 2,
                       maxWidth: '90%',
                       minWidth: '50%',
-                      backgroundColor: colors.secondaryColor,
+                      // backgroundColor: colors.redisExtraLight,
                       gap: 15,
                     }}>
                     <View
@@ -291,11 +341,20 @@ const NormalConversationScreen = ({navigation}: NavigProps<null>) => {
                         borderRadius: 10,
                         paddingHorizontal: 10,
                         paddingVertical: 5,
-                        alignItems: 'flex-end',
+                        alignItems:
+                          item.item.user._id === currentUser?._id
+                            ? 'flex-end'
+                            : 'flex-start',
                       }}>
-                      <View style={{alignItems: 'flex-end'}}>
-                        <View style={{}}>
-                          {item.item.image && (
+                      <View style={{alignItems: 'flex-end', gap: 10}}>
+                        {item.item.image && (
+                          <View
+                            style={{
+                              backgroundColor: colors.bg,
+                              elevation: 2,
+                              height: 150,
+                              borderRadius: 15,
+                            }}>
                             <Image
                               source={{uri: item.item.image}}
                               style={{
@@ -306,97 +365,55 @@ const NormalConversationScreen = ({navigation}: NavigProps<null>) => {
                                 borderRadius: 15,
                               }}
                             />
-                          )}
-                        </View>
-                        <Text
-                          style={{
-                            fontSize: 14,
-                            color: colors.textColor.secondaryColor,
-                            fontFamily: font.Poppins,
-                            maxWidth: width * 0.65,
-                          }}>
-                          {item.item.text}
-                        </Text>
-                      </View>
-                    </View>
-                  </View>
-                </View>
-              ) : (
-                <View
-                  style={{
-                    alignItems: 'flex-start',
-                    marginTop: 20,
-                  }}>
-                  <View
-                    style={{
-                      borderRadius: 10,
-                      paddingHorizontal: 10,
-                      paddingVertical: 10,
-                      maxWidth: '90%',
-                      minWidth: '50%',
-                      backgroundColor: colors.redisExtraLight,
-                      flexDirection: 'row',
-                    }}>
-                    <View>
-                      <Image
-                        source={{
-                          uri: `https://s3-alpha-sig.figma.com/img/7568/3fd5/7261c2ae940abab762a6e0130b36b3a9?Expires=1721606400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=AykSrcYr~WEBIHMW4WezFwp74XIKqwz1DXFJPi-jBgpPa0w-AKmFioPrvXMG08QXjqfFJ7xtZ25idfjkopahkcvMKxIXm4TY4TBZFWD~2ZCGL4jbefjiM0ufmw09012~6B89nl~j6xWjd9ggQilJal8vQ8KUcmdm-KyxNUlAA0yT-JwjW~4Hx9gzTiaI8mXu9SmdrwivuQtAmxDNBHcx0hvDb7l8zrX95Hww4mVqCT-z3AbxnyyzEvIgAivaXFHPvNFXDdOp23QKhDg~zKX5ZObnIYL7uNdvhuAZWiwbKxUOSag8laDRybIo8hjF63zSi6rL9nm7x5pUOleZgtmDfQ__`,
-                        }}
-                        style={{
-                          width: 45,
-                          height: 45,
-                          borderRadius: 50,
-                        }}
-                      />
-                    </View>
-                    <View
-                      style={{
-                        borderRadius: 10,
-                        paddingHorizontal: 10,
-                        paddingVertical: 10,
-                        maxWidth: '90%',
-                        minWidth: '50%',
-                        backgroundColor: colors.redisExtraLight,
-                        gap: 15,
-                      }}>
-                      <View
-                        style={{
-                          // backgroundColor: colors.redisExtraLight,
-                          borderRadius: 10,
-                          paddingHorizontal: 10,
-                          paddingVertical: 5,
-                          alignItems: 'flex-end',
-                        }}>
-                        <View style={{}}>
-                          <View style={{}}>
-                            {item.item.image && (
-                              <Image
-                                source={item.item.image}
-                                style={{
-                                  marginBottom: 20,
-                                  aspectRatio: 1,
-
-                                  height: 150,
-                                  borderRadius: 15,
-                                }}
-                              />
-                            )}
                           </View>
+                        )}
+
+                        {item.item.text && (
                           <Text
                             style={{
                               fontSize: 14,
                               color: colors.textColor.secondaryColor,
                               fontFamily: font.Poppins,
                               maxWidth: width * 0.65,
+                              textAlign:
+                                item.item.user._id === currentUser?._id
+                                  ? 'right'
+                                  : 'left',
                             }}>
                             {item.item.text}
                           </Text>
-                        </View>
+                        )}
+
+                        {item.item.bookImage && (
+                          <View
+                            style={{
+                              backgroundColor: colors.bg,
+                              elevation: 2,
+                              // height: 192,
+                              borderColor: colors.bg,
+
+                              borderRadius: 15,
+                            }}>
+                            <Image
+                              resizeMode="stretch"
+                              source={{uri: item.item.bookImage}}
+                              style={{
+                                // marginBottom: 20,
+                                // aspectRatio: 1,
+
+                                width: 150,
+
+                                height: 190,
+                                borderRadius: 15,
+                              }}
+                            />
+                          </View>
+                        )}
                       </View>
                     </View>
                   </View>
                 </View>
-              )}
+              </View>
             </View>
           );
         }}
@@ -414,24 +431,11 @@ const NormalConversationScreen = ({navigation}: NavigProps<null>) => {
           type
           record
           books
+          // ImageLink={newImage}
+          setMessages={setMessages}
+          messages={messages}
           setImageAssets={setNewImage}
-          onSendImageMessage={() => {
-            console.log('ok');
-            setMessages([
-              ...messages,
-              {
-                id: messages.length + 1,
-                text: newMessages,
-                createdAt: new Date(),
-                image: newImage,
-                user: {
-                  _id: 1,
-                  name: 'Amina',
-                  avatar: require('../../assets/tempAssets/3a906b3de8eaa53e14582edf5c918b5d.jpg'),
-                },
-              },
-            ]);
-          }}
+          onSendImageMessage={() => {}}
           setTextMessage={setNewMessages}
           onSendTextMessage={() => {
             setMessages([
@@ -441,7 +445,7 @@ const NormalConversationScreen = ({navigation}: NavigProps<null>) => {
 
                 text: newMessages,
                 createdAt: new Date(),
-                image: newImage,
+
                 user: {
                   _id: 1,
                   name: 'Amina',

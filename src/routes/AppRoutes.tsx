@@ -45,6 +45,8 @@ import MyAllFriends from '../screens/profile/MyAllFriends';
 import ViewAllFaceDown from '../screens/profile/ViewAllFaceDown';
 import MakeGroupScreen from '../screens/message/MakeGroupScreen';
 import NormalConversationScreen from '../screens/message/NormalConversationScreen';
+import GroupConversationScreen from '../screens/message/GroupConversationScreen';
+import LiveConversationScreen from '../screens/message/LiveConversationScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -160,8 +162,22 @@ const Routes = () => {
           />
 
           <Stack.Screen
+            name="GroupConversation"
+            component={GroupConversationScreen}
+            options={{
+              animation: 'slide_from_right',
+            }}
+          />
+          <Stack.Screen
             name="NormalConversation"
             component={NormalConversationScreen}
+            options={{
+              animation: 'slide_from_right',
+            }}
+          />
+          <Stack.Screen
+            name="LiveConversation"
+            component={LiveConversationScreen}
             options={{
               animation: 'slide_from_right',
             }}

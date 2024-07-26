@@ -42,6 +42,7 @@ import Carousel, {
 } from 'react-native-reanimated-carousel';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import {AnimatedCircularProgress} from 'react-native-circular-progress';
+import NormalButton from '../../components/common/NormalButton';
 
 const data = [
   {
@@ -116,6 +117,7 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
   const [conversationalModal, setConversationalModal] = React.useState(false);
   const [imageModal, setImageModal] = React.useState(false);
   const [textInputModal, setTextInputModal] = React.useState(false);
+  const [liveModal, setLiveModal] = React.useState(false);
   const [activeIndex, setActiveIndex] = React.useState(0);
   const [activeIndexBigButton, setActiveIndexBigButton] = React.useState(0);
   const [recordOn, setRecordOn] = React.useState(false);
@@ -823,6 +825,8 @@ is recognize for SIC "
                       setConversationalModal(false);
                     }
                     if (item.name === 'Join your room') {
+                      setConversationalModal(false);
+                      setLiveModal(!liveModal);
                     }
                     if (item.name === 'New Face Dwn') {
                     }
@@ -1118,6 +1122,129 @@ is recognize for SIC "
             </TouchableOpacity>
           </View>
         </View>
+      </ModalOfBottom>
+      <ModalOfBottom
+        modalVisible={liveModal}
+        setModalVisible={setLiveModal}
+        onlyTopRadius={20}
+        height={'60%'}
+        containerColor={colors.bg}>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{
+            gap: 25,
+          }}>
+          <Text
+            style={{
+              fontFamily: font.PoppinsSemiBold,
+              fontSize: 20,
+              color: colors.textColor.secondaryColor,
+              // marginBottom: 10,
+            }}>
+            Live setup
+          </Text>
+          <View
+            style={{
+              backgroundColor: colors.gray.variant,
+              paddingHorizontal: 20,
+              paddingVertical: 10,
+              borderRadius: 50,
+              flexDirection: 'row',
+              gap: 15,
+            }}>
+            <Image
+              style={{
+                width: 24,
+                height: 24,
+                resizeMode: 'contain',
+              }}
+              source={require('../../assets/icons/modalIcons/earthyGray.png')}
+            />
+            <View>
+              <Text
+                style={{
+                  fontFamily: font.PoppinsSemiBold,
+                  fontSize: 14,
+                  color: colors.textColor.neutralColor,
+                }}>
+                Public
+              </Text>
+              <Text
+                style={{
+                  fontFamily: font.Poppins,
+                  fontSize: 12,
+                  color: colors.textColor.neutralColor,
+                }}>
+                Everyone can join this room
+              </Text>
+            </View>
+          </View>
+          <View>
+            <View
+              style={{
+                gap: 15,
+              }}>
+              <Text
+                style={{
+                  fontFamily: font.Poppins,
+                  fontSize: 14,
+                  color: '#A1A1A1',
+                }}>
+                Add title
+              </Text>
+              <TextInput
+                value="Asadullah calling live"
+                placeholderTextColor={colors.textColor.light}
+                style={{
+                  fontFamily: font.Poppins,
+                  backgroundColor: colors.secondaryColor,
+                  borderRadius: 100,
+                  fontSize: 14,
+                  paddingHorizontal: 20,
+                  height: 56,
+                  color: colors.textColor.neutralColor,
+                }}
+                placeholder="type "
+              />
+            </View>
+          </View>
+          <View>
+            <View
+              style={{
+                gap: 15,
+              }}>
+              <Text
+                style={{
+                  fontFamily: font.Poppins,
+                  fontSize: 14,
+                  color: '#A1A1A1',
+                }}>
+                Pinned link
+              </Text>
+              <TextInput
+                value="https://www.youtube.com/watch?v=...."
+                placeholderTextColor={colors.textColor.light}
+                style={{
+                  fontFamily: font.Poppins,
+                  backgroundColor: colors.secondaryColor,
+                  borderRadius: 100,
+                  fontSize: 14,
+                  paddingHorizontal: 20,
+                  height: 56,
+                  color: colors.textColor.neutralColor,
+                }}
+                placeholder="type "
+              />
+            </View>
+          </View>
+          <NormalButton
+            onPress={() => {
+              setLiveModal(false);
+              navigation?.navigate('LiveConversation');
+            }}
+            title="Start Live"
+          />
+        </ScrollView>
       </ModalOfBottom>
 
       <View
