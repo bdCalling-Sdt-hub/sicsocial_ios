@@ -54,6 +54,7 @@ const ConversationalCard = ({
       {/*========================== conversation card start ======================= */}
 
       <TouchableOpacity
+        activeOpacity={0.8}
         disabled={disabled}
         onPress={onPress}
         style={{

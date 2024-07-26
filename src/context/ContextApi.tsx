@@ -118,7 +118,7 @@ export const useStyles = () => {
       normal: isDark ? '#333333' : '#ffffff',
       redis: 'rgba(142, 60, 80, 1)',
       redisLight: 'rgba(241, 231, 233, 1)',
-      redisExtraLight: '#FFF5F7',
+      redisExtraLight: isDark ? '#333333' : '#FFF5F7',
       gray: {
         variant: isDark ? 'rgba(144, 144, 144, 1)' : 'rgba(244, 244, 244, 1)',
         variantTwo: isDark ? 'rgba(144, 144, 144, 1)' : '#D9D9D9',
