@@ -238,7 +238,7 @@ const MassageScreen = ({navigation}: NavigProps<null>) => {
                   style={{
                     width: 65,
                     height: 65,
-                    borderRadius: 30,
+                    borderRadius: 28,
                     resizeMode: 'contain',
                     borderColor: 'rgba(255,255,255,1)',
                     borderWidth: 2,

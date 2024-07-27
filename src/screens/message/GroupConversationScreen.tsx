@@ -217,7 +217,7 @@ const GroupConversationScreen = ({navigation}: NavigProps<null>) => {
               width: 46,
               height: 46,
               // borderColor: 'rgba(0,0,0,.2)',
-              borderRadius: 30,
+              borderRadius: 28,
               position: 'absolute',
               transform: [
                 {
@@ -231,13 +231,13 @@ const GroupConversationScreen = ({navigation}: NavigProps<null>) => {
                 elevation: 1,
                 borderWidth: 2,
                 // padding: 2,
-                borderRadius: 30,
+                borderRadius: 28,
               }}>
               <Image
                 style={{
                   height: 46,
                   aspectRatio: 1,
-                  borderRadius: 30,
+                  borderRadius: 28,
                   resizeMode: 'contain',
                 }}
                 source={require('../../assets/tempAssets/ad868d019f92ce267e6de23af3413e5b.jpg')}
@@ -252,7 +252,7 @@ const GroupConversationScreen = ({navigation}: NavigProps<null>) => {
               width: 46,
               height: 46,
               // borderColor: 'rgba(0,0,0,.2)',
-              borderRadius: 30,
+              borderRadius: 28,
               position: 'absolute',
               transform: [
                 {
@@ -269,13 +269,13 @@ const GroupConversationScreen = ({navigation}: NavigProps<null>) => {
                 elevation: 1,
                 borderWidth: 2,
                 // padding: 2,
-                borderRadius: 30,
+                borderRadius: 28,
               }}>
               <Image
                 style={{
                   height: 46,
                   aspectRatio: 1,
-                  borderRadius: 30,
+                  borderRadius: 28,
                   resizeMode: 'contain',
                 }}
                 source={require('../../assets/tempAssets/86efa3df337e8c215dd8095476bb6513.jpg')}
@@ -290,7 +290,7 @@ const GroupConversationScreen = ({navigation}: NavigProps<null>) => {
               aspectRatio: 1,
               height: 40,
               // borderColor: 'rgba(0,0,0,.2)',
-              borderRadius: 30,
+              borderRadius: 28,
               position: 'absolute',
               transform: [
                 {
@@ -307,13 +307,13 @@ const GroupConversationScreen = ({navigation}: NavigProps<null>) => {
                 elevation: 1,
                 borderWidth: 2,
                 // padding: 2,
-                borderRadius: 30,
+                borderRadius: 28,
               }}>
               <Image
                 style={{
                   height: 35,
                   aspectRatio: 1,
-                  borderRadius: 30,
+                  borderRadius: 28,
                   resizeMode: 'contain',
                 }}
                 source={require('../../assets/tempAssets/691af02d3a7ca8be2811716f82d9212b.jpg')}
@@ -328,7 +328,7 @@ const GroupConversationScreen = ({navigation}: NavigProps<null>) => {
               aspectRatio: 1,
               height: 20,
               // borderColor: 'rgba(0,0,0,.2)',
-              borderRadius: 30,
+                borderRadius: 28,
               position: 'absolute',
               transform: [
                 {
@@ -345,13 +345,13 @@ const GroupConversationScreen = ({navigation}: NavigProps<null>) => {
                 elevation: 1,
                 borderWidth: 2,
                 // padding: 2,
-                borderRadius: 30,
+                  borderRadius: 28,
               }}>
               <Image
                 style={{
                   height: 20,
                   aspectRatio: 1,
-                  borderRadius: 30,
+                    borderRadius: 28,
                   resizeMode: 'contain',
                 }}
                 source={{
@@ -368,7 +368,7 @@ const GroupConversationScreen = ({navigation}: NavigProps<null>) => {
               aspectRatio: 1,
               height: 20,
               // borderColor: 'rgba(0,0,0,.2)',
-              borderRadius: 30,
+                borderRadius: 28,
               position: 'absolute',
               transform: [
                 {
@@ -385,13 +385,13 @@ const GroupConversationScreen = ({navigation}: NavigProps<null>) => {
                 elevation: 1,
                 borderWidth: 2,
                 // padding: 2,
-                borderRadius: 30,
+                  borderRadius: 28,
               }}>
               <Image
                 style={{
                   height: 20,
                   aspectRatio: 1,
-                  borderRadius: 30,
+                    borderRadius: 28,
                   resizeMode: 'contain',
                 }}
                 source={{
@@ -408,7 +408,7 @@ const GroupConversationScreen = ({navigation}: NavigProps<null>) => {
               aspectRatio: 1,
               height: 40,
               // borderColor: 'rgba(0,0,0,.2)',
-              borderRadius: 30,
+              borderRadius: 28,
               position: 'absolute',
               transform: [
                 {
@@ -425,13 +425,13 @@ const GroupConversationScreen = ({navigation}: NavigProps<null>) => {
                 elevation: 1,
                 borderWidth: 2,
                 // padding: 2,
-                borderRadius: 30,
+                borderRadius: 28,
               }}>
               <Image
                 style={{
                   height: 35,
                   aspectRatio: 1,
-                  borderRadius: 30,
+                  borderRadius: 28,
                   resizeMode: 'contain',
                 }}
                 source={require('../../assets/tempAssets/4005b22a3c1c23d7c04f6c9fdbd85468.jpg')}
@@ -458,13 +458,13 @@ const GroupConversationScreen = ({navigation}: NavigProps<null>) => {
                 elevation: 1,
                 borderWidth: 2,
                 // padding: 2,
-                borderRadius: 30,
+                borderRadius: 28,
               }}>
               <Image
                 style={{
                   height: 50,
                   aspectRatio: 1,
-                  borderRadius: 30,
+                  borderRadius: 28,
                   resizeMode: 'contain',
                 }}
                 source={require('../../assets/tempAssets/ae1e058c2ed75ab981a9f8bb62e96a13.jpg')}

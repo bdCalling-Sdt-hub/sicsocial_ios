@@ -46,28 +46,31 @@ const ModalOfBottom = ({
   containerColor,
 }: CustomModalProps) => {
   const containerColorValue = useSharedValue('transparent');
+  const containerOpacity = useSharedValue(1);
 
   useEffect(() => {
     if (modalVisible) {
-      setTimeout(() => {
-        containerColorValue.value = withTiming('rgba(0,0,0,0.2)');
-      }, 200);
+      containerColorValue.value = withTiming('rgba(0,0,0,0.2)', {
+        duration: 500,
+      });
     }
     return () => {
       containerColorValue.value = withTiming('transparent');
+      containerOpacity.value = withTiming(1);
     };
   }, [modalVisible]);
 
   const modalAnimationStyle = useAnimatedStyle(() => {
     return {
       backgroundColor: containerColorValue.value,
+      opacity: containerOpacity.value,
     };
   });
 
   return (
     <Modal
+      // presentationStyle="pageSheet"
       animationType={'slide'}
-      animated
       transparent={true}
       visible={modalVisible}>
       <Pressable
@@ -75,11 +78,17 @@ const ModalOfBottom = ({
         onPressIn={() => {
           containerColorValue.value = withTiming('transparent');
         }}
-        onPressOut={() => {
-          setTimeout(() => {
-            setModalVisible(false);
-          }, 50);
-        }}>
+        onPress={() => {
+          containerOpacity.value = withTiming(0);
+          setModalVisible(false);
+        }}
+        // onPressOut={() => {
+        //   containerOpacity.value = withTiming(0, {duration: 10});
+        //   setModalVisible(false);
+        //   // setTimeout(() => {
+        //   // }, 50);
+        // }}
+      >
         <Animated.View
           style={[
             {

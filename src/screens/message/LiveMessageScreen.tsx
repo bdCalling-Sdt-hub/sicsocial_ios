@@ -36,7 +36,11 @@ export interface messagePros {
   };
 }
 
-const NormalConversationScreen = ({navigation}: NavigProps<null>) => {
+import Feather from 'react-native-vector-icons/Feather';
+import {SvgXml} from 'react-native-svg';
+import {TextInput} from 'react-native-gesture-handler';
+
+const LiveMessageScreen = ({navigation}: NavigProps<null>) => {
   const {width, height} = useWindowDimensions();
   const {colors, font} = useStyles();
 
@@ -158,129 +162,88 @@ const NormalConversationScreen = ({navigation}: NavigProps<null>) => {
       }}>
       <View
         style={{
-          height: '7.2%',
-        }}
-      />
-      <ConversationHeader
-        icon={`<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-<g clip-path="url(#clip0_527_1901)">
-<path d="M13.5058 2.90655C12.7431 2.08066 11.8041 1.43713 10.7587 1.02372C9.71324 0.610321 8.58811 0.43766 7.46681 0.518554C5.55516 0.679892 3.77507 1.55762 2.48319 2.97588C1.19131 4.39414 0.483045 6.24819 0.500308 8.16655V15.0001C0.500283 15.0989 0.529579 15.1956 0.584491 15.2778C0.639403 15.3601 0.717465 15.4242 0.808808 15.4621C0.869474 15.4873 0.934581 15.5003 1.00031 15.5001C1.13291 15.5 1.26006 15.4473 1.35381 15.3536L2.53581 14.1721C2.68001 14.0312 2.86983 13.9465 3.071 13.9333C3.27217 13.9201 3.47143 13.9792 3.63281 14.1001C5.14317 15.1854 7.00292 15.6708 8.85104 15.4621C10.6992 15.2534 12.4038 14.3654 13.6341 12.9706C14.8644 11.5758 15.5325 9.77358 15.5088 7.91386C15.4851 6.05414 14.7712 4.26957 13.5058 2.90655ZM14.4268 8.99305C14.2575 10.0909 13.8096 11.1271 13.1259 12.0026C12.4422 12.8782 11.5455 13.5639 10.5215 13.9943C9.49741 14.4248 8.38011 14.5856 7.27621 14.4614C6.17231 14.3373 5.11866 13.9323 4.21581 13.2851C3.89704 13.0548 3.51403 12.9305 3.12081 12.9296C2.88078 12.9292 2.64304 12.9763 2.4213 13.0682C2.19956 13.1601 1.9982 13.295 1.82881 13.4651L1.50031 13.7931V8.16655C1.48243 6.50123 2.09445 4.89065 3.21377 3.65747C4.3331 2.42429 5.87704 1.65958 7.53631 1.51655C8.51056 1.44725 9.48791 1.59824 10.3958 1.95832C11.3037 2.31841 12.1189 2.87833 12.7808 3.59655C13.4428 4.31476 13.9344 5.17282 14.2194 6.10705C14.5043 7.04128 14.5752 8.02768 14.4268 8.99305Z" fill="#DBB162"/>
-<rect x="4.66699" y="6" width="1.33333" height="3.33333" rx="0.666667" fill="#DBB162"/>
-<rect x="7.33398" y="4" width="1.33333" height="7.33333" rx="0.666667" fill="#DBB162"/>
-<rect x="10" y="5.33337" width="1.33333" height="4.66667" rx="0.666667" fill="#DBB162"/>
-</g>
-<defs>
-<clipPath id="clip0_527_1901">
-<rect width="16" height="16" fill="white"/>
-</clipPath>
-</defs>
-</svg>
-`}
-        title="Voice Message"
-        optionOnPress={() => {
-          setModalVisible(true);
-        }}
-        navigation={navigation}
-      />
+          width: '100%',
+          paddingVertical: 20,
+          flexDirection: 'row',
 
-      <Animated.View
-        style={[
-          {
-            paddingHorizontal: 15,
-            backgroundColor: colors.bg,
-            width: '100%',
-            paddingVertical: 10,
-            position: 'absolute',
+          // justifyContent: 'flex-end',
+          paddingHorizontal: '4%',
 
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: 50,
-            zIndex: 4,
-          },
-          animationStyleForUserConversation,
-        ]}>
-        <View>
+          // alignItems: 'center',
+          gap: 15,
+        }}>
+        <TouchableOpacity
+          style={{marginTop: '2%'}}
+          onPress={() => navigation && navigation.goBack()}>
+          <Feather
+            name="arrow-left"
+            color={colors.textColor.neutralColor}
+            size={24}
+          />
+        </TouchableOpacity>
+        <View style={{}}>
           <View
             style={{
-              padding: 2,
-              backgroundColor: 'white',
-              // elevation: 1,
-              // borderWidth: 0.5,
-              width: 46,
-              height: 46,
-              // borderColor: 'rgba(0,0,0,.2)',
-              borderRadius: 28,
-              position: 'absolute',
-              transform: [
-                {
-                  translateY: 3,
-                },
-              ],
+              flexDirection: 'row',
+
+              paddingHorizontal: '4%',
+              paddingVertical: '3%',
+
+              borderRadius: 100,
+              alignItems: 'center',
+              justifyContent: 'space-between',
             }}>
-            <Image
-              style={{
-                width: 46,
-                height: 46,
-                borderRadius: 28,
-                resizeMode: 'contain',
-              }}
-              source={{
-                uri: 'https://s3-alpha-sig.figma.com/img/7568/3fd5/7261c2ae940abab762a6e0130b36b3a9?Expires=1721606400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=AykSrcYr~WEBIHMW4WezFwp74XIKqwz1DXFJPi-jBgpPa0w-AKmFioPrvXMG08QXjqfFJ7xtZ25idfjkopahkcvMKxIXm4TY4TBZFWD~2ZCGL4jbefjiM0ufmw09012~6B89nl~j6xWjd9ggQilJal8vQ8KUcmdm-KyxNUlAA0yT-JwjW~4Hx9gzTiaI8mXu9SmdrwivuQtAmxDNBHcx0hvDb7l8zrX95Hww4mVqCT-z3AbxnyyzEvIgAivaXFHPvNFXDdOp23QKhDg~zKX5ZObnIYL7uNdvhuAZWiwbKxUOSag8laDRybIo8hjF63zSi6rL9nm7x5pUOleZgtmDfQ__',
-              }}
-            />
-          </View>
-          <View
-            style={{
-              padding: 2,
-              backgroundColor: 'white',
-              // elevation: 1,
-              // borderWidth: 0.5,
-              width: 56,
-              height: 56,
-              // borderColor: 'rgba(0,0,0,.2)',
-              borderRadius: 28,
-              position: 'relative',
-              transform: [
-                {
-                  translateX: 30,
-                },
-              ],
-            }}>
-            <Image
-              style={{
-                width: 56,
-                height: 56,
-                borderRadius: 28,
-                resizeMode: 'contain',
-              }}
-              source={require('../../assets/tempAssets/ae1e058c2ed75ab981a9f8bb62e96a13.jpg')}
-            />
+            <View style={{}}>
+              <Text
+                style={{
+                  fontFamily: font.Poppins,
+                  fontSize: 12,
+                  color: colors.textColor.neutralColor,
+                }}>
+                Asadullah created a group
+              </Text>
+              <Text
+                style={{
+                  fontFamily: font.PoppinsSemiBold,
+                  fontSize: 14,
+                  color: colors.textColor.secondaryColor,
+                }}>
+                Asadullah calling live{' '}
+              </Text>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  gap: 8,
+                }}>
+                <Image
+                  style={{
+                    width: 12,
+                    height: 12,
+                  }}
+                  source={require('../../assets/icons/modalIcons/earthyGray.png')}
+                />
+                <Text
+                  style={{
+                    fontFamily: font.PoppinsSemiBold,
+                    fontSize: 12,
+                    color: colors.textColor.neutralColor,
+                  }}>
+                  Public
+                </Text>
+              </View>
+            </View>
           </View>
         </View>
-        <Text
-          style={{
-            fontFamily: font.PoppinsSemiBold,
-            color: colors.textColor.primaryColor,
-            fontSize: 14,
-          }}>
-          Amina
-        </Text>
-      </Animated.View>
-
+      </View>
       <FlatList
-        scrollEventThrottle={10}
-        style={{
-          height: height * 0.6,
-        }}
-        onContentSizeChange={(w: number, h: number) => {
-          // console.log(height * 0.6);
-          if (height * 0.7 < h) {
-            animatePosition.value = withTiming(-(height * 0.3), {
-              duration: 500,
-            });
-          }
-        }}
+        showsVerticalScrollIndicator={false}
         inverted
+        style={{
+          marginBottom: height * 0.09,
+        }}
+        keyboardShouldPersistTaps="always"
+        automaticallyAdjustKeyboardInsets
         data={messages.sort((a, b) => b.id - a.id)}
         renderItem={item => {
           return (
@@ -422,22 +385,34 @@ const NormalConversationScreen = ({navigation}: NavigProps<null>) => {
       <View
         style={{
           flex: 1,
-          justifyContent: 'center',
-
+          flexDirection: 'row',
+          // justifyContent: 'center',
           alignItems: 'center',
+          width: '100%',
+          paddingHorizontal: '4%',
+          // paddingVertical: '5%',
+          alignSelf: 'center',
+
+          gap: 10,
+          position: 'absolute',
+          bottom: 0,
+          height: height * 0.09,
+          backgroundColor: colors.bg,
         }}>
-        <ConversationCarousal
-          photo
-          type
-          record
-          books
-          // ImageLink={newImage}
-          setMessages={setMessages}
-          messages={messages}
-          setImageAssets={setNewImage}
-          onSendImageMessage={() => {}}
-          setTextMessage={setNewMessages}
-          onSendTextMessage={() => {
+        <TextInput
+          placeholder="Message"
+          onChangeText={text => setNewMessages(text)}
+          value={newMessages}
+          style={{
+            backgroundColor: 'rgba(235, 235, 235, 1)',
+            flex: 1,
+            borderRadius: 100,
+            height: 50,
+            paddingHorizontal: 20,
+          }}
+        />
+        <TouchableOpacity
+          onPress={() => {
             setMessages([
               ...messages,
               {
@@ -453,8 +428,25 @@ const NormalConversationScreen = ({navigation}: NavigProps<null>) => {
                 },
               },
             ]);
+            setNewMessages('');
           }}
-        />
+          activeOpacity={0.8}
+          style={{
+            width: 50,
+            height: 50,
+            backgroundColor: colors.primaryColor,
+            borderRadius: 100,
+            justifyContent: 'center',
+            alignItems: 'center',
+            // marginBottom: 10,
+          }}>
+          <SvgXml
+            xml={`<svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M21.2166 11.0202C21.2166 11.7502 20.7456 12.4002 19.9266 12.8102L3.5066 21.0202C3.1066 21.2202 2.7166 21.3202 2.3566 21.3202C1.8356 21.3202 1.3766 21.1002 1.0856 20.7112C0.836598 20.3702 0.596598 19.7802 0.886598 18.8202L2.7366 12.6502C2.7966 12.4702 2.8366 12.2512 2.8566 12.0202L12.9866 12.0202C13.5366 12.0202 13.9866 11.5702 13.9866 11.0202C13.9866 10.4702 13.5366 10.0202 12.9866 10.0202L2.8566 10.0202C2.8356 9.79023 2.7956 9.57023 2.7366 9.39023L0.886598 3.22023C0.596598 2.26023 0.836598 1.67023 1.0866 1.33023C1.5766 0.670234 2.5066 0.520234 3.5066 1.02023L19.9276 9.23023C20.7466 9.64023 21.2166 10.2902 21.2166 11.0202Z" fill="#FCFCFC"/>
+</svg>
+`}
+          />
+        </TouchableOpacity>
       </View>
 
       <ModalOfBottom
@@ -589,6 +581,6 @@ const NormalConversationScreen = ({navigation}: NavigProps<null>) => {
   );
 };
 
-export default NormalConversationScreen;
+export default LiveMessageScreen;
 
 const styles = StyleSheet.create({});

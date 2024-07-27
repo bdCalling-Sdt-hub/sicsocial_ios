@@ -432,7 +432,7 @@ const ProfileScreen = ({navigation}: NavigProps<null>) => {
                     style={{
                       width: 65,
                       height: 65,
-                      borderRadius: 30,
+                      borderRadius: 28,
                       resizeMode: 'contain',
                     }}
                     source={item.item.img}

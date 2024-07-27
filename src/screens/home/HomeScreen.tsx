@@ -338,7 +338,7 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
     recordingAnimation.value = withTiming('100%', {duration: 10000});
   };
 
-  const liveCardAnimationPositionY = useSharedValue('0%');
+  const liveCardAnimationPositionY = useSharedValue('-10%');
   const voiceModalAnimationPositionY = useSharedValue('7.4%');
   const scrollViewGapHight = useSharedValue('20%');
 

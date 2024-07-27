@@ -157,7 +157,7 @@ const MyAllFriends = ({navigation}: NavigProps<null>) => {
                     style={{
                       width: 65,
                       height: 65,
-                      borderRadius: 30,
+                      borderRadius: 28,
                       resizeMode: 'contain',
                     }}
                     source={item.item.img}
@@ -167,7 +167,7 @@ const MyAllFriends = ({navigation}: NavigProps<null>) => {
                     style={{
                       width: 65,
                       height: 65,
-                      borderRadius: 30,
+                      borderRadius: 28,
                       backgroundColor: getRandomColor(),
                       justifyContent: 'center',
                       alignItems: 'center',

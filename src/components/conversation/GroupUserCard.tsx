@@ -78,7 +78,7 @@ const GroupUserCard = ({
               width: 65,
               height: 65,
               // borderColor: 'rgba(0,0,0,.2)',
-              borderRadius: 30,
+              borderRadius: 28,
             }}>
             <Image
               style={{

@@ -47,6 +47,7 @@ import MakeGroupScreen from '../screens/message/MakeGroupScreen';
 import NormalConversationScreen from '../screens/message/NormalConversationScreen';
 import GroupConversationScreen from '../screens/message/GroupConversationScreen';
 import LiveConversationScreen from '../screens/message/LiveConversationScreen';
+import LiveMessageScreen from '../screens/message/LiveMessageScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -178,6 +179,13 @@ const Routes = () => {
           <Stack.Screen
             name="LiveConversation"
             component={LiveConversationScreen}
+            options={{
+              animation: 'slide_from_right',
+            }}
+          />
+          <Stack.Screen
+            name="LiveMessage"
+            component={LiveMessageScreen}
             options={{
               animation: 'slide_from_right',
             }}
