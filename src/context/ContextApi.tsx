@@ -4,6 +4,8 @@ import React, {createContext, useContext, useState} from 'react';
 interface ProviderProps {
   isDark?: boolean;
   setDark?: Function | any;
+  isLive?: boolean;
+  setIsLive?: Function | any;
 }
 
 export const ContextProvider = createContext<ProviderProps>({
@@ -18,8 +20,8 @@ interface ContextApiProps {
 }
 
 export const useContextApi = () => {
-  const {isDark, setDark} = useContext(ContextProvider);
-  return {isDark, setDark};
+  const {isDark, setDark, isLive, setIsLive} = useContext(ContextProvider);
+  return {isDark, setDark, isLive, setIsLive};
 };
 
 export const useStyles = () => {
@@ -130,7 +132,8 @@ export const useStyles = () => {
 const ContextApi = ({children}: ContextApiProps) => {
   const darkMode = Appearance.getColorScheme();
   const [isDark, setDark] = useState(darkMode === 'dark' ? true : false);
-  const shearValue = {isDark, setDark};
+  const [isLive, setIsLive] = useState(false);
+  const shearValue = {isDark, setDark, isLive, setIsLive};
   return (
     <ContextProvider.Provider value={shearValue}>
       {children}

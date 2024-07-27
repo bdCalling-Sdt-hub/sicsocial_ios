@@ -1,11 +1,13 @@
 import {
   Alert,
+  Dimensions,
   FlatList,
   Image,
   ImageBackground,
   Linking,
   Modal,
   Pressable,
+  SafeAreaView,
   StyleSheet,
   Text,
   ToastAndroid,
@@ -26,7 +28,11 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import Clipboard from '@react-native-clipboard/clipboard';
 import {Link, useTheme} from '@react-navigation/native';
 import {NavigProps} from '../../interfaces/NaviProps';
-import {ContextProvider, useStyles} from '../../context/ContextApi';
+import {
+  ContextProvider,
+  useContextApi,
+  useStyles,
+} from '../../context/ContextApi';
 import Animated, {
   Easing,
   interpolate,
@@ -34,6 +40,7 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withDelay,
+  withSpring,
   withTiming,
 } from 'react-native-reanimated';
 import Carousel, {
@@ -110,8 +117,11 @@ const items = [
   },
 ];
 
+const {height, width} = Dimensions.get('window');
+
 const HomeScreen = ({navigation}: NavigProps<null>) => {
-  const {height, width} = useWindowDimensions();
+  const LIVE_ACTIVE_VALUE = height * 0.079;
+  const {isLive, setIsLive} = useContextApi();
   const {colors, font} = useStyles();
   const [modalVisible, setModalVisible] = React.useState(false);
   const [conversationalModal, setConversationalModal] = React.useState(false);
@@ -124,6 +134,8 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
   const [recordOnDone, setRecordOnDone] = React.useState(false);
   const [imageAssets, setImageAssets] = React.useState<any>({});
   const textInputRef = React.useRef<TextInput>(null);
+
+  // lines of modal animation
 
   const modalWidth = useSharedValue(height * 0.116);
   const modalHight = useSharedValue(width * 0.244);
@@ -326,14 +338,54 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
     recordingAnimation.value = withTiming('100%', {duration: 10000});
   };
 
+  const liveCardAnimationPositionY = useSharedValue('0%');
+  const voiceModalAnimationPositionY = useSharedValue('7.4%');
+  const scrollViewGapHight = useSharedValue('20%');
+
   useEffect(() => {
     if (textInputModal) {
       setTimeout(() => textInputRef.current?.focus(), 10);
     }
-  }, [textInputModal]);
+
+    if (isLive) {
+      liveCardAnimationPositionY.value = withTiming('10%', {
+        duration: 1000,
+      });
+      voiceModalAnimationPositionY.value = withTiming('21%', {
+        duration: 1000,
+      });
+      scrollViewGapHight.value = withTiming('25%', {
+        duration: 1000,
+      });
+    }
+    if (!isLive) {
+      liveCardAnimationPositionY.value = withTiming('-9%', {
+        duration: 1000,
+      });
+      voiceModalAnimationPositionY.value = withTiming('7.4%', {
+        duration: 1000,
+      });
+      scrollViewGapHight.value = withTiming('2%', {
+        duration: 1000,
+      });
+    }
+  }, [textInputModal, isLive]);
+
+  // is live  card have checker and create animation asaa
+
+  const rLiveCardStyle = useAnimatedStyle(() => {
+    return {
+      bottom: liveCardAnimationPositionY.value,
+    };
+  });
+  const rVoiceModalStyle = useAnimatedStyle(() => {
+    return {
+      bottom: voiceModalAnimationPositionY.value,
+    };
+  });
 
   return (
-    <View
+    <SafeAreaView
       style={{
         height: '100%',
         // backgroundColor: 'gray',
@@ -439,7 +491,7 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
         contentContainerStyle={{
           gap: 16,
           paddingTop: 16,
-          paddingBottom: 16,
+          // paddingBottom: isLive ? LIVE_ACTIVE_VALUE + 30 : 16,
           paddingHorizontal: '5%',
         }}>
         {/*========================== conversation card start ======================= */}
@@ -509,6 +561,10 @@ is recognize for SIC "
           conversationStyle="normal"
           cardStyle="four"
           conversationTitle="COFFE HOUSE"
+          onPress={() => {
+            setIsLive(!isLive);
+            navigation?.navigate('LiveConversation');
+          }}
           conversationSubtitle="join room"
           lastMessageTime="8:10 am"
           lastMessage="Hello Asadullah some books
@@ -533,17 +589,25 @@ is recognize for SIC "
           lastMessageTime="8:10 am"
           lastMessage="nadin invite you in room"
         />
+        <Animated.View
+          style={{
+            paddingBottom: scrollViewGapHight,
+          }}
+        />
       </ScrollView>
       {/*==================== Body part Start ===================  */}
 
-      <View
-        style={{
-          position: 'absolute',
-          bottom: 65,
-          borderRadius: 100,
-          // width: '100%',
-          alignSelf: 'center',
-        }}>
+      <Animated.View
+        style={[
+          {
+            position: 'absolute',
+
+            borderRadius: 100,
+            // width: '100%',
+            alignSelf: 'center',
+          },
+          rVoiceModalStyle,
+        ]}>
         <TouchableOpacity
           onPress={() => {
             handleOpen();
@@ -564,7 +628,120 @@ is recognize for SIC "
             source={require('../../assets/icons/microphone/microphone.png')}
           />
         </TouchableOpacity>
-      </View>
+      </Animated.View>
+      <Animated.View
+        style={[
+          {
+            position: 'absolute',
+            // bottom: 65,
+            borderRadius: 100,
+            // width: '100%',
+            // alignSelf: 'center',
+            marginHorizontal: '5%',
+          },
+          rLiveCardStyle,
+        ]}>
+        <View
+          style={{
+            backgroundColor: colors.bg,
+            flexDirection: 'row',
+            width: width * 0.9,
+            paddingHorizontal: '10%',
+            paddingVertical: '3%',
+            elevation: 5,
+
+            borderRadius: 100,
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}>
+          <View style={{}}>
+            <Text
+              style={{
+                fontFamily: font.Poppins,
+                fontSize: 12,
+                color: colors.textColor.neutralColor,
+              }}>
+              Asadullah created a group
+            </Text>
+            <Text
+              style={{
+                fontFamily: font.PoppinsSemiBold,
+                fontSize: 14,
+                color: colors.textColor.secondaryColor,
+              }}>
+              Asadullah calling live{' '}
+            </Text>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: 8,
+              }}>
+              <Image
+                style={{
+                  width: 12,
+                  height: 12,
+                }}
+                source={require('../../assets/icons/modalIcons/earthyGray.png')}
+              />
+              <Text
+                style={{
+                  fontFamily: font.PoppinsSemiBold,
+                  fontSize: 12,
+                  color: colors.textColor.neutralColor,
+                }}>
+                Public
+              </Text>
+            </View>
+          </View>
+          <TouchableOpacity
+            onPress={() => {
+              setIsLive(false);
+            }}
+            activeOpacity={0.8}
+            style={{
+              backgroundColor: 'rgba(241, 99, 101, 1)',
+              width: '35%',
+              height: 37,
+              borderRadius: 100,
+              justifyContent: 'center',
+              alignItems: 'center',
+              flexDirection: 'row',
+              gap: 8,
+            }}>
+            <SvgXml
+              xml={`<svg width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_691_5429)">
+<path d="M5.59375 1.80081V6.35366C5.59375 7.07206 6.17616 7.65447 6.89456 7.65447H10.6019C10.7815 7.65447 10.9271 7.80006 10.9271 7.97969V9.08769C10.9271 9.36653 11.255 9.51606 11.4655 9.33322L13.2152 7.81378C13.3335 7.71103 13.4849 7.65447 13.6416 7.65447H14.6994C15.4178 7.65447 16.0002 7.07206 16.0002 6.35366V1.80081C16.0002 1.08241 15.4178 0.5 14.6994 0.5H6.89456C6.17612 0.5 5.59375 1.08241 5.59375 1.80081Z" fill="#FD8087"/>
+<path d="M14.7008 0.5H13.6602C14.3786 0.5 14.961 1.08241 14.961 1.80081V6.35366C14.961 7.07206 14.3786 7.65447 13.6602 7.65447H14.7008C15.4192 7.65447 16.0016 7.07206 16.0016 6.35366V1.80081C16.0016 1.08241 15.4192 0.5 14.7008 0.5Z" fill="#FE646F"/>
+<path d="M9.76859 6.42007C9.44116 6.10485 9.01044 5.93125 8.55575 5.93125C8.46422 5.93125 8.37378 5.93825 8.28503 5.95194C8.23966 5.8905 8.18997 5.83163 8.13616 5.77575C7.80725 5.43413 7.36191 5.24597 6.88219 5.24597C6.41375 5.24597 5.95584 5.43522 5.62587 5.76519L5.59375 5.79732V6.35366C5.59375 7.07207 6.17616 7.65447 6.89456 7.65447H10.2982C10.293 7.18232 10.105 6.744 9.76859 6.42007Z" fill="#FE646F"/>
+<path d="M10.0261 10.9296C9.69785 10.6136 9.17554 10.6174 8.85194 10.941L9.57966 10.2132C9.91203 9.88087 9.92007 9.32884 9.58144 9.0028C9.25319 8.68677 8.73088 8.69055 8.40728 9.01415L9.135 8.28643C9.46738 7.95405 9.47541 7.40202 9.13679 7.07599C8.80854 6.75996 8.28622 6.76374 7.96263 7.08734L7.46857 7.5814C7.79216 7.2578 7.79594 6.73549 7.47991 6.40724C7.15388 6.06862 6.60185 6.07665 6.26947 6.40902L2.86441 9.81412L3.29963 9.0603C3.53466 8.65321 3.39953 8.11793 2.98807 7.89065C2.58919 7.67034 2.08569 7.80918 1.85685 8.20552L0.536691 10.4921C-0.369715 12.062 -0.108622 14.045 1.17322 15.3269C2.73738 16.891 5.27338 16.891 6.83753 15.3269L10.0243 12.1401C10.3567 11.8077 10.3647 11.2556 10.0261 10.9296Z" fill="#FED2A4"/>
+<path d="M10.0247 10.9297C10.0117 10.9171 9.99825 10.9053 9.98466 10.8938L6.19381 14.6847C4.73894 16.1395 2.44344 16.2409 0.871094 14.9893C0.964281 15.1062 1.06413 15.2193 1.17178 15.3269C2.73594 16.8911 5.27194 16.8911 6.83609 15.3269L10.0229 12.1401C10.3553 11.8077 10.3633 11.2557 10.0247 10.9297Z" fill="#FFBD86"/>
+<path d="M13.7759 5.14362H12.9141V4.31155H13.6951C13.8245 4.31155 13.9295 4.20662 13.9295 4.07718C13.9295 3.94774 13.8245 3.8428 13.6951 3.8428H12.9141V3.01074H13.7759C13.9053 3.01074 14.0103 2.9058 14.0103 2.77637C14.0103 2.6469 13.9053 2.54199 13.7759 2.54199H12.6797C12.5502 2.54199 12.4453 2.6469 12.4453 2.77637V5.37799C12.4453 5.50743 12.5502 5.61237 12.6797 5.61237H13.7759C13.9053 5.61237 14.0103 5.50743 14.0103 5.37799C14.0103 5.24855 13.9053 5.14362 13.7759 5.14362Z" fill="#DFF6FD"/>
+<path d="M9.22106 3.89643C9.33606 3.75359 9.40513 3.57224 9.40513 3.37499C9.40513 2.91568 9.03144 2.54199 8.57212 2.54199H7.81641C7.68697 2.54199 7.58203 2.6469 7.58203 2.77637V5.37799C7.58203 5.44034 7.60687 5.50012 7.65103 5.54409C7.69497 5.5878 7.75444 5.61237 7.81641 5.61237H7.81744C7.8175 5.61237 8.5125 5.60927 8.70409 5.60927C9.21947 5.60927 9.63875 5.18999 9.63875 4.67462C9.63875 4.35027 9.47262 4.06412 9.22106 3.89643ZM8.57212 3.01074C8.77297 3.01074 8.93638 3.17415 8.93638 3.37499C8.93638 3.57584 8.77297 3.73924 8.57212 3.73924C8.51637 3.73924 8.41119 3.73955 8.29662 3.73993H8.05078V3.01074H8.57212ZM8.70409 5.14052C8.58497 5.14052 8.27153 5.14171 8.05078 5.14262V4.20968C8.12784 4.20937 8.21481 4.20902 8.29703 4.20874H8.70409C8.961 4.20874 9.17 4.41774 9.17 4.67465C9.17 4.93155 8.961 5.14052 8.70409 5.14052Z" fill="#DFF6FD"/>
+<path d="M11.8378 2.58658C11.7293 2.51598 11.5841 2.54664 11.5135 2.65514L10.8854 3.61995L10.2509 2.64827C10.1802 2.53986 10.0349 2.50939 9.92657 2.58014C9.8182 2.65092 9.7877 2.79614 9.85848 2.90452L10.6512 4.11855L10.6481 5.37742C10.6478 5.50689 10.7524 5.61205 10.8819 5.61239H10.8825C11.0116 5.61239 11.1165 5.50783 11.1169 5.37861L11.1199 4.11892L11.9064 2.91086C11.9769 2.80239 11.9462 2.6572 11.8378 2.58658Z" fill="#DFF6FD"/>
+<path d="M9.78752 9.33896L6.89193 12.2346L6.03765 11.3803L9.13284 8.28509C9.36612 8.05078 9.43859 7.70812 9.34287 7.41215L5.70621 11.0488L4.85193 10.1945L7.46659 7.57987C7.69902 7.34631 7.76543 7.01 7.6659 6.71765L4.52046 9.86309L4.43915 9.78178C4.34762 9.69025 4.19921 9.69025 4.10771 9.78178C4.01618 9.87331 4.01618 10.0217 4.10771 10.1132L6.97321 12.9787C7.01896 13.0245 7.07896 13.0474 7.13893 13.0474C7.1989 13.0474 7.2589 13.0245 7.30465 12.9787C7.39618 12.8872 7.39618 12.7388 7.30465 12.6473L7.22334 12.566L9.57762 10.2117C9.8108 9.97743 9.88321 9.63484 9.78752 9.33896Z" fill="#FFBD86"/>
+<path d="M2.86329 9.81357L2.86276 9.8141L3.29798 9.06026C3.44692 8.80232 3.44704 8.49295 3.32257 8.24304L2.49479 9.5192L2.34467 9.75704C2.19526 9.99376 2.18214 10.2954 2.31045 10.5442L2.74914 11.3947C3.03798 11.9547 2.93267 12.6304 2.48707 13.0759L2.38432 13.1787C2.29279 13.2702 2.29282 13.4186 2.38435 13.5101C2.4301 13.5559 2.49007 13.5788 2.55007 13.5788C2.61007 13.5788 2.67004 13.5559 2.71582 13.5101L2.81857 13.4074C3.40895 12.817 3.54845 11.9218 3.16576 11.1798L2.72707 10.3293C2.67457 10.2275 2.67995 10.1041 2.74107 10.0072L2.86329 9.81357Z" fill="#FFBD86"/>
+</g>
+<defs>
+<clipPath id="clip0_691_5429">
+<rect width="16" height="16" fill="white" transform="translate(0 0.5)"/>
+</clipPath>
+</defs>
+</svg>
+`}
+            />
+            <Text
+              style={{
+                fontFamily: font.PoppinsSemiBold,
+                fontSize: 14,
+                color: colors.textColor.white,
+              }}>
+              Leave
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </Animated.View>
 
       <ModalOfBottom
         modalVisible={modalVisible}
@@ -1252,7 +1429,7 @@ is recognize for SIC "
           height: '7.2%',
         }}
       />
-    </View>
+    </SafeAreaView>
   );
 };
 
