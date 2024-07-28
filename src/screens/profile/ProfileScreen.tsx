@@ -10,7 +10,7 @@ import {
   View,
 } from 'react-native';
 import React from 'react';
-import {useStyles} from '../../context/ContextApi';
+import {useContextApi, useStyles} from '../../context/ContextApi';
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
 import {NavigProps} from '../../interfaces/NaviProps';
 import {SvgXml} from 'react-native-svg';
@@ -72,6 +72,7 @@ const FaceDown = [
 
 const ProfileScreen = ({navigation}: NavigProps<null>) => {
   const [modalVisible, setModalVisible] = React.useState(false);
+  const {isLive, setIsLive} = useContextApi();
   const {colors, font} = useStyles();
   return (
     <View
@@ -111,9 +112,7 @@ const ProfileScreen = ({navigation}: NavigProps<null>) => {
                 borderRadius: 46,
                 alignSelf: 'center',
               }}
-              source={{
-                uri: 'https://s3-alpha-sig.figma.com/img/f6e4/02df/f94d91c8643f6698b126e7dec5854350?Expires=1721606400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=cz4Qczd8u0VDld~tiTdDzpKyOyxcx0QKLi091Vwp7yLsWKwyX0kwvBwFi3CE~mjA1B7~52uARqrujtEPoas1jL07XHeld9MAk-bvMtOR199vh~BxYYw9hY0-XMtCz8NOw-gemuWJpZqKNq2B71gEBIZh5TR4A1VFtOFZwwVP5KaJVlrWAyXCv384mXBcpTrsSICu768Vjcu65nYevf9JiULhGtrft9MZdYjncJo5QIc1Dq~dnjWcEKfIUFTt8YItfJfxDEWxrPmLzv2uG3UjAP16rEmEsmOdNgJlbmHEqu0jB2fxIpTX2woIB75iUqgnTLjpjgxtwp-5PgStdX7P3Q__',
-              }}
+              source={require('../../assets/tempAssets/7261c2ae940abab762a6e0130b36b3a9.jpg')}
             />
           </View>
           <View
@@ -610,6 +609,9 @@ const ProfileScreen = ({navigation}: NavigProps<null>) => {
 
           <ConversationalCard
             conversationStyle="normal"
+            onPress={() => {
+              navigation?.navigate('NormalConversation');
+            }}
             cardStyle="single"
             conversationTitle="You"
             conversationSubtitle="Start a chat"
@@ -620,6 +622,25 @@ const ProfileScreen = ({navigation}: NavigProps<null>) => {
           <ConversationalCard
             conversationStyle="normal"
             cardStyle="two"
+            // havNotUser
+            onPress={() => {
+              navigation?.navigate('GroupConversation');
+            }}
+            conversationTitle="Khushi Aktar"
+            isReply
+            conversationSubtitle="replied in chat"
+            lastMessageTime="9:30 am"
+            lastMessage="Hello asad vai, i`m 
+coming from Banasri"
+          />
+          <ConversationalCard
+            conversationStyle="normal"
+            cardStyle="two"
+            onPress={() => {
+              setIsLive(!isLive);
+              navigation?.navigate('LiveConversation');
+            }}
+            havNotUser
             conversationTitle="Khushi Aktar"
             isReply
             conversationSubtitle="replied in chat"
@@ -639,6 +660,37 @@ is recognize for SIC "
           <ConversationalCard
             conversationStyle="normal"
             cardStyle="three"
+            onPress={() => {
+              setIsLive(!isLive);
+              navigation?.navigate('LiveConversation');
+            }}
+            conversationTitle="COFFE HOUSE"
+            conversationSubtitle="join room"
+            lastMessageTime="8:10 am"
+            lastMessage="nadin invite you in room"
+          />
+          <ConversationalCard
+            conversationStyle="normal"
+            cardStyle="four"
+            conversationTitle="COFFE HOUSE"
+            onPress={() => {
+              setIsLive(!isLive);
+              navigation?.navigate('LiveConversation');
+            }}
+            conversationSubtitle="join room"
+            lastMessageTime="8:10 am"
+            lastMessage="Hello Asadullah some books
+is recognize for SIC "
+          />
+          <ConversationalCard
+            conversationStyle="normal"
+            cardStyle="three"
+            manyPeople
+            havNotUser
+            onPress={() => {
+              setIsLive(!isLive);
+              navigation?.navigate('LiveConversation');
+            }}
             conversationTitle="COFFE HOUSE"
             conversationSubtitle="join room"
             lastMessageTime="8:10 am"
@@ -647,22 +699,11 @@ is recognize for SIC "
           <ConversationalCard
             conversationStyle="normal"
             cardStyle="three"
-            conversationTitle="COFFE HOUSE"
-            conversationSubtitle="join room"
-            lastMessageTime="8:10 am"
-            lastMessage="nadin invite you in room"
-          />
-          <ConversationalCard
-            conversationStyle="normal"
-            cardStyle="three"
-            conversationTitle="COFFE HOUSE"
-            conversationSubtitle="join room"
-            lastMessageTime="8:10 am"
-            lastMessage="nadin invite you in room"
-          />
-          <ConversationalCard
-            conversationStyle="normal"
-            cardStyle="three"
+            havNotUser
+            onPress={() => {
+              setIsLive(!isLive);
+              navigation?.navigate('LiveConversation');
+            }}
             conversationTitle="COFFE HOUSE"
             conversationSubtitle="join room"
             lastMessageTime="8:10 am"

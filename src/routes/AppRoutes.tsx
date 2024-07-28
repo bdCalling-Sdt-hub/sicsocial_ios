@@ -48,6 +48,10 @@ import NormalConversationScreen from '../screens/message/NormalConversationScree
 import GroupConversationScreen from '../screens/message/GroupConversationScreen';
 import LiveConversationScreen from '../screens/message/LiveConversationScreen';
 import LiveMessageScreen from '../screens/message/LiveMessageScreen';
+import LiveAddFriendsScreen from '../screens/message/LiveAddFriendsScreen';
+import CreateNewFaceDown from '../screens/message/CreateNewFaceDown';
+import FaceDownConversation from '../screens/message/FaceDownConversation';
+import FaceDownAddMember from '../screens/message/FaceDownAddMember';
 
 const Stack = createNativeStackNavigator();
 
@@ -131,6 +135,13 @@ const Routes = () => {
               animation: 'slide_from_right',
             }}
           />
+          <Stack.Screen
+            name="FaceDownAddMember"
+            component={FaceDownAddMember}
+            options={{
+              animation: 'slide_from_right',
+            }}
+          />
           {/*======================== Home end ============================ */}
 
           {/*======================== Friend start ============================ */}
@@ -186,6 +197,27 @@ const Routes = () => {
           <Stack.Screen
             name="LiveMessage"
             component={LiveMessageScreen}
+            options={{
+              animation: 'slide_from_right',
+            }}
+          />
+          <Stack.Screen
+            name="LiveAddFriends"
+            component={LiveAddFriendsScreen}
+            options={{
+              animation: 'slide_from_right',
+            }}
+          />
+          <Stack.Screen
+            name="CreateFaceDown"
+            component={CreateNewFaceDown}
+            options={{
+              animation: 'slide_from_right',
+            }}
+          />
+          <Stack.Screen
+            name="FaceDownConversation"
+            component={FaceDownConversation}
             options={{
               animation: 'slide_from_right',
             }}

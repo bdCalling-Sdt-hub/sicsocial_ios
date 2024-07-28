@@ -8,6 +8,7 @@ import Animated, {
   withDelay,
   useAnimatedStyle,
 } from 'react-native-reanimated';
+import {useStyles} from '../../../context/ContextApi';
 
 type CustomModalProps = {
   modalVisible: boolean;
@@ -46,17 +47,24 @@ const ModalOfBottom = ({
   containerColor,
 }: CustomModalProps) => {
   const containerColorValue = useSharedValue('transparent');
-  const containerOpacity = useSharedValue(1);
+  const containerOpacity = useSharedValue(0);
+  const {colors} = useStyles();
 
   useEffect(() => {
     if (modalVisible) {
       containerColorValue.value = withTiming('rgba(0,0,0,0.2)', {
-        duration: 500,
+        duration: 700,
       });
+      containerOpacity.value = 1;
     }
+    if (!modalVisible) {
+      containerColorValue.value = 'transparent';
+      containerOpacity.value = 0;
+    }
+
     return () => {
-      containerColorValue.value = withTiming('transparent');
-      containerOpacity.value = withTiming(1);
+      containerColorValue.value = 'transparent';
+      containerOpacity.value = 1;
     };
   }, [modalVisible]);
 
@@ -76,10 +84,10 @@ const ModalOfBottom = ({
       <Pressable
         disabled={normal || false}
         onPressIn={() => {
-          containerColorValue.value = withTiming('transparent');
+          containerColorValue.value = 'transparent';
+          containerOpacity.value = withTiming(0, {duration: 400});
         }}
         onPress={() => {
-          containerOpacity.value = withTiming(0);
           setModalVisible(false);
         }}
         // onPressOut={() => {
@@ -105,7 +113,7 @@ const ModalOfBottom = ({
               borderRadius: Radius ? 9 : 0,
               borderTopRightRadius: onlyTopRadius ? onlyTopRadius : 0,
               borderTopLeftRadius: onlyTopRadius ? onlyTopRadius : 0,
-              backgroundColor: containerColor ? containerColor : 'white',
+              backgroundColor: colors.bg,
               height: height ? height : '40%',
               width: width ? width : '100%',
               padding: 30,

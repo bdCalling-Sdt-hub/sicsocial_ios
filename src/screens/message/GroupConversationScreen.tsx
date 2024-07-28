@@ -144,8 +144,8 @@ const GroupConversationScreen = ({navigation}: NavigProps<null>) => {
       opacity: animateOpacity.value,
     };
   });
-  console.log(messages);
-  console.log(messages.length);
+  // console.log(messages);
+  // console.log(messages.length);
 
   const currentUser = messages.find(message => message.user._id === 1)?.user;
 
@@ -502,12 +502,30 @@ const GroupConversationScreen = ({navigation}: NavigProps<null>) => {
 
       <FlatList
         scrollEventThrottle={10}
+        keyboardShouldPersistTaps="always"
+        showsVerticalScrollIndicator={false}
         style={{
           height: height * 0.6,
+          // backgroundColor: 'red',
+        }}
+        contentContainerStyle={{
+          paddingTop: 10,
+          paddingBottom: 60,
         }}
         onContentSizeChange={(w: number, h: number) => {
-          // console.log(height * 0.6);
           if (height * 0.7 < h) {
+            animatePosition.value = withTiming(-(height * 0.3), {
+              duration: 500,
+            });
+          }
+        }}
+        onScroll={e => {
+          if (e.nativeEvent.contentOffset.y > 0) {
+            animatePosition.value = withTiming(height * 0.07, {
+              duration: 500,
+            });
+          }
+          if (e.nativeEvent.contentOffset.y === 0) {
             animatePosition.value = withTiming(-(height * 0.3), {
               duration: 500,
             });

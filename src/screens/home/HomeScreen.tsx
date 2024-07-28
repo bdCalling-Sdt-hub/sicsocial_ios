@@ -427,9 +427,7 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
               justifyContent: 'center',
               alignItems: 'center',
             }}
-            source={{
-              uri: 'https://s3-alpha-sig.figma.com/img/7568/3fd5/7261c2ae940abab762a6e0130b36b3a9?Expires=1721606400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=AykSrcYr~WEBIHMW4WezFwp74XIKqwz1DXFJPi-jBgpPa0w-AKmFioPrvXMG08QXjqfFJ7xtZ25idfjkopahkcvMKxIXm4TY4TBZFWD~2ZCGL4jbefjiM0ufmw09012~6B89nl~j6xWjd9ggQilJal8vQ8KUcmdm-KyxNUlAA0yT-JwjW~4Hx9gzTiaI8mXu9SmdrwivuQtAmxDNBHcx0hvDb7l8zrX95Hww4mVqCT-z3AbxnyyzEvIgAivaXFHPvNFXDdOp23QKhDg~zKX5ZObnIYL7uNdvhuAZWiwbKxUOSag8laDRybIo8hjF63zSi6rL9nm7x5pUOleZgtmDfQ__',
-            }}
+            source={require('../../assets/tempAssets/86efa3df337e8c215dd8095476bb6513.jpg')}
           />
           <View
             style={{
@@ -511,6 +509,9 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
         />
         <ConversationalCard
           conversationStyle="normal"
+          onPress={() => {
+            navigation?.navigate('NormalConversation');
+          }}
           cardStyle="single"
           conversationTitle="You"
           conversationSubtitle="Start a chat"
@@ -522,6 +523,9 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
           conversationStyle="normal"
           cardStyle="two"
           // havNotUser
+          onPress={() => {
+            navigation?.navigate('GroupConversation');
+          }}
           conversationTitle="Khushi Aktar"
           isReply
           conversationSubtitle="replied in chat"
@@ -532,6 +536,10 @@ coming from Banasri"
         <ConversationalCard
           conversationStyle="normal"
           cardStyle="two"
+          onPress={() => {
+            setIsLive(!isLive);
+            navigation?.navigate('LiveConversation');
+          }}
           havNotUser
           conversationTitle="Khushi Aktar"
           isReply
@@ -543,6 +551,9 @@ coming from Banasri"
         <ConversationalCard
           conversationStyle="normal"
           cardStyle="book"
+          onPress={() => {
+            navigation?.navigate('BookShare');
+          }}
           conversationTitle="SIC Discussion"
           conversationSubtitle="recommendations"
           lastMessageTime="9:30 am"
@@ -552,6 +563,10 @@ is recognize for SIC "
         <ConversationalCard
           conversationStyle="normal"
           cardStyle="three"
+          onPress={() => {
+            setIsLive(!isLive);
+            navigation?.navigate('LiveConversation');
+          }}
           conversationTitle="COFFE HOUSE"
           conversationSubtitle="join room"
           lastMessageTime="8:10 am"
@@ -575,6 +590,10 @@ is recognize for SIC "
           cardStyle="three"
           manyPeople
           havNotUser
+          onPress={() => {
+            setIsLive(!isLive);
+            navigation?.navigate('LiveConversation');
+          }}
           conversationTitle="COFFE HOUSE"
           conversationSubtitle="join room"
           lastMessageTime="8:10 am"
@@ -584,6 +603,10 @@ is recognize for SIC "
           conversationStyle="normal"
           cardStyle="three"
           havNotUser
+          onPress={() => {
+            setIsLive(!isLive);
+            navigation?.navigate('LiveConversation');
+          }}
           conversationTitle="COFFE HOUSE"
           conversationSubtitle="join room"
           lastMessageTime="8:10 am"
@@ -809,6 +832,7 @@ is recognize for SIC "
       {/*==================== Body part end ===================  */}
 
       {/*===================== modal main part start ================ */}
+      {/* modal of mother  */}
       <Modal
         animationType={'fade'}
         transparent={true}
@@ -1006,6 +1030,8 @@ is recognize for SIC "
                       setLiveModal(!liveModal);
                     }
                     if (item.name === 'New Face Dwn') {
+                      navigation?.navigate('CreateFaceDown');
+                      setConversationalModal(false);
                     }
                   }}
                   style={{

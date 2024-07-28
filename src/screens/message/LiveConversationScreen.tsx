@@ -513,10 +513,11 @@ const LiveConversationScreen = ({navigation}: NavigProps<null>) => {
         containerWidth={width * 0.9}
         numColumns={4}
         contentContainerStyle={{
-          alignItems: 'center',
+          // alignItems: 'center',
+          alignSelf: 'center',
           paddingVertical: 10,
         }}
-        data={Friends}
+        data={Friends.slice(0, 6)}
         renderItem={item => {
           return (
             <TouchableOpacity
@@ -656,7 +657,7 @@ const LiveConversationScreen = ({navigation}: NavigProps<null>) => {
             gap: 16,
             paddingHorizontal: '4%',
           }}
-          data={Friends}
+          data={Friends.slice(0, 6)}
           renderItem={item => (
             <View style={{gap: 6}}>
               <TouchableOpacity
@@ -718,6 +719,8 @@ const LiveConversationScreen = ({navigation}: NavigProps<null>) => {
               flexDirection: 'row',
               justifyContent: 'space-between',
             }}>
+            {/* ==================live group message start ===================*/}
+
             <TouchableOpacity
               activeOpacity={0.8}
               style={{}}
@@ -761,6 +764,8 @@ const LiveConversationScreen = ({navigation}: NavigProps<null>) => {
                 </Text>
               </View>
             </TouchableOpacity>
+            {/*==================== live group message end =======================*/}
+            {/*===================== live link shear start ======================*/}
             <TouchableOpacity
               onPress={() => {
                 setModalVisible(!modalVisible);
@@ -795,7 +800,14 @@ const LiveConversationScreen = ({navigation}: NavigProps<null>) => {
                 </Text>
               </View>
             </TouchableOpacity>
-            <TouchableOpacity activeOpacity={0.8} style={{}}>
+            {/* =================live link shear end ======================*/}
+            {/*====================== live add more member start==================== */}
+            <TouchableOpacity
+              onPress={() => {
+                navigation?.navigate('LiveAddFriends');
+              }}
+              activeOpacity={0.8}
+              style={{}}>
               <View
                 style={{
                   backgroundColor: colors.secondaryColor,
@@ -817,7 +829,9 @@ const LiveConversationScreen = ({navigation}: NavigProps<null>) => {
                 />
               </View>
             </TouchableOpacity>
+            {/* live add more member end */}
           </View>
+          {/* ===============live joined and knock and voice run on or off start============ */}
           <TouchableOpacity
             activeOpacity={0.8}
             style={{}}
@@ -899,13 +913,14 @@ const LiveConversationScreen = ({navigation}: NavigProps<null>) => {
               />
             </View>
           </TouchableOpacity>
+          {/*=============== live joined and knock and voice run on or off end================ */}
         </View>
       </View>
 
       <ModalOfBottom
         modalVisible={showShortProfile}
         setModalVisible={setShowShortProfile}
-        onlyTopRadius={2}>
+        onlyTopRadius={20}>
         <View>
           <View
             style={{
@@ -932,9 +947,7 @@ const LiveConversationScreen = ({navigation}: NavigProps<null>) => {
                   borderRadius: 46,
                   alignSelf: 'center',
                 }}
-                source={{
-                  uri: 'https://s3-alpha-sig.figma.com/img/f6e4/02df/f94d91c8643f6698b126e7dec5854350?Expires=1721606400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=cz4Qczd8u0VDld~tiTdDzpKyOyxcx0QKLi091Vwp7yLsWKwyX0kwvBwFi3CE~mjA1B7~52uARqrujtEPoas1jL07XHeld9MAk-bvMtOR199vh~BxYYw9hY0-XMtCz8NOw-gemuWJpZqKNq2B71gEBIZh5TR4A1VFtOFZwwVP5KaJVlrWAyXCv384mXBcpTrsSICu768Vjcu65nYevf9JiULhGtrft9MZdYjncJo5QIc1Dq~dnjWcEKfIUFTt8YItfJfxDEWxrPmLzv2uG3UjAP16rEmEsmOdNgJlbmHEqu0jB2fxIpTX2woIB75iUqgnTLjpjgxtwp-5PgStdX7P3Q__',
-                }}
+                source={require('../../assets/tempAssets/4005b22a3c1c23d7c04f6c9fdbd85468.jpg')}
               />
             </View>
             <View

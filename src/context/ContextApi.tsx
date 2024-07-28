@@ -1,4 +1,4 @@
-import {View, Text, Appearance} from 'react-native';
+import {View, Text, Appearance, Dimensions} from 'react-native';
 import React, {createContext, useContext, useState} from 'react';
 
 interface ProviderProps {
@@ -24,10 +24,18 @@ export const useContextApi = () => {
   return {isDark, setDark, isLive, setIsLive};
 };
 
+const {height, width} = Dimensions.get('window');
+
+// console.log(height, width);
+
 export const useStyles = () => {
   const {isDark} = useContext(ContextProvider);
 
   return {
+    window: {
+      height,
+      width,
+    },
     font: {
       SuezOne: 'SuezOne-Regular',
       RussoOne: 'RussoOne-Regular',

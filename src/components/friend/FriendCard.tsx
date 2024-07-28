@@ -129,9 +129,7 @@ const FriendCard = ({
                       width: 24,
                       borderRadius: 100,
                     }}
-                    source={{
-                      uri: 'https://s3-alpha-sig.figma.com/img/3d5c/b72f/ae1e058c2ed75ab981a9f8bb62e96a13?Expires=1721606400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=eJaHp1JALpTwbH-LSjIAIvY821a5NKO6rK5gu~-rGeFwsPliOnXzKteirjOx4iEKdiqOPvSUa7FeiTOyK~H836mreo~PcxMtwmaJGpEJcM6Fh1yVFAJBCyk1VHjKPQ9dqaodOQ0ZEdykoxaq24C4qvaeIQKV~wZO6s4xjed21grqnXsN307KjWHHIZbYVfrcBgDRk5d7brULhHZidnLrXNPP-XE2tgf7qUsa7lsDw9UwxJbqagf1UAeyiufB6ZwfblJXUprYoOnw~z~MRKOqpcnVVt-ax3sJ0p~66nkeBM-RZkVMVaT1YGxNTbu1I1TqayL5NP1qHcsv8e5B8cpcCA__',
-                    }}
+                    source={require('../../assets/tempAssets/86efa3df337e8c215dd8095476bb6513.jpg')}
                   />
                 </View>
                 <View
@@ -148,9 +146,7 @@ const FriendCard = ({
                       width: 24,
                       borderRadius: 100,
                     }}
-                    source={{
-                      uri: 'https://s3-alpha-sig.figma.com/img/bdc6/db2a/3a906b3de8eaa53e14582edf5c918b5d?Expires=1721606400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=U7P8CfaZR8VN~AB1t4yamhll4GWaFTFOGHWe5KuCLxDNe4~p9UhUbNtg9VA8aaFLDKPmwuByzP7CpTyF1KFHwPwChykfMqAhFl6iJGCErm9vbcCeYixeYDT1QE1JWrVlT5y4YfuzY2H1hH9V0dHwAzKAc8hMALmYPIoMNsqxZICi6T0PjW0ATcq~eeOYXaxtY9S30thVMs3WHidear3kaHFhkU-MO7VCCQVDbjVzVvy~PWSw-QZcZiqNvkC-lm0DLJlzBtuVkjIlOgoW2JTZqVMcaNUau2ybiuv2uIAR~tRoO18JRvqWgC55EfDQZ1lvwk1mAkeoSHqBPHP954d7kQ__',
-                    }}
+                    source={require('../../assets/tempAssets/ae1e058c2ed75ab981a9f8bb62e96a13.jpg')}
                   />
                 </View>
               </View>

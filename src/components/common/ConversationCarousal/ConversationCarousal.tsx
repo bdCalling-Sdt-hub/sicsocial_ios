@@ -141,6 +141,7 @@ interface ConversationCarousalProps extends NavigProps<null> {
   faceDown?: boolean;
   room?: boolean;
   record?: boolean;
+  onPressLive?: () => void;
   onSendTextMessage?: () => void;
   onSendImageMessage?: () => void;
   setMessages?: Dispatch<SetStateAction<Array<messagePros>>>;
@@ -169,6 +170,7 @@ const ConversationCarousal = ({
   ImageMessage,
   TextMessage,
   messages,
+  onPressLive,
 }: ConversationCarousalProps) => {
   const absoluteData = [];
 
@@ -392,6 +394,7 @@ const ConversationCarousal = ({
                 setTextInputModal(!textInputModal);
               }
               if (item.name === 'Join your room') {
+                onPressLive();
               }
               if (item.name === 'New Face Dwn') {
               }
@@ -820,11 +823,7 @@ const ConversationCarousal = ({
                       ...messages,
                       {
                         id: messages.length + 1,
-                        text: textMessage
-                          ? textMessage
-                          : 'Everyone read this book',
                         createdAt: new Date(),
-                        image: imageAssets ? imageAssets : '',
                         bookImage: item.item.image,
                         user: {
                           _id: 1,

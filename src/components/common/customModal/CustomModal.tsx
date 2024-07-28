@@ -2,6 +2,7 @@ import {View, Modal, Pressable, TouchableOpacity} from 'react-native';
 import React from 'react';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {GStyles} from '../../../styles/GStyles';
+import {useStyles} from '../../../context/ContextApi';
 
 type CustomModalProps = {
   modalVisible: boolean;
@@ -34,6 +35,7 @@ const CustomModal = ({
   backButton,
   containerColor,
 }: CustomModalProps) => {
+  const {colors} = useStyles();
   return (
     <Modal
       animationType={slide ? 'slide' : 'fade'}
@@ -55,7 +57,7 @@ const CustomModal = ({
             borderRadius: Radius ? 9 : 0,
             borderTopRightRadius: onlyTopRadius && 9,
             borderTopLeftRadius: onlyTopRadius && 9,
-            backgroundColor: containerColor ? containerColor : 'white',
+            backgroundColor: containerColor ? containerColor : colors.bg,
             height: height ? height : '50%',
             width: width ? width : '90%',
             padding: 10,
