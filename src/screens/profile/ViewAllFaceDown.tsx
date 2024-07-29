@@ -83,6 +83,9 @@ const ViewAllFaceDown = ({navigation}: NavigProps<null>) => {
               return (
                 <View style={{gap: 6}}>
                   <TouchableOpacity
+                    onPress={() => {
+                      navigation?.navigate('CreateFaceDown');
+                    }}
                     style={{
                       width: 68,
                       height: 68,
@@ -115,7 +118,9 @@ const ViewAllFaceDown = ({navigation}: NavigProps<null>) => {
             renderItem={item => (
               <View style={{gap: 6}}>
                 <TouchableOpacity
-                  onPress={() => {}}
+                  onPress={() => {
+                    navigation?.navigate('FaceDownConversation');
+                  }}
                   style={{
                     backgroundColor: colors.secondaryColor,
                     // paddingVertical: 5,
@@ -174,7 +179,9 @@ const ViewAllFaceDown = ({navigation}: NavigProps<null>) => {
             renderItem={item => (
               <View style={{gap: 6}}>
                 <TouchableOpacity
-                  onPress={() => {}}
+                  onPress={() => {
+                    navigation?.navigate('FaceDownConversation');
+                  }}
                   style={{
                     backgroundColor: colors.secondaryColor,
                     // paddingVertical: 5,

@@ -69,6 +69,7 @@ const Routes = () => {
             statusBarStyle: isDark ? 'light' : 'dark',
           }}>
           {/* <Stack.Screen name="Splash" component={SplashScreen} /> */}
+
           <Stack.Screen name="Login" component={LoginScreen} />
           <Stack.Screen name="SignUp" component={SignUpScreen} />
           <Stack.Screen

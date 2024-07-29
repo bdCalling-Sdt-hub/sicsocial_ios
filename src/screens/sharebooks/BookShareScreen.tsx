@@ -167,7 +167,7 @@ const BookShareScreen = ({navigation, route}: NavigProps<Books>) => {
               // setConfirmationModal(!confirmationModal);
               // setIsFriendRequest(false);
               // setIsFriendRequestSent(false);
-              // setModalVisible(false);
+              setModalVisible(false);
             }}
             style={{
               padding: 10,
@@ -188,6 +188,7 @@ const BookShareScreen = ({navigation, route}: NavigProps<Books>) => {
               // setIsFriendRequest(false);
               // setIsFriendRequestSent(false);
               // setModalVisible(false);
+              // navigation?.navigate('');
             }}
             style={{
               padding: 10,
@@ -207,7 +208,8 @@ const BookShareScreen = ({navigation, route}: NavigProps<Books>) => {
               // setConfirmationModal(!confirmationModal);
               // setIsFriendRequest(false);
               // setIsFriendRequestSent(false);
-              // setModalVisible(false);
+              setModalVisible(false);
+              navigation?.navigate('CreateFaceDown');
             }}
             style={{
               padding: 10,

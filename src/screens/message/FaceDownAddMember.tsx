@@ -54,7 +54,7 @@ const FaceDownAddMember = ({navigation}: NavigProps<null>) => {
   const [modalVisible, setModalVisible] = React.useState(false);
   const [selectedUser, setSelectUser] = React.useState<
     Array<{name: string; img: string; lastMessage: string; id: number}>
-  >([...friends.slice(0, 2)]);
+  >([...friends.slice(0, 1)]);
 
   //   console.log(selectedUser);
   return (

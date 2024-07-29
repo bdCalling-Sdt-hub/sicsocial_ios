@@ -36,7 +36,7 @@ const NotificationCard = ({
           style={{
             flexDirection: 'row',
             alignItems: 'center',
-            gap: 5,
+            gap: 10,
           }}>
           <View
             style={{
@@ -52,11 +52,7 @@ const NotificationCard = ({
                 borderColor: 'white',
                 borderWidth: 2,
               }}
-              source={{
-                uri: img
-                  ? img
-                  : 'https://s3-alpha-sig.figma.com/img/9a5b/b355/1d7cda242662363cc8c5c6f279c5248e?Expires=1721606400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=Ws6ogv13FwgG40JNBdYK0dNRkgnWijJvB9UydMrny19qG9IAxEBH6DaUQCtKO4AFbLy-2T6w8Qr6W7BXbVZlGr3anyrb3giz1Y-7Tr3t3DXFaQw2J-i6qIR-O9ZA5kvNT0Cdk0wC9vzQnNZ9a1glskxqT-ygRB-2TYM5J7-089idsFmVuF7rxP7j-O8hDywsAfFYe4EGU5psL4bEKLnf18O3-Q10D9g5rz6cLBQelMMIEwwUqR66dtu~0yZxk3i-cL8BTCdu9oNSq6riLDeql3iQUcFppITRtoA4JeUV5hNp3v6BpmXWVYXvX5-nZKdi4r6MN-F6~4xjLNkpqM2qLA__',
-              }}
+              source={require('../../assets/tempAssets/691af02d3a7ca8be2811716f82d9212b.jpg')}
             />
           </View>
           <Text

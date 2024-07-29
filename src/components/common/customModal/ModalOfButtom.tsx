@@ -85,7 +85,7 @@ const ModalOfBottom = ({
         disabled={normal || false}
         onPressIn={() => {
           containerColorValue.value = 'transparent';
-          containerOpacity.value = withTiming(0, {duration: 400});
+          containerOpacity.value = withTiming(0, {duration: 250});
         }}
         onPress={() => {
           setModalVisible(false);
@@ -149,7 +149,11 @@ const ModalOfBottom = ({
                   <AntDesign
                     name="close"
                     size={24}
-                    color={backButtonColor ? backButtonColor : '#3D3D3D'}
+                    color={
+                      backButtonColor
+                        ? backButtonColor
+                        : colors.textColor.normal
+                    }
                   />
                 </View>
               </TouchableOpacity>

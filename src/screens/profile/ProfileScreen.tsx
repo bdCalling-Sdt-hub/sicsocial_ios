@@ -504,6 +504,9 @@ const ProfileScreen = ({navigation}: NavigProps<null>) => {
               return (
                 <View style={{gap: 6}}>
                   <TouchableOpacity
+                    onPress={() => {
+                      navigation?.navigate('CreateFaceDown');
+                    }}
                     style={{
                       width: 68,
                       height: 68,
@@ -536,7 +539,9 @@ const ProfileScreen = ({navigation}: NavigProps<null>) => {
             renderItem={item => (
               <View style={{gap: 6}}>
                 <TouchableOpacity
-                  onPress={() => {}}
+                  onPress={() => {
+                    navigation?.navigate('FaceDownConversation');
+                  }}
                   style={{
                     backgroundColor: colors.secondaryColor,
                     // paddingVertical: 5,
@@ -637,8 +642,7 @@ coming from Banasri"
             conversationStyle="normal"
             cardStyle="two"
             onPress={() => {
-              setIsLive(!isLive);
-              navigation?.navigate('LiveConversation');
+              navigation?.navigate('GroupConversation');
             }}
             havNotUser
             conversationTitle="Khushi Aktar"
@@ -651,6 +655,9 @@ coming from Banasri"
           <ConversationalCard
             conversationStyle="normal"
             cardStyle="book"
+            onPress={() => {
+              navigation?.navigate('BookShare');
+            }}
             conversationTitle="SIC Discussion"
             conversationSubtitle="recommendations"
             lastMessageTime="9:30 am"
@@ -661,13 +668,12 @@ is recognize for SIC "
             conversationStyle="normal"
             cardStyle="three"
             onPress={() => {
-              setIsLive(!isLive);
-              navigation?.navigate('LiveConversation');
+              navigation?.navigate('FaceDownConversation');
             }}
-            conversationTitle="COFFE HOUSE"
-            conversationSubtitle="join room"
+            conversationTitle="Reader lovers"
+            conversationSubtitle="join FaceDwn"
             lastMessageTime="8:10 am"
-            lastMessage="nadin invite you in room"
+            lastMessage="nadin invite you in facedwn"
           />
           <ConversationalCard
             conversationStyle="normal"
@@ -686,19 +692,6 @@ is recognize for SIC "
             conversationStyle="normal"
             cardStyle="three"
             manyPeople
-            havNotUser
-            onPress={() => {
-              setIsLive(!isLive);
-              navigation?.navigate('LiveConversation');
-            }}
-            conversationTitle="COFFE HOUSE"
-            conversationSubtitle="join room"
-            lastMessageTime="8:10 am"
-            lastMessage="nadin invite you in room"
-          />
-          <ConversationalCard
-            conversationStyle="normal"
-            cardStyle="three"
             havNotUser
             onPress={() => {
               setIsLive(!isLive);

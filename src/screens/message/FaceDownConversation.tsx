@@ -24,6 +24,7 @@ import ConversationCarousal from '../../components/common/ConversationCarousal/C
 import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
 import CustomModal from '../../components/common/customModal/CustomModal';
 import NormalButton from '../../components/common/NormalButton';
+import NotifyTopComponent from '../../components/common/notify/NotifyTopComponent';
 
 const FaceDownConversation = ({navigation}: NavigProps<null>) => {
   const {width, height} = useWindowDimensions();
@@ -124,6 +125,7 @@ const FaceDownConversation = ({navigation}: NavigProps<null>) => {
   const [fullBanner, setFullBanner] = React.useState(false);
   const [confirmationModal, setConfirmationModal] = React.useState(false);
   const [liveModal, setLiveModal] = React.useState(false);
+  const [open, setNotify] = React.useState(false);
   const scrollRef = useRef();
 
   const FULL_HIGHT = height * 0.42;
@@ -180,6 +182,12 @@ const FaceDownConversation = ({navigation}: NavigProps<null>) => {
         backgroundColor: colors.bg,
         width: window.width,
       }}>
+      <NotifyTopComponent
+        context=""
+        variant="normal"
+        open={open}
+        onDismiss={setNotify}
+      />
       <View
         style={{
           height: '7.2%',
@@ -369,7 +377,7 @@ const FaceDownConversation = ({navigation}: NavigProps<null>) => {
               {item.item.live && (
                 <TouchableOpacity
                   onPress={() => {
-                    navigation.navigate('LiveConversation');
+                    navigation?.navigate('LiveConversation');
                   }}
                   activeOpacity={0.8}
                   style={{
@@ -544,7 +552,7 @@ const FaceDownConversation = ({navigation}: NavigProps<null>) => {
                           {item.item.bookImage && (
                             <TouchableOpacity
                               onPress={() => {
-                                navigation.navigate('BookShare');
+                                navigation?.navigate('BookShare');
                               }}
                               activeOpacity={0.8}
                               style={{

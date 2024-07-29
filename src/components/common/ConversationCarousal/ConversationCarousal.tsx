@@ -18,10 +18,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import {useStyles} from '../../../context/ContextApi';
-import Carousel, {
-  ICarouselInstance,
-  TAnimationStyle,
-} from 'react-native-reanimated-carousel';
+import Carousel, {ICarouselInstance} from 'react-native-reanimated-carousel';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import {NavigProps} from '../../../interfaces/NaviProps';
 import {AnimatedCircularProgress} from 'react-native-circular-progress';
@@ -280,7 +277,7 @@ const ConversationCarousal = ({
     recordingAnimation.value = withTiming('100%', {duration: 10000});
   };
 
-  const animationStyle: TAnimationStyle = React.useCallback(
+  const animationStyle = React.useCallback(
     (value: number) => {
       'worklet';
 
@@ -394,7 +391,7 @@ const ConversationCarousal = ({
                 setTextInputModal(!textInputModal);
               }
               if (item.name === 'Join your room') {
-                onPressLive();
+                onPressLive && onPressLive();
               }
               if (item.name === 'New Face Dwn') {
               }
@@ -682,7 +679,7 @@ const ConversationCarousal = ({
                   setMessages([
                     ...messages,
                     {
-                      id: messages.length + 1,
+                      id: messages && messages?.length + 1,
                       text: textMessage ? textMessage : '',
                       createdAt: new Date(),
                       image: imageAssets ? imageAssets : '',
