@@ -1329,7 +1329,6 @@ is recognize for SIC "
       <ModalOfBottom
         modalVisible={liveModal}
         setModalVisible={setLiveModal}
-        onlyTopRadius={20}
         height={'60%'}
         containerColor={colors.bg}>
         <ScrollView
