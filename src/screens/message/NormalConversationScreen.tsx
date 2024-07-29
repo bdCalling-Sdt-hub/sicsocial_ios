@@ -22,6 +22,7 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
+import ConversationCarousal1 from '../../components/common/ConversationCarousal/ConversationCarousal1';
 
 export interface messagePros {
   id: number;
@@ -445,7 +446,7 @@ const NormalConversationScreen = ({navigation}: NavigProps<null>) => {
 
           alignItems: 'center',
         }}>
-        <ConversationCarousal
+        <ConversationCarousal1
           photo
           type
           record

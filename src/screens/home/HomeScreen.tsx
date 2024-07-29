@@ -52,6 +52,7 @@ import {AnimatedCircularProgress} from 'react-native-circular-progress';
 import NormalButton from '../../components/common/NormalButton';
 import CustomModal from '../../components/common/customModal/CustomModal';
 import {LinkPreview} from '@flyerhq/react-native-link-preview';
+import ConversationCarousal1 from '../../components/common/ConversationCarousal/ConversationCarousal1';
 
 const data = [
   {
@@ -903,7 +904,7 @@ is recognize for SIC "
               gap: -10,
               zIndex: 99999,
             }}>
-            <Carousel
+            {/* <Carousel
               style={{
                 width: width,
                 height: height * 0.3,
@@ -921,13 +922,11 @@ is recognize for SIC "
                   style={{
                     width: 100,
                     height: 100,
-                    // justifyContent: 'center',
+                
                     alignItems: 'center',
                   }}>
                   <Animated.View
-                    // onPress={() => {
-                    //   handleOpen();
-                    // }}
+                
 
                     style={[
                       {
@@ -979,11 +978,7 @@ is recognize for SIC "
                         />
                       )}
 
-                      {/* {activeIndex === index ? (
-                          <SvgXml xml={item.activeImage} />
-                        ) : (
-                          <SvgXml xml={item.unActive} />
-                        )} */}
+               
                     </View>
                   </Animated.View>
                   {activeIndex === index && (
@@ -1004,8 +999,8 @@ is recognize for SIC "
                 </TouchableOpacity>
               )}
               customAnimation={animationStyle1}
-            />
-            <Carousel
+            /> */}
+            {/* <Carousel
               width={itemSize}
               height={itemSize}
               style={{
@@ -1258,7 +1253,10 @@ is recognize for SIC "
                 </TouchableOpacity>
               )}
               customAnimation={animationStyle}
-            />
+            /> */}
+            <View>
+              <ConversationCarousal1 />
+            </View>
           </Pressable>
         </Pressable>
       </Modal>
