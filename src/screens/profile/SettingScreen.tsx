@@ -241,8 +241,7 @@ const SettingScreen = ({navigation}: NavigProps<null>) => {
         setModalVisible={setLanguageModal}
         modalVisible={languageModal}
         onlyTopRadius={10}
-        backButton
-        height={'80%'}>
+        backButton>
         <View>
           <Text
             style={{

@@ -19,11 +19,12 @@ import CustomModal from '../../components/common/customModal/CustomModal';
 const FriendsProfile = ({navigation}: NavigProps<null>) => {
   const {colors, font} = useStyles();
 
-  const [isFriend, setIsFriend] = React.useState(true);
-  const [isFriendRequest, setIsFriendRequest] = React.useState(false);
+  const [isFriend, setIsFriend] = React.useState(false);
+  const [isFriendRequest, setIsFriendRequest] = React.useState(true);
   const [isFriendRequestSent, setIsFriendRequestSent] = React.useState(false);
   const [modalVisible, setModalVisible] = React.useState(false);
   const [confirmationModal, setConfirmationModal] = React.useState(false);
+  const [reportModal, setReportModal] = React.useState(false);
 
   return (
     <View
@@ -396,7 +397,6 @@ is recognize for SIC "
         </View>
       </ScrollView>
       <ModalOfBottom
-        height={'18%'}
         onlyTopRadius={15}
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}>
@@ -421,23 +421,162 @@ is recognize for SIC "
               Unfriend
             </Text>
           </TouchableOpacity>
-          {isFriend && (
-            <TouchableOpacity
+
+          <TouchableOpacity
+            onPress={() => {
+              setReportModal(!reportModal);
+              setModalVisible(false);
+            }}
+            style={{
+              padding: 10,
+            }}>
+            <Text
               style={{
-                padding: 10,
+                fontFamily: font.Poppins,
+                fontSize: 14,
+                color: colors.textColor.neutralColor,
               }}>
-              <Text
-                style={{
-                  fontFamily: font.Poppins,
-                  fontSize: 14,
-                  color: colors.textColor.neutralColor,
-                }}>
-                Report
-              </Text>
-            </TouchableOpacity>
-          )}
+              Report
+            </Text>
+          </TouchableOpacity>
         </View>
       </ModalOfBottom>
+
+      {/* report  */}
+      <ModalOfBottom
+        setModalVisible={setReportModal}
+        modalVisible={reportModal}
+        onlyTopRadius={10}
+        backButton>
+        <View
+          style={{
+            gap: 10,
+          }}>
+          <View>
+            <Text
+              style={{
+                fontSize: 16,
+                fontWeight: 'bold',
+                // paddingTop: 10,
+                paddingBottom: 10,
+                // paddingHorizontal: 20,
+                color: colors.textColor.light,
+                fontFamily: font.Poppins,
+              }}>
+              Report reasons
+            </Text>
+          </View>
+          <TouchableOpacity
+            onPress={() => {
+              // setIsFriend(false);
+              // setConfirmationModal(!confirmationModal);
+              // setIsFriendRequest(false);
+              // setIsFriendRequestSent(false);
+              // setModalVisible(false);
+            }}
+            style={{
+              padding: 10,
+            }}>
+            <Text
+              style={{
+                fontFamily: font.Poppins,
+                fontSize: 14,
+                color: colors.textColor.neutralColor,
+              }}>
+              reasons 1
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              // setIsFriend(false);
+              // setConfirmationModal(!confirmationModal);
+              // setIsFriendRequest(false);
+              // setIsFriendRequestSent(false);
+              // setModalVisible(false);
+            }}
+            style={{
+              padding: 10,
+            }}>
+            <Text
+              style={{
+                fontFamily: font.Poppins,
+                fontSize: 14,
+                color: colors.textColor.neutralColor,
+              }}>
+              reasons 1
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              // setIsFriend(false);
+              // setConfirmationModal(!confirmationModal);
+              // setIsFriendRequest(false);
+              // setIsFriendRequestSent(false);
+              // setModalVisible(false);
+            }}
+            style={{
+              padding: 10,
+            }}>
+            <Text
+              style={{
+                fontFamily: font.Poppins,
+                fontSize: 14,
+                color: colors.textColor.neutralColor,
+              }}>
+              reasons 1
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              // setIsFriend(false);
+              // setConfirmationModal(!confirmationModal);
+              // setIsFriendRequest(false);
+              // setIsFriendRequestSent(false);
+              // setModalVisible(false);
+            }}
+            style={{
+              padding: 10,
+            }}>
+            <Text
+              style={{
+                fontFamily: font.Poppins,
+                fontSize: 14,
+                color: colors.textColor.neutralColor,
+              }}>
+              reasons 1
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              // setIsFriend(false);
+              // setConfirmationModal(!confirmationModal);
+              // setIsFriendRequest(false);
+              // setIsFriendRequestSent(false);
+              // setModalVisible(false);
+            }}
+            style={{
+              padding: 10,
+              backgroundColor: 'rgba(241, 99, 101, 1)',
+              borderRadius: 100,
+              width: '60%',
+              justifyContent: 'center',
+              alignItems: 'center',
+              alignSelf: 'center',
+              marginBottom: 10,
+              marginTop: 10,
+            }}>
+            <Text
+              style={{
+                fontFamily: font.PoppinsMedium,
+                fontSize: 14,
+                color: colors.textColor.white,
+              }}>
+              Confirm report
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </ModalOfBottom>
+
       <CustomModal
         modalVisible={confirmationModal}
         setModalVisible={setConfirmationModal}

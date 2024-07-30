@@ -654,7 +654,7 @@ coming from Banasri"
           />
           <ConversationalCard
             conversationStyle="normal"
-            cardStyle="book"
+            cardStyle="shear_book"
             onPress={() => {
               navigation?.navigate('BookShare');
             }}
@@ -710,8 +710,7 @@ is recognize for SIC "
         setModalVisible={setModalVisible}
         onlyTopRadius={20}
         backButton
-        containerColor={colors.bg}
-        height={'30%'}>
+        containerColor={colors.bg}>
         <View>
           <Text
             style={{
@@ -766,6 +765,7 @@ is recognize for SIC "
                 elevation: 2,
                 backgroundColor: colors.white,
                 borderRadius: 100,
+                marginBottom: 10,
               }}>
               <MaterialCommunityIcons name="content-copy" size={15} />
               <Text>Copy</Text>

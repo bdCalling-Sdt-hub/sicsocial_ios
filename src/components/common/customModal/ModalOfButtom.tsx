@@ -203,225 +203,77 @@ const ModalOfBottom = ({
     //   </Pressable>
     // </Modal>
     <>
-      {panOf ? (
-        <KeyboardAvoidingView
-          onLayout={e => {
-            // e.nativeEvent.layout.y && setLayout(e.nativeEvent.layout.y);
-          }}>
-          <Dialog
-            visible={modalVisible}
-            bottom={true}
-            width={window.width}
-            containerStyle={{
-              //   paddingBottom: 10,
+      <KeyboardAvoidingView
+        onLayout={e => {
+          // e.nativeEvent.layout.y && setLayout(e.nativeEvent.layout.y);
+        }}>
+        <Dialog
+          visible={modalVisible}
+          bottom={true}
+          width={window.width}
+          containerStyle={{
+            //   paddingBottom: 10,
+            // borderRadius: 10,
+            borderTopLeftRadius: 10,
+            borderTopRightRadius: 10,
+          }}
+          onDismiss={() => setModalVisible(false)}
+          // panDirection={Dialog.directions.DOWN}
+        >
+          <View
+            style={{
+              backgroundColor: containerColor ? containerColor : colors.bg,
               // borderRadius: 10,
-              borderTopLeftRadius: 10,
-              borderTopRightRadius: 10,
-            }}
-            onDismiss={() => setModalVisible(false)}
-            // panDirection={Dialog.directions.DOWN}
-          >
-            <View
-              style={{
-                backgroundColor: containerColor ? containerColor : colors.bg,
-                // borderRadius: 10,
-                padding: 20,
-                // justifyContent: 'flex-start',
-                // alignItems: 'center',
-              }}>
-              {backButton && (
-                <TouchableOpacity
-                  onPressIn={() => {
-                    containerColorValue.value = withTiming('transparent');
-                  }}
-                  onPressOut={() => {
-                    setTimeout(() => {
-                      setModalVisible(false);
-                    }, 50);
-                  }}
-                  style={{
-                    position: 'absolute',
-                    right: 8,
-                    top: 8,
-                    zIndex: 999,
-                  }}>
-                  <View
-                    style={{
-                      width: 30,
-                      height: 30,
-                      // backgroundColor: globalStyle.primary,
-                      //   backgroundColor: 'gray',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      borderRadius: 100,
-                    }}>
-                    <AntDesign
-                      name="close"
-                      size={24}
-                      color={
-                        backButtonColor
-                          ? backButtonColor
-                          : colors.textColor.normal
-                      }
-                    />
-                  </View>
-                </TouchableOpacity>
-              )}
-              <ScrollView
-                keyboardShouldPersistTaps="always"
-                showsVerticalScrollIndicator={false}>
-                {children}
-              </ScrollView>
-            </View>
-          </Dialog>
-        </KeyboardAvoidingView>
-      ) : (
-        <KeyboardAvoidingView
-          behavior="position"
-          onLayout={e => {
-            // e.nativeEvent.layout?.y && setLayout(e.nativeEvent.layout.y);
-          }}>
-          <Dialog
-            visible={modalVisible}
-            bottom={true}
-            width={window.width}
-            renderPannableHeader={() => (
-              <View
+              padding: 20,
+              // justifyContent: 'flex-start',
+              // alignItems: 'center',
+            }}>
+            {backButton && (
+              <TouchableOpacity
+                onPressIn={() => {
+                  containerColorValue.value = withTiming('transparent');
+                }}
+                onPressOut={() => {
+                  setTimeout(() => {
+                    setModalVisible(false);
+                  }, 50);
+                }}
                 style={{
-                  height: 30,
-                  // backgroundColor: containerColor ? containerColor : colors.bg,
-                  justifyContent: 'center',
-                  alignItems: 'center',
+                  position: 'absolute',
+                  right: 8,
+                  top: 8,
+                  zIndex: 999,
                 }}>
                 <View
                   style={{
-                    width: '9%',
-                    height: 3,
-                    backgroundColor: 'black',
+                    width: 30,
+                    height: 30,
+                    // backgroundColor: globalStyle.primary,
+                    //   backgroundColor: 'gray',
+                    justifyContent: 'center',
+                    alignItems: 'center',
                     borderRadius: 100,
-                  }}
-                />
-              </View>
+                  }}>
+                  <AntDesign
+                    name="close"
+                    size={24}
+                    color={
+                      backButtonColor
+                        ? backButtonColor
+                        : colors.textColor.normal
+                    }
+                  />
+                </View>
+              </TouchableOpacity>
             )}
-            containerStyle={{
-              //   paddingBottom: 10,
-              borderRadius: 10,
-              borderTopLeftRadius: 10,
-              borderTopRightRadius: 10,
-            }}
-            onDismiss={() => setModalVisible(false)}
-            panDirection={Dialog.directions.DOWN}>
-            {isKeyboardVisible ? (
-              <View
-                style={{
-                  height: layout,
-                  backgroundColor: containerColor ? containerColor : colors.bg,
-                  borderRadius: 10,
-                  padding: 20,
-                  // justifyContent: 'flex-start',
-                  // alignItems: 'center',
-                }}>
-                {backButton && (
-                  <TouchableOpacity
-                    onPressIn={() => {
-                      containerColorValue.value = withTiming('transparent');
-                    }}
-                    onPressOut={() => {
-                      setTimeout(() => {
-                        setModalVisible(false);
-                      }, 50);
-                    }}
-                    style={{
-                      position: 'absolute',
-                      right: 8,
-                      top: 8,
-                      zIndex: 999,
-                    }}>
-                    <View
-                      style={{
-                        width: 30,
-                        height: 30,
-                        // backgroundColor: globalStyle.primary,
-                        //   backgroundColor: 'gray',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        borderRadius: 100,
-                      }}>
-                      <AntDesign
-                        name="close"
-                        size={24}
-                        color={
-                          backButtonColor
-                            ? backButtonColor
-                            : colors.textColor.normal
-                        }
-                      />
-                    </View>
-                  </TouchableOpacity>
-                )}
-                <ScrollView
-                  keyboardShouldPersistTaps="always"
-                  showsVerticalScrollIndicator={false}>
-                  {children}
-                </ScrollView>
-              </View>
-            ) : (
-              <View
-                style={{
-                  backgroundColor: containerColor ? containerColor : colors.bg,
-                  borderRadius: 10,
-                  padding: 20,
-                  // justifyContent: 'flex-start',
-                  // alignItems: 'center',
-                }}>
-                {backButton && (
-                  <TouchableOpacity
-                    onPressIn={() => {
-                      containerColorValue.value = withTiming('transparent');
-                    }}
-                    onPressOut={() => {
-                      setTimeout(() => {
-                        setModalVisible(false);
-                      }, 50);
-                    }}
-                    style={{
-                      position: 'absolute',
-                      right: 8,
-                      top: 8,
-                      zIndex: 999,
-                    }}>
-                    <View
-                      style={{
-                        width: 30,
-                        height: 30,
-                        // backgroundColor: globalStyle.primary,
-                        //   backgroundColor: 'gray',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        borderRadius: 100,
-                      }}>
-                      <AntDesign
-                        name="close"
-                        size={24}
-                        color={
-                          backButtonColor
-                            ? backButtonColor
-                            : colors.textColor.normal
-                        }
-                      />
-                    </View>
-                  </TouchableOpacity>
-                )}
-                <ScrollView
-                  keyboardShouldPersistTaps="always"
-                  showsVerticalScrollIndicator={false}>
-                  {children}
-                </ScrollView>
-              </View>
-            )}
-          </Dialog>
-        </KeyboardAvoidingView>
-      )}
+            <ScrollView
+              keyboardShouldPersistTaps="always"
+              showsVerticalScrollIndicator={false}>
+              {children}
+            </ScrollView>
+          </View>
+        </Dialog>
+      </KeyboardAvoidingView>
     </>
   );
 };
