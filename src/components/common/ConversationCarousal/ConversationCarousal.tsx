@@ -286,7 +286,11 @@ const ConversationCarousal = ({
       //   [-2, -2, -1, 0, 1, 2],
       //   [30, 40, 50, 0, -50, -40],
       // );
-      const itemGap = interpolate(value, [-2, -1, 0, 1], [40, 30, 0, -30]);
+      const itemGap = interpolate(
+        value,
+        [-2, -1, 0, 1, 2],
+        [40, 30, 0, -30, -40],
+      );
       // const itemGap = interpolate(value, [-1, 0, 1], [50, 0, -50]);
 
       // const translateX =
@@ -589,7 +593,7 @@ const ConversationCarousal = ({
         modalVisible={imageModal}
         setModalVisible={setImageModal}
         onlyTopRadius={20}
-        height={'20%'}
+        panOf
         containerColor={colors.bg}>
         <View
           style={{
@@ -635,7 +639,7 @@ const ConversationCarousal = ({
         modalVisible={textInputModal}
         setModalVisible={setTextInputModal}
         onlyTopRadius={20}
-        height={'17%'}
+        panOf
         containerColor={colors.bg}>
         <View
           style={{

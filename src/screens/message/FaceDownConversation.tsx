@@ -706,7 +706,7 @@ const FaceDownConversation = ({navigation}: NavigProps<null>) => {
         </View>
       </CustomModal>
       <ModalOfBottom
-        height={'22%'}
+        panOf
         onlyTopRadius={15}
         modalVisible={modalVisible}
         containerColor={colors.bg}
@@ -780,7 +780,7 @@ const FaceDownConversation = ({navigation}: NavigProps<null>) => {
         modalVisible={liveModal}
         setModalVisible={setLiveModal}
         onlyTopRadius={20}
-        height={'60%'}
+        panOf
         containerColor={colors.bg}>
         <ScrollView
           showsVerticalScrollIndicator={false}

@@ -52,6 +52,7 @@ import LiveAddFriendsScreen from '../screens/message/LiveAddFriendsScreen';
 import CreateNewFaceDown from '../screens/message/CreateNewFaceDown';
 import FaceDownConversation from '../screens/message/FaceDownConversation';
 import FaceDownAddMember from '../screens/message/FaceDownAddMember';
+import TestScreen from '../screens/TextScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -68,8 +69,9 @@ const Routes = () => {
             statusBarColor: colors.bg,
             statusBarStyle: isDark ? 'light' : 'dark',
           }}>
-          {/* <Stack.Screen name="Splash" component={SplashScreen} /> */}
+          {/* <Stack.Screen name="Test" component={TestScreen} /> */}
 
+          {/* <Stack.Screen name="TEsting" component={TestScreen} /> */}
           <Stack.Screen name="Login" component={LoginScreen} />
           <Stack.Screen name="SignUp" component={SignUpScreen} />
           <Stack.Screen

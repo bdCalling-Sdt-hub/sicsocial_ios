@@ -45,7 +45,6 @@ const DonationScreen = ({navigation}: NavigProps<null>) => {
           color: colors.textColor.secondaryColor,
           fontFamily: font.PoppinsSemiBold,
         }}
-        thirdColl
       />
 
       <FlatList

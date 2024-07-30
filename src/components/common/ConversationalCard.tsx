@@ -21,7 +21,14 @@ interface ConversationalCardProps extends NavigProps<null> {
   onDonationShearPress?: () => void;
   onDonationViewDetailsPress?: () => void;
   conversationStyle?: 'donation' | 'normal';
-  cardStyle?: 'book' | 'two' | 'single' | 'three' | 'four';
+  cardStyle?:
+    | 'book_promotion'
+    | 'shear_book'
+    | 'image'
+    | 'two'
+    | 'single'
+    | 'three'
+    | 'four';
   havNotUser?: boolean;
   onPress?: () => void;
   disabled?: boolean;
@@ -69,7 +76,7 @@ const ConversationalCard = ({
             flexDirection: 'row',
             justifyContent: 'space-between',
             alignItems: 'center',
-            elevation: 2,
+            elevation: 0.8,
             height: 120,
           }}>
           {/*================= donation card Start ============= */}
@@ -212,7 +219,7 @@ const ConversationalCard = ({
                       }}>
                       {conversationTitle ? conversationTitle : 'empty'}
                     </Text>
-                    {cardStyle === 'book' ? (
+                    {cardStyle === 'book_promotion' ? (
                       <Text
                         style={{
                           fontFamily: font.PoppinsMedium,
@@ -255,7 +262,7 @@ const ConversationalCard = ({
                   </Text>
                 </View>
               </View>
-              {cardStyle === 'book' && (
+              {cardStyle === 'book_promotion' && (
                 <>
                   <View
                     style={{
@@ -277,6 +284,138 @@ const ConversationalCard = ({
                         borderWidth: 2,
                       }}
                       source={require('../../assets/tempAssets/book.jpg')}
+                    />
+                  </View>
+                </>
+              )}
+              {cardStyle === 'shear_book' && (
+                <>
+                  <View
+                    style={{
+                      // height: 76,
+
+                      borderRadius: 18,
+                      elevation: 1,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      padding: 1,
+                      transform: [
+                        {
+                          translateX: -25,
+                        },
+                      ],
+                    }}>
+                    <Image
+                      resizeMode="cover"
+                      style={{
+                        height: 85,
+                        width: 75,
+                        borderRadius: 18,
+                        borderColor: 'white',
+                        borderWidth: 2,
+                      }}
+                      source={require('../../assets/tempAssets/book2.jpg')}
+                    />
+                  </View>
+                  <View
+                    style={{
+                      // height: 76,
+
+                      borderRadius: 28,
+                      elevation: 2,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      position: 'absolute',
+                      right: 40,
+                      zIndex: 2,
+                      transform: [
+                        {
+                          rotate: '15deg',
+                        },
+                        {
+                          translateX: 25,
+                        },
+                        {
+                          translateY: 0,
+                        },
+                      ],
+                    }}>
+                    <Image
+                      resizeMode="cover"
+                      style={{
+                        height: 70,
+                        width: 70,
+                        borderRadius: 28,
+                        borderColor: 'white',
+                        borderWidth: 2,
+                      }}
+                      source={require('../../assets/tempAssets/51ad46951bbdc28be4cf7e384964f309.jpg')}
+                    />
+                  </View>
+                </>
+              )}
+              {cardStyle === 'image' && (
+                <>
+                  <View
+                    style={{
+                      // height: 76,
+
+                      borderRadius: 18,
+                      elevation: 1,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      padding: 1,
+                      transform: [
+                        {
+                          translateX: -25,
+                        },
+                      ],
+                    }}>
+                    <Image
+                      resizeMode="cover"
+                      style={{
+                        height: 85,
+                        width: 75,
+                        borderRadius: 18,
+                        borderColor: 'white',
+                        borderWidth: 2,
+                      }}
+                      source={require('../../assets/tempAssets/charity.jpg')}
+                    />
+                  </View>
+                  <View
+                    style={{
+                      // height: 76,
+
+                      borderRadius: 28,
+                      elevation: 2,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      position: 'absolute',
+                      right: 40,
+                      zIndex: 2,
+                      transform: [
+                        {
+                          rotate: '15deg',
+                        },
+                        {
+                          translateX: 25,
+                        },
+                        {
+                          translateY: 0,
+                        },
+                      ],
+                    }}>
+                    <Image
+                      resizeMode="cover"
+                      style={{
+                        height: 70,
+                        width: 70,
+                        borderRadius: 28,
+                        borderColor: 'white',
+                        borderWidth: 2,
+                      }}
+                      source={require('../../assets/tempAssets/51ad46951bbdc28be4cf7e384964f309.jpg')}
                     />
                   </View>
                 </>

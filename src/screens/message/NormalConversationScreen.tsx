@@ -446,7 +446,7 @@ const NormalConversationScreen = ({navigation}: NavigProps<null>) => {
 
           alignItems: 'center',
         }}>
-        <ConversationCarousal1
+        <ConversationCarousal
           photo
           type
           record

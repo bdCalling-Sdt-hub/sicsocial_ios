@@ -1,25 +1,33 @@
 import {
+  ActivityIndicator,
   Image,
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   useWindowDimensions,
   View,
 } from 'react-native';
 import React from 'react';
-import {useStyles} from '../../context/ContextApi';
+import {useContextApi, useStyles} from '../../context/ContextApi';
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
 import {NavigProps} from '../../interfaces/NaviProps';
 import {Books} from './ShareBooksScreen';
 import ConversationCarousal from '../../components/common/ConversationCarousal/ConversationCarousal';
 import {SvgXml} from 'react-native-svg';
 import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
+import NormalButton from '../../components/common/NormalButton';
+import {LinkPreview} from '@flyerhq/react-native-link-preview';
 
 const BookShareScreen = ({navigation, route}: NavigProps<Books>) => {
   const {colors, font} = useStyles();
   const {height, width} = useWindowDimensions();
   const [modalVisible, setModalVisible] = React.useState(false);
+  const {isDark, isLive, setIsLive} = useContextApi();
+
+  const [liveModal, setLiveModal] = React.useState(false);
+
   return (
     <View
       style={{
@@ -155,7 +163,6 @@ const BookShareScreen = ({navigation, route}: NavigProps<Books>) => {
         </View>
       </ScrollView>
       <ModalOfBottom
-        height={'22%'}
         onlyTopRadius={15}
         modalVisible={modalVisible}
         containerColor={colors.bg}
@@ -189,6 +196,8 @@ const BookShareScreen = ({navigation, route}: NavigProps<Books>) => {
               // setIsFriendRequestSent(false);
               // setModalVisible(false);
               // navigation?.navigate('');
+              // setIsLive();
+              setLiveModal(!liveModal);
             }}
             style={{
               padding: 10,
@@ -223,6 +232,164 @@ const BookShareScreen = ({navigation, route}: NavigProps<Books>) => {
               New Face Dwn
             </Text>
           </TouchableOpacity>
+        </View>
+      </ModalOfBottom>
+
+      <ModalOfBottom
+        modalVisible={liveModal}
+        setModalVisible={setLiveModal}
+        onlyTopRadius={20}
+        // backButton
+        panOf
+        height={height * 0.8}
+        containerColor={colors.bg}>
+        <View
+          // showsVerticalScrollIndicator={false}
+          // keyboardShouldPersistTaps="always"
+          style={{
+            gap: 25,
+          }}>
+          <Text
+            style={{
+              fontFamily: font.PoppinsSemiBold,
+              fontSize: 20,
+              color: colors.textColor.secondaryColor,
+              // marginBottom: 10,
+            }}>
+            Live setup
+          </Text>
+          <View
+            style={{
+              backgroundColor: isDark
+                ? colors.neutralColor
+                : colors.gray.variant,
+              paddingHorizontal: 20,
+              paddingVertical: 10,
+              borderRadius: 50,
+              flexDirection: 'row',
+              gap: 15,
+            }}>
+            <Image
+              style={{
+                width: 24,
+                height: 24,
+                resizeMode: 'contain',
+              }}
+              source={
+                isDark
+                  ? require('../../assets/icons/modalIcons/earthBlack.png')
+                  : require('../../assets/icons/modalIcons/earthyGray.png')
+              }
+            />
+            <View>
+              <Text
+                style={{
+                  fontFamily: font.PoppinsSemiBold,
+                  fontSize: 14,
+                  color: colors.textColor.neutralColor,
+                }}>
+                Public
+              </Text>
+              <Text
+                style={{
+                  fontFamily: font.Poppins,
+                  fontSize: 12,
+                  color: colors.textColor.neutralColor,
+                }}>
+                Everyone can join this room
+              </Text>
+            </View>
+          </View>
+          <View>
+            <View
+              style={{
+                gap: 15,
+              }}>
+              <Text
+                style={{
+                  fontFamily: font.Poppins,
+                  fontSize: 14,
+                  color: '#A1A1A1',
+                }}>
+                Add title
+              </Text>
+              <TextInput
+                value="Asadullah calling live"
+                placeholderTextColor={colors.textColor.light}
+                style={{
+                  fontFamily: font.Poppins,
+                  backgroundColor: colors.secondaryColor,
+                  borderRadius: 100,
+                  fontSize: 14,
+                  paddingHorizontal: 20,
+                  height: 56,
+                  color: colors.textColor.neutralColor,
+                }}
+                placeholder="type "
+              />
+            </View>
+          </View>
+          <View
+            style={{
+              gap: 15,
+              // marginHorizontal: '4%',
+              // marginVertical: 10,
+            }}>
+            <Text
+              style={{
+                fontFamily: font.Poppins,
+                fontSize: 14,
+                color: '#A1A1A1',
+                paddingLeft: 10,
+              }}>
+              Share content
+            </Text>
+
+            <TouchableOpacity activeOpacity={0.8}>
+              <Image
+                resizeMode="stretch"
+                style={{
+                  borderRadius: 24,
+
+                  height: 150,
+                  width: 120,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+                source={require('../../assets/tempAssets/book.jpg')}
+              />
+            </TouchableOpacity>
+
+            {/* <View
+              style={{
+                flexDirection: 'row',
+                gap: 10,
+              }}>
+              <TextInput
+                placeholder="shear url/link"
+                onChangeText={text => setLinkUrl(text)}
+                style={{
+                  fontFamily: font.Poppins,
+                  backgroundColor: colors.secondaryColor,
+                  borderRadius: 100,
+                  fontSize: 14,
+                  paddingHorizontal: 20,
+                  height: 56,
+                  flex: 1,
+                  color: colors.textColor.neutralColor,
+                }}
+                // defaultValue="write image /book/url link"
+              />
+            </View> */}
+          </View>
+          <NormalButton
+            onPress={() => {
+              setModalVisible(false);
+              setLiveModal(false);
+              navigation?.navigate('LiveConversation');
+            }}
+            title="Start Live"
+          />
         </View>
       </ModalOfBottom>
     </View>
