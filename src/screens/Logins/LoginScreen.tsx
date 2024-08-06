@@ -13,6 +13,7 @@ import {NavigProps} from '../../interfaces/NaviProps';
 import Feather from 'react-native-vector-icons/Feather';
 import {Formik} from 'formik';
 import {useStyles} from '../../context/ContextApi';
+import {Checkbox} from 'react-native-ui-lib';
 
 const LoginScreen = ({navigation}: NavigProps<null>) => {
   const {colors, font} = useStyles();
@@ -155,30 +156,20 @@ const LoginScreen = ({navigation}: NavigProps<null>) => {
                     alignItems: 'center',
                     gap: 12,
                   }}>
-                  <View
-                    style={{
-                      height: 24,
-                      width: 24,
-                      borderColor: '#D6D6D6',
+                  <Checkbox
+                    value={check}
+                    onValueChange={() => setCheck(!check)}
+                    containerStyle={{
                       borderWidth: 1,
-                      borderRadius: 5,
-                      elevation: 1,
-                      shadowColor: 'black',
-                      shadowOffset: {
-                        width: 0,
-                        height: 2,
-                      },
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                    }}>
-                    {check && (
-                      <Feather
-                        name="check"
-                        color={colors.green['#00C208']}
-                        size={18}
-                      />
-                    )}
-                  </View>
+                      borderColor: colors.textColor.neutralColor,
+                    }}
+                    borderRadius={5}
+                    size={18}
+                    // iconColor="red"
+                    color="white"
+                    // size={10}
+                    iconColor={colors.green['#00B047']}
+                  />
                   <Text
                     style={{
                       fontFamily: font.Poppins,

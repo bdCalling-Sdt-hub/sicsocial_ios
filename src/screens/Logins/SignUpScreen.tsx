@@ -26,13 +26,19 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
       }}>
       <BackButtonWithTitle
         navigation={navigation}
-        thirdColl
         title="Sign Up !"
         titleStyle={{
           fontSize: 24,
           color: colors.textColor.secondaryColor,
           fontFamily: font.PoppinsSemiBold,
+          textAlign: 'center',
+          flex: 1,
+          marginRight: '10%',
         }}
+        thirdRoll
+        // containerStyle={{}}
+
+        // thirdRoll
       />
       <ScrollView>
         <View>
@@ -47,7 +53,7 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
         </View>
         <Formik
           initialValues={{
-            name: 'Asadullah',
+            name: 'Asadullah Khan',
             email: 'Gabrail101@gmail.com',
             contract: '+99000000000000',
             password: 'asdfsadf',
@@ -71,7 +77,7 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
                     fontSize: 14,
                     color: '#A1A1A1',
                   }}>
-                  Name
+                  Full name
                 </Text>
                 <TextInput
                   value="Asadullah"
@@ -253,7 +259,8 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
               <View>
                 <TouchableOpacity
                   onPress={() => {
-                    navigation?.navigate('EmailConfirmation');
+                    navigation?.navigate('Interest');
+                    // navigation?.navigate('EmailConfirmation');
                     // handleSubmit();
                   }}
                   style={{

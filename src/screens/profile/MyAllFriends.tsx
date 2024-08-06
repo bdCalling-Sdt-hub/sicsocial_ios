@@ -105,21 +105,6 @@ const MyAllFriends = ({navigation}: NavigProps<null>) => {
         height: '100%',
         backgroundColor: colors.bg,
       }}>
-      <Modal
-        style={{
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-          padding: 20,
-        }}
-        overlayBackgroundColor="rgba(0, 0, 0, 0.1)"
-        transparent
-        // animationType="slide"
-        visible={test}
-        onBackgroundPress={() => setTest(!test)}
-        onDismiss={() => setTest(!test)}>
-        <Text>ok</Text>
-      </Modal>
       <BackButtonWithTitle
         navigation={navigation}
         title="My friends"
@@ -154,7 +139,8 @@ const MyAllFriends = ({navigation}: NavigProps<null>) => {
           <View style={{gap: 6}}>
             <TouchableOpacity
               onPress={() => {
-                setTest(!test);
+                // setTest(!test);
+                navigation?.navigate('FriendsProfile');
               }}
               style={{
                 alignItems: 'center',

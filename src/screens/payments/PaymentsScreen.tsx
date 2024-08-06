@@ -46,7 +46,7 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
       <ScrollView keyboardShouldPersistTaps="always">
         <Formik
           initialValues={{
-            name: 'Asadullah',
+            name: 'Asadullah Khan',
             email: 'Gabrail101@gmail.com',
             contract: '+99000000000000',
             password: 'asdfsadf',
@@ -70,10 +70,10 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
                     fontSize: 14,
                     color: '#A1A1A1',
                   }}>
-                  Name
+                 Full name
                 </Text>
                 <TextInput
-                  value="Asadullah"
+                  value="Asadullah Khan"
                   style={{
                     fontFamily: font.Poppins,
                     backgroundColor: colors.secondaryColor,
@@ -198,7 +198,8 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
                     height: 56,
                     color: colors.textColor.neutralColor,
                   }}
-                  placeholder="$ "
+                  placeholder="min-$50"
+                  
                   placeholderTextColor={colors.textColor.neutralColor}
                   keyboardType="decimal-pad"
                 />

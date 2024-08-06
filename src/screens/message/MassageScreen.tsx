@@ -134,7 +134,7 @@ const MassageScreen = ({navigation}: NavigProps<null>) => {
             gap: 19,
             alignItems: 'center',
           }}>
-          <TouchableOpacity
+          {/* <TouchableOpacity
             onPress={() => {
               navigation?.navigate('Search');
             }}>
@@ -144,7 +144,7 @@ const MassageScreen = ({navigation}: NavigProps<null>) => {
 </svg>
 `}
             />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           <TouchableOpacity
             onPress={() => {
               navigation?.navigate('Notifications');

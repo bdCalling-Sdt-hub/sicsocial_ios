@@ -17,6 +17,7 @@ interface BackButtonWithTitleProps extends NavigProps<null> {
   onOptionPress?: () => void;
   button?: boolean;
   buttonComponent?: React.ReactNode;
+  thirdRoll?: boolean;
 }
 
 const BackButtonWithTitle = ({
@@ -28,7 +29,7 @@ const BackButtonWithTitle = ({
   titleStyle,
 
   offTitle,
-
+  thirdRoll,
   onOptionPress,
   onOptions,
   button,
@@ -77,6 +78,8 @@ const BackButtonWithTitle = ({
         </TouchableOpacity>
       )}
       {button && buttonComponent}
+
+      {thirdRoll && <View />}
     </View>
   );
 };

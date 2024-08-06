@@ -1,6 +1,7 @@
 import {
   FlatList,
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -20,6 +21,7 @@ import Animated, {
 import InterestCard from '../../components/interest/InterestCard';
 import NormalButton from '../../components/common/NormalButton';
 import {NavigProps} from '../../interfaces/NaviProps';
+import {ExpandableSection} from 'react-native-ui-lib';
 
 const data = [
   {
@@ -222,7 +224,7 @@ const data = [
   },
   {
     id: 6,
-    title: 'Kidstown',
+    title: `I'm YOU(2)'RE ME`,
     sub: [
       {
         id: 1,
@@ -291,6 +293,7 @@ const data = [
 const InterestScreen = ({navigation}: NavigProps<null>) => {
   const {colors, font} = useStyles();
   // Your code here...
+
   const [selectItem, setSelectItem] = React.useState(0);
 
   return (
@@ -308,6 +311,21 @@ const InterestScreen = ({navigation}: NavigProps<null>) => {
           fontFamily: font.PoppinsSemiBold,
         }}
       />
+      {/* <FlatList
+        showsVerticalScrollIndicator={false}
+        data={data}
+        contentContainerStyle={{
+          paddingTop: 20,
+          paddingHorizontal: 20,
+          gap: 16,
+          //   flex: 1,
+          paddingBottom: 200,
+        }}
+        style={{}}
+        renderItem={item => {
+          return <InterestCard item={item.item} />;
+        }}
+      /> */}
       <FlatList
         showsVerticalScrollIndicator={false}
         data={data}
@@ -323,6 +341,7 @@ const InterestScreen = ({navigation}: NavigProps<null>) => {
           return <InterestCard item={item.item} />;
         }}
       />
+
       <View
         style={{
           paddingHorizontal: '4%',

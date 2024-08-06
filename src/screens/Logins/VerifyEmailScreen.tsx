@@ -250,7 +250,8 @@ const VerifyEmailScreen = ({navigation}: NavigProps<null>) => {
             title="Confirm"
             marginVertical={31}
             onPress={() => {
-              navigation?.navigate('ResetPassword');
+              // navigation?.navigate('ResetPassword');
+              navigation?.navigate('VerifySuccessful');
             }}
           />
         </View>

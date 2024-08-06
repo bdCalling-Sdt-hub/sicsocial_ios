@@ -266,28 +266,31 @@ const MakeGroupScreen = ({navigation}: NavigProps<null>) => {
           </>
         )}
       />
-      <TouchableOpacity
-        activeOpacity={0.8}
-        onPress={() => {
-          navigation?.navigate('GroupConversation');
-        }}
-        style={{
-          position: 'absolute',
-          bottom: '12%',
-          right: '5%',
-          // elevation: 3,
-          backgroundColor: 'rgba(0,0,0,.04)',
-          borderRadius: 100,
-        }}>
-        <SvgXml
-          xml={`<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect width="48" height="47.5563" rx="23.7782" transform="matrix(-1 0 0 1 48 0)" fill="#D29E3B"/>
-<path d="M28.1716 22.7782H16V24.7782H28.1716L22.8076 30.1421L24.2218 31.5563L32 23.7782L24.2218 16L22.8076 17.4142L28.1716 22.7782Z" fill="#F4F4F4"/>
-</svg>
+      {selectedUser?.length !== 0 && (
+        <TouchableOpacity
+          activeOpacity={0.8}
+          onPress={() => {
+            navigation?.navigate('GroupConversation');
+          }}
+          style={{
+            position: 'absolute',
+            bottom: '12%',
+            right: '5%',
+            // elevation: 3,
+            backgroundColor: 'rgba(0,0,0,.04)',
+            borderRadius: 100,
+          }}>
+          <SvgXml
+            xml={`<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="48" height="47.5563" rx="23.7782" transform="matrix(-1 0 0 1 48 0)" fill="#D29E3B"/>
+  <path d="M28.1716 22.7782H16V24.7782H28.1716L22.8076 30.1421L24.2218 31.5563L32 23.7782L24.2218 16L22.8076 17.4142L28.1716 22.7782Z" fill="#F4F4F4"/>
+  </svg>
+  
+  `}
+          />
+        </TouchableOpacity>
+      )}
 
-`}
-        />
-      </TouchableOpacity>
       <ModalOfBottom
         height={'18%'}
         onlyTopRadius={15}

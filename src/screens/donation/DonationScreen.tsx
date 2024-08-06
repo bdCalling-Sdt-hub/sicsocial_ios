@@ -40,10 +40,12 @@ const DonationScreen = ({navigation}: NavigProps<null>) => {
       <BackButtonWithTitle
         title="Integrity Donation"
         navigation={navigation}
+        thirdRoll
         titleStyle={{
           fontSize: 20,
           color: colors.textColor.secondaryColor,
           fontFamily: font.PoppinsSemiBold,
+          justifyContent: 'space-between',
         }}
       />
 
