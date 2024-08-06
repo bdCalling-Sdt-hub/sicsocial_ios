@@ -1380,7 +1380,7 @@ const LiveConversationScreen = ({navigation}: NavigProps<null>) => {
               color: colors.textColor.secondaryColor,
               // marginBottom: 10,
             }}>
-            Live setup
+            Edit Live
           </Text>
           <View
             style={{

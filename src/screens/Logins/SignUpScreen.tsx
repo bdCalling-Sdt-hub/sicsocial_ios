@@ -259,7 +259,7 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
               <View>
                 <TouchableOpacity
                   onPress={() => {
-                    navigation?.navigate('Interest');
+                    navigation?.navigate('VerifyEmail');
                     // navigation?.navigate('EmailConfirmation');
                     // handleSubmit();
                   }}
