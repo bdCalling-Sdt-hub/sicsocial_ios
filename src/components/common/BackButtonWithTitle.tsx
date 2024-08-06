@@ -10,12 +10,13 @@ interface BackButtonWithTitleProps extends NavigProps<null> {
   containerStyle?: {};
   BackButtonStyle?: {};
   titleStyle?: {};
-  thirdColl?: boolean;
-  forthColl?: boolean;
+
   offBack?: boolean;
   offTitle?: boolean;
   onOptions?: boolean;
   onOptionPress?: () => void;
+  button?: boolean;
+  buttonComponent?: React.ReactNode;
 }
 
 const BackButtonWithTitle = ({
@@ -25,11 +26,13 @@ const BackButtonWithTitle = ({
   BackButtonStyle,
   containerStyle,
   titleStyle,
-  thirdColl,
+
   offTitle,
-  forthColl,
+
   onOptionPress,
   onOptions,
+  button,
+  buttonComponent,
 }: BackButtonWithTitleProps) => {
   return (
     <View
@@ -53,8 +56,7 @@ const BackButtonWithTitle = ({
       )}
 
       <View>{offTitle || <Text style={titleStyle}>{title}</Text>}</View>
-      {thirdColl && <View></View>}
-      {forthColl && <View></View>}
+
       {onOptions && (
         <TouchableOpacity onPress={onOptionPress}>
           <SvgXml
@@ -74,6 +76,7 @@ const BackButtonWithTitle = ({
           />
         </TouchableOpacity>
       )}
+      {button && buttonComponent}
     </View>
   );
 };

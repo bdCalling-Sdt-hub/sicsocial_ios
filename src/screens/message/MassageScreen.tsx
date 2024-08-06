@@ -238,7 +238,7 @@ const MassageScreen = ({navigation}: NavigProps<null>) => {
                   style={{
                     width: 65,
                     height: 65,
-                    borderRadius: 30,
+                    borderRadius: 28,
                     resizeMode: 'contain',
                     borderColor: 'rgba(255,255,255,1)',
                     borderWidth: 2,
@@ -342,7 +342,10 @@ const MassageScreen = ({navigation}: NavigProps<null>) => {
         setModalVisible={setModalVisible}>
         <View style={{gap: 3}}>
           <TouchableOpacity
-            onPress={() => {}}
+            onPress={() => {
+              navigation.navigate('FriendsProfile');
+              setModalVisible(false);
+            }}
             style={{
               paddingHorizontal: 10,
               paddingVertical: 8,

@@ -47,6 +47,12 @@ import MakeGroupScreen from '../screens/message/MakeGroupScreen';
 import NormalConversationScreen from '../screens/message/NormalConversationScreen';
 import GroupConversationScreen from '../screens/message/GroupConversationScreen';
 import LiveConversationScreen from '../screens/message/LiveConversationScreen';
+import LiveMessageScreen from '../screens/message/LiveMessageScreen';
+import LiveAddFriendsScreen from '../screens/message/LiveAddFriendsScreen';
+import CreateNewFaceDown from '../screens/message/CreateNewFaceDown';
+import FaceDownConversation from '../screens/message/FaceDownConversation';
+import FaceDownAddMember from '../screens/message/FaceDownAddMember';
+import TestScreen from '../screens/TextScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -63,7 +69,9 @@ const Routes = () => {
             statusBarColor: colors.bg,
             statusBarStyle: isDark ? 'light' : 'dark',
           }}>
-          {/* <Stack.Screen name="Splash" component={SplashScreen} /> */}
+          {/* <Stack.Screen name="Test" component={TestScreen} /> */}
+
+          {/* <Stack.Screen name="TEsting" component={TestScreen} /> */}
           <Stack.Screen name="Login" component={LoginScreen} />
           <Stack.Screen name="SignUp" component={SignUpScreen} />
           <Stack.Screen
@@ -130,6 +138,13 @@ const Routes = () => {
               animation: 'slide_from_right',
             }}
           />
+          <Stack.Screen
+            name="FaceDownAddMember"
+            component={FaceDownAddMember}
+            options={{
+              animation: 'slide_from_right',
+            }}
+          />
           {/*======================== Home end ============================ */}
 
           {/*======================== Friend start ============================ */}
@@ -178,6 +193,34 @@ const Routes = () => {
           <Stack.Screen
             name="LiveConversation"
             component={LiveConversationScreen}
+            options={{
+              animation: 'slide_from_right',
+            }}
+          />
+          <Stack.Screen
+            name="LiveMessage"
+            component={LiveMessageScreen}
+            options={{
+              animation: 'slide_from_right',
+            }}
+          />
+          <Stack.Screen
+            name="LiveAddFriends"
+            component={LiveAddFriendsScreen}
+            options={{
+              animation: 'slide_from_right',
+            }}
+          />
+          <Stack.Screen
+            name="CreateFaceDown"
+            component={CreateNewFaceDown}
+            options={{
+              animation: 'slide_from_right',
+            }}
+          />
+          <Stack.Screen
+            name="FaceDownConversation"
+            component={FaceDownConversation}
             options={{
               animation: 'slide_from_right',
             }}

@@ -21,8 +21,7 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
   const [imageModal, setImageModal] = React.useState(false);
 
   const [userInfo, setUserInfo] = React.useState({
-    profile_image:
-      'https://s3-alpha-sig.figma.com/img/7568/3fd5/7261c2ae940abab762a6e0130b36b3a9?Expires=1722211200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=cFUHzqdrtnlQwoWrpZH3cEN3l6xK-td4O8Ou0NjKpIJfS95qBc3POqPV16UtDzMsQv4pJpDOc0nSt7v89PfMPkTH0NE-u210Yvl~WpsOc42Fv7NrF3M2BzXE5lP-Cq~dlKC5WO7Q1qHHlhKqJRymhlI0RpAmji98KpUK4aujRcr2vCZ8yiVAgh68Qr724OEpmZ8ZpYBBhScsuqJOujG-On6-ZN9VOkU7stmdmBqvZZBJkksF6yvRCTap-jjHtc8OypX-7Zm2npxUJLn9isCm9xLuEKRRcDS4YY0cWh87AtGMG~ZfM-yOMNGnPkhgM3vef1Us4k6X3R9BDsWfIkDUFw__',
+    profile_image: '',
     bio: 'Hello everyone , I am so simple person. i am working as a ux ui designer. ',
     details: {
       name: 'Asadullah',
@@ -190,9 +189,13 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
                   borderWidth: 1,
                   borderColor: colors.white,
                 }}
-                source={{
-                  uri: userInfo.profile_image,
-                }}
+                source={
+                  userInfo?.profile_image
+                    ? {
+                        uri: userInfo.profile_image,
+                      }
+                    : require('../../assets/tempAssets/EptyImageUser.jpg')
+                }
               />
             </View>
           </View>
@@ -300,6 +303,7 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
                 padding: 12,
                 backgroundColor: colors.rareInput,
                 borderRadius: 16,
+                color: colors.textColor.neutralColor,
               }}
               placeholderTextColor={colors.textColor.neutralColor}
               placeholder={edit.bio ? 'Describe yourself...' : userInfo.bio}
@@ -987,6 +991,10 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
               editable={edit.link}
               placeholder="https://www.instagram.com/example"
               value={userInfo?.link}
+              style={{
+                color: colors.textColor.light,
+              }}
+              placeholderTextColor={colors.neutralColor}
             />
           </View>
         </View>

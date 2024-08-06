@@ -45,7 +45,6 @@ const DonationScreen = ({navigation}: NavigProps<null>) => {
           color: colors.textColor.secondaryColor,
           fontFamily: font.PoppinsSemiBold,
         }}
-        thirdColl
       />
 
       <FlatList
@@ -99,9 +98,7 @@ const DonationScreen = ({navigation}: NavigProps<null>) => {
                 marginBottom: 20,
                 alignSelf: 'center',
               }}
-              source={{
-                uri: 'https://s3-alpha-sig.figma.com/img/03b7/67a2/9befaf871355af2c6770745fcc2d1d24?Expires=1721606400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=YdFu37RuiBo-Jmekp~ay71cfO0BYj-df9o84OunX24zIf169oaVjjopJiSSK60BCYhn2QQ3GxBrK22su2aPOkNhhspBdidro0r7-aZpXvfWcNBFgGA0AUFuay8X~yB8G4znQg0UjodKY5GzXEeIgfXTuFidyBrx86gdgXPXlUD90sQFHKT8ctqrKl4XSJ-vjOEhMOaO-TeadgJCtJCfoYr0136GX7M~WTwCnrm3ZIrVOPf9PgET16XXG5xnJC7ESwnn1rnn12lBhV9lyImrWCX5--djxfFHLhLMn27A-N8xaQWdlxbpdfPYIxNYE4bkzJ2bx7z4WofMFsE3hZzHO8g__',
-              }}
+              source={require('../../assets/tempAssets/charity.jpg')}
             />
             <View>
               <Text

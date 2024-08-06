@@ -10,6 +10,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@flyerhq/react-native-link-preview": "^1.6.0",
     "@gorhom/bottom-sheet": "^4.6.3",
     "@react-native-clipboard/clipboard": "^1.14.1",
     "@react-native-masked-view/masked-view": "^0.3.1",
@@ -17,6 +18,7 @@
     "@react-navigation/bottom-tabs": "^6.6.0",
     "@react-navigation/native": "^6.1.17",
     "@react-navigation/native-stack": "^6.10.0",
+    "axios": "^1.7.2",
     "formik": "^2.4.6",
     "lottie-react-native": "^6.7.2",
     "react": "18.2.0",
@@ -32,6 +34,7 @@
     "react-native-screens": "^3.32.0",
     "react-native-svg": "^15.3.0",
     "react-native-svg-transformer": "^1.5.0",
+    "react-native-ui-datepicker": "^2.0.3",
     "react-native-ui-lib": "^7.27.0",
     "react-native-vector-icons": "^10.1.0"
   },

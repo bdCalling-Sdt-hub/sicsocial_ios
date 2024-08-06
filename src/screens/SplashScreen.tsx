@@ -44,7 +44,7 @@ const SplashScreen = ({navigation, setIsSplash}: SplashProps) => {
           }}
         />
       </ImageBackground>
-      <StatusBar backgroundColor={colors.bg} barStyle="default" />
+      <StatusBar hidden />
     </View>
   );
 };

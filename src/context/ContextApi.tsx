@@ -1,9 +1,11 @@
-import {View, Text, Appearance} from 'react-native';
+import {View, Text, Appearance, Dimensions} from 'react-native';
 import React, {createContext, useContext, useState} from 'react';
 
 interface ProviderProps {
   isDark?: boolean;
   setDark?: Function | any;
+  isLive?: boolean;
+  setIsLive?: Function | any;
 }
 
 export const ContextProvider = createContext<ProviderProps>({
@@ -18,14 +20,22 @@ interface ContextApiProps {
 }
 
 export const useContextApi = () => {
-  const {isDark, setDark} = useContext(ContextProvider);
-  return {isDark, setDark};
+  const {isDark, setDark, isLive, setIsLive} = useContext(ContextProvider);
+  return {isDark, setDark, isLive, setIsLive};
 };
+
+const {height, width} = Dimensions.get('window');
+
+// console.log(height, width);
 
 export const useStyles = () => {
   const {isDark} = useContext(ContextProvider);
 
   return {
+    window: {
+      height,
+      width,
+    },
     font: {
       SuezOne: 'SuezOne-Regular',
       RussoOne: 'RussoOne-Regular',
@@ -99,6 +109,7 @@ export const useStyles = () => {
         white: isDark ? 'white' : 'white',
         light: isDark ? '#767676' : '#5C5C5C',
         rare: isDark ? '#D29E3B' : '#720B24',
+        normal: isDark ? '#E6E6E6' : '#333333',
         gray: isDark ? '#E6E6E6' : 'rgba(161, 161, 161, 1)',
       },
       orange: '#F27405',
@@ -130,7 +141,8 @@ export const useStyles = () => {
 const ContextApi = ({children}: ContextApiProps) => {
   const darkMode = Appearance.getColorScheme();
   const [isDark, setDark] = useState(darkMode === 'dark' ? true : false);
-  const shearValue = {isDark, setDark};
+  const [isLive, setIsLive] = useState(false);
+  const shearValue = {isDark, setDark, isLive, setIsLive};
   return (
     <ContextProvider.Provider value={shearValue}>
       {children}

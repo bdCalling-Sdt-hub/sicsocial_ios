@@ -1,10 +1,25 @@
-import {FlatList, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import React from 'react';
+import {
+  FlatList,
+  Pressable,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import React, {useState} from 'react';
 import {useStyles} from '../../context/ContextApi';
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
 import {NavigProps} from '../../interfaces/NaviProps';
 import {Image} from 'react-native';
 import {getRandomColor} from '../../utils/GetRandomColor';
+import {
+  Dash,
+  Dialog,
+  GridList,
+  Modal,
+  PanningProvider,
+  Toast,
+} from 'react-native-ui-lib';
 
 const friends = [
   {
@@ -73,23 +88,38 @@ const friends = [
 
     lastMessage: 'you: I’m feeling good',
   },
-  {
-    id: 5,
-    name: 'Samina',
-    img: require('../../assets/tempAssets/7261c2ae940abab762a6e0130b36b3a9.jpg'),
-    lastMessage: 'you: I’m feeling good',
-  },
+  // {
+  //   id: 5,
+  //   name: 'Samina',
+  //   img: require('../../assets/tempAssets/7261c2ae940abab762a6e0130b36b3a9.jpg'),
+  //   lastMessage: 'you: I’m feeling good',
+  // },
 ];
 
 const MyAllFriends = ({navigation}: NavigProps<null>) => {
-  const {colors, font} = useStyles();
-
+  const {colors, font, window} = useStyles();
+  const [test, setTest] = useState(false);
   return (
     <View
       style={{
         height: '100%',
         backgroundColor: colors.bg,
       }}>
+      <Modal
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          padding: 20,
+        }}
+        overlayBackgroundColor="rgba(0, 0, 0, 0.1)"
+        transparent
+        // animationType="slide"
+        visible={test}
+        onBackgroundPress={() => setTest(!test)}
+        onDismiss={() => setTest(!test)}>
+        <Text>ok</Text>
+      </Modal>
       <BackButtonWithTitle
         navigation={navigation}
         title="My friends"
@@ -110,37 +140,32 @@ const MyAllFriends = ({navigation}: NavigProps<null>) => {
         }}>
         {friends.length} friends
       </Text>
-      <View
-        style={{
-          paddingVertical: 20,
-        }}>
-        <FlatList
-          showsHorizontalScrollIndicator={false}
-          numColumns={4}
-          columnWrapperStyle={{
-            justifyContent: 'space-around',
-          }}
-          contentContainerStyle={{
-            gap: 16,
-            paddingRight: 20,
-            paddingHorizontal: '5%',
-          }}
-          data={friends}
-          renderItem={item => (
-            <View style={{gap: 6}}>
-              <TouchableOpacity
-                onPress={() => {}}
-                style={{
-                  backgroundColor: colors.secondaryColor,
-                  // paddingVertical: 5,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  elevation: 3,
-                  borderRadius: 50,
-                  padding: 3,
-                  position: 'relative',
-                }}>
-                {/* <View
+
+      <GridList
+        showsHorizontalScrollIndicator={false}
+        numColumns={4}
+        containerWidth={window.width * 0.9}
+        contentContainerStyle={{
+          marginTop: 15,
+          alignSelf: 'center',
+        }}
+        data={friends}
+        renderItem={item => (
+          <View style={{gap: 6}}>
+            <TouchableOpacity
+              onPress={() => {
+                setTest(!test);
+              }}
+              style={{
+                alignItems: 'center',
+                justifyContent: 'center',
+                elevation: 3,
+                borderRadius: 50,
+
+                position: 'relative',
+                width: 70,
+              }}>
+              {/* <View
                     style={{
                       width: 12,
                       height: 12,
@@ -152,52 +177,35 @@ const MyAllFriends = ({navigation}: NavigProps<null>) => {
                       bottom: 5,
                     }}
                   /> */}
-                {item.item.img ? (
-                  <Image
-                    style={{
-                      width: 65,
-                      height: 65,
-                      borderRadius: 30,
-                      resizeMode: 'contain',
-                    }}
-                    source={item.item.img}
-                  />
-                ) : (
-                  <View
-                    style={{
-                      width: 65,
-                      height: 65,
-                      borderRadius: 30,
-                      backgroundColor: getRandomColor(),
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                    }}>
-                    <Text
-                      style={{
-                        fontSize: 35,
-                        fontFamily: font.PoppinsBold,
-                        color: getRandomColor(),
-                        textAlign: 'center',
-                        marginTop: 5,
-                      }}>
-                      {item.item.name?.slice(0, 1)}
-                    </Text>
-                  </View>
-                )}
-              </TouchableOpacity>
-              <Text
+
+              <Image
                 style={{
-                  fontSize: 12,
-                  fontFamily: font.Poppins,
-                  color: colors.textColor.neutralColor,
-                  textAlign: 'center',
-                }}>
-                {item.item.name}
-              </Text>
-            </View>
-          )}
-        />
-      </View>
+                  width: 65,
+                  height: 65,
+                  borderRadius: 28,
+                  resizeMode: 'contain',
+                  borderColor: 'white',
+                  borderWidth: 2,
+                }}
+                source={
+                  item.item.img
+                    ? item.item.img
+                    : require('../../assets/tempAssets/EptyImageUser.jpg')
+                }
+              />
+            </TouchableOpacity>
+            <Text
+              style={{
+                fontSize: 12,
+                fontFamily: font.Poppins,
+                color: colors.textColor.neutralColor,
+                textAlign: 'center',
+              }}>
+              {item.item.name}
+            </Text>
+          </View>
+        )}
+      />
     </View>
   );
 };
