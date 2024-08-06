@@ -26,13 +26,19 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
       }}>
       <BackButtonWithTitle
         navigation={navigation}
-        thirdColl
         title="Sign Up !"
         titleStyle={{
           fontSize: 24,
           color: colors.textColor.secondaryColor,
           fontFamily: font.PoppinsSemiBold,
+          textAlign: 'center',
+          flex: 1,
+          marginRight: '10%',
         }}
+        thirdRoll
+        // containerStyle={{}}
+
+        // thirdRoll
       />
       <ScrollView>
         <View>

@@ -259,7 +259,7 @@ const FriendCard = ({
                   padding: 1,
                   justifyContent: 'center',
                   alignItems: 'center',
-                  elevation: 3,
+                  elevation: 5,
                   shadowColor: colors.redis,
                 }}>
                 <Image
@@ -289,6 +289,7 @@ const FriendCard = ({
                   justifyContent: 'center',
                   alignItems: 'center',
                   elevation: 3,
+                  shadowColor: colors.primaryColor,
                 }}>
                 <Image
                   style={{
@@ -358,6 +359,7 @@ const FriendCard = ({
                   justifyContent: 'center',
                   alignItems: 'center',
                   elevation: 3,
+                  shadowColor: colors.primaryColor,
                 }}>
                 <Image
                   style={{

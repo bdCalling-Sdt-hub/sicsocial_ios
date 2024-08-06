@@ -56,11 +56,12 @@ const FeedBackScreen = ({navigation}: NavigProps<null>) => {
             padding: 16,
             backgroundColor: colors.secondaryColor,
             borderRadius: 20,
-            height: height * 0.65,
+            // height: height * 0.65,
           }}>
           <TextInput
             textAlignVertical="top"
-            placeholder=" Sic is a social audio app — think of it as a call-in radio show for
+            placeholder="type feedback"
+            defaultValue=" Sic is a social audio app — think of it as a call-in radio show for
             the 21st century. Users enter “Rooms,” where they can listen to (and
             participate in) conversations about specific topics. Sic is a social audio app — think of it as a call-in radio show for
             the 21st century. Users enter “Rooms,” where they can listen to (and
@@ -72,6 +73,7 @@ const FeedBackScreen = ({navigation}: NavigProps<null>) => {
             the 21st century. Users enter “Rooms,” where they can listen to (and
             participate in) conversations about specific topics."
             multiline
+            placeholderTextColor={colors.textColor.neutralColor}
             style={{
               fontFamily: font.Poppins,
               fontSize: 14,
@@ -81,22 +83,22 @@ const FeedBackScreen = ({navigation}: NavigProps<null>) => {
               flex: 2,
             }}
           />
-
-          <View
-            style={{
-              flex: 1,
-              right: '11%',
-            }}>
-            <ConversationCarousal />
-          </View>
         </View>
       </ScrollView>
       <View
         style={{
-          paddingHorizontal: '5%',
-          paddingVertical: 20,
+          // paddingHorizontal: '5%',
+          paddingBottom: 20,
+          height: height * 0.25,
         }}>
-        <NormalButton title="Send Feedback" />
+        <ConversationCarousal />
+
+        <View
+          style={{
+            paddingHorizontal: '5%',
+          }}>
+          <NormalButton title="Send Feedback" />
+        </View>
       </View>
     </View>
   );

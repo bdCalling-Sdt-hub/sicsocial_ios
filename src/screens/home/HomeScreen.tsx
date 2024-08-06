@@ -400,8 +400,19 @@ is recognize for SIC "
                 borderRadius: 100,
                 marginBottom: 10,
               }}>
-              <MaterialCommunityIcons name="content-copy" size={15} />
-              <Text>Copy</Text>
+              <MaterialCommunityIcons
+                name="content-copy"
+                size={15}
+                color={'rgba(0,0,0,.5)'}
+              />
+              <Text
+                style={{
+                  fontFamily: font.Poppins,
+                  // fontSize: 12,
+                  color: 'rgba(0,0,0,.5)',
+                }}>
+                Copy
+              </Text>
             </TouchableOpacity>
           </View>
         </View>

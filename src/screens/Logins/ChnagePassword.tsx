@@ -16,7 +16,11 @@ import {useStyles} from '../../context/ContextApi';
 
 const ChangePassword = ({navigation}: NavigProps<null>) => {
   const {colors, font} = useStyles();
-  const [isShow, setIsShow] = React.useState(false);
+  const [isShow, setIsShow] = React.useState({
+    oldPassword: false,
+    newPassword: false,
+    confirmPassword: false,
+  });
   const [check, setCheck] = React.useState(false);
 
   return (
@@ -27,7 +31,6 @@ const ChangePassword = ({navigation}: NavigProps<null>) => {
       }}>
       <BackButtonWithTitle
         navigation={navigation}
-        thirdColl
         // title="Sign Up !"
         titleStyle={{
           fontSize: 24,
@@ -111,10 +114,12 @@ const ChangePassword = ({navigation}: NavigProps<null>) => {
                   secureTextEntry={!isShow}
                   onChangeText={handleChange('password')}
                   onBlur={handleBlur('password')}
-                  value={values?.password}
+                  value={isShow.oldPassword}
                 />
                 <TouchableOpacity
-                  onPress={() => setIsShow(!isShow)}
+                  onPress={() =>
+                    setIsShow({...isShow, oldPassword: !isShow.oldPassword})
+                  }
                   style={{
                     position: 'absolute',
                     right: 10,
@@ -152,10 +157,12 @@ const ChangePassword = ({navigation}: NavigProps<null>) => {
                     color: colors.textColor.neutralColor,
                   }}
                   placeholder="type "
-                  secureTextEntry={!isShow}
+                  secureTextEntry={!isShow.newPassword}
                 />
                 <TouchableOpacity
-                  onPress={() => setIsShow(!isShow)}
+                  onPress={() =>
+                    setIsShow({...isShow, newPassword: !isShow.newPassword})
+                  }
                   style={{
                     position: 'absolute',
                     right: 10,
@@ -193,10 +200,15 @@ const ChangePassword = ({navigation}: NavigProps<null>) => {
                     color: colors.textColor.neutralColor,
                   }}
                   placeholder="type "
-                  secureTextEntry={!isShow}
+                  secureTextEntry={!isShow.confirmPassword}
                 />
                 <TouchableOpacity
-                  onPress={() => setIsShow(!isShow)}
+                  onPress={() =>
+                    setIsShow({
+                      ...isShow,
+                      confirmPassword: !isShow.confirmPassword,
+                    })
+                  }
                   style={{
                     position: 'absolute',
                     right: 10,

@@ -85,9 +85,7 @@ const BookShareScreen = ({navigation, route}: NavigProps<Books>) => {
             }}
             source={
               route?.params?.data?.image
-                ? {
-                    uri: route?.params?.data?.image,
-                  }
+                ? route?.params?.data?.image
                 : require('../../assets/tempAssets/book.jpg')
             }
           />
