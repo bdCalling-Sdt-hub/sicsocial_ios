@@ -67,6 +67,11 @@ const settingsData = [
     name: 'Language',
     option: 'language',
   },
+  {
+    id: 11,
+    name: 'Log Out',
+    option: 'logout',
+  },
 ];
 
 const Languages = [
@@ -180,6 +185,9 @@ const SettingScreen = ({navigation}: NavigProps<null>) => {
                 }
                 if (item.item.option === 'your_feedback') {
                   navigation?.navigate('Feedback');
+                }
+                if (item.item.option === 'logout') {
+                  navigation?.navigate('Login');
                 }
               }}
               style={{
