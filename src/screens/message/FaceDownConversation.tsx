@@ -273,7 +273,7 @@ const FaceDownConversation = ({navigation}: NavigProps<null>) => {
                       resizeMode: 'stretch',
                     },
                   ]}
-                  source={require('../../assets/tempAssets/book2.jpg')}
+                  source={require('../../assets/tempAssets/book.jpg')}
                 />
               </TouchableOpacity>
             </Animated.View>
@@ -565,7 +565,7 @@ const FaceDownConversation = ({navigation}: NavigProps<null>) => {
                               }}>
                               <Image
                                 resizeMode="stretch"
-                                source={{uri: item.item.bookImage}}
+                                source={item.item.bookImage}
                                 style={{
                                   // marginBottom: 20,
                                   // aspectRatio: 1,

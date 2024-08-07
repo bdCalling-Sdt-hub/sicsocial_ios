@@ -56,7 +56,7 @@ import {LinkPreview} from '@flyerhq/react-native-link-preview';
 import ConversationCarousal1 from '../../../components/common/ConversationCarousal/ConversationCarousal1';
 import {GridList, ListItem, SkeletonView} from 'react-native-ui-lib';
 import {IConversationProps} from '../../../screens/home/HomeScreen';
-import {books} from '../../../utils/GetRandomColor';
+import {books, TemBooks} from '../../../utils/GetRandomColor';
 const data = [
   {
     id: 1,
@@ -1474,7 +1474,7 @@ const ConversationalModal = ({
                 paddingTop: 20,
                 paddingBottom: 15,
               }}
-              data={books}
+              data={TemBooks}
               renderItem={item => (
                 <>
                   <TouchableOpacity
@@ -1515,7 +1515,7 @@ const ConversationalModal = ({
             showsVerticalScrollIndicator={false}
             containerWidth={width * 0.82}
             numColumns={2}
-            data={books}
+            data={TemBooks}
             columnWrapperStyle={{
               gap: 20,
               alignSelf: 'center',

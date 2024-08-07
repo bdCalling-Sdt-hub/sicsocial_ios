@@ -7,7 +7,7 @@ export const getRandomColor = () => {
   return color;
 };
 
-export const books = [
+export const TemBooks = [
   {
     id: 1,
     content: 'All',

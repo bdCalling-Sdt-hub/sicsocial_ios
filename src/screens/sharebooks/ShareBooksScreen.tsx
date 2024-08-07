@@ -13,7 +13,7 @@ import {useStyles} from '../../context/ContextApi';
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
 import {SvgXml} from 'react-native-svg';
 import {NavigProps} from '../../interfaces/NaviProps';
-import {books} from '../../utils/GetRandomColor';
+import {books, TemBooks} from '../../utils/GetRandomColor';
 import {GridList} from 'react-native-ui-lib';
 
 export interface Books {
@@ -150,9 +150,9 @@ const ShareBooksScreen = ({navigation}: NavigProps<null>) => {
       </View>
       <GridList
         showsVerticalScrollIndicator={false}
-        containerWidth={width * 0.95}
+        containerWidth={width * 0.9}
         numColumns={2}
-        data={books}
+        data={TemBooks}
         columnWrapperStyle={{
           gap: 20,
           alignSelf: 'center',
@@ -176,7 +176,7 @@ const ShareBooksScreen = ({navigation}: NavigProps<null>) => {
             <Image
               style={{
                 height: height * 0.24,
-                width: width * 0.4,
+                width: "100%",
                 borderRadius: 24,
               }}
               source={item.item.image}

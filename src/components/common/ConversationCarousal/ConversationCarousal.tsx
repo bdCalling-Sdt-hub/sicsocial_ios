@@ -26,6 +26,8 @@ import ModalOfBottom from '../customModal/ModalOfButtom';
 import {SvgXml} from 'react-native-svg';
 import {messagePros} from '../../../screens/message/NormalConversationScreen';
 import CustomModal from '../customModal/CustomModal';
+import { TemBooks } from '../../../utils/GetRandomColor';
+import { GridList } from 'react-native-ui-lib';
 
 const data = [
   {
@@ -90,44 +92,7 @@ const options = [
   },
 ];
 
-const Books = [
-  {
-    id: 1,
-    content: 'All',
-    image:
-      'https://s3-alpha-sig.figma.com/img/b585/a027/7f388786571d771f17b0126f4f4b800e?Expires=1722211200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=OC~YaczzAJGqizqlco5iCX~PGxyzUApVZAXbAVgFyiyI~8CT~WCcRn-9uBCMYkGYfbxfNB~3IJZ-TR7UZXX-eFstZmoOkurN4MPc5zQkcaBeYbACaOlbU-ht7rC3nvPJLR1fdDGViukbtJFIcqJsbFEAVBI4fjbrMA~ZB6HkVQEYxWZk5fPyIhUiqdR5tzOzeK8GYVYWtAsJ9Mn1oDpquODytUnzuIn8iLPf~lPyp44TAcERVyIwFG8U~a8h3bkUFzuejdt~LW7~9ESbOwwS0koDiTvrT5eotZI5vzriZZJ2n-4zF1nI39CHpG3pvqL9VfVDSNgctcQMnzANzH2xqg__',
-  },
-  {
-    id: 2,
-    content: 'Way of Life',
-    image:
-      'https://s3-alpha-sig.figma.com/img/b485/2fe5/af0552a10655c69b712579ca828ea910?Expires=1722211200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=UFuFuMAqtH233TU3imgCV05rZeo~aNm15BTdHNp6FVrQ4brkHBB9gVIr5K58pimYDt54lSZKdiCmA-vwuC3vwI8abuJ8jfXrnYnwA4Sodia3aVJ2zFcQEIPoE2A48~Vx96K40jMsZicVbWcSmhMN3uyrvfKwOc7hnH22PZLcze0WoS7H7josWXf0AMYfHy11ryvlcyVQ0IM5WXn2o-S~M8JfP84vhqyO3-O2xI4ry2XUQZtvYc3KToGENW1NgR2DeyyViajAQKzXetyMbwiFYXBxxT9LqQpkh~YMAH0~9LxEPApmTiSyj7aQsn6LU2U~MOnWb9sgi8MmgYMfwO7J3A__',
-  },
-  {
-    id: 3,
-    content: 'Business',
-    image:
-      'https://s3-alpha-sig.figma.com/img/ac94/a291/488b4f850f0251fe5ba556fe9da20e2e?Expires=1722211200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=lU30ivlnQY21xTbRlkrFvj6pGnG1JjeU~NrbRVoCvwEr4LLzjpFVmDt2GSZbNa0cXEH0GLV1ClbXE9MSrE-GFcwmBRSt6XM8DasUDCdRX3Xls0Y6J39oZRkmrsDpXL-odwKSEv8zzE2qBESxljPDZmBWYUSMWNueiliCXoDLPaSl3tNU18ZHs0ajIO-gp62LT0LQ6ytNlJgl9Ki8NIZ8HS6Em1brLMC7V9eF1LyZ9HFkhiKV5Z1IXZAzO~3aVsiULYyGHSPcAothJ1T~7SALoNqbwE3ScAPFwYBX50n-v88mXDDo5YgF7uhP6~dfEk9m39hMqvmTzN9erqtSAczWPg__',
-  },
-  {
-    id: 4,
-    content: 'Human Family',
-    image:
-      'https://s3-alpha-sig.figma.com/img/668f/869c/1019d2e044ead62f3eb08738a899354c?Expires=1722211200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=C7NCI29l1S-7lBg-fBKMTxYfFI7Wz5tnea1OTf3k2chLtJW22V27J~328Ok-DI~IpJiQuHx~RQ-H87Ncz8N~aj92mLRJdIvZoflHwaaCI9DYkBd7I~hT03tJN6IDvh2eErhOPYhyfE3bH56-o3Eck3~Q5Ku3jPiIhP~Z4BuCuvsqZTrcA4Vd9Bqb6Ej-XzPjEtpVY14ISlWxhymCkMgdLnScOaIX6ue~UKaD5lxWUd03C71wDbwZi3Lao-7Xop599-bNfVSG525Xq7c2e63lxxLSYhDFRv7ietjecAiNiEIsXMRhnmP-cgnxMYDT2QK~CTZLV~R6KEowdLSt0aXwjA__',
-  },
-  {
-    id: 5,
-    content: 'Worldview',
-    image:
-      'https://s3-alpha-sig.figma.com/img/e98c/1a54/ee547a642f63a9a135f7b2b7d4b37956?Expires=1722211200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=mGk4oV79QgAFlUfUGDlGutahqQXvpOYOIHhcR2LBxVpJIARIaReonfDBmXYqtA1d4oO2vC3lVp8UmptZ7~yCh~Xkn~z5DKXMkzpvT2oKsWEx~fcshksYJH24oWEinepfhnRh6rry8ZCSJK1qHMxwqDll-9ujtqr-EmdEkSlpOeKD9RtviWCgxtk-UhDFAVabFHsEORW4Ju4qkjBxjWenW8UqFxKUQgfbwBy-gTrF5x0vrMwAxhLm5S4lWppWjONOLNX6t98jQFrwo1oxiG-jzeHRmN4rlDnzN6ip6uFhM4sgCfcqsVW3M5N1iAz96ed50aoo2qRPSCamSF6ZFroRXw__',
-  },
-  {
-    id: 6,
-    content: 'Worldview',
-    image:
-      'https://s3-alpha-sig.figma.com/img/d180/9195/da84fbcfb6556b63dea67af8844a57d8?Expires=1722211200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=XU8OsCuvhuriTh0fx0mDKR5Vz8K81jB6N5Yc~CS44rIvRCRRp4t~rZdYZ6mKP14C4Q8wt3a5WB8B0V1SZQv4gzft-iRV0ZzIFX1yDmy~6IIZmAIeywM2HxOfhutarGZtMxdOguZGlPF4OH4ScrSjjV5RQu5Zy9OHNUw-tPCdwT2oYgNEwtNYcJqAYBfw1IQWsB9l5VpGMsEjprp8QpZADhfvrL5w6Gq2BW1-B6~1cBQhfKV3Y0JefajMOIuI8YH~crtfuXWRP7Rfz7STD3q~iKtsT6fV8HG5e22X9c1RnLyAXIJj43Dd2jRC5kA4QAFkk-hzhihBAS3T5~2Q3rp7Jg__',
-  },
-];
+
 
 interface ConversationCarousalProps extends NavigProps<null> {
   // Add props here if needed.
@@ -804,10 +769,11 @@ const ConversationCarousal = ({
             />
           </View>
 
-          <FlatList
+          <GridList
             showsVerticalScrollIndicator={false}
             numColumns={2}
-            data={Books}
+            containerWidth={width * .844}
+            data={TemBooks}
             columnWrapperStyle={{
               gap: 20,
               alignSelf: 'center',
@@ -845,12 +811,10 @@ const ConversationCarousal = ({
                 <Image
                   style={{
                     height: height * 0.24,
-                    width: width * 0.4,
+                    width: "100%",
                     borderRadius: 24,
                   }}
-                  source={{
-                    uri: item.item.image,
-                  }}
+                  source={item.item.image}
                 />
               </TouchableOpacity>
             )}
