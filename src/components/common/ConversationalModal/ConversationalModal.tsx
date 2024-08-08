@@ -1459,7 +1459,7 @@ const ConversationalModal = ({
               />
             </View>
           </View>
-          <View
+          {/* <View
             style={{
               borderBottomWidth: 1,
               borderBlockColor: 'rgba(217, 217, 217, 1)',
@@ -1509,7 +1509,7 @@ const ConversationalModal = ({
                 </>
               )}
             />
-          </View>
+          </View> */}
 
           <GridList
             showsVerticalScrollIndicator={false}
@@ -1526,25 +1526,56 @@ const ConversationalModal = ({
             }}
             renderItem={item => (
               <TouchableOpacity
-                onPress={() => {
-                  setSelectBook(item.item.image);
-                  setBooksModal(false);
-                }}
+              onPress={() => {
+                navigation?.navigate('BookShare', {data: item.item});
+              }}
+              style={{
+                // elevation: 2,
+                // backgroundColor: colors.bg,
+                // padding: 2,
+                borderRadius: 24,
+                // height: height * 0.243,
+                // alignItems : "center",
+                // justifyContent : "center",
+              }}>
+           <View style={{
+            elevation : 1,
+            padding : 3,
+         
+         
+           }}>
+           <Image
+              resizeMode='stretch'
                 style={{
-                  elevation: 2,
-                  backgroundColor: colors.bg,
-                  padding: 2,
+                  height: height * 0.24,
+                  width: width * 0.41,
                   borderRadius: 24,
-                }}>
-                <Image
-                  style={{
-                    height: height * 0.24,
-                    width: width * 0.4,
-                    borderRadius: 24,
-                  }}
-                  source={item.item.image}
-                />
-              </TouchableOpacity>
+                  borderWidth : 2,
+                  borderColor : colors.bg
+                }}
+                source={item.item.image}
+              />
+           </View>
+              <View style={{
+                marginTop : 10,
+                alignItems : "center",
+                gap : 5,
+                maxWidth : width * 0.41,
+              }}>
+              <Text style={{
+                color: colors.textColor.light,
+                fontSize: 14,
+                fontFamily: font.PoppinsMedium,
+                
+              }}>{item.item.title}</Text>
+              <Text style={{
+                color: colors.textColor.neutralColor,
+                fontSize: 12,
+                fontFamily: font.Poppins,
+                
+              }}>{item.item.publisher}</Text>
+              </View>
+            </TouchableOpacity>
             )}
           />
         </>

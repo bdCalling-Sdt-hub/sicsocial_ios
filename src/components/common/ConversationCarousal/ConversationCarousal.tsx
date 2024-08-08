@@ -554,6 +554,7 @@ const ConversationCarousal = ({
         )}
         customAnimation={animationStyle}
       />
+      {/* "image modal" */}
       <ModalOfBottom
         modalVisible={imageModal}
         setModalVisible={setImageModal}
