@@ -344,7 +344,7 @@ const CreateNewFaceDown = ({navigation}: NavigProps<null>) => {
                 }}
                 source={
                   selectBook
-                    ? {uri: selectBook}
+                    ?  selectBook
                     : require('../../assets/tempAssets/book.jpg')
                 }
               />
@@ -824,7 +824,9 @@ sed Quisque ac lobortis, Quisque urna ipsum Nam id tempor placerat. Morbi ipsum 
             renderItem={item => (
               <TouchableOpacity
               onPress={() => {
-                navigation?.navigate('BookShare', {data: item.item});
+                setBooksModal(false)
+                setSelectBook(item?.item.image)
+                // navigation?.navigate('BookShare', {data: item.item});
               }}
               style={{
                 // elevation: 2,

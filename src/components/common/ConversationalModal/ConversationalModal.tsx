@@ -1527,7 +1527,9 @@ const ConversationalModal = ({
             renderItem={item => (
               <TouchableOpacity
               onPress={() => {
-                navigation?.navigate('BookShare', {data: item.item});
+                setBooksModal(false)
+                setSelectBook(item?.item.image)
+                // navigation?.navigate('BookShare', {data: item.item});
               }}
               style={{
                 // elevation: 2,
