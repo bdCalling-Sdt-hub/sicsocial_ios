@@ -1434,7 +1434,7 @@ const ConversationalModal = ({
           <View
             style={{
               paddingHorizontal: '4%',
-              marginTop: 15,
+              marginTop: 25,
             }}>
             <View
               style={{

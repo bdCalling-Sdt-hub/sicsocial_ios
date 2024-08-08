@@ -731,7 +731,7 @@ sed Quisque ac lobortis, Quisque urna ipsum Nam id tempor placerat. Morbi ipsum 
           <View
             style={{
               paddingHorizontal: '4%',
-              marginTop: 15,
+              marginTop: 25,
             }}>
             <View
               style={{
