@@ -109,6 +109,7 @@ export const useStyles = () => {
         white: isDark ? 'white' : 'white',
         light: isDark ? '#767676' : '#5C5C5C',
         rare: isDark ? '#D29E3B' : '#720B24',
+        yellowis: isDark ? '#DBB162' : '#6B4213',
         normal: isDark ? '#E6E6E6' : '#333333',
         gray: isDark ? '#E6E6E6' : 'rgba(161, 161, 161, 1)',
       },

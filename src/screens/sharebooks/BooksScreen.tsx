@@ -1,6 +1,7 @@
 import {
   FlatList,
   Image,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -15,6 +16,7 @@ import {SvgXml} from 'react-native-svg';
 import {NavigProps} from '../../interfaces/NaviProps';
 import {books, TemBooks} from '../../utils/GetRandomColor';
 import {GridList} from 'react-native-ui-lib';
+import AntDesign from "react-native-vector-icons/AntDesign"
 
 export interface Books {
   id: number;
@@ -45,7 +47,7 @@ const data = [
   },
 ];
 
-const ShareBooksScreen = ({navigation}: NavigProps<null>) => {
+const BooksScreen = ({navigation}: NavigProps<null>) => {
   const {colors, font} = useStyles();
   const [selectItem, setSelectIItem] = React.useState<number>(1);
   const {height, width} = useWindowDimensions();
@@ -58,7 +60,7 @@ const ShareBooksScreen = ({navigation}: NavigProps<null>) => {
       }}>
       <BackButtonWithTitle
         navigation={navigation}
-        title="Share Books"
+        title="Books Library"
         containerStyle={{
           justifyContent: 'flex-start',
           gap: 20,
@@ -72,7 +74,7 @@ const ShareBooksScreen = ({navigation}: NavigProps<null>) => {
       <View
         style={{
           paddingHorizontal: '4%',
-          marginTop: 10,
+          // marginTop: 5,
         }}>
         <View
           style={{
@@ -82,6 +84,7 @@ const ShareBooksScreen = ({navigation}: NavigProps<null>) => {
             gap: 10,
             height: 48,
             paddingHorizontal: 20,
+            marginVertical : 10,
             borderRadius: 50,
           }}>
           <SvgXml
@@ -97,69 +100,48 @@ const ShareBooksScreen = ({navigation}: NavigProps<null>) => {
           />
         </View>
       </View>
-      <View
-        style={{
-          borderBottomWidth: 1,
-          borderBlockColor: 'rgba(217, 217, 217, 1)',
+   
+      <ScrollView showsVerticalScrollIndicator={false}>
+        {
+          TemBooks.map((book,index) =>
+          (
+            <View key={book.id}>
+         <TouchableOpacity onPress={()=> navigation?.navigate("BookShareWithCategory" ,{data : TemBooks[index].category })} style={{
+          flexDirection :"row",
+          justifyContent : "space-between",
+          width : width,
+          paddingHorizontal : '5%',
+        paddingVertical : 10
+         }}>
+         <Text style={{
+          color : colors.textColor.rare,
+          fontSize : 15,
+          fontFamily : font.PoppinsSemiBold,
+         }}>
+             {TemBooks[index].category}
+          </Text>
+        <View style={{
+          flexDirection : "row",
+          alignItems : "center",
+          justifyContent : "center",
+          gap : 10
+ 
         }}>
+        <Text style={{
+            color : colors.textColor.rare
+         }}>
+             {data.length}
+          </Text>
+          <AntDesign name='right' size={15}  color={colors.textColor.rare}/>
+        </View>
+         </TouchableOpacity>
         <FlatList
-          showsHorizontalScrollIndicator={false}
-          keyboardShouldPersistTaps="always"
-          horizontal
-          contentContainerStyle={{
-            gap: 16,
-            paddingHorizontal: 20,
-            paddingTop: 20,
-            paddingBottom: 15,
-          }}
-          data={data}
-          renderItem={item => (
-            <>
-              <TouchableOpacity
-                onPress={() => {
-                  setSelectIItem(item.index);
-                }}
-                style={{
-                  backgroundColor:
-                    selectItem === item.index
-                      ? colors.primaryColor
-                      : colors.secondaryColor,
-                  height: 35,
-                  paddingHorizontal: 20,
-                  // paddingVertical: 5,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  borderRadius: 50,
-                }}>
-                <Text
-                  style={{
-                    color:
-                      selectItem === item.index
-                        ? colors.textColor.white
-                        : colors.textColor.light,
-                    fontSize: 12,
-                    fontFamily: font.PoppinsMedium,
-                    textAlign: 'center',
-                  }}>
-                  {item.item.content}
-                </Text>
-              </TouchableOpacity>
-            </>
-          )}
-        />
-      </View>
-      <GridList
-        showsVerticalScrollIndicator={false}
-        containerWidth={width * 0.9}
-        numColumns={2}
+       horizontal
+       showsHorizontalScrollIndicator={false}
         data={TemBooks}
-        columnWrapperStyle={{
-          gap: 20,
-          alignSelf: 'center',
-        }}
         contentContainerStyle={{
           gap: 20,
-          paddingVertical: 20,
+          paddingBottom: 20,
           paddingHorizontal: '5%',
         }}
         renderItem={item => (
@@ -168,26 +150,64 @@ const ShareBooksScreen = ({navigation}: NavigProps<null>) => {
               navigation?.navigate('BookShare', {data: item.item});
             }}
             style={{
-              elevation: 2,
-              backgroundColor: colors.bg,
-              padding: 2,
+              // elevation: 2,
+              // backgroundColor: colors.bg,
+              // padding: 2,
               borderRadius: 24,
+              // height: height * 0.243,
+              // alignItems : "center",
+              // justifyContent : "center",
             }}>
-            <Image
+         <View style={{
+          elevation : 1,
+          padding : 3,
+       
+       
+         }}>
+         <Image
+            resizeMode='stretch'
               style={{
                 height: height * 0.24,
-                width: "100%",
+                width: width * 0.41,
                 borderRadius: 24,
+                borderWidth : 2,
+                borderColor : colors.bg
               }}
               source={item.item.image}
             />
+         </View>
+            <View style={{
+              marginTop : 10,
+              alignItems : "center",
+              gap : 5,
+              maxWidth : width * 0.41,
+            }}>
+            <Text style={{
+              color: colors.textColor.light,
+              fontSize: 14,
+              fontFamily: font.PoppinsMedium,
+              
+            }}>{item.item.title}</Text>
+            <Text style={{
+              color: colors.textColor.neutralColor,
+              fontSize: 12,
+              fontFamily: font.Poppins,
+              
+            }}>{item.item.publisher}</Text>
+            </View>
           </TouchableOpacity>
         )}
       />
+        </View>
+          )
+          )
+        }
+       
+      </ScrollView>
     </View>
   );
 };
 
-export default ShareBooksScreen;
+export default BooksScreen;
 
 const styles = StyleSheet.create({});

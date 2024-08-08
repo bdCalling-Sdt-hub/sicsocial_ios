@@ -26,7 +26,7 @@ import {useColorScheme} from 'react-native';
 import FriendsScreen from '../screens/friends/FriendsScreen';
 import FriendsProfile from '../screens/friends/FriendsProfile';
 import MassageScreen from '../screens/message/MassageScreen';
-import ShareBooksScreen from '../screens/sharebooks/ShareBooksScreen';
+
 import BookShareScreen from '../screens/sharebooks/BookShareScreen';
 import ProfileScreen from '../screens/profile/ProfileScreen';
 import SettingScreen from '../screens/profile/SettingScreen';
@@ -53,6 +53,8 @@ import CreateNewFaceDown from '../screens/message/CreateNewFaceDown';
 import FaceDownConversation from '../screens/message/FaceDownConversation';
 import FaceDownAddMember from '../screens/message/FaceDownAddMember';
 import TestScreen from '../screens/TextScreen';
+import BooksScreen from '../screens/sharebooks/BooksScreen';
+import BookShareWithCategory from '../screens/sharebooks/BookShareWithCategory';
 
 const Stack = createNativeStackNavigator();
 
@@ -119,7 +121,7 @@ const Routes = () => {
           />
           <Stack.Screen
             name="ShareBooks"
-            component={ShareBooksScreen}
+            component={BooksScreen}
             options={{
               animation: 'slide_from_right',
             }}
@@ -127,6 +129,13 @@ const Routes = () => {
           <Stack.Screen
             name="BookShare"
             component={BookShareScreen}
+            options={{
+              animation: 'slide_from_right',
+            }}
+          />
+          <Stack.Screen
+            name="BookShareWithCategory"
+            component={BookShareWithCategory}
             options={{
               animation: 'slide_from_right',
             }}
