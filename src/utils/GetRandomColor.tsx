@@ -10,27 +10,37 @@ export const getRandomColor = () => {
 export const TemBooks = [
   {
     id: 1,
-    content: 'All',
+    category: 'Comic',
+    title : "Educated a memoir",
+  publisher : "UAE Book Publications",
     image: require('../assets/tempAssets/book.jpg'),
   },
   {
     id: 2,
-    content: 'Way of Life',
+    category: 'Way of Life',
+    title : "The Quran (Arabic, English)",
+    publisher : "World publication ltd.",
     image: require('../assets/tempAssets/book3.jpg'),
   },
   {
     id: 3,
-    content: 'Business',
+    category: 'Business',
+    title : "The Quran (Arabic, English)",
+    publisher : "World publication ltd.",
     image: require('../assets/tempAssets/book2.jpg'),
   },
   {
     id: 4,
-    content: 'Human Family',
+    category: 'Econimic',
+    title : "The Quran (Arabic, English)",
+    publisher : "World publication ltd.",
     image: require('../assets/tempAssets/book4.jpg'),
   },
   {
     id: 5,
-    content: 'Human Family',
+    category: 'Joke',
+    title : "The Quran (Arabic, English)",
+    publisher : "World publication ltd.",
     image: require('../assets/tempAssets/book5.jpg'),
   },
 ];

@@ -245,7 +245,7 @@ const ConversationalCard = ({
                     style={{
                       fontFamily: font.PoppinsMedium,
                       fontSize: 13,
-                      color: '#6B4213',
+                      color:  colors.textColor.yellowis,
                     }}>
                     {lastMessageTime ? lastMessageTime : 'empty'}
                   </Text>

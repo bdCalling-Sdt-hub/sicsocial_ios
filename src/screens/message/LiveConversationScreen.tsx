@@ -337,7 +337,7 @@ const LiveConversationScreen = ({navigation}: NavigProps<null>) => {
       {/* all notification of lives start  */}
       <NotifyTopComponent
         context=""
-        variant="normal"
+        variant="success"
         open={open}
         onDismiss={setNotify}
       />
