@@ -6,11 +6,11 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React from 'react';
-import {NavigProps} from '../../interfaces/NaviProps';
 
-import {SvgXml} from 'react-native-svg';
-import {useStyles} from '../../context/ContextApi';
+import React from 'react';
+import { SvgXml } from 'react-native-svg';
+import { useStyles } from '../../context/ContextApi';
+import { NavigProps } from '../../interfaces/NaviProps';
 
 interface ConversationalCardProps extends NavigProps<null> {
   conversationTitle?: string;
@@ -61,7 +61,7 @@ const ConversationalCard = ({
       {/*========================== conversation card start ======================= */}
 
       <TouchableOpacity
-        activeOpacity={0.8}
+        activeOpacity={0.9}
         disabled={disabled}
         onPress={onPress}
         style={{

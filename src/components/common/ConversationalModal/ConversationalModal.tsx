@@ -1,62 +1,44 @@
+
+import React, { useEffect } from 'react';
 import {
   ActivityIndicator,
-  Alert,
-  Dimensions,
   FlatList,
   Image,
-  ImageBackground,
-  Linking,
   Modal,
   Pressable,
-  SafeAreaView,
   StyleSheet,
   Text,
-  ToastAndroid,
-  TouchableNativeFeedback,
   TouchableOpacity,
-  useWindowDimensions,
-  View,
+  View
 } from 'react-native';
-import React, {Dispatch, useContext, useEffect} from 'react';
-import * as Animatable from 'react-native-animatable';
-import LinearGradient from 'react-native-linear-gradient';
-import {ScrollView, TextInput} from 'react-native-gesture-handler';
-import {SvgUri, SvgXml} from 'react-native-svg';
-import ConversationalCard from '../../../components/common/ConversationalCard';
-import ModalOfBottom from '../../../components/common/customModal/ModalOfButtom';
-
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import Clipboard from '@react-native-clipboard/clipboard';
-import {Link, useTheme} from '@react-navigation/native';
-import {NavigProps} from '../../../interfaces/NaviProps';
-import {
-  ContextProvider,
-  useContextApi,
-  useStyles,
-} from '../../../context/ContextApi';
+import { TextInput } from 'react-native-gesture-handler';
+import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import Animated, {
   Easing,
   interpolate,
-  ReduceMotion,
   useAnimatedStyle,
   useSharedValue,
-  withDelay,
-  withSpring,
-  withTiming,
+  withTiming
 } from 'react-native-reanimated';
 import Carousel, {
-  ICarouselInstance,
-  TAnimationStyle,
+  TAnimationStyle
 } from 'react-native-reanimated-carousel';
-import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
-import {AnimatedCircularProgress} from 'react-native-circular-progress';
+import { SvgXml } from 'react-native-svg';
+import { GridList } from 'react-native-ui-lib';
+import {
+  useContextApi,
+  useStyles
+} from '../../../context/ContextApi';
+import { TemBooks } from '../../../utils/GetRandomColor';
+
+import { LinkPreview } from '@flyerhq/react-native-link-preview';
+import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import NormalButton from '../../../components/common/NormalButton';
 import CustomModal from '../../../components/common/customModal/CustomModal';
-import {LinkPreview} from '@flyerhq/react-native-link-preview';
-import ConversationCarousal1 from '../../../components/common/ConversationCarousal/ConversationCarousal1';
-import {GridList, ListItem, SkeletonView} from 'react-native-ui-lib';
-import {IConversationProps} from '../../../screens/home/HomeScreen';
-import {books, TemBooks} from '../../../utils/GetRandomColor';
+import ModalOfBottom from '../../../components/common/customModal/ModalOfButtom';
+import { NavigProps } from '../../../interfaces/NaviProps';
+import { IConversationProps } from '../../../screens/home/HomeScreen';
+
 const data = [
   {
     id: 1,
@@ -116,11 +98,11 @@ const items = [
     activeImg: require('../../../assets/icons/modalIcons/shearFriendBlack.png'),
     unActive: require('../../../assets/icons/modalIcons/shearFriendGray.png'),
   },
-  {
-    id: 3,
-    title: 'Asadullah face',
-    house: true,
-  },
+  // {
+  //   id: 3,
+  //   title: 'Asadullah face',
+  //   house: true,
+  // },
 ];
 
 interface ConversationalModalProps extends NavigProps<null> {
@@ -538,7 +520,7 @@ const ConversationalModal = ({
             onPress={() => {
               setIsLive(false);
             }}
-            activeOpacity={0.8}
+            activeOpacity={0.9}
             style={{
               backgroundColor: 'rgba(241, 99, 101, 1)',
               width: '35%',
@@ -1340,7 +1322,7 @@ const ConversationalModal = ({
                 onPress={() => {
                   setBooksModal(true);
                 }}
-                activeOpacity={0.8}
+                activeOpacity={0.9}
                 style={{
                   height: 50,
                   width: 50,
@@ -1388,7 +1370,7 @@ const ConversationalModal = ({
                 />
               </TouchableOpacity>
               {/* <TouchableOpacity
-              activeOpacity={0.8}
+              activeOpacity={0.9}
               style={{
                 height: 50,
                 width: 50,

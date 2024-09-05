@@ -1,25 +1,25 @@
+import React, { SetStateAction } from 'react';
 import {
-  View,
-  Text,
-  Image,
-  TouchableOpacity,
-  TextInput,
-  ImageBackground,
-  ScrollView,
-  useWindowDimensions,
-  FlatList,
+    FlatList,
+    Image,
+    ScrollView,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
+    useWindowDimensions
 } from 'react-native';
-import React, {SetStateAction} from 'react';
-import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
-import {useStyles} from '../../context/ContextApi';
-import {NavigProps} from '../../interfaces/NaviProps';
-import {SvgXml} from 'react-native-svg';
-import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
+import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
+
+import { LinkPreview } from '@flyerhq/react-native-link-preview';
+import { SvgXml } from 'react-native-svg';
 import DateTimePicker from 'react-native-ui-datepicker';
+import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
 import CustomModal from '../../components/common/customModal/CustomModal';
+import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
 import NormalButton from '../../components/common/NormalButton';
-import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
-import {LinkPreview} from '@flyerhq/react-native-link-preview';
+import { useStyles } from '../../context/ContextApi';
+import { NavigProps } from '../../interfaces/NaviProps';
 
 const Books = [
   {
@@ -179,7 +179,7 @@ const CreateNewFaceDown = ({navigation}: NavigProps<null>) => {
               onPress={() => {
                 handleImagePick('camera');
               }}
-              activeOpacity={0.8}
+              activeOpacity={0.9}
               style={{
                 flexDirection: 'row',
                 gap: 4,
@@ -258,7 +258,7 @@ const CreateNewFaceDown = ({navigation}: NavigProps<null>) => {
           </Text>
 
           <TouchableOpacity
-            activeOpacity={0.8}
+            activeOpacity={0.9}
             onPress={() => {
               navigation?.navigate('FaceDownAddMember');
             }}>
@@ -405,7 +405,7 @@ const CreateNewFaceDown = ({navigation}: NavigProps<null>) => {
               onPress={() => {
                 setBooksModal(true);
               }}
-              activeOpacity={0.8}
+              activeOpacity={0.9}
               style={{
                 height: 50,
                 width: 50,
@@ -453,7 +453,7 @@ const CreateNewFaceDown = ({navigation}: NavigProps<null>) => {
               />
             </TouchableOpacity>
             {/* <TouchableOpacity
-              activeOpacity={0.8}
+              activeOpacity={0.9}
               style={{
                 height: 50,
                 width: 50,
@@ -527,7 +527,7 @@ sed Quisque ac lobortis, Quisque urna ipsum Nam id tempor placerat. Morbi ipsum 
             onPress={() => {
               setModalVisible(!modalVisible);
             }}
-            activeOpacity={0.8}
+            activeOpacity={0.9}
             style={{
               backgroundColor: colors.secondaryColor,
               borderRadius: 100,

@@ -1,30 +1,31 @@
+import React, { useEffect, useRef } from 'react';
 import {
-  FlatList,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  useWindowDimensions,
-  View,
-  TextInput,
-  Pressable,
+    FlatList,
+    Pressable,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
+    useWindowDimensions,
 } from 'react-native';
-import React, {useEffect, useRef} from 'react';
-import {useStyles} from '../../context/ContextApi';
-import {NavigProps} from '../../interfaces/NaviProps';
-import ConversationHeader from '../../components/conversation/ConversationHeader';
-import {Image} from 'react-native-animatable';
-import {messagePros} from './NormalConversationScreen';
 import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
+    useAnimatedStyle,
+    useSharedValue,
+    withTiming,
 } from 'react-native-reanimated';
+
+import { Image } from 'react-native-animatable';
 import ConversationCarousal from '../../components/common/ConversationCarousal/ConversationCarousal';
-import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
 import CustomModal from '../../components/common/customModal/CustomModal';
+import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
 import NormalButton from '../../components/common/NormalButton';
 import NotifyTopComponent from '../../components/common/notify/NotifyTopComponent';
+import ConversationHeader from '../../components/conversation/ConversationHeader';
+import { useStyles } from '../../context/ContextApi';
+import { NavigProps } from '../../interfaces/NaviProps';
+import { messagePros } from './NormalConversationScreen';
 
 const FaceDownConversation = ({navigation}: NavigProps<null>) => {
   const {width, height} = useWindowDimensions();
@@ -246,7 +247,7 @@ const FaceDownConversation = ({navigation}: NavigProps<null>) => {
           animationStyleForUserConversation,
         ]}>
         <TouchableOpacity
-          activeOpacity={0.8}
+          activeOpacity={0.9}
           onPress={() => {
             setFullBanner(!fullBanner);
           }}
@@ -260,7 +261,7 @@ const FaceDownConversation = ({navigation}: NavigProps<null>) => {
             ]}>
             <Animated.View style={[animationImageONBanner]}>
               <TouchableOpacity
-                activeOpacity={0.8}
+                activeOpacity={0.9}
                 onPress={() => {
                   navigation?.navigate('BookShare');
                 }}>
@@ -379,7 +380,7 @@ const FaceDownConversation = ({navigation}: NavigProps<null>) => {
                   onPress={() => {
                     navigation?.navigate('LiveConversation');
                   }}
-                  activeOpacity={0.8}
+                  activeOpacity={0.9}
                   style={{
                     alignItems: 'center',
                     marginTop: 20,
@@ -554,7 +555,7 @@ const FaceDownConversation = ({navigation}: NavigProps<null>) => {
                               onPress={() => {
                                 navigation?.navigate('BookShare');
                               }}
-                              activeOpacity={0.8}
+                              activeOpacity={0.9}
                               style={{
                                 backgroundColor: colors.bg,
                                 elevation: 2,

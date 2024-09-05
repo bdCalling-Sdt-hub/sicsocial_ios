@@ -1,40 +1,37 @@
 import {
-  ActivityIndicator,
-  FlatList,
-  Image,
-  Linking,
-  Pressable,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  ToastAndroid,
-  TouchableOpacity,
-  useWindowDimensions,
-  View,
+    ActivityIndicator,
+    FlatList,
+    Image,
+    Linking,
+    SafeAreaView,
+    StyleSheet,
+    Text,
+    ToastAndroid,
+    TouchableOpacity,
+    View,
+    useWindowDimensions
 } from 'react-native';
-import React from 'react';
-import ConversationHeader from '../../components/conversation/ConversationHeader';
-import {useContextApi, useStyles} from '../../context/ContextApi';
-import {NavigProps} from '../../interfaces/NaviProps';
-import {SvgXml} from 'react-native-svg';
-import {LinkPreview} from '@flyerhq/react-native-link-preview';
-import {GridList, Toast} from 'react-native-ui-lib';
 import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withRepeat,
-  withSpring,
-  withTiming,
+    useAnimatedStyle,
+    useSharedValue,
+    withRepeat,
+    withTiming
 } from 'react-native-reanimated';
-import Divider from '../../components/common/Divider';
-import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
-import CustomModal from '../../components/common/customModal/CustomModal';
-import Clipboard from '@react-native-clipboard/clipboard';
+import { GridList } from 'react-native-ui-lib';
+import { useContextApi, useStyles } from '../../context/ContextApi';
 
+import { LinkPreview } from '@flyerhq/react-native-link-preview';
+import Clipboard from '@react-native-clipboard/clipboard';
+import React from 'react';
+import { TextInput } from 'react-native';
+import { SvgXml } from 'react-native-svg';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import NotifyTopComponent from '../../components/common/notify/NotifyTopComponent';
+import CustomModal from '../../components/common/customModal/CustomModal';
+import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
 import NormalButton from '../../components/common/NormalButton';
-import {TextInput} from 'react-native';
+import NotifyTopComponent from '../../components/common/notify/NotifyTopComponent';
+import ConversationHeader from '../../components/conversation/ConversationHeader';
+import { NavigProps } from '../../interfaces/NaviProps';
 
 const Friends = [
   {
@@ -362,7 +359,7 @@ const LiveConversationScreen = ({navigation}: NavigProps<null>) => {
               setIsLive(false);
               navigation?.goBack();
             }}
-            activeOpacity={0.8}
+            activeOpacity={0.9}
             style={{
               backgroundColor: 'rgba(241, 99, 101, 1)',
               width: '23%',
@@ -573,7 +570,7 @@ const LiveConversationScreen = ({navigation}: NavigProps<null>) => {
               onLongPress={() => {
                 navigation?.navigate('NormalConversation');
               }}
-              activeOpacity={0.8}
+              activeOpacity={0.9}
               onPress={() => {
                 // setModalVisible(!modalVisible);
                 setShowShortProfile(!showShortProfile);
@@ -710,7 +707,7 @@ const LiveConversationScreen = ({navigation}: NavigProps<null>) => {
           renderItem={item => (
             <View style={{gap: 6}}>
               <TouchableOpacity
-                activeOpacity={0.8}
+                activeOpacity={0.9}
                 onPress={() => {
                   // setModalVisible(!modalVisible);
                   setShowShortProfile(!showShortProfile);
@@ -771,7 +768,7 @@ const LiveConversationScreen = ({navigation}: NavigProps<null>) => {
             {/* ==================live group message start ===================*/}
 
             <TouchableOpacity
-              activeOpacity={0.8}
+              activeOpacity={0.9}
               style={{}}
               onPress={() => {
                 navigation?.navigate('LiveMessage');
@@ -819,7 +816,7 @@ const LiveConversationScreen = ({navigation}: NavigProps<null>) => {
               onPress={() => {
                 setModalVisible(!modalVisible);
               }}
-              activeOpacity={0.8}
+              activeOpacity={0.9}
               style={{}}>
               <View
                 style={{
@@ -855,7 +852,7 @@ const LiveConversationScreen = ({navigation}: NavigProps<null>) => {
               onPress={() => {
                 navigation?.navigate('LiveAddFriends');
               }}
-              activeOpacity={0.8}
+              activeOpacity={0.9}
               style={{}}>
               <View
                 style={{
@@ -882,7 +879,7 @@ const LiveConversationScreen = ({navigation}: NavigProps<null>) => {
           </View>
           {/* ===============live joined and knock and voice run on or off start============ */}
           <TouchableOpacity
-            activeOpacity={0.8}
+            activeOpacity={0.9}
             style={{}}
             onPress={() => {
               // setRunOnVoice(!runOnVoice);
@@ -1100,7 +1097,7 @@ const LiveConversationScreen = ({navigation}: NavigProps<null>) => {
               gap: 24,
             }}>
             <TouchableOpacity
-              activeOpacity={0.8}
+              activeOpacity={0.9}
               onPress={() => {
                 if (isFriendRequest) {
                   setIsFriend(true);
@@ -1178,7 +1175,7 @@ const LiveConversationScreen = ({navigation}: NavigProps<null>) => {
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
-              activeOpacity={0.8}
+              activeOpacity={0.9}
               onPress={() => {
                 setConfirmationModal(false); //
                 setShowShortProfile(false); //)
@@ -1590,7 +1587,7 @@ const LiveConversationScreen = ({navigation}: NavigProps<null>) => {
                 onPress={() => {
                   setBooksModal(true);
                 }}
-                activeOpacity={0.8}
+                activeOpacity={0.9}
                 style={{
                   height: 50,
                   width: 50,
@@ -1638,7 +1635,7 @@ const LiveConversationScreen = ({navigation}: NavigProps<null>) => {
                 />
               </TouchableOpacity>
               {/* <TouchableOpacity
-              activeOpacity={0.8}
+              activeOpacity={0.9}
               style={{
                 height: 50,
                 width: 50,

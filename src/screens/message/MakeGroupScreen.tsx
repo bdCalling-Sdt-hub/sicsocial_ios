@@ -1,20 +1,21 @@
 import {
-  FlatList,
-  Image,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
+    FlatList,
+    Image,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from 'react-native';
+
 import React from 'react';
-import {useStyles} from '../../context/ContextApi';
-import {NavigProps} from '../../interfaces/NaviProps';
-import {SvgXml} from 'react-native-svg';
-import MessageCard from '../../components/conversation/MessageCard';
+import { SvgXml } from 'react-native-svg';
+import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
 import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
 import GroupUserCard from '../../components/conversation/GroupUserCard';
-import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
+import { useStyles } from '../../context/ContextApi';
+import { NavigProps } from '../../interfaces/NaviProps';
+
 const friends = [
   {
     id: 1,
@@ -268,7 +269,7 @@ const MakeGroupScreen = ({navigation}: NavigProps<null>) => {
       />
       {selectedUser?.length !== 0 && (
         <TouchableOpacity
-          activeOpacity={0.8}
+          activeOpacity={0.9}
           onPress={() => {
             navigation?.navigate('GroupConversation');
           }}

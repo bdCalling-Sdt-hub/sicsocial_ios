@@ -1,15 +1,14 @@
 import {
-  Image,
-  Pressable,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  useWindowDimensions,
-  View,
+    Image,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
+    useWindowDimensions
 } from 'react-native';
+
 import React from 'react';
-import {useStyles} from '../../context/ContextApi';
-import {SvgXml} from 'react-native-svg';
+import { useStyles } from '../../context/ContextApi';
 
 interface FriendCardProps {
   item?: {
@@ -53,7 +52,7 @@ const FriendCard = ({
     <>
       {/*============== card start ============ */}
       <TouchableOpacity
-        activeOpacity={0.8}
+        activeOpacity={0.9}
         onPress={onPress}
         style={{
           justifyContent: 'center',
@@ -247,7 +246,7 @@ const FriendCard = ({
                 marginTop: 20,
               }}>
               <TouchableOpacity
-                activeOpacity={0.8}
+                activeOpacity={0.9}
                 onPress={onDeclineFriendRequestPress}
                 onPressIn={() => setRejectBtnPress(true)}
                 onPressOut={() => setRejectBtnPress(false)}
@@ -276,7 +275,7 @@ const FriendCard = ({
                 />
               </TouchableOpacity>
               <TouchableOpacity
-                activeOpacity={0.8}
+                activeOpacity={0.9}
                 onPress={onAcceptFriendRequestPress}
                 onPressIn={() => setAcceptBtnPress(true)}
                 onPressOut={() => setAcceptBtnPress(false)}
@@ -317,7 +316,7 @@ const FriendCard = ({
                 marginTop: 20,
               }}>
               <TouchableOpacity
-                activeOpacity={0.8}
+                activeOpacity={0.9}
                 onPress={onDeclineFriendRequestPress}
                 onPressIn={() => setRejectBtnPress(true)}
                 onPressOut={() => setRejectBtnPress(false)}
@@ -346,7 +345,7 @@ const FriendCard = ({
                 />
               </TouchableOpacity>
               <TouchableOpacity
-                activeOpacity={0.8}
+                activeOpacity={0.9}
                 onPress={onAcceptFriendRequestPress}
                 onPressIn={() => setAcceptBtnPress(true)}
                 onPressOut={() => setAcceptBtnPress(false)}
