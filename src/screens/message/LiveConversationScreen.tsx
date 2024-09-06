@@ -1,30 +1,31 @@
 import {
-    ActivityIndicator,
-    FlatList,
-    Image,
-    Linking,
-    SafeAreaView,
-    StyleSheet,
-    Text,
-    ToastAndroid,
-    TouchableOpacity,
-    View,
-    useWindowDimensions
+  ActivityIndicator,
+  FlatList,
+  Image,
+  Linking,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  ToastAndroid,
+  TouchableOpacity,
+  View,
+  useWindowDimensions
 } from 'react-native';
 import Animated, {
-    useAnimatedStyle,
-    useSharedValue,
-    withRepeat,
-    withTiming
+  useAnimatedStyle,
+  useSharedValue,
+  withRepeat,
+  withTiming
 } from 'react-native-reanimated';
-import { GridList } from 'react-native-ui-lib';
 import { useContextApi, useStyles } from '../../context/ContextApi';
+import { isSmall, isTablet } from '../../utils/utils';
 
 import { LinkPreview } from '@flyerhq/react-native-link-preview';
 import Clipboard from '@react-native-clipboard/clipboard';
 import React from 'react';
 import { TextInput } from 'react-native';
 import { SvgXml } from 'react-native-svg';
+import { GridList } from 'react-native-ui-lib';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import CustomModal from '../../components/common/customModal/CustomModal';
 import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
@@ -339,6 +340,7 @@ const LiveConversationScreen = ({navigation}: NavigProps<null>) => {
         onDismiss={setNotify}
       />
       {/* all notification of lives end  */}
+   
       <View
         style={{
           height: '7.5%',
@@ -362,8 +364,8 @@ const LiveConversationScreen = ({navigation}: NavigProps<null>) => {
             activeOpacity={0.9}
             style={{
               backgroundColor: 'rgba(241, 99, 101, 1)',
-              width: '23%',
-              height: 28,
+              width: isSmall() ? width * 0.3  : isTablet() ?width * 0.1 : width * 0.3,
+              height: height * 0.04,
               borderRadius: 100,
               justifyContent: 'center',
               alignItems: 'center',
@@ -494,7 +496,7 @@ const LiveConversationScreen = ({navigation}: NavigProps<null>) => {
               return (
                 <View
                   style={{
-                    width: '90%',
+                    width: width * 0.9,
                     height: height * 0.1,
                     backgroundColor: previewData?.title
                       ? colors.secondaryColor
@@ -509,9 +511,10 @@ const LiveConversationScreen = ({navigation}: NavigProps<null>) => {
                   {previewData?.image && (
                     <Image
                       source={{uri: previewData?.image?.url}}
+                      resizeMode="cover"
                       style={{
-                        width: width * 0.27,
-                        height: height * 0.1,
+                        width: isTablet() ? width * 0.1 : width * 0.27,
+                        height: isTablet() ? height * 0.1 : height * 0.1,
                         borderRadius: 15,
                       }}
                     />
@@ -557,7 +560,7 @@ const LiveConversationScreen = ({navigation}: NavigProps<null>) => {
       <GridList
         showsVerticalScrollIndicator={false}
         containerWidth={width * 0.9}
-        numColumns={4}
+        numColumns={ isTablet() ? 10 : 4}
         contentContainerStyle={{
           // alignItems: 'center',
           alignSelf: 'center',
@@ -679,7 +682,7 @@ const LiveConversationScreen = ({navigation}: NavigProps<null>) => {
       <View
         style={{
           paddingVertical: 9,
-          height: '26%',
+          height: '20%',
           borderTopColor: colors.gray.variantTwo,
           borderTopWidth: 1,
         }}>
@@ -749,6 +752,16 @@ const LiveConversationScreen = ({navigation}: NavigProps<null>) => {
             </View>
           )}
         />
+     
+      </View>
+      <View
+        style={{
+          paddingVertical: 9,
+          // height: '8%',
+          borderTopColor: colors.gray.variantTwo,
+          borderTopWidth: 1,
+        }}>
+      
         <View
           style={{
             marginBottom: 10,
@@ -757,7 +770,7 @@ const LiveConversationScreen = ({navigation}: NavigProps<null>) => {
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'space-between',
-            height: 40,
+            height: height * .055,
           }}>
           <View
             style={{
@@ -963,6 +976,8 @@ const LiveConversationScreen = ({navigation}: NavigProps<null>) => {
           {/*=============== live joined and knock and voice run on or off end================ */}
         </View>
       </View>
+ 
+
 
       <ModalOfBottom
         modalVisible={showShortProfile}

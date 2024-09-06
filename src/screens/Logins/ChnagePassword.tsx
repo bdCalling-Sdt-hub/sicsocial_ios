@@ -6,13 +6,13 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React from 'react';
-import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
 
-import {NavigProps} from '../../interfaces/NaviProps';
-import {Formik} from 'formik';
+import { Formik } from 'formik';
+import React from 'react';
 import Feather from 'react-native-vector-icons/Feather';
-import {useStyles} from '../../context/ContextApi';
+import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
+import { useStyles } from '../../context/ContextApi';
+import { NavigProps } from '../../interfaces/NaviProps';
 
 const ChangePassword = ({navigation}: NavigProps<null>) => {
   const {colors, font} = useStyles();
@@ -39,9 +39,12 @@ const ChangePassword = ({navigation}: NavigProps<null>) => {
         }}
       />
 
-      <ScrollView
+       
+     <ScrollView
+       showsVerticalScrollIndicator={false}
+       showsHorizontalScrollIndicator={false}
         keyboardShouldPersistTaps="always"
-        showsVerticalScrollIndicator={false}
+    
         contentContainerStyle={{
           //   flex: 1,
           justifyContent: 'center',

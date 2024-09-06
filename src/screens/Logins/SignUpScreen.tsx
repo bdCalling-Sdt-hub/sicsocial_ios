@@ -1,18 +1,18 @@
 import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from 'react-native';
-import React from 'react';
-import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
 
-import {NavigProps} from '../../interfaces/NaviProps';
-import {Formik} from 'formik';
+import { Formik } from 'formik';
+import React from 'react';
 import Feather from 'react-native-vector-icons/Feather';
-import {useStyles} from '../../context/ContextApi';
+import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
+import { useStyles } from '../../context/ContextApi';
+import { NavigProps } from '../../interfaces/NaviProps';
 
 const SignUpScreen = ({navigation}: NavigProps<null>) => {
   const {colors, font} = useStyles();
@@ -40,7 +40,10 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
 
         // thirdRoll
       />
-      <ScrollView>
+       
+     <ScrollView
+       showsVerticalScrollIndicator={false}
+       showsHorizontalScrollIndicator={false}>
         <View>
           <Text
             style={{

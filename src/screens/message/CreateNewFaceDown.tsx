@@ -1,13 +1,13 @@
 import React, { SetStateAction } from 'react';
 import {
-    FlatList,
-    Image,
-    ScrollView,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
-    useWindowDimensions
+  FlatList,
+  Image,
+  ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+  useWindowDimensions
 } from 'react-native';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 
@@ -131,9 +131,11 @@ const CreateNewFaceDown = ({navigation}: NavigProps<null>) => {
           fontFamily: font.PoppinsSemiBold,
         }}
       />
-      <ScrollView
+       
+    <ScrollView
+       showsVerticalScrollIndicator={false}
+       showsHorizontalScrollIndicator={false}
         keyboardShouldPersistTaps="always"
-        showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           paddingBottom: '8%',
         }}>

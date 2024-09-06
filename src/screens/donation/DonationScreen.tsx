@@ -1,17 +1,18 @@
 import {
-  Image,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    Image,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from 'react-native';
+
 import React from 'react';
+import { FlatList } from 'react-native-gesture-handler';
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
-import {NavigProps} from '../../interfaces/NaviProps';
-import {FlatList} from 'react-native-gesture-handler';
 import NormalButton from '../../components/common/NormalButton';
-import {useStyles} from '../../context/ContextApi';
+import { useStyles } from '../../context/ContextApi';
+import { NavigProps } from '../../interfaces/NaviProps';
 
 const data = [
   {
@@ -82,7 +83,10 @@ const DonationScreen = ({navigation}: NavigProps<null>) => {
           </TouchableOpacity>
         )}
       />
-      <ScrollView
+       
+     <ScrollView
+       showsVerticalScrollIndicator={false}
+       showsHorizontalScrollIndicator={false}
         contentContainerStyle={{
           paddingVertical: 20,
         }}>

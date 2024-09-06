@@ -1,11 +1,12 @@
 import {
-    Image,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
-    useWindowDimensions
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  useWindowDimensions
 } from 'react-native';
+import { height, isSmall, isTablet } from '../../utils/utils';
 
 import React from 'react';
 import { useStyles } from '../../context/ContextApi';
@@ -61,12 +62,12 @@ const FriendCard = ({
         <View
           style={{
             gap: 20,
-            height: 380,
-            width: 300,
+            height: isTablet() ? height * 0.5 : isSmall() ? height * 0.52 :  height * 0.43,
+            width: isTablet() ? width * 0.5 : isSmall() ? width * 0.7 :  width * 0.73,
             backgroundColor: colors.cardBg,
             borderRadius: 42,
-            paddingHorizontal: '6%',
-            paddingVertical: '8%',
+            paddingHorizontal:isTablet() ? "3%" : '6%',
+            paddingVertical:isTablet() ? "3%" : '8%',
             elevation: 2,
           }}>
           <View
@@ -217,7 +218,7 @@ const FriendCard = ({
               </Text>
             </View>
             <Text
-              numberOfLines={4}
+              numberOfLines={isSmall() ?  2 : 4 }
               style={{
                 fontFamily: font.Poppins,
                 fontSize: 12,

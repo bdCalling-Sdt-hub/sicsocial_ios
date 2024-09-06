@@ -7,14 +7,15 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+
 import React from 'react';
-import {useStyles} from '../../context/ContextApi';
+import { SvgXml } from 'react-native-svg';
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
-import {NavigProps} from '../../interfaces/NaviProps';
-import {SvgXml} from 'react-native-svg';
 import ConversationalCard from '../../components/common/ConversationalCard';
-import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
 import CustomModal from '../../components/common/customModal/CustomModal';
+import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
+import { useStyles } from '../../context/ContextApi';
+import { NavigProps } from '../../interfaces/NaviProps';
 
 const FriendsProfile = ({navigation}: NavigProps<null>) => {
   const {colors, font} = useStyles();
@@ -40,8 +41,11 @@ const FriendsProfile = ({navigation}: NavigProps<null>) => {
           setModalVisible(!modalVisible);
         }}
       />
-      <ScrollView
-        showsVerticalScrollIndicator={false}
+       
+     <ScrollView
+       showsVerticalScrollIndicator={false}
+       showsHorizontalScrollIndicator={false}
+   
         contentContainerStyle={{
           paddingBottom: 30,
         }}>

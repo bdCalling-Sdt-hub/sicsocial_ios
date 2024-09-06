@@ -1,12 +1,12 @@
 import {
-    Image,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
-    useWindowDimensions
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+  useWindowDimensions
 } from 'react-native';
 import { useContextApi, useStyles } from '../../context/ContextApi';
 
@@ -65,7 +65,10 @@ const BookShareScreen = ({navigation, route}: NavigProps<Books>) => {
           </TouchableOpacity>
         }
       />
-      <ScrollView showsVerticalScrollIndicator={false}>
+       
+     <ScrollView
+       showsVerticalScrollIndicator={false}
+       showsHorizontalScrollIndicator={false} >
         <View
           style={{
             justifyContent: 'center',

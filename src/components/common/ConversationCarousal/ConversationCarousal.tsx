@@ -1,33 +1,33 @@
+import React, { Dispatch, SetStateAction, useEffect } from 'react';
 import {
-  Easing,
   FlatList,
   Image,
-  Keyboard,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  useWindowDimensions,
   View,
+  useWindowDimensions
 } from 'react-native';
-import React, {Dispatch, SetStateAction, useEffect} from 'react';
+import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import Animated, {
   interpolate,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
-import {useStyles} from '../../../context/ContextApi';
-import Carousel, {ICarouselInstance} from 'react-native-reanimated-carousel';
-import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
-import {NavigProps} from '../../../interfaces/NaviProps';
-import {AnimatedCircularProgress} from 'react-native-circular-progress';
-import ModalOfBottom from '../customModal/ModalOfButtom';
-import {SvgXml} from 'react-native-svg';
-import {messagePros} from '../../../screens/message/NormalConversationScreen';
-import CustomModal from '../customModal/CustomModal';
-import { TemBooks } from '../../../utils/GetRandomColor';
+
+import { AnimatedCircularProgress } from 'react-native-circular-progress';
+import Carousel from 'react-native-reanimated-carousel';
+import { SvgXml } from 'react-native-svg';
 import { GridList } from 'react-native-ui-lib';
+import { useStyles } from '../../../context/ContextApi';
+import { NavigProps } from '../../../interfaces/NaviProps';
+import { messagePros } from '../../../screens/message/NormalConversationScreen';
+import { TemBooks } from '../../../utils/GetRandomColor';
+import { isSmall } from '../../../utils/utils';
+import CustomModal from '../customModal/CustomModal';
+import ModalOfBottom from '../customModal/ModalOfButtom';
 
 const data = [
   {
@@ -370,6 +370,11 @@ const ConversationCarousal = ({
               height: 95,
               justifyContent: 'center',
               alignItems: 'center',
+              transform : [
+                {
+                  scale : isSmall() ? .8 : 1
+                }
+              ]
             }}>
             {/* <View
               style={{

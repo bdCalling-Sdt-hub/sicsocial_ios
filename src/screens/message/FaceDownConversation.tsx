@@ -1,22 +1,22 @@
 import React, { useEffect, useRef } from 'react';
 import {
-    FlatList,
-    Pressable,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
-    useWindowDimensions,
+  FlatList,
+  Image,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+  useWindowDimensions,
 } from 'react-native';
 import Animated, {
-    useAnimatedStyle,
-    useSharedValue,
-    withTiming,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
 } from 'react-native-reanimated';
 
-import { Image } from 'react-native-animatable';
 import ConversationCarousal from '../../components/common/ConversationCarousal/ConversationCarousal';
 import CustomModal from '../../components/common/customModal/CustomModal';
 import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
@@ -783,8 +783,11 @@ const FaceDownConversation = ({navigation}: NavigProps<null>) => {
         onlyTopRadius={20}
         panOf
         containerColor={colors.bg}>
-        <ScrollView
-          showsVerticalScrollIndicator={false}
+         
+     <ScrollView
+       showsVerticalScrollIndicator={false}
+       showsHorizontalScrollIndicator={false}
+        
           contentContainerStyle={{
             gap: 25,
           }}>

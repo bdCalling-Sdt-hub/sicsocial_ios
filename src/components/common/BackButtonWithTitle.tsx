@@ -1,9 +1,9 @@
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import React from 'react';
-import {NavigProps} from '../../interfaces/NaviProps';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
+import React from 'react';
+import { SvgXml } from 'react-native-svg';
 import Feather from 'react-native-vector-icons/Feather';
-import {SvgXml} from 'react-native-svg';
+import { NavigProps } from '../../interfaces/NaviProps';
 
 interface BackButtonWithTitleProps extends NavigProps<null> {
   title?: string;

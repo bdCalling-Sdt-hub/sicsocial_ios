@@ -1,20 +1,20 @@
 import {
-  Dimensions,
-  Image,
   StyleSheet,
   Text,
   TouchableOpacity,
-  useWindowDimensions,
   View,
+  useWindowDimensions
 } from 'react-native';
+import Carousel, { ICarouselInstance } from 'react-native-reanimated-carousel';
+import { isSmall, isTablet } from '../../utils/utils';
+
 import React from 'react';
-import {useStyles} from '../../context/ContextApi';
 import LinearGradient from 'react-native-linear-gradient';
-import {SvgXml} from 'react-native-svg';
-import {NavigProps} from '../../interfaces/NaviProps';
+import { useSharedValue } from 'react-native-reanimated';
+import { SvgXml } from 'react-native-svg';
 import FriendCard from '../../components/friend/FriendCard';
-import Carousel, {ICarouselInstance} from 'react-native-reanimated-carousel';
-import {useSharedValue} from 'react-native-reanimated';
+import { useStyles } from '../../context/ContextApi';
+import { NavigProps } from '../../interfaces/NaviProps';
 
 const data = [
   {
@@ -160,6 +160,7 @@ const FriendsScreen = ({navigation}: NavigProps<null>) => {
         style={{
           paddingHorizontal: '10%',
           flexDirection: 'row',
+          justifyContent : "center",
           gap: 24,
           paddingVertical: 20,
           borderBottomWidth: 0.3,
@@ -179,7 +180,7 @@ const FriendsScreen = ({navigation}: NavigProps<null>) => {
             justifyContent: 'center',
             alignItems: 'center',
             borderRadius: 100,
-            elevation: isRequest ? 0 : 2,
+            elevation: isRequest ? 0 :  2,
           }}>
           <Text
             style={{
@@ -219,7 +220,7 @@ const FriendsScreen = ({navigation}: NavigProps<null>) => {
         </TouchableOpacity>
       </View>
 
-      <View style={{flex: 1, marginTop: '10%', position: 'relative'}}>
+      <View style={{flex: 1, marginTop: isTablet() ? "2%" : isSmall() ? "3%" : '10%', position: 'relative'}}>
         <TouchableOpacity
           onPress={() => onLeftSwipe()}
           style={{
