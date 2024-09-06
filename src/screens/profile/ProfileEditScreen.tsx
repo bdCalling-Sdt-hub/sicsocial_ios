@@ -1,20 +1,21 @@
+import React, { useState } from 'react';
 import {
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
+    Image,
+    Pressable,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from 'react-native';
-import React, {useState} from 'react';
+import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
+
+import { SvgXml } from 'react-native-svg';
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
-import {useStyles} from '../../context/ContextApi';
-import {NavigProps} from '../../interfaces/NaviProps';
-import {SvgXml} from 'react-native-svg';
-import {Image} from 'react-native-animatable';
-import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
+import { useStyles } from '../../context/ContextApi';
+import { NavigProps } from '../../interfaces/NaviProps';
 
 const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
   const {colors, font} = useStyles();
@@ -110,9 +111,11 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
           fontFamily: font.PoppinsSemiBold,
         }}
       />
-      <ScrollView
+       
+    <ScrollView
+       showsVerticalScrollIndicator={false}
+       showsHorizontalScrollIndicator={false}
         keyboardShouldPersistTaps="always"
-        showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           paddingHorizontal: '4%',
           paddingBottom: 30,

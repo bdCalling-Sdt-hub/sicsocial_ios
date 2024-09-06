@@ -1,41 +1,30 @@
+import React, { useEffect } from 'react';
 import {
-  ActivityIndicator,
-  Alert,
-  Dimensions,
-  FlatList,
   Image,
-  ImageBackground,
   Linking,
-  Modal,
-  Pressable,
   SafeAreaView,
   StyleSheet,
   Text,
   ToastAndroid,
-  TouchableNativeFeedback,
   TouchableOpacity,
-  useWindowDimensions,
-  View,
+  View
 } from 'react-native';
-import React, {useContext, useEffect} from 'react';
-
-import LinearGradient from 'react-native-linear-gradient';
-import {ScrollView, TextInput} from 'react-native-gesture-handler';
-import {SvgUri, SvgXml} from 'react-native-svg';
-import ConversationalCard from '../../components/common/ConversationalCard';
-
-import {NavigProps} from '../../interfaces/NaviProps';
+import Animated, { useSharedValue, withTiming } from 'react-native-reanimated';
 import {
-  ContextProvider,
   useContextApi,
-  useStyles,
+  useStyles
 } from '../../context/ContextApi';
-import Animated, {useSharedValue, withTiming} from 'react-native-reanimated';
 
-import ConversationalModal from '../../components/common/ConversationalModal/ConversationalModal';
 import Clipboard from '@react-native-clipboard/clipboard';
-import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
+import { ScrollView } from 'react-native-gesture-handler';
+import LinearGradient from 'react-native-linear-gradient';
+import { SvgXml } from 'react-native-svg';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import ConversationalCard from '../../components/common/ConversationalCard';
+import ConversationalModal from '../../components/common/ConversationalModal/ConversationalModal';
+import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
+import { NavigProps } from '../../interfaces/NaviProps';
+import { isTablet } from '../../utils/utils';
 
 export interface IConversationProps {
   id: number;
@@ -69,12 +58,12 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
 
   useEffect(() => {
     if (isLive) {
-      scrollViewGapHight.value = withTiming('25%', {
+      scrollViewGapHight.value = withTiming( isTablet() ? "10%" : '25%', {
         duration: 1000,
       });
     }
     if (!isLive) {
-      scrollViewGapHight.value = withTiming('2%', {
+      scrollViewGapHight.value = withTiming('0%', {
         duration: 1000,
       });
     }
@@ -182,8 +171,11 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
       </LinearGradient>
 
       {/*==================== profile card end ===================  */}
-      <ScrollView
-        showsVerticalScrollIndicator={false}
+       
+     <ScrollView
+       showsVerticalScrollIndicator={false}
+       showsHorizontalScrollIndicator={false}
+     
         contentContainerStyle={{
           gap: 16,
           paddingTop: 16,

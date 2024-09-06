@@ -1,11 +1,10 @@
-import {Image, ScrollView, StyleSheet, Text, View} from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
+
 import React from 'react';
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
-
-import {NavigProps} from '../../interfaces/NaviProps';
-import {FlatList} from 'react-native-gesture-handler';
 import NotificationCard from '../../components/notificaiton/NotificationCard';
-import {useStyles} from '../../context/ContextApi';
+import { useStyles } from '../../context/ContextApi';
+import { NavigProps } from '../../interfaces/NaviProps';
 
 const NotificationsScreen = ({navigation}: NavigProps<null>) => {
   const {colors, font} = useStyles();
@@ -29,8 +28,10 @@ const NotificationsScreen = ({navigation}: NavigProps<null>) => {
         }}
       />
 
-      <ScrollView
-        showsVerticalScrollIndicator={false}
+       
+     <ScrollView
+          showsVerticalScrollIndicator={false}
+       showsHorizontalScrollIndicator={false}
         contentContainerStyle={{
           paddingHorizontal: '4%',
           gap: 16,

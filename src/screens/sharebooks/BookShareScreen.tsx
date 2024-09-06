@@ -1,24 +1,22 @@
 import {
-  ActivityIndicator,
   Image,
   ScrollView,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  useWindowDimensions,
   View,
+  useWindowDimensions
 } from 'react-native';
+import { useContextApi, useStyles } from '../../context/ContextApi';
+
 import React from 'react';
-import {useContextApi, useStyles} from '../../context/ContextApi';
+import { SvgXml } from 'react-native-svg';
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
-import {NavigProps} from '../../interfaces/NaviProps';
-import {Books} from './ShareBooksScreen';
-import ConversationCarousal from '../../components/common/ConversationCarousal/ConversationCarousal';
-import {SvgXml} from 'react-native-svg';
 import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
 import NormalButton from '../../components/common/NormalButton';
-import {LinkPreview} from '@flyerhq/react-native-link-preview';
+import { NavigProps } from '../../interfaces/NaviProps';
+import { Books } from './ShareBooksScreen';
 
 const BookShareScreen = ({navigation, route}: NavigProps<Books>) => {
   const {colors, font} = useStyles();
@@ -52,7 +50,7 @@ const BookShareScreen = ({navigation, route}: NavigProps<Books>) => {
             onPress={() => {
               setModalVisible(true);
             }}
-            activeOpacity={0.8}
+            activeOpacity={0.9}
             style={{
               alignItems: 'flex-end',
               justifyContent: 'flex-end',
@@ -67,7 +65,10 @@ const BookShareScreen = ({navigation, route}: NavigProps<Books>) => {
           </TouchableOpacity>
         }
       />
-      <ScrollView showsVerticalScrollIndicator={false}>
+       
+     <ScrollView
+       showsVerticalScrollIndicator={false}
+       showsHorizontalScrollIndicator={false} >
         <View
           style={{
             justifyContent: 'center',

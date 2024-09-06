@@ -1,25 +1,19 @@
+import React, { useState } from 'react';
 import {
-  FlatList,
-  Pressable,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from 'react-native';
-import React, {useState} from 'react';
-import {useStyles} from '../../context/ContextApi';
-import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
-import {NavigProps} from '../../interfaces/NaviProps';
-import {Image} from 'react-native';
-import {getRandomColor} from '../../utils/GetRandomColor';
+
+import { Image } from 'react-native';
 import {
-  Dash,
-  Dialog,
-  GridList,
-  Modal,
-  PanningProvider,
-  Toast,
+  GridList
 } from 'react-native-ui-lib';
+import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
+import { useStyles } from '../../context/ContextApi';
+import { NavigProps } from '../../interfaces/NaviProps';
+import { isTablet } from '../../utils/utils';
 
 const friends = [
   {
@@ -128,7 +122,7 @@ const MyAllFriends = ({navigation}: NavigProps<null>) => {
 
       <GridList
         showsHorizontalScrollIndicator={false}
-        numColumns={4}
+        numColumns={isTablet() ? 8: 4}
         containerWidth={window.width * 0.9}
         contentContainerStyle={{
           marginTop: 15,
@@ -136,7 +130,8 @@ const MyAllFriends = ({navigation}: NavigProps<null>) => {
         }}
         data={friends}
         renderItem={item => (
-          <View style={{gap: 6}}>
+          <View style={{gap: 6 , alignItems: 'center',
+            justifyContent: 'center',}}>
             <TouchableOpacity
               onPress={() => {
                 // setTest(!test);

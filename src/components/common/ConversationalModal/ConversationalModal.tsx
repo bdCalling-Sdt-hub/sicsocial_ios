@@ -1,62 +1,44 @@
+import React, { useEffect } from 'react';
 import {
   ActivityIndicator,
-  Alert,
-  Dimensions,
   FlatList,
   Image,
-  ImageBackground,
-  Linking,
   Modal,
   Pressable,
-  SafeAreaView,
   StyleSheet,
   Text,
-  ToastAndroid,
-  TouchableNativeFeedback,
   TouchableOpacity,
-  useWindowDimensions,
-  View,
+  View
 } from 'react-native';
-import React, {Dispatch, useContext, useEffect} from 'react';
-import * as Animatable from 'react-native-animatable';
-import LinearGradient from 'react-native-linear-gradient';
-import {ScrollView, TextInput} from 'react-native-gesture-handler';
-import {SvgUri, SvgXml} from 'react-native-svg';
-import ConversationalCard from '../../../components/common/ConversationalCard';
-import ModalOfBottom from '../../../components/common/customModal/ModalOfButtom';
-
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import Clipboard from '@react-native-clipboard/clipboard';
-import {Link, useTheme} from '@react-navigation/native';
-import {NavigProps} from '../../../interfaces/NaviProps';
-import {
-  ContextProvider,
-  useContextApi,
-  useStyles,
-} from '../../../context/ContextApi';
+import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import Animated, {
   Easing,
   interpolate,
-  ReduceMotion,
   useAnimatedStyle,
   useSharedValue,
-  withDelay,
-  withSpring,
-  withTiming,
+  withTiming
 } from 'react-native-reanimated';
 import Carousel, {
-  ICarouselInstance,
-  TAnimationStyle,
+  TAnimationStyle
 } from 'react-native-reanimated-carousel';
-import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
-import {AnimatedCircularProgress} from 'react-native-circular-progress';
-import NormalButton from '../../../components/common/NormalButton';
+import {
+  useContextApi,
+  useStyles
+} from '../../../context/ContextApi';
+import { isSmall, isTablet } from '../../../utils/utils';
+
+import { LinkPreview } from '@flyerhq/react-native-link-preview';
+import { AnimatedCircularProgress } from 'react-native-circular-progress';
+import { TextInput } from 'react-native-gesture-handler';
+import { SvgXml } from 'react-native-svg';
+import { GridList } from 'react-native-ui-lib';
 import CustomModal from '../../../components/common/customModal/CustomModal';
-import {LinkPreview} from '@flyerhq/react-native-link-preview';
-import ConversationCarousal1 from '../../../components/common/ConversationCarousal/ConversationCarousal1';
-import {GridList, ListItem, SkeletonView} from 'react-native-ui-lib';
-import {IConversationProps} from '../../../screens/home/HomeScreen';
-import {books, TemBooks} from '../../../utils/GetRandomColor';
+import ModalOfBottom from '../../../components/common/customModal/ModalOfButtom';
+import NormalButton from '../../../components/common/NormalButton';
+import { NavigProps } from '../../../interfaces/NaviProps';
+import { IConversationProps } from '../../../screens/home/HomeScreen';
+import { TemBooks } from '../../../utils/GetRandomColor';
+
 const data = [
   {
     id: 1,
@@ -116,11 +98,11 @@ const items = [
     activeImg: require('../../../assets/icons/modalIcons/shearFriendBlack.png'),
     unActive: require('../../../assets/icons/modalIcons/shearFriendGray.png'),
   },
-  {
-    id: 3,
-    title: 'Asadullah face',
-    house: true,
-  },
+  // {
+  //   id: 3,
+  //   title: 'Asadullah face',
+  //   house: true,
+  // },
 ];
 
 interface ConversationalModalProps extends NavigProps<null> {
@@ -140,7 +122,7 @@ const ConversationalModal = ({
     font,
     window: {height, width},
   } = useStyles();
-  const LIVE_ACTIVE_VALUE = height * 0.079;
+
   const {isLive, setIsLive, isDark} = useContextApi();
   const [modalVisible, setModalVisible] = React.useState(false);
   const [conversationalModal, setConversationalModal] = React.useState(false);
@@ -165,7 +147,7 @@ const ConversationalModal = ({
   const modalHight = useSharedValue(width * 0.244);
   const borderRadius = useSharedValue(100);
   const marginBottom = useSharedValue(65);
-  const Bottom = useSharedValue(0);
+  const Bottom = useSharedValue("0%");
   const topBorderRadius = useSharedValue(100);
   const backgroundColor = useSharedValue('rgba(219, 177, 98, 1)');
   const opacityDown = useSharedValue(0.2);
@@ -173,14 +155,14 @@ const ConversationalModal = ({
 
   const handleOpen = () => {
     setConversationalModal(true);
-    modalWidth.value = withTiming(width * 1.44, {
+    modalWidth.value = withTiming(width * 1.8, {
       duration: 200,
     });
-    modalHight.value = withTiming(height * 0.666, {
+    modalHight.value = withTiming(isSmall() ? height * 0.777 : height * 0.6444, {
       duration: 200,
     });
 
-    Bottom.value = withTiming(0, {duration: 200});
+    Bottom.value = withTiming("0%", {duration: 200});
 
     marginBottom.value = withTiming(-200, {duration: 200});
     borderRadius.value = withTiming(isLive ? 5000 : 2000, {duration: 200});
@@ -193,17 +175,17 @@ const ConversationalModal = ({
   };
   const handleClose = () => {
     opacityDown.value = withTiming(0, {duration: 150});
-    modalWidth.value = withTiming(isLive ? 100 : height * 0.116, {
+    modalWidth.value = withTiming( isSmall() ? 80 : 100, {
       duration: 200,
     });
-    modalHight.value = withTiming(isLive ? 100 : width * 0.244, {
+    modalHight.value = withTiming( isSmall() ? 80 : 100 , {
       duration: 200,
     });
-    Bottom.value = withTiming(isLive ? 112 : -2, {duration: 200});
+    Bottom.value = withTiming(isLive ? isTablet() ? "16.8%" : "10.5%" : isSmall() ? "0%" : "0.4%", {duration: 200});
     marginBottom.value = withTiming(65, {duration: 200});
     borderRadius.value = withTiming(100, {duration: 200});
     backgroundColor.value = withTiming('rgba(219, 177, 98, 1)', {
-      duration: 300,
+      duration: 200,
       easing: Easing.ease,
     });
     topBorderRadius.value = withTiming(100, {duration: 200});
@@ -220,6 +202,8 @@ const ConversationalModal = ({
       marginVertical: marginBottom.value,
       backgroundColor: backgroundColor.value,
       bottom: Bottom.value,
+      maxWidth : 500,
+      // maxHeight : 500
       // borderTopRightRadius: topBorderRadius.value,
       // borderTopLeftRadius: topBorderRadius.value,
       // borderTopEndRadius: topBorderRadius.value,
@@ -395,8 +379,8 @@ const ConversationalModal = ({
     recordingAnimation.value = withTiming('100%', {duration: 10000});
   };
 
-  const liveCardAnimationPositionY = useSharedValue('-10%');
-  const voiceModalAnimationPositionY = useSharedValue('7.4%');
+  const liveCardAnimationPositionY = useSharedValue('-8.5%');
+  const voiceModalAnimationPositionY = useSharedValue('0%');
 
   useEffect(() => {
     if (textInputModal) {
@@ -404,18 +388,26 @@ const ConversationalModal = ({
     }
 
     if (isLive) {
-      liveCardAnimationPositionY.value = withTiming('10%', {
+      liveCardAnimationPositionY.value = withTiming( isSmall() ? "14%" : isTablet() ? "20%": '8.5%', {
         duration: 1000,
       });
-      voiceModalAnimationPositionY.value = withTiming('21%', {
+      voiceModalAnimationPositionY.value = withTiming( isSmall() ? "22.3%" : isTablet() ? "25.5%":'18%', {
         duration: 1000,
       });
     }
     if (!isLive) {
-      liveCardAnimationPositionY.value = withTiming('-9%', {
+      liveCardAnimationPositionY.value = withTiming( '-9%', {
         duration: 1000,
       });
-      voiceModalAnimationPositionY.value = withTiming('7.4%', {
+      voiceModalAnimationPositionY.value = withTiming(isSmall() ? '9%' : isTablet() ? '9%' : '7.8%', {
+        duration: 1000,
+      });
+    }
+    return () => {
+      liveCardAnimationPositionY.value = withTiming( '-9%', {
+        duration: 1000,
+      });
+      voiceModalAnimationPositionY.value = withTiming(isSmall() ? '9%' : isTablet() ? '9%' : '7.8%', {
         duration: 1000,
       });
     }
@@ -429,8 +421,11 @@ const ConversationalModal = ({
     };
   });
   const rVoiceModalStyle = useAnimatedStyle(() => {
+
+    
     return {
       bottom: voiceModalAnimationPositionY.value,
+     
     };
   });
 
@@ -443,7 +438,13 @@ const ConversationalModal = ({
 
             borderRadius: 100,
             // width: '100%',
+           
             alignSelf: 'center',
+            transform : [
+              {
+                scale : isSmall() ? .8 : 1
+              }
+            ]
           },
           rVoiceModalStyle,
         ]}>
@@ -473,24 +474,26 @@ const ConversationalModal = ({
           {
             position: 'absolute',
             // bottom: 65,
-            borderRadius: 100,
             // width: '100%',
             // alignSelf: 'center',
-            backgroundColor: colors.bg,
+            
+       
             marginHorizontal: '5%',
+            width: width * 0.9,
+            height : isTablet() ? height * 0.05 : height * 0.09,
           },
           rLiveCardStyle,
         ]}>
         <View
           style={{
+            
             backgroundColor: colors.bg,
             flexDirection: 'row',
-            width: width * 0.9,
-            paddingHorizontal: '10%',
+            
+            paddingHorizontal: isTablet() ? "4%" : '10%',
             paddingVertical: '3%',
             // elevation: 5,
-
-            borderRadius: 100,
+            borderRadius: 1000,
             alignItems: 'center',
             justifyContent: 'space-between',
           }}>
@@ -538,7 +541,7 @@ const ConversationalModal = ({
             onPress={() => {
               setIsLive(false);
             }}
-            activeOpacity={0.8}
+            activeOpacity={0.9}
             style={{
               backgroundColor: 'rgba(241, 99, 101, 1)',
               width: '35%',
@@ -602,7 +605,7 @@ const ConversationalModal = ({
             flex: 1,
             justifyContent: 'flex-end',
             alignItems: 'center',
-            height: height,
+            // height: height,
             backgroundColor: 'rgba(0, 0, 0, 0.2)',
           }}>
           <Animated.View
@@ -617,17 +620,17 @@ const ConversationalModal = ({
           <Pressable
             style={{
               position: 'absolute',
-              // bottom: '15%',
+              bottom: '5%',
               justifyContent: 'center',
               alignItems: 'center',
-              height: height * 0.38,
-              gap: -40,
+              height: isSmall() ? height * 0.35 : height * 0.30,
+              // gap: -20,
               zIndex: 99999,
             }}>
             <Carousel
               style={{
                 width: width,
-                height: height * 0.3,
+                height: height * 0.2,
               }}
               width={itemSize}
               height={itemSize}
@@ -644,7 +647,11 @@ const ConversationalModal = ({
                   style={{
                     width: 100,
                     height: 100,
-
+                    transform : [
+                      {
+                        scale : isSmall() ? .8 : 1
+                      }
+                    ],
                     alignItems: 'center',
                   }}>
                   <Animated.View
@@ -665,7 +672,7 @@ const ConversationalModal = ({
                       opacityStyle,
                     ]}>
                     <View>
-                      {item.house ? (
+                      {item?.house ? (
                         <View
                           style={{
                             width: 50,
@@ -723,7 +730,7 @@ const ConversationalModal = ({
               height={itemSize}
               style={{
                 width: width,
-                height: height * 0.3,
+                height: height * 0.2,
               }}
               loop
               snapEnabled
@@ -785,6 +792,11 @@ const ConversationalModal = ({
                     width: 95,
                     height: 95,
                     // justifyContent: 'center',
+                    transform : [
+                      {
+                        scale : isSmall() ? .8 : 1
+                      }
+                    ],
                     alignItems: 'center',
                   }}>
                   <View
@@ -1340,7 +1352,7 @@ const ConversationalModal = ({
                 onPress={() => {
                   setBooksModal(true);
                 }}
-                activeOpacity={0.8}
+                activeOpacity={0.9}
                 style={{
                   height: 50,
                   width: 50,
@@ -1388,7 +1400,7 @@ const ConversationalModal = ({
                 />
               </TouchableOpacity>
               {/* <TouchableOpacity
-              activeOpacity={0.8}
+              activeOpacity={0.9}
               style={{
                 height: 50,
                 width: 50,

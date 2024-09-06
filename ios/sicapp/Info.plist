@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>sic_social</string>
+	<string>sicapp</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -37,7 +37,7 @@
 	<string>LaunchScreen</string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
-		<string>armv7</string>
+		<string>arm64</string>
 	</array>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
@@ -49,6 +49,8 @@
 	<false/>
 	<key>UIAppFonts</key>
 	<array>
+		<string>BodoniModaSC-Italic-VariableFont.ttf</string>
+		<string>BodoniModaSC-VariableFont.ttf</string>
 		<string>Poppins-Black.ttf</string>
 		<string>Poppins-BlackItalic.ttf</string>
 		<string>Poppins-Bold.ttf</string>
@@ -68,14 +70,12 @@
 		<string>Poppins-Thin.ttf</string>
 		<string>Poppins-ThinItalic.ttf</string>
 		<string>ProstoOne-Regular.ttf</string>
-		<string>RussoOne-Regular.ttf</string>
-		<string>Sarina-Regular.ttf</string>
-		<string>SuezOne-Regular.ttf</string>
-		<string>BodoniModaSC-Italic-VariableFont.ttf</string>
-		<string>BodoniModaSC-VariableFont.ttf</string>
 		<string>Rowdies-Bold.ttf</string>
 		<string>Rowdies-Light.ttf</string>
 		<string>Rowdies-Regular.ttf</string>
+		<string>RussoOne-Regular.ttf</string>
+		<string>Sarina-Regular.ttf</string>
+		<string>SuezOne-Regular.ttf</string>
 	</array>
 </dict>
 </plist>

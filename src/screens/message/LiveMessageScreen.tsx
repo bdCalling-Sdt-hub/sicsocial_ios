@@ -1,27 +1,25 @@
+import React, { useRef } from 'react';
 import {
-  FlatList,
-  Image,
-  KeyboardAvoidingView,
-  Platform,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  useWindowDimensions,
-  View,
+    FlatList,
+    Image,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
+    useWindowDimensions
 } from 'react-native';
-import React, {useEffect, useRef} from 'react';
-import {NavigProps} from '../../interfaces/NaviProps';
-import {useStyles} from '../../context/ContextApi';
-import ConversationHeader from '../../components/conversation/ConversationHeader';
-
-import ConversationCarousal from '../../components/common/ConversationCarousal/ConversationCarousal';
-import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
-import CustomModal from '../../components/common/customModal/CustomModal';
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
+import {
+    useAnimatedStyle,
+    useSharedValue
 } from 'react-native-reanimated';
+
+import { TextInput } from 'react-native-gesture-handler';
+import { SvgXml } from 'react-native-svg';
+import Feather from 'react-native-vector-icons/Feather';
+import CustomModal from '../../components/common/customModal/CustomModal';
+import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
+import { useStyles } from '../../context/ContextApi';
+import { NavigProps } from '../../interfaces/NaviProps';
 
 export interface messagePros {
   id: number;
@@ -36,9 +34,9 @@ export interface messagePros {
   };
 }
 
-import Feather from 'react-native-vector-icons/Feather';
-import {SvgXml} from 'react-native-svg';
-import {TextInput} from 'react-native-gesture-handler';
+
+
+
 
 const LiveMessageScreen = ({navigation}: NavigProps<null>) => {
   const {width, height} = useWindowDimensions();
@@ -430,7 +428,7 @@ const LiveMessageScreen = ({navigation}: NavigProps<null>) => {
             ]);
             setNewMessages('');
           }}
-          activeOpacity={0.8}
+          activeOpacity={0.9}
           style={{
             width: 50,
             height: 50,

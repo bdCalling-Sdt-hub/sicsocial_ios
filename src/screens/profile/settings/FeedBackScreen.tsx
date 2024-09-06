@@ -1,17 +1,18 @@
 import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  useWindowDimensions,
-  View,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    View,
+    useWindowDimensions,
 } from 'react-native';
+
 import React from 'react';
-import {NavigProps} from '../../../interfaces/NaviProps';
-import {useStyles} from '../../../context/ContextApi';
 import BackButtonWithTitle from '../../../components/common/BackButtonWithTitle';
-import NormalButton from '../../../components/common/NormalButton';
 import ConversationCarousal from '../../../components/common/ConversationCarousal/ConversationCarousal';
+import NormalButton from '../../../components/common/NormalButton';
+import { useStyles } from '../../../context/ContextApi';
+import { NavigProps } from '../../../interfaces/NaviProps';
 
 const FeedBackScreen = ({navigation}: NavigProps<null>) => {
   const {colors, font} = useStyles();
@@ -36,9 +37,11 @@ const FeedBackScreen = ({navigation}: NavigProps<null>) => {
           fontFamily: font.PoppinsSemiBold,
         }}
       />
-      <ScrollView
+       
+    <ScrollView
+       showsVerticalScrollIndicator={false}
+       showsHorizontalScrollIndicator={false}
         keyboardShouldPersistTaps="always"
-        showsVerticalScrollIndicator={false}
         style={{
           paddingHorizontal: '4%',
         }}>

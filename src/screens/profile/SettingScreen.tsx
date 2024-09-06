@@ -1,20 +1,18 @@
 import {
-  FlatList,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableHighlight,
-  TouchableOpacity,
-  View,
+    FlatList,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View
 } from 'react-native';
+import { useContextApi, useStyles } from '../../context/ContextApi';
+
 import React from 'react';
+import { SvgXml } from 'react-native-svg';
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
-import {useContextApi, useStyles} from '../../context/ContextApi';
-import {NavigProps} from '../../interfaces/NaviProps';
-import {SvgXml} from 'react-native-svg';
-import Entypo from 'react-native-vector-icons/Entypo';
 import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
+import { NavigProps } from '../../interfaces/NaviProps';
 
 const settingsData = [
   {
@@ -263,7 +261,10 @@ const SettingScreen = ({navigation}: NavigProps<null>) => {
             }}>
             Language
           </Text>
-          <ScrollView
+           
+     <ScrollView
+       showsVerticalScrollIndicator={false}
+       showsHorizontalScrollIndicator={false}
             style={
               {
                 // gap: 10,

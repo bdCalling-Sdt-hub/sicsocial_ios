@@ -1,22 +1,20 @@
 import {
-  Button,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
+    Button,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    View
 } from 'react-native';
+
+import { Formik } from 'formik';
 import React from 'react';
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
-
-import {NavigProps} from '../../interfaces/NaviProps';
-import {Formik} from 'formik';
-import Feather from 'react-native-vector-icons/Feather';
-import NormalButton from '../../components/common/NormalButton';
 import CustomModal from '../../components/common/customModal/CustomModal';
 import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
-import {useStyles} from '../../context/ContextApi';
+import NormalButton from '../../components/common/NormalButton';
+import { useStyles } from '../../context/ContextApi';
+import { NavigProps } from '../../interfaces/NaviProps';
 
 const PaymentsScreen = ({navigation}: NavigProps<null>) => {
   const {colors, font} = useStyles();
@@ -43,7 +41,10 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
           fontFamily: font.PoppinsSemiBold,
         }}
       />
-      <ScrollView keyboardShouldPersistTaps="always">
+       
+     <ScrollView
+       showsVerticalScrollIndicator={false}
+       showsHorizontalScrollIndicator={false} keyboardShouldPersistTaps="always">
         <Formik
           initialValues={{
             name: 'Asadullah Khan',

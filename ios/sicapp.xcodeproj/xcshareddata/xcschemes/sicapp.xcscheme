@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "sic_social.app"
-               BlueprintName = "sic_social"
-               ReferencedContainer = "container:sic_social.xcodeproj">
+               BuildableName = "sicapp.app"
+               BlueprintName = "sicapp"
+               ReferencedContainer = "container:sicapp.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "sic_socialTests.xctest"
-               BlueprintName = "sic_socialTests"
-               ReferencedContainer = "container:sic_social.xcodeproj">
+               BuildableName = "sicappTests.xctest"
+               BlueprintName = "sicappTests"
+               ReferencedContainer = "container:sicapp.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "sic_social.app"
-            BlueprintName = "sic_social"
-            ReferencedContainer = "container:sic_social.xcodeproj">
+            BuildableName = "sicapp.app"
+            BlueprintName = "sicapp"
+            ReferencedContainer = "container:sicapp.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "sic_social.app"
-            BlueprintName = "sic_social"
-            ReferencedContainer = "container:sic_social.xcodeproj">
+            BuildableName = "sicapp.app"
+            BlueprintName = "sicapp"
+            ReferencedContainer = "container:sicapp.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

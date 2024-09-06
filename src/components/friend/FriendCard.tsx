@@ -1,15 +1,15 @@
 import {
   Image,
-  Pressable,
   StyleSheet,
   Text,
   TouchableOpacity,
-  useWindowDimensions,
   View,
+  useWindowDimensions
 } from 'react-native';
+import { height, isSmall, isTablet } from '../../utils/utils';
+
 import React from 'react';
-import {useStyles} from '../../context/ContextApi';
-import {SvgXml} from 'react-native-svg';
+import { useStyles } from '../../context/ContextApi';
 
 interface FriendCardProps {
   item?: {
@@ -53,7 +53,7 @@ const FriendCard = ({
     <>
       {/*============== card start ============ */}
       <TouchableOpacity
-        activeOpacity={0.8}
+        activeOpacity={0.9}
         onPress={onPress}
         style={{
           justifyContent: 'center',
@@ -62,12 +62,12 @@ const FriendCard = ({
         <View
           style={{
             gap: 20,
-            height: 380,
-            width: 300,
+            height: isTablet() ? height * 0.5 : isSmall() ? height * 0.52 :  height * 0.43,
+            width: isTablet() ? width * 0.5 : isSmall() ? width * 0.7 :  width * 0.73,
             backgroundColor: colors.cardBg,
             borderRadius: 42,
-            paddingHorizontal: '6%',
-            paddingVertical: '8%',
+            paddingHorizontal:isTablet() ? "3%" : '6%',
+            paddingVertical:isTablet() ? "3%" : '8%',
             elevation: 2,
           }}>
           <View
@@ -218,7 +218,7 @@ const FriendCard = ({
               </Text>
             </View>
             <Text
-              numberOfLines={4}
+              numberOfLines={isSmall() ?  2 : 4 }
               style={{
                 fontFamily: font.Poppins,
                 fontSize: 12,
@@ -247,7 +247,7 @@ const FriendCard = ({
                 marginTop: 20,
               }}>
               <TouchableOpacity
-                activeOpacity={0.8}
+                activeOpacity={0.9}
                 onPress={onDeclineFriendRequestPress}
                 onPressIn={() => setRejectBtnPress(true)}
                 onPressOut={() => setRejectBtnPress(false)}
@@ -276,7 +276,7 @@ const FriendCard = ({
                 />
               </TouchableOpacity>
               <TouchableOpacity
-                activeOpacity={0.8}
+                activeOpacity={0.9}
                 onPress={onAcceptFriendRequestPress}
                 onPressIn={() => setAcceptBtnPress(true)}
                 onPressOut={() => setAcceptBtnPress(false)}
@@ -317,7 +317,7 @@ const FriendCard = ({
                 marginTop: 20,
               }}>
               <TouchableOpacity
-                activeOpacity={0.8}
+                activeOpacity={0.9}
                 onPress={onDeclineFriendRequestPress}
                 onPressIn={() => setRejectBtnPress(true)}
                 onPressOut={() => setRejectBtnPress(false)}
@@ -346,7 +346,7 @@ const FriendCard = ({
                 />
               </TouchableOpacity>
               <TouchableOpacity
-                activeOpacity={0.8}
+                activeOpacity={0.9}
                 onPress={onAcceptFriendRequestPress}
                 onPressIn={() => setAcceptBtnPress(true)}
                 onPressOut={() => setAcceptBtnPress(false)}

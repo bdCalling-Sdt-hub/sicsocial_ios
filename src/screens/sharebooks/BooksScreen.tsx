@@ -6,17 +6,17 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  useWindowDimensions,
   View,
+  useWindowDimensions,
 } from 'react-native';
-import React, {useState} from 'react';
-import {useStyles} from '../../context/ContextApi';
+
+import React from 'react';
+import { SvgXml } from 'react-native-svg';
+import AntDesign from "react-native-vector-icons/AntDesign";
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
-import {SvgXml} from 'react-native-svg';
-import {NavigProps} from '../../interfaces/NaviProps';
-import {books, TemBooks} from '../../utils/GetRandomColor';
-import {GridList} from 'react-native-ui-lib';
-import AntDesign from "react-native-vector-icons/AntDesign"
+import { useStyles } from '../../context/ContextApi';
+import { NavigProps } from '../../interfaces/NaviProps';
+import { TemBooks } from '../../utils/GetRandomColor';
 
 export interface Books {
   id: number;
@@ -101,7 +101,10 @@ const BooksScreen = ({navigation}: NavigProps<null>) => {
         </View>
       </View>
    
-      <ScrollView showsVerticalScrollIndicator={false}>
+       
+     <ScrollView
+       showsVerticalScrollIndicator={false}
+       showsHorizontalScrollIndicator={false} >
         {
           TemBooks.map((book,index) =>
           (

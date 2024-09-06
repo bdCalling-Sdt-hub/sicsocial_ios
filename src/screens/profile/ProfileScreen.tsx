@@ -1,23 +1,24 @@
 import {
-  FlatList,
-  Image,
-  Linking,
-  ScrollView,
-  StyleSheet,
-  Text,
-  ToastAndroid,
-  TouchableOpacity,
-  View,
+    FlatList,
+    Image,
+    Linking,
+    ScrollView,
+    StyleSheet,
+    Text,
+    ToastAndroid,
+    TouchableOpacity,
+    View,
 } from 'react-native';
+import { useContextApi, useStyles } from '../../context/ContextApi';
+
+import Clipboard from '@react-native-clipboard/clipboard';
 import React from 'react';
-import {useContextApi, useStyles} from '../../context/ContextApi';
-import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
-import {NavigProps} from '../../interfaces/NaviProps';
-import {SvgXml} from 'react-native-svg';
+import { SvgXml } from 'react-native-svg';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import ConversationalCard from '../../components/common/ConversationalCard';
 import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
-import Clipboard from '@react-native-clipboard/clipboard';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { NavigProps } from '../../interfaces/NaviProps';
+import { isSmall } from '../../utils/utils';
 
 const friends = [
   {
@@ -80,8 +81,10 @@ const ProfileScreen = ({navigation}: NavigProps<null>) => {
         height: '100%',
         backgroundColor: colors.bg,
       }}>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
+       
+     <ScrollView
+          showsVerticalScrollIndicator={false}
+       showsHorizontalScrollIndicator={false}
         contentContainerStyle={{
           paddingBottom: 25,
         }}>
@@ -210,7 +213,7 @@ const ProfileScreen = ({navigation}: NavigProps<null>) => {
             flexDirection: 'row',
             marginTop: 20,
             marginHorizontal: '4%',
-            gap: 24,
+            gap: isSmall() ? 8 : 24,
           }}>
           <TouchableOpacity
             onPress={() => setModalVisible(!modalVisible)}

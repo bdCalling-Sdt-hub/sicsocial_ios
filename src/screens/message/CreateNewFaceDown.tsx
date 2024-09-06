@@ -1,28 +1,25 @@
 import {
-  View,
-  Text,
-  Image,
-  TouchableOpacity,
-  TextInput,
-  ImageBackground,
-  ScrollView,
-  useWindowDimensions,
   FlatList,
+  Image,
+  ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+  useWindowDimensions
 } from 'react-native';
-import React, {SetStateAction} from 'react';
-import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
-import {useStyles} from '../../context/ContextApi';
-import {NavigProps} from '../../interfaces/NaviProps';
-import {SvgXml} from 'react-native-svg';
-import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
-import DateTimePicker from 'react-native-ui-datepicker';
-import CustomModal from '../../components/common/customModal/CustomModal';
-import NormalButton from '../../components/common/NormalButton';
-import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
-import {LinkPreview} from '@flyerhq/react-native-link-preview';
-import { TemBooks } from '../../utils/GetRandomColor';
-import { GridList } from 'react-native-ui-lib';
+import React, { SetStateAction } from 'react';
+import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 
+import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
+import CustomModal from '../../components/common/customModal/CustomModal';
+import DateTimePicker from 'react-native-ui-datepicker';
+import { LinkPreview } from '@flyerhq/react-native-link-preview';
+import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
+import { NavigProps } from '../../interfaces/NaviProps';
+import NormalButton from '../../components/common/NormalButton';
+import { SvgXml } from 'react-native-svg';
+import { useStyles } from '../../context/ContextApi';
 
 const CreateNewFaceDown = ({navigation}: NavigProps<null>) => {
   const {colors, font, window} = useStyles();
@@ -96,9 +93,11 @@ const CreateNewFaceDown = ({navigation}: NavigProps<null>) => {
           fontFamily: font.PoppinsSemiBold,
         }}
       />
-      <ScrollView
+       
+    <ScrollView
+       showsVerticalScrollIndicator={false}
+       showsHorizontalScrollIndicator={false}
         keyboardShouldPersistTaps="always"
-        showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           paddingBottom: '8%',
         }}>
@@ -145,7 +144,7 @@ const CreateNewFaceDown = ({navigation}: NavigProps<null>) => {
                 // handleImagePick('camera');
                 setImageModal(true)
               }}
-              activeOpacity={0.8}
+              activeOpacity={0.9}
               style={{
                 flexDirection: 'row',
                 gap: 4,
@@ -224,10 +223,7 @@ const CreateNewFaceDown = ({navigation}: NavigProps<null>) => {
           </Text>
 
           <TouchableOpacity
-            activeOpacity={0.8}
-            style={{
-              width: 80,
-            }}
+            activeOpacity={0.9}
             onPress={() => {
               navigation?.navigate('FaceDownAddMember');
             }}>
@@ -374,7 +370,7 @@ const CreateNewFaceDown = ({navigation}: NavigProps<null>) => {
               onPress={() => {
                 setBooksModal(true);
               }}
-              activeOpacity={0.8}
+              activeOpacity={0.9}
               style={{
                 height: 50,
                 width: 50,
@@ -422,7 +418,7 @@ const CreateNewFaceDown = ({navigation}: NavigProps<null>) => {
               />
             </TouchableOpacity>
             {/* <TouchableOpacity
-              activeOpacity={0.8}
+              activeOpacity={0.9}
               style={{
                 height: 50,
                 width: 50,
@@ -496,7 +492,7 @@ sed Quisque ac lobortis, Quisque urna ipsum Nam id tempor placerat. Morbi ipsum 
             onPress={() => {
               setModalVisible(!modalVisible);
             }}
-            activeOpacity={0.8}
+            activeOpacity={0.9}
             style={{
               backgroundColor: colors.secondaryColor,
               borderRadius: 100,

@@ -1,26 +1,20 @@
+import React, { useEffect, useState } from 'react';
 import {
-  View,
-  Modal,
-  Pressable,
-  TouchableOpacity,
-  ScrollView,
-  SafeAreaView,
-  KeyboardAvoidingView,
-  useWindowDimensions,
-  Dimensions,
   Keyboard,
+  KeyboardAvoidingView,
+  ScrollView,
+  TouchableOpacity,
+  View
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
-import AntDesign from 'react-native-vector-icons/AntDesign';
-import Animated, {
-  useSharedValue,
-  withTiming,
-  Easing,
-  withDelay,
+import {
   useAnimatedStyle,
+  useSharedValue,
+  withTiming
 } from 'react-native-reanimated';
-import {useStyles} from '../../../context/ContextApi';
-import {Dialog} from 'react-native-ui-lib';
+
+import { Dialog } from 'react-native-ui-lib';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import { useStyles } from '../../../context/ContextApi';
 
 type CustomModalProps = {
   modalVisible: boolean;
@@ -266,9 +260,12 @@ const ModalOfBottom = ({
                 </View>
               </TouchableOpacity>
             )}
-            <ScrollView
+             
+     <ScrollView
+       showsVerticalScrollIndicator={false}
+       showsHorizontalScrollIndicator={false}
               keyboardShouldPersistTaps="always"
-              showsVerticalScrollIndicator={false}>
+             >
               {children}
             </ScrollView>
           </View>
