@@ -1,8 +1,7 @@
 // devices screen size
 
-import { MMKVLoader } from 'react-native-mmkv-storage';
-
 import { Dimensions } from 'react-native';
+import { MMKVLoader } from 'react-native-mmkv-storage';
 
 export const {width, height} = Dimensions.get('screen')
 const storage = new MMKVLoader().initialize();
@@ -24,7 +23,7 @@ export const isMobile = () => {
 
 
 export const setStorageToken = (token: string) => {
-  storage.set('token', token);
+  storage.setString('token', token);
 };
 
 export const getStorageToken = () => {
@@ -32,11 +31,11 @@ export const getStorageToken = () => {
 };
 
 export const removeStorageToken = () => {
-  storage.delete('token');
+  storage.removeItem('token');
 };
 
 export const setStorageRole = (role: string) => {
-  storage.set('role', role);
+  storage.setString('role', role);
 };
 
 export const getStorageRole = () => {
@@ -44,7 +43,7 @@ export const getStorageRole = () => {
 };
 
 export const removeStorageRole = () => {
-  storage.delete('role');
+  storage.removeItem('role');
 };
 
 

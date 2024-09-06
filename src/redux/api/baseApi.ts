@@ -1,26 +1,24 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { removeStorageRole, removeStorageToken } from '../../utils/utils';
-import { getSocket, initiateSocket } from '../services/socket';
-
-import { AsyncStorage } from 'react-native';
+import { getStorageToken, removeStorageToken } from '../../utils/utils';
 
 const baseQuery = fetchBaseQuery({
   baseUrl: 'http://192.168.10.185:5001/api/v1',
   prepareHeaders: async (headers, { getState }) => {
-    const token = await AsyncStorage.getItem('token');
+    const token = getStorageToken();
     if (token) {
       headers.set('authorization', `Bearer ${token}`);
+      headers.getSetCookie()
     }
     return headers;
   },
 });
 
 const baseQueryWithReauth: typeof baseQuery = async (args, api, extraOptions) => {
-  const socket = getSocket();
+  // const socket = getSocket();
 
-  if (!socket){
-    initiateSocket();
-  }
+  // if (!socket){
+  //   initiateSocket();
+  // }
   
   let result = await baseQuery(args, api, extraOptions);
   // console.log(result);
@@ -30,7 +28,7 @@ const baseQueryWithReauth: typeof baseQuery = async (args, api, extraOptions) =>
   if (result?.error?.status === 401) {
     // Handle token refresh logic here if needed
     // For now, we'll log out the user
-    removeStorageRole();
+    // removeStorageRole();
     removeStorageToken();
   }
   return result;

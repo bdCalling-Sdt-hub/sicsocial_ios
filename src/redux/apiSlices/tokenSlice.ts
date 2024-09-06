@@ -1,8 +1,9 @@
 // features/token/tokenSlice.js
+
 import { createSlice } from '@reduxjs/toolkit';
 
-const userSlice = createSlice({
-  name: 'user',
+const tokenSlice = createSlice({
+  name: 'token',
   initialState: {
     token: null,
     role: null,
@@ -23,5 +24,5 @@ const userSlice = createSlice({
   },
 });
 
-export const { setToken, clearToken,clearUserRole,setUserRole } = userSlice.actions;
-export default userSlice.reducer;
+export const { setToken, clearToken,clearUserRole,setUserRole } = tokenSlice.actions;
+export default tokenSlice.reducer;
