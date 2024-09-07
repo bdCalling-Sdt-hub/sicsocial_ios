@@ -6,7 +6,9 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import PopUpModal, { PopUpModalRef } from '../../components/common/modals/PopUpModal';
+import PopUpModal, {
+  PopUpModalRef,
+} from '../../components/common/modals/PopUpModal';
 
 import { Formik } from 'formik';
 import React from 'react';
@@ -18,77 +20,79 @@ import { NavigProps } from '../../interfaces/NaviProps';
 import { useCreateUserMutation } from '../../redux/apiSlices/authSlice';
 
 const SignUpScreen = ({navigation}: NavigProps<null>) => {
-  const modalRef = React.useRef<PopUpModalRef>()
-  const [createUser,results] =  useCreateUserMutation()
+  const modalRef = React.useRef<PopUpModalRef>();
+  const [createUser, results] = useCreateUserMutation();
   const {colors, font} = useStyles();
   const [isShow, setIsShow] = React.useState(false);
   const [check, setCheck] = React.useState(false);
-  const OnSubmitHandler = (values) => {
+  const OnSubmitHandler = values => {
     console.log(values);
-    if(!values?.fullName){
+    if (!values?.fullName) {
       modalRef.current?.open({
         // title : "Error",
-        content : "Please enter your name",
-      })
-    }
-    else if(!values?.email){
+        content: 'Please enter your name',
+      });
+    } else if (!values?.email) {
       modalRef.current?.open({
         // title : "Error",
-        content : "Please enter your email",
-      })
-    }
-    else if(!values?.password){
+        content: 'Please enter your email',
+      });
+    } else if (!values?.password) {
       modalRef.current?.open({
         // title : "Error",
-        content : "Please enter your password",
-      })
+        content: 'Please enter your password',
+      });
     }
     // password maust be at least 8 characters
-    else if(values?.password?.length < 8){
+    else if (values?.password?.length < 8) {
       modalRef.current?.open({
         // title : "Error",
-        content : "Password must be at least 8 characters",
-      })
+        content: 'Password must be at least 8 characters',
+      });
     }
     // password or confirm password not match
-    else if(values?.password !== values?.confirm_password){
+    else if (values?.password !== values?.confirm_password) {
       modalRef.current?.open({
         // title : "Error",
-        content : "Password or confirm password not match",
-      })
+        content: 'Password or confirm password not match',
+      });
     }
-    // email not valid 
-    else if(!values?.email?.match(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/)){
+    // email not valid
+    else if (!values?.email?.match(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/)) {
       modalRef.current?.open({
         // title : "Error",
-        content : "Email not valid",
-      })
-    }
-    else if(!values?.confirm_password){
+        content: 'Email not valid',
+      });
+    } else if (!values?.confirm_password) {
       modalRef.current?.open({
         // title : "Error",
-        content : "Please enter your confirm password",
-      })
-    }else{
+        content: 'Please enter your confirm password',
+      });
+    } else {
       createUser(values).then(res => {
         console.log(res);
         if (res.error) {
           modalRef.current?.open({
             // title : "Error",
-            content : res?.error?.data?.message,
-          })
+            content: res?.error?.data?.message,
+          });
         }
         if (res?.data) {
           // console.log(res.data);
-          if(res.data?.success){
-            navigation?.navigate('Login')
+          if (res.data?.success) {
+            navigation?.navigate('VerifyEmail', {
+              data: {
+                email: values?.email,
+                otp : "",
+                verificationType: 'emailVerification',
+              },
+            });
           }
           // lStorage.setString("token", res.data?.data?.accessToken);
         }
-      })
+      });
     }
-    
-  }
+  };
   return (
     <View
       style={{
@@ -111,11 +115,11 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
 
         // thirdRoll
       />
-       
-     <ScrollView
-     keyboardShouldPersistTaps="always"
-       showsVerticalScrollIndicator={false}
-       showsHorizontalScrollIndicator={false}>
+
+      <ScrollView
+        keyboardShouldPersistTaps="always"
+        showsVerticalScrollIndicator={false}
+        showsHorizontalScrollIndicator={false}>
         <View>
           <Text
             style={{
@@ -155,7 +159,6 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
                   Full name
                 </Text>
                 <TextInput
-            
                   style={{
                     fontFamily: font.Poppins,
                     backgroundColor: colors.secondaryColor,
@@ -185,7 +188,6 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
                   Email
                 </Text>
                 <TextInput
-             
                   style={{
                     fontFamily: font.Poppins,
                     backgroundColor: colors.secondaryColor,
@@ -215,7 +217,6 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
                   Contact no
                 </Text>
                 <TextInput
-            
                   style={{
                     fontFamily: font.Poppins,
                     backgroundColor: colors.secondaryColor,
@@ -245,7 +246,6 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
                   Password
                 </Text>
                 <TextInput
-                
                   style={{
                     fontFamily: font.Poppins,
                     backgroundColor: colors.secondaryColor,
@@ -255,7 +255,7 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
                     height: 56,
                     color: colors.textColor.neutralColor,
                   }}
-                 placeholderTextColor={colors.textColor.gray}
+                  placeholderTextColor={colors.textColor.gray}
                   // placeholder="********"
                   secureTextEntry={!isShow}
                   onChangeText={handleChange('password')}
@@ -298,7 +298,6 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
                   Confirm Password
                 </Text>
                 <TextInput
-               
                   style={{
                     fontFamily: font.Poppins,
                     backgroundColor: colors.secondaryColor,
@@ -310,7 +309,7 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
                   }}
                   onChangeText={handleChange('confirm_password')}
                   onBlur={handleBlur('confirm_password')}
-                 placeholderTextColor={colors.textColor.gray}
+                  placeholderTextColor={colors.textColor.gray}
                   // placeholder="********"
                   secureTextEntry={!isShow}
                 />
@@ -339,15 +338,19 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
               </View>
 
               <View style={{marginTop: 20}}>
-              <NormalButton isLoading={results?.isLoading}  title='Sign Up' onPress={()=>{
-                handleSubmit();
-              }} />
+                <NormalButton
+                  isLoading={results?.isLoading}
+                  title="Sign Up"
+                  onPress={() => {
+                    handleSubmit();
+                  }}
+                />
               </View>
             </View>
           )}
         </Formik>
       </ScrollView>
-      <PopUpModal ref={modalRef}/>
+      <PopUpModal ref={modalRef} />
     </View>
   );
 };
