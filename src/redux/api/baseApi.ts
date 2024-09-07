@@ -2,18 +2,19 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { getStorageToken, removeStorageToken } from '../../utils/utils';
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: 'http://192.168.10.185:5001/api/v1',
+  baseUrl: 'http://192.168.10.202:5000/api/v1',
   prepareHeaders: async (headers, { getState }) => {
     const token = getStorageToken();
     if (token) {
+      // console.log(token);
       headers.set('authorization', `Bearer ${token}`);
-      headers.getSetCookie()
+      // headers.getSetCookie()
     }
     return headers;
   },
 });
 
-const baseQueryWithReauth: typeof baseQuery = async (args, api, extraOptions) => {
+const baseQueryWithRath: typeof baseQuery = async (args, api, extraOptions) => {
   // const socket = getSocket();
 
   // if (!socket){
@@ -38,11 +39,11 @@ const baseQueryWithReauth: typeof baseQuery = async (args, api, extraOptions) =>
 export const api = createApi({
   reducerPath: 'api',
   // keepUnusedDataFor: 0,
-  baseQuery: baseQueryWithReauth,
+  baseQuery: baseQueryWithRath,
   
   endpoints: () => ({}),
-  tagTypes: ['user', 'class', 'student', 'category', 'task',"Rewards","studentAssign" ,"studentUser","notification"],
+  tagTypes: ['user'],
 });
 
 
-export const imageUrl = 'http://192.168.10.185:5001';
+export const imageUrl = 'http://192.168.10.202:5000/api/v1';

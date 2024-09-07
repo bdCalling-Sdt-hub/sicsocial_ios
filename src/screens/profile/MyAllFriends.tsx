@@ -90,7 +90,7 @@ const friends = [
   // },
 ];
 
-const MyAllFriends = ({navigation}: NavigProps<null>) => {
+const MyAllFriends = ({navigation,route}: NavigProps<null>) => {
   const {colors, font, window} = useStyles();
   const [test, setTest] = useState(false);
   return (

@@ -1,7 +1,7 @@
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import { ActivityIndicator, StyleSheet, Text, TouchableOpacity } from 'react-native';
+
 import React from 'react';
-import {NavigProps} from '../../interfaces/NaviProps';
-import {useStyles} from '../../context/ContextApi';
+import { useStyles } from '../../context/ContextApi';
 
 interface VerifyEmailProps {
   routeText?: string;
@@ -14,6 +14,7 @@ interface VerifyEmailProps {
   textSize?: number;
   outLine?: boolean;
   width?: string | number;
+  isLoading ?: boolean
 }
 
 const NormalButton = ({
@@ -27,10 +28,13 @@ const NormalButton = ({
   textSize,
   outLine,
   width,
+  isLoading
 }: VerifyEmailProps) => {
   const {colors, font} = useStyles();
   return (
     <TouchableOpacity
+    disabled={isLoading}
+      activeOpacity={0.8}
       onPress={onPress}
       style={{
         backgroundColor: outLine
@@ -46,7 +50,13 @@ const NormalButton = ({
         alignItems: 'center',
         marginVertical: marginVertical ? marginVertical : 0,
         width: width ? width : '100%',
+        flexDirection : "row",
+        gap : 10,
+      
       }}>
+        {
+          isLoading && <ActivityIndicator size="small" color={colors.white} />
+        }
       <Text
         style={{
           fontFamily: font.PoppinsSemiBold,

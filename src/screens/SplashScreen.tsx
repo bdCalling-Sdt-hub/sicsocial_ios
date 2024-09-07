@@ -1,8 +1,9 @@
-import {ImageBackground, StatusBar, StyleSheet, Text, View} from 'react-native';
-import React, {SetStateAction} from 'react';
+import React, { SetStateAction } from 'react';
+import { ImageBackground, StatusBar, StyleSheet, View } from 'react-native';
+
 import LottieView from 'lottie-react-native';
-import {NavigProps} from '../interfaces/NaviProps';
-import {useStyles} from '../context/ContextApi';
+import { useStyles } from '../context/ContextApi';
+import { NavigProps } from '../interfaces/NaviProps';
 
 interface SplashProps extends NavigProps<null> {
   setIsSplash: React.Dispatch<SetStateAction<boolean>>;

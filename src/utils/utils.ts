@@ -1,12 +1,15 @@
 // devices screen size
 
-import { Dimensions } from 'react-native';
+import { Dimensions, PixelRatio } from 'react-native';
+
 import { MMKVLoader } from 'react-native-mmkv-storage';
 
 export const {width, height} = Dimensions.get('screen')
-const storage = new MMKVLoader().initialize();
+export const lStorage = new MMKVLoader().initialize();
 
 //  three size like sm md or tablet 
+const fontScale = PixelRatio.getFontScale();
+export const FontSize = (size : number) => size / fontScale;
 
 export const isSmall = () => {
     return width < 375
@@ -23,27 +26,27 @@ export const isMobile = () => {
 
 
 export const setStorageToken = (token: string) => {
-  storage.setString('token', token);
+  lStorage.setString('token', token);
 };
 
 export const getStorageToken = () => {
-  return storage.getString('token');
+  return lStorage.getString('token');
 };
 
 export const removeStorageToken = () => {
-  storage.removeItem('token');
+  lStorage.removeItem('token');
 };
 
 export const setStorageRole = (role: string) => {
-  storage.setString('role', role);
+  lStorage.setString('role', role);
 };
 
 export const getStorageRole = () => {
-  return storage.getString('role');
+  return lStorage.getString('role');
 };
 
 export const removeStorageRole = () => {
-  storage.removeItem('role');
+  lStorage.removeItem('role');
 };
 
 

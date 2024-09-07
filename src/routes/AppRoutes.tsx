@@ -4,11 +4,11 @@ import * as React from 'react';
 
 import ContextApi, { useContextApi, useStyles } from '../context/ContextApi';
 
-import {
-  NavigationContainer
-} from '@react-navigation/native';
+import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { Provider } from 'react-redux';
+import store from '../redux/store';
 import ChangePassword from '../screens/Logins/ChnagePassword';
 import DeleteAccount from '../screens/Logins/DeleteAccount';
 import EmailConfirmationScreen from '../screens/Logins/EmailConfirmationScreen';
@@ -69,6 +69,7 @@ const Routes = () => {
           {/* <Stack.Screen name="Test" component={TestScreen} /> */}
 
           {/* <Stack.Screen name="TEsting" component={TestScreen} /> */}
+          {/* <Stack.Screen name="Splash" component={SplashScreen} /> */}
           <Stack.Screen name="Login" component={LoginScreen} />
           <Stack.Screen name="SignUp" component={SignUpScreen} />
           <Stack.Screen
@@ -327,11 +328,14 @@ const Routes = () => {
 
 function AppRoutes() {
   const [isSplash, setIsSplash] = React.useState(true);
- 
+
   return (
-    <ContextApi>
-      {isSplash ? <SplashScreen setIsSplash={setIsSplash} /> : <Routes />}
-    </ContextApi>
+    <Provider store={store}>
+      <ContextApi>
+        {isSplash ? <SplashScreen setIsSplash={setIsSplash} /> : <Routes />}
+      {/* <Routes /> */}
+      </ContextApi>
+    </Provider>
   );
 }
 
