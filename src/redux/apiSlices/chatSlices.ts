@@ -36,4 +36,4 @@ export const chatSlices = api.injectEndpoints({
 })
 
 
-export const { useGetChatListQuery } = chatSlices;
+export const { useGetChatListQuery ,useCreateChatMutation,useCreateMessageMutation,useGetMessageQuery } = chatSlices;

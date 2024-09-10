@@ -1,8 +1,9 @@
 import { api } from "../api/baseApi";
+import { IUser } from "../interface/interface";
 
 const authSlice = api.injectEndpoints({
     endpoints: (builder) => ({
-        getUserProfile: builder.query({
+        getUserProfile: builder.query<IUser,unknown>({
             query: token => ({
                 url : `/users/profile`,
                 headers: {

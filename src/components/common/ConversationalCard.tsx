@@ -77,7 +77,7 @@ const ConversationalCard = ({
             justifyContent: 'space-between',
             alignItems: 'center',
             elevation: 0.8,
-            height: 120,
+            // height: cardStyle == "four" ? 120 : undefined,
           }}>
           {/*================= donation card Start ============= */}
           {conversationStyle === 'donation' && (
@@ -87,22 +87,26 @@ const ConversationalCard = ({
                   gap: 4,
                   marginRight: 1,
                 }}>
-                <Text
-                  style={{
-                    fontFamily: font.PoppinsSemiBold,
-                    fontSize: 17,
-                    color: colors.textColor.secondaryColor,
-                  }}>
-                  {conversationTitle ? conversationTitle : 'empty'}
-                </Text>
-                <Text
-                  style={{
-                    fontFamily: font.Poppins,
-                    fontSize: 12,
-                    color: colors.textColor.secondaryColor,
-                  }}>
-                  {lastMessage ? lastMessage : 'empty'}
-                </Text>
+                {conversationTitle && (
+                  <Text
+                    style={{
+                      fontFamily: font.PoppinsSemiBold,
+                      fontSize: 17,
+                      color: colors.textColor.secondaryColor,
+                    }}>
+                    {conversationTitle}
+                  </Text>
+                )}
+                {lastMessage && (
+                  <Text
+                    style={{
+                      fontFamily: font.Poppins,
+                      fontSize: 12,
+                      color: colors.textColor.secondaryColor,
+                    }}>
+                    {lastMessage}
+                  </Text>
+                )}
                 <View
                   style={{
                     flexDirection: 'row',
@@ -211,55 +215,70 @@ const ConversationalCard = ({
                       flexDirection: 'row',
                       gap: 5,
                     }}>
+                    {conversationTitle && (
+                      <Text
+                        style={{
+                          fontFamily: font.PoppinsMedium,
+                          fontSize: 12,
+                          color: colors.textColor.secondaryColor,
+                        }}>
+                        {conversationTitle}
+                      </Text>
+                    )}
+                    {cardStyle === 'book_promotion' ? (
+                      <>
+                        {conversationSubtitle && (
+                          <Text
+                            style={{
+                              fontFamily: font.PoppinsMedium,
+                              fontSize: 13,
+                              color: '#8C5719',
+                            }}>
+                            {conversationSubtitle.toLocaleUpperCase()}
+                          </Text>
+                        )}
+                      </>
+                    ) : (
+                      <>
+                        {conversationSubtitle && (
+                          <Text
+                            style={{
+                              fontFamily: font.PoppinsMedium,
+                              fontSize: 13,
+                              color: colors.textColor.neutralColor,
+                            }}>
+                            {conversationSubtitle}
+                          </Text>
+                        )}
+                      </>
+                    )}
+                  </View>
+                  {lastMessageTime && (
                     <Text
                       style={{
                         fontFamily: font.PoppinsMedium,
-                        fontSize: 12,
-                        color: colors.textColor.secondaryColor,
+                        fontSize: 13,
+                        color: colors.textColor.yellowis,
                       }}>
-                      {conversationTitle ? conversationTitle : 'empty'}
+                      {lastMessageTime}
                     </Text>
-                    {cardStyle === 'book_promotion' ? (
-                      <Text
-                        style={{
-                          fontFamily: font.PoppinsMedium,
-                          fontSize: 13,
-                          color: '#8C5719',
-                        }}>
-                        {conversationSubtitle
-                          ? conversationSubtitle.toLocaleUpperCase()
-                          : 'empty '}
-                      </Text>
-                    ) : (
-                      <Text
-                        style={{
-                          fontFamily: font.PoppinsMedium,
-                          fontSize: 13,
-                          color: colors.textColor.neutralColor,
-                        }}>
-                        {conversationSubtitle ? conversationSubtitle : 'empty '}
-                      </Text>
-                    )}
-                  </View>
-                  <Text
-                    style={{
-                      fontFamily: font.PoppinsMedium,
-                      fontSize: 13,
-                      color:  colors.textColor.yellowis,
-                    }}>
-                    {lastMessageTime ? lastMessageTime : 'empty'}
-                  </Text>
-                  <Text
-                    style={{
-                      fontFamily: isReply ? font.PoppinsSemiBold : font.Poppins,
-                      fontSize: 13,
-                      color: isReply
-                        ? colors.textColor.neutralColor
-                        : colors.textColor.neutralColor,
-                    }}
-                    numberOfLines={2}>
-                    {lastMessage ? lastMessage : 'empty'}
-                  </Text>
+                  )}
+                  {lastMessage && (
+                    <Text
+                    
+                      style={{
+                        fontFamily: isReply
+                          ? font.PoppinsSemiBold
+                          : font.Poppins,
+                        fontSize: 13,
+                        color: isReply
+                          ? colors.textColor.neutralColor
+                          : colors.textColor.neutralColor,
+                      }}
+                      numberOfLines={2}>
+                      {lastMessage}
+                    </Text>
+                  )}
                 </View>
               </View>
               {cardStyle === 'book_promotion' && (
@@ -691,7 +710,13 @@ const ConversationalCard = ({
                 </View>
               )}
               {cardStyle === 'four' && (
-                <View>
+                <View style={{
+                  transform : [
+                    {
+                      scale : 0.8
+                    }
+                  ]
+                }}> 
                   <View
                     style={{
                       // height: 76,

@@ -24,6 +24,7 @@ import {
   useContextApi,
   useStyles
 } from '../../../context/ContextApi';
+import { useCreateChatMutation, useCreateMessageMutation } from '../../../redux/apiSlices/chatSlices';
 import { isSmall, isTablet } from '../../../utils/utils';
 
 import { LinkPreview } from '@flyerhq/react-native-link-preview';
@@ -35,6 +36,7 @@ import CustomModal from '../../../components/common/customModal/CustomModal';
 import ModalOfBottom from '../../../components/common/customModal/ModalOfButtom';
 import NormalButton from '../../../components/common/NormalButton';
 import { NavigProps } from '../../../interfaces/NaviProps';
+import { ICreateMessage } from '../../../redux/interface/interface';
 import { IConversationProps } from '../../../screens/home/HomeScreen';
 import { TemBooks } from '../../../utils/GetRandomColor';
 
@@ -82,26 +84,30 @@ const items = [
   {
     id: 1,
     title: 'Public',
+    type : 'public',
     activeImg: require('../../../assets/icons/modalIcons/earthyGray.png'),
     unActive: require('../../../assets/icons/modalIcons/earthBlack.png'),
   },
   {
     id: 2,
     title: 'Friends',
+    type : 'friend',
     activeImg: require('../../../assets/icons/modalIcons/shearFriendBlack.png'),
     unActive: require('../../../assets/icons/modalIcons/shearFriendGray.png'),
   },
   {
     id: 3,
     title: 'Chosen buddies',
+    type : 'friend',
     activeImg: require('../../../assets/icons/modalIcons/shearFriendBlack.png'),
     unActive: require('../../../assets/icons/modalIcons/shearFriendGray.png'),
   },
-  // {
-  //   id: 3,
-  //   title: 'Asadullah face',
-  //   house: true,
-  // },
+  {
+    id: 3,
+    title: 'Asadullah face',
+    type : 'facedown',
+    house: true,
+  },
 ];
 
 interface ConversationalModalProps extends NavigProps<null> {
@@ -116,6 +122,8 @@ const ConversationalModal = ({
   addNewVoiceCard,
   setAddNewVoiceCard,
 }: ConversationalModalProps) => {
+  const [createChat,createChartResults] = useCreateChatMutation({});
+  const [createMessage,createMessageResult] = useCreateMessageMutation({});
   const {
     colors,
     font,
@@ -139,6 +147,9 @@ const ConversationalModal = ({
   const [selectBook, setSelectBook] = React.useState<number>();
   const [liveModal, setLiveModal] = React.useState(false);
   const [linkUrl, setLinkUrl] = React.useState('');
+
+  const [createChartInfo , setCreateChatInfo] = React.useState();
+  const [createMessageInfo , setCreateMessageInfo] = React.useState<ICreateMessage>();
 
   // lines of modal animation
 
@@ -329,18 +340,7 @@ const ConversationalModal = ({
         });
 
         if (!result.didCancel) {
-          setImageAssets(result?.assets![0].uri);
-
-          setAddNewVoiceCard([
-            ...addNewVoiceCard,
-            {
-              id: addNewVoiceCard?.length + 1,
-              content: 'Start chat with Image',
-              image: '',
-              style: 'image',
-            },
-          ]);
-
+          setCreateMessageInfo({image : result?.assets![0]});
           // console.log(result);
         }
       }
@@ -428,6 +428,35 @@ const ConversationalModal = ({
     };
   });
 
+// console.log(createChartInfo);
+  const handleCreateNewChat = React.useCallback(()=>{
+
+    const formData = new FormData();
+
+ 
+    createChat({type : createChartInfo?.type || "public"}).then((res)=>{
+      console.log(res);
+       if(res?.data?.data?._id){
+        formData.append("chatId", res.data?.data?._id)
+        // if(createMessageInfo?.image){
+        //   formData.append("image")
+        // }
+        // if(createMessageInfo?.audio){
+        //   formData.append("audio")
+        // }
+        if(createMessageInfo?.text){
+          formData.append("text", createMessageInfo?.text)
+        }
+        // if(createMessageInfo?.path){
+        //   formData.append("path")
+        // }
+  
+        createMessage(formData).then((res)=>{
+          console.log(res);
+        })
+       }
+    })
+  },[createChartInfo, createMessageInfo])
   return (
     <>
       <Animated.View
@@ -640,6 +669,7 @@ const ConversationalModal = ({
               onSnapToItem={(index: number) => {
                 setActiveIndex(index);
                 // console.log(index);
+                 setCreateChatInfo({ ...createChartInfo, type: items![index]?.type})
               }}
               renderItem={({index, item, animationValue}) => (
                 <TouchableOpacity
@@ -1078,6 +1108,9 @@ const ConversationalModal = ({
             <TextInput
               ref={textInputRef}
               placeholder="Type your message"
+              onChangeText={(text) => {
+                setCreateMessageInfo({text});
+              }}
               placeholderTextColor={colors.textColor.neutralColor}
               style={{
                 backgroundColor: isDark ? colors.whiteDark : '#F1F1F1',
@@ -1090,15 +1123,7 @@ const ConversationalModal = ({
             />
             <TouchableOpacity
               onPress={() => {
-                setAddNewVoiceCard([
-                  ...addNewVoiceCard,
-                  {
-                    id: addNewVoiceCard?.length + 1,
-                    content: 'Start chat with text',
-                    image: '',
-                    style: 'single',
-                  },
-                ]);
+               handleCreateNewChat();
                 setConversationalModal(false);
                 setTextInputModal(false);
               }}

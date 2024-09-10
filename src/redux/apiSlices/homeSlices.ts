@@ -1,8 +1,9 @@
 import { api } from "../api/baseApi";
+import { INewFeeds } from "../interface/interface";
 
 export const homeSlices = api.injectEndpoints({
     endpoints: (builder) => ({
-        getNewsFeet: builder.query({
+        getNewsFeet: builder.query<INewFeeds , unknown>({
             query: ({id,page,limit}) => ({
                 url: `/chat/news-feed`,
             }),

@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import {
+  FlatList,
   Image,
   Linking,
   SafeAreaView,
@@ -16,39 +17,26 @@ import {
 } from '../../context/ContextApi';
 
 import Clipboard from '@react-native-clipboard/clipboard';
-import { ScrollView } from 'react-native-gesture-handler';
+import { format } from 'date-fns';
 import LinearGradient from 'react-native-linear-gradient';
 import { SvgXml } from 'react-native-svg';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import ConversationalCard from '../../components/common/ConversationalCard';
 import ConversationalModal from '../../components/common/ConversationalModal/ConversationalModal';
 import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
+import { IConversationProps } from '../../interfaces/Interface';
 import { NavigProps } from '../../interfaces/NaviProps';
+import { imageUrl } from '../../redux/api/baseApi';
+import { useGetUserProfileQuery } from '../../redux/apiSlices/authSlice';
 import { useGetNewsFeetQuery } from '../../redux/apiSlices/homeSlices';
 import { isTablet } from '../../utils/utils';
 
-export interface IConversationProps {
-  id: number;
-  content?: string;
-  image?: string;
-  style?:
-    | 'book_promotion'
-    | 'shear_book'
-    | 'image'
-    | 'two'
-    | 'single'
-    | 'three'
-    | 'four';
-  user?: {
-    name: string;
-    image: string;
-  };
-}
-
 const HomeScreen = ({navigation}: NavigProps<null>) => {
   const {isLive, setIsLive, isDark} = useContextApi();
-  const {data} = useGetNewsFeetQuery({});
-  console.log(data);
+
+  const {data : newsFeet} = useGetNewsFeetQuery({});
+  const {data : userProfile} = useGetUserProfileQuery({});
+  // console.log(userProfile);
   const {colors, font} = useStyles();
   const [modalVisible, setModalVisible] = React.useState(false);
 
@@ -73,7 +61,7 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
   }, [isLive]);
 
   // is live  card have checker and create animation asaa
-
+ const profileImage = userProfile?.data?.avatar.startsWith("https") ? userProfile?.data?.avatar : `${imageUrl}/${userProfile?.data?.avatar}`
   return (
     <SafeAreaView
       style={{
@@ -117,7 +105,9 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
               justifyContent: 'center',
               alignItems: 'center',
             }}
-            source={require('../../assets/tempAssets/86efa3df337e8c215dd8095476bb6513.jpg')}
+            source={{
+              uri : profileImage
+            }}
           />
           <View
             style={{
@@ -137,7 +127,7 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
                 fontSize: 16,
                 color: colors.textColor.primaryColor,
               }}>
-              Asadullah
+              {userProfile?.data?.fullName}
             </Text>
           </View>
         </View>
@@ -175,22 +165,39 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
 
       {/*==================== profile card end ===================  */}
        
-     <ScrollView
-       showsVerticalScrollIndicator={false}
-       showsHorizontalScrollIndicator={false}
-     
-        contentContainerStyle={{
+   
+        {/*========================== conversation card start ======================= */}
+
+        <FlatList
+         showsVerticalScrollIndicator={false}
+         showsHorizontalScrollIndicator={false}
+         contentContainerStyle={{
           gap: 16,
           paddingTop: 16,
           // paddingBottom: isLive ? LIVE_ACTIVE_VALUE + 30 : 16,
           paddingHorizontal: '5%',
-        }}>
-        {/*========================== conversation card start ======================= */}
-
+        }}
+      data={newsFeet?.data}
+      renderItem={({ item }) => (
         <ConversationalCard
+      conversationStyle="normal"
+      onPress={() => {
+        navigation?.navigate('NormalConversation');
+      }}
+      cardStyle="four"
+      conversationTitle={item.lastMessage.sender._id === userProfile?.data?._id ? "You" : userProfile?.data?.fullName}
+      conversationSubtitle={item.lastMessage.sender._id === userProfile?.data?._id ? "send a message" : "Reply to the message"}
+      lastMessageTime={format(new Date(item.updatedAt), "hh :mm a")}
+      lastMessage={item.lastMessage.audio ? "send a audio message" : item.lastMessage.image ? "send an image message" : item.lastMessage.text ? item.lastMessage.text : item.lastMessage.path ? "send a book" : "Start a chat"}
+    />
+      )}
+      // estimatedItemSize={150}
+    />
+
+        {/* <ConversationalCard
           disabled
           conversationStyle="donation"
-          conversationTitle="Hello Asadullah"
+          conversationTitle={`Hello ${userProfile?.data?.fullName}`}
           // conversationSubtitle="Contribute and share with others."
           lastMessage="Contribute and share with others."
           onDonationShearPress={() => {
@@ -200,22 +207,7 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
             navigation?.navigate('donation');
           }}
         />
-        {addNewVoiceCard
-          .sort((a, b) => b.id - a.id)
-          .map(card => (
-            <ConversationalCard
-              key={card.id}
-              conversationStyle="normal"
-              onPress={() => {
-                navigation?.navigate('NormalConversation');
-              }}
-              cardStyle={card?.style}
-              conversationTitle="You"
-              conversationSubtitle={card.content}
-              lastMessageTime="9:30 am"
-              lastMessage="Hello"
-            />
-          ))}
+  
 
         <ConversationalCard
           conversationStyle="normal"
@@ -319,17 +311,18 @@ is recognize for SIC "
           conversationSubtitle="join room"
           lastMessageTime="8:10 am"
           lastMessage="nadin invite you in room"
-        />
+        /> */}
 
         <Animated.View
           style={{
             paddingBottom: scrollViewGapHight,
           }}
         />
-      </ScrollView>
+    
       {/*==================== Body part Start ===================  */}
 
       <ConversationalModal
+      
         addNewVoiceCard={addNewVoiceCard}
         setAddNewVoiceCard={setAddNewVoiceCard}
         navigation={navigation}

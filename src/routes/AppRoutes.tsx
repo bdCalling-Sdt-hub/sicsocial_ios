@@ -49,6 +49,7 @@ import SearchScreen from '../screens/search/SearchScreen';
 import BookShareScreen from '../screens/sharebooks/BookShareScreen';
 import BookShareWithCategory from '../screens/sharebooks/BookShareWithCategory';
 import BooksScreen from '../screens/sharebooks/BooksScreen';
+import { getStorageToken } from '../utils/utils';
 import BottomBarRoutes from './BottomBarRoutes';
 
 const Stack = createNativeStackNavigator();
@@ -56,10 +57,14 @@ const Stack = createNativeStackNavigator();
 const Routes = () => {
   const {colors} = useStyles();
   const {isDark} = useContextApi();
+
+  const token = getStorageToken()
+
   return (
     <GestureHandlerRootView>
       <NavigationContainer>
         <Stack.Navigator
+        initialRouteName={token ? "HomeRoutes" : "Login"}
           screenOptions={{
             headerShown: false,
             statusBarAnimation: 'fade',
