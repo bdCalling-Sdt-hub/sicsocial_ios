@@ -1,35 +1,73 @@
 import {
   Pressable,
-  ScrollView,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  View,
+  View
 } from 'react-native';
+import PopUpModal, { PopUpModalRef } from '../../components/common/modals/PopUpModal';
+import { useSendCodeAgainMutation, useVerifyUserMutation } from '../../redux/apiSlices/authSlice';
+
 import React from 'react';
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
-import {NavigProps} from '../../interfaces/NaviProps';
 import NormalButton from '../../components/common/NormalButton';
-import {useStyles} from '../../context/ContextApi';
+import { useStyles } from '../../context/ContextApi';
+import { IVerifyUserRoute } from '../../interfaces/Interface';
+import { NavigProps } from '../../interfaces/NaviProps';
+import { lStorage } from '../../utils/utils';
 
-const VerifyEmailScreen = ({navigation}: NavigProps<null>) => {
+const VerifyEmailScreen = ({navigation,route}: NavigProps<IVerifyUserRoute>) => {
+  const verifyInfo = route?.params.data;
+   const [sendVerifyCodeAgain, sendCodeResult] = useSendCodeAgainMutation();
+   const [VerifyEmail, results] = useVerifyUserMutation();
+   const modalRef = React.useRef<PopUpModalRef>();
+  console.log(verifyInfo);
+
   const {colors, font} = useStyles();
   const [pin, setPin] = React.useState('');
   const textInputRef = React.useRef<TextInput>(null);
   const handlePress = () => {
     if (textInputRef.current) {
-      textInputRef.current.focus();
+   textInputRef.current?.focus()
     }
   };
   React.useEffect(() => {
-    textInputRef.current?.focus();
+    setTimeout(() => textInputRef.current?.focus(), 100);
   }, []);
 
   const handlePinChange = (input: string) => {
     // Ensure only numbers are entered and limit to 6 digits
     const filteredInput = input.replace(/[^0-9]/g, '').slice(0, 6);
     setPin(filteredInput);
+  };
+
+  const handleEmailVerify = () => {
+    // check have pin or pin must be 8 digits 
+    if (pin.length < 6) {
+      modalRef.current?.open({
+        // title : "Error",
+        content: 'Please enter your 6 digits code',
+      });
+
+      return;
+    }
+    // console.log(pin);
+
+      verifyInfo.otp = Number(pin);
+    
+    VerifyEmail(verifyInfo).then(res => {
+      if (res?.data) {
+        lStorage.setString("token", res.data?.data?.accessToken);
+        navigation?.navigate('VerifySuccessful');
+      }
+      if(res.error){
+        modalRef.current?.open({
+          // title : "Error",
+          content: res?.error?.data?.message,
+        });
+      }
+    });
   };
 
   return (
@@ -91,6 +129,7 @@ const VerifyEmailScreen = ({navigation}: NavigProps<null>) => {
           style={{
             gap: 8,
             marginVertical: 15,
+            maxWidth : '100%'
           }}>
           <View
             style={{
@@ -230,6 +269,19 @@ const VerifyEmailScreen = ({navigation}: NavigProps<null>) => {
             I didn't find confirmation code,{' '}
           </Text>
           <TouchableOpacity
+        disabled={sendCodeResult.isLoading}
+          onPress={()=>{
+            sendVerifyCodeAgain({email :verifyInfo?.email}).then((res)=>{
+              if(res.data){
+                modalRef.current?.open({
+                  title: 'Please check your email',
+                  content: res?.data?.message,
+                  lottify : require("../../assets/lotties/notifyEmail.json"),
+                })
+                setPin('')
+              }
+            })
+          }}
             style={{
               justifyContent: 'center',
               alignItems: 'center',
@@ -247,12 +299,13 @@ const VerifyEmailScreen = ({navigation}: NavigProps<null>) => {
         </View>
         <View>
           <NormalButton
+          isLoading={results.isLoading}
             title="Confirm"
             marginVertical={31}
             onPress={() => {
               // navigation?.navigate('ResetPassword');
               // navigation?.navigate('VerifySuccessful');
-              navigation?.navigate('Interest');
+              handleEmailVerify()
             }}
           />
         </View>
@@ -265,14 +318,11 @@ const VerifyEmailScreen = ({navigation}: NavigProps<null>) => {
           position: 'absolute',
           top: -500,
         }}
-        onEndEditing={() => {
-          if (pin.length === 6) {
-            // navigation?.navigate('');
-          }
-        }}
+        value={pin}
         onChangeText={handlePinChange}
         maxLength={6}
       />
+          <PopUpModal ref={modalRef} />
     </View>
   );
 };

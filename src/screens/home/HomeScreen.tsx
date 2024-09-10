@@ -24,6 +24,7 @@ import ConversationalCard from '../../components/common/ConversationalCard';
 import ConversationalModal from '../../components/common/ConversationalModal/ConversationalModal';
 import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
 import { NavigProps } from '../../interfaces/NaviProps';
+import { useGetNewsFeetQuery } from '../../redux/apiSlices/homeSlices';
 import { isTablet } from '../../utils/utils';
 
 export interface IConversationProps {
@@ -46,6 +47,8 @@ export interface IConversationProps {
 
 const HomeScreen = ({navigation}: NavigProps<null>) => {
   const {isLive, setIsLive, isDark} = useContextApi();
+  const {data} = useGetNewsFeetQuery({});
+  console.log(data);
   const {colors, font} = useStyles();
   const [modalVisible, setModalVisible] = React.useState(false);
 

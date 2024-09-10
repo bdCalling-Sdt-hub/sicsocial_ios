@@ -168,7 +168,7 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
                     height: 56,
                     color: colors.textColor.neutralColor,
                   }}
-                  placeholder="ex : John Doe"
+                  placeholder="John Doe"
                   placeholderTextColor={colors.textColor.gray}
                   onChangeText={handleChange('fullName')}
                   onBlur={handleBlur('fullName')}
@@ -197,7 +197,7 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
                     height: 56,
                     color: colors.textColor.neutralColor,
                   }}
-                  placeholder="ex : johndoe@gmail.com"
+                  placeholder="johndoe@gmail.com"
                   placeholderTextColor={colors.textColor.gray}
                   onChangeText={handleChange('email')}
                   onBlur={handleBlur('email')}

@@ -35,11 +35,21 @@ const authSlice = api.injectEndpoints({
             }),
             invalidatesTags : ["user"]
           }),
+        sendCodeAgain: builder.mutation({
+            query: (data) => ({
+              url: `/auth/resend-email`,
+              method: 'POST',
+              body: data,
+            }),
+            invalidatesTags : ["user"]
+          }),
     })
 });
 
 export const {
   useGetUserProfileQuery,
   useCreateUserMutation,
-  useLoginUserMutation
+  useLoginUserMutation,
+  useVerifyUserMutation,
+  useSendCodeAgainMutation
 } = authSlice;

@@ -53,11 +53,12 @@ const LoginScreen = ({navigation}: NavigProps<null>) => {
             // title : "Error",
             content : res?.error?.data?.message,
           })
-        //  lStorage.setString("token", res.data.token);
+          
         }
         if (res?.data) {
-          // console.log(res.data?.data?.accessToken);
+          console.log(res.data?.data?.accessToken);
          lStorage.setString("token", res.data?.data?.accessToken);
+          navigation?.navigate('HomeRoutes');
         }
       })
     }
@@ -228,6 +229,30 @@ const LoginScreen = ({navigation}: NavigProps<null>) => {
                   }}>
                   <Checkbox
                     value={rememberItems.check}
+                    onValueChange={() =>{
+                      if(!rememberItems.check){
+                        setRememberItems({
+                          check : true,
+                          email :values.email,
+                          password :values.password
+                        });
+                          lStorage.setBool('check',true);
+                          lStorage.setString('email', values.email);
+                          lStorage.setString('password', values.password);
+                      }
+
+                      if(rememberItems.check){
+                        lStorage.removeItem('email');
+                        lStorage.removeItem('password');
+                        lStorage.removeItem('check');
+                     setRememberItems({
+                      check : false,
+                      email : "",
+                      password : ""
+                     })
+               
+                    }
+                  }}
                     containerStyle={{
                       borderWidth: 1,
                       borderColor: colors.textColor.neutralColor,

@@ -5,6 +5,7 @@ const baseQuery = fetchBaseQuery({
   baseUrl: 'http://192.168.10.202:5000/api/v1',
   prepareHeaders: async (headers, { getState }) => {
     const token = getStorageToken();
+    console.log(token);
     if (token) {
       // console.log(token);
       headers.set('authorization', `Bearer ${token}`);
@@ -42,7 +43,7 @@ export const api = createApi({
   baseQuery: baseQueryWithRath,
   
   endpoints: () => ({}),
-  tagTypes: ['user'],
+  tagTypes: ['user',"message","chat","news_feed"],
 });
 
 
