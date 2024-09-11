@@ -865,6 +865,6 @@ const ConversationalCard = ({
   );
 };
 
-export default ConversationalCard;
+export default React.memo(ConversationalCard);
 
 const styles = StyleSheet.create({});

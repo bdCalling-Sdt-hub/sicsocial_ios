@@ -1,8 +1,9 @@
 import { api } from "../api/baseApi";
+import { IChats } from "../interface/interface";
 
 export const chatSlices = api.injectEndpoints({
     endpoints: (builder) => ({
-        getChatList: builder.query({
+        getChatList: builder.query<IChats , unknown>({
             query: ({id,page,limit}) => ({
                 url: `/chat/chat-list`,
               
@@ -19,6 +20,9 @@ export const chatSlices = api.injectEndpoints({
         createMessage: builder.mutation({
             query: (data) => ({
                 url: `/message/send-message`,
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
               method: 'POST',
               body: data,
             }),
@@ -30,7 +34,7 @@ export const chatSlices = api.injectEndpoints({
               method: 'POST',
               body: data,
             }),
-            invalidatesTags : ["chat","news_feed"]
+            invalidatesTags : ["news_feed"]
           }),
     }),
 })

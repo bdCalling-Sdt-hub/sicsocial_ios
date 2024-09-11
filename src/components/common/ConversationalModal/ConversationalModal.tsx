@@ -3,11 +3,12 @@ import {
   ActivityIndicator,
   Image,
   Modal,
+  PermissionsAndroid,
   Pressable,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
 } from 'react-native';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import Animated, {
@@ -15,19 +16,18 @@ import Animated, {
   interpolate,
   useAnimatedStyle,
   useSharedValue,
-  withTiming
+  withTiming,
 } from 'react-native-reanimated';
-import Carousel, {
-  TAnimationStyle
-} from 'react-native-reanimated-carousel';
+import Carousel, { TAnimationStyle } from 'react-native-reanimated-carousel';
+import { useContextApi, useStyles } from '../../../context/ContextApi';
 import {
-  useContextApi,
-  useStyles
-} from '../../../context/ContextApi';
-import { useCreateChatMutation, useCreateMessageMutation } from '../../../redux/apiSlices/chatSlices';
+  useCreateChatMutation,
+  useCreateMessageMutation,
+} from '../../../redux/apiSlices/chatSlices';
 import { isSmall, isTablet } from '../../../utils/utils';
 
 import { LinkPreview } from '@flyerhq/react-native-link-preview';
+import AudioRecord from 'react-native-audio-record';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import { TextInput } from 'react-native-gesture-handler';
 import { SvgXml } from 'react-native-svg';
@@ -84,31 +84,38 @@ const items = [
   {
     id: 1,
     title: 'Public',
-    type : 'public',
+    type: 'public',
     activeImg: require('../../../assets/icons/modalIcons/earthyGray.png'),
     unActive: require('../../../assets/icons/modalIcons/earthBlack.png'),
   },
   {
     id: 2,
     title: 'Friends',
-    type : 'friend',
+    type: 'private',
     activeImg: require('../../../assets/icons/modalIcons/shearFriendBlack.png'),
     unActive: require('../../../assets/icons/modalIcons/shearFriendGray.png'),
   },
   {
     id: 3,
     title: 'Chosen buddies',
-    type : 'friend',
+    type: 'private',
     activeImg: require('../../../assets/icons/modalIcons/shearFriendBlack.png'),
     unActive: require('../../../assets/icons/modalIcons/shearFriendGray.png'),
   },
   {
     id: 3,
     title: 'Asadullah face',
-    type : 'facedown',
+    type: 'public',
     house: true,
   },
 ];
+const options = {
+  sampleRate: 16000, // default 44100
+  channels: 1, // 1 or 2, default 1
+  bitsPerSample: 16, // 8 or 16, default 16
+  audioSource: 6, // android only (see below)
+  wavFile: 'voice.wav', // default 'audio.wav'
+};
 
 interface ConversationalModalProps extends NavigProps<null> {
   addNewVoiceCard: Array<IConversationProps>;
@@ -122,8 +129,8 @@ const ConversationalModal = ({
   addNewVoiceCard,
   setAddNewVoiceCard,
 }: ConversationalModalProps) => {
-  const [createChat,createChartResults] = useCreateChatMutation({});
-  const [createMessage,createMessageResult] = useCreateMessageMutation({});
+  const [createChat, createChartResults] = useCreateChatMutation({});
+  const [createMessage, createMessageResult] = useCreateMessageMutation({});
   const {
     colors,
     font,
@@ -148,8 +155,9 @@ const ConversationalModal = ({
   const [liveModal, setLiveModal] = React.useState(false);
   const [linkUrl, setLinkUrl] = React.useState('');
 
-  const [createChartInfo , setCreateChatInfo] = React.useState();
-  const [createMessageInfo , setCreateMessageInfo] = React.useState<ICreateMessage>();
+  const [createChartInfo, setCreateChatInfo] = React.useState();
+  const [createMessageInfo, setCreateMessageInfo] =
+    React.useState<ICreateMessage>();
 
   // lines of modal animation
 
@@ -157,7 +165,7 @@ const ConversationalModal = ({
   const modalHight = useSharedValue(width * 0.244);
   const borderRadius = useSharedValue(100);
   const marginBottom = useSharedValue(65);
-  const Bottom = useSharedValue("0%");
+  const Bottom = useSharedValue('0%');
   const topBorderRadius = useSharedValue(100);
   const backgroundColor = useSharedValue('rgba(219, 177, 98, 1)');
   const opacityDown = useSharedValue(0.2);
@@ -168,11 +176,14 @@ const ConversationalModal = ({
     modalWidth.value = withTiming(width * 1.8, {
       duration: 200,
     });
-    modalHight.value = withTiming(isSmall() ? height * 0.777 : height * 0.6444, {
-      duration: 200,
-    });
+    modalHight.value = withTiming(
+      isSmall() ? height * 0.777 : isTablet() ? height * 0.6444 : height * 0.6222,
+      {
+        duration: 200,
+      },
+    );
 
-    Bottom.value = withTiming("0%", {duration: 200});
+    Bottom.value = withTiming('0%', {duration: 200});
 
     marginBottom.value = withTiming(-200, {duration: 200});
     borderRadius.value = withTiming(isLive ? 5000 : 2000, {duration: 200});
@@ -185,13 +196,16 @@ const ConversationalModal = ({
   };
   const handleClose = () => {
     opacityDown.value = withTiming(0, {duration: 150});
-    modalWidth.value = withTiming( isSmall() ? 80 : 100, {
+    modalWidth.value = withTiming(isSmall() ? 80 : 100, {
       duration: 200,
     });
-    modalHight.value = withTiming( isSmall() ? 80 : 100 , {
+    modalHight.value = withTiming(isSmall() ? 80 : 100, {
       duration: 200,
     });
-    Bottom.value = withTiming(isLive ? isTablet() ? "16.8%" : "10.5%" : isSmall() ? "0%" : "0.4%", {duration: 200});
+    Bottom.value = withTiming(
+      isLive ? (isTablet() ? '16.8%' : '10.5%') : isSmall() ? '0%' : '0.4%',
+      {duration: 200},
+    );
     marginBottom.value = withTiming(65, {duration: 200});
     borderRadius.value = withTiming(100, {duration: 200});
     backgroundColor.value = withTiming('rgba(219, 177, 98, 1)', {
@@ -212,7 +226,7 @@ const ConversationalModal = ({
       marginVertical: marginBottom.value,
       backgroundColor: backgroundColor.value,
       bottom: Bottom.value,
-      maxWidth : 500,
+      maxWidth: 500,
       // maxHeight : 500
       // borderTopRightRadius: topBorderRadius.value,
       // borderTopLeftRadius: topBorderRadius.value,
@@ -340,7 +354,17 @@ const ConversationalModal = ({
         });
 
         if (!result.didCancel) {
-          setCreateMessageInfo({image : result?.assets![0]});
+          handleCreateNewChat({
+            image: {
+              uri: result?.assets![0].uri,
+              type: result?.assets![0].type,
+              name: result?.assets![0].fileName,
+              size: result?.assets![0].fileSize,
+              lastModified: new Date().getTime(), // Assuming current time as last modified
+              lastModifiedDate: new Date(),
+              webkitRelativePath: '',
+            },
+          });
           // console.log(result);
         }
       }
@@ -354,17 +378,19 @@ const ConversationalModal = ({
         });
 
         if (!result.didCancel) {
-          setImageAssets(result?.assets![0].uri);
-          // console.log(result);
-          setAddNewVoiceCard([
-            ...addNewVoiceCard,
-            {
-              id: addNewVoiceCard?.length + 1,
-              content: 'Start chat with Image',
-              image: '',
-              style: 'image',
+          // add image add a file image
+          handleCreateNewChat({
+            image: {
+              uri: result?.assets![0].uri,
+              type: result?.assets![0].type,
+              name: result?.assets![0].fileName,
+              size: result?.assets![0].fileSize,
+              lastModified: new Date().getTime(), // Assuming current time as last modified
+              lastModifiedDate: new Date(),
+              webkitRelativePath: '',
             },
-          ]);
+          });
+          // console.log(result);
         }
       }
     } catch (error) {
@@ -372,10 +398,43 @@ const ConversationalModal = ({
     }
   };
 
-  const recordingAnimation = useSharedValue('0%');
 
-  const recodingOn = () => {
-    recordingAnimation.value = withTiming('100%', {duration: 10000});
+
+  const recodingOn =  async() => {
+    if(!recordOn){
+      await PermissionsAndroid.requestMultiple([
+        PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+      ]);
+      
+      setRecordOn(true);
+      setRecordOnDone(false);
+      AudioRecord.init(options);
+      AudioRecord.start();
+      letsBorderAnimationValue.value =
+        letsBorderAnimationValue.value === 8
+          ? withTiming(25, {
+              duration: 200,
+              easing: Easing.ease,
+            })
+          : withTiming(8, {
+              duration: 200,
+            });
+    }
+   else{
+    setRecordOn(false);
+    setRecordOnDone(true);
+    letsBorderAnimationValue.value = 20
+    const audioPath = await AudioRecord.stop();
+
+    const audio = {
+      uri: `file://${audioPath}`,   
+      type: 'audio/wav', // Try changing this if 'audio/x-wav' doesn't work
+      name: 'voice.wav',
+    };
+ 
+    handleCreateNewChat({audio})
+   }
+   
   };
 
   const liveCardAnimationPositionY = useSharedValue('-8.5%');
@@ -387,29 +446,41 @@ const ConversationalModal = ({
     }
 
     if (isLive) {
-      liveCardAnimationPositionY.value = withTiming( isSmall() ? "14%" : isTablet() ? "20%": '8.5%', {
-        duration: 1000,
-      });
-      voiceModalAnimationPositionY.value = withTiming( isSmall() ? "22.3%" : isTablet() ? "25.5%":'18%', {
-        duration: 1000,
-      });
+      liveCardAnimationPositionY.value = withTiming(
+        isSmall() ? '14%' : isTablet() ? '20%' : '8.5%',
+        {
+          duration: 1000,
+        },
+      );
+      voiceModalAnimationPositionY.value = withTiming(
+        isSmall() ? '22.3%' : isTablet() ? '25.5%' : '18%',
+        {
+          duration: 1000,
+        },
+      );
     }
     if (!isLive) {
-      liveCardAnimationPositionY.value = withTiming( '-9%', {
+      liveCardAnimationPositionY.value = withTiming('-9%', {
         duration: 1000,
       });
-      voiceModalAnimationPositionY.value = withTiming(isSmall() ? '9%' : isTablet() ? '9%' : '7.8%', {
-        duration: 1000,
-      });
+      voiceModalAnimationPositionY.value = withTiming(
+        isSmall() ? '9%' : isTablet() ? '9%' : '7.8%',
+        {
+          duration: 1000,
+        },
+      );
     }
     return () => {
-      liveCardAnimationPositionY.value = withTiming( '-9%', {
+      liveCardAnimationPositionY.value = withTiming('-9%', {
         duration: 1000,
       });
-      voiceModalAnimationPositionY.value = withTiming(isSmall() ? '9%' : isTablet() ? '9%' : '7.8%', {
-        duration: 1000,
-      });
-    }
+      voiceModalAnimationPositionY.value = withTiming(
+        isSmall() ? '9%' : isTablet() ? '9%' : '7.8%',
+        {
+          duration: 1000,
+        },
+      );
+    };
   }, [textInputModal, isLive]);
 
   // is live  card have checker and create animation asaa
@@ -420,43 +491,44 @@ const ConversationalModal = ({
     };
   });
   const rVoiceModalStyle = useAnimatedStyle(() => {
-
-    
     return {
       bottom: voiceModalAnimationPositionY.value,
-     
     };
   });
 
-// console.log(createChartInfo);
-  const handleCreateNewChat = React.useCallback(()=>{
+  // console.log(createChartInfo);
+  const handleCreateNewChat = React.useCallback(
+    data => {
+      const formData = new FormData();
 
-    const formData = new FormData();
-
- 
-    createChat({type : createChartInfo?.type || "public"}).then((res)=>{
-      console.log(res);
-       if(res?.data?.data?._id){
-        formData.append("chatId", res.data?.data?._id)
-        // if(createMessageInfo?.image){
-        //   formData.append("image")
-        // }
-        // if(createMessageInfo?.audio){
-        //   formData.append("audio")
-        // }
-        if(createMessageInfo?.text){
-          formData.append("text", createMessageInfo?.text)
+      createChat({type: createChartInfo?.type || 'public'}).then(res => {
+        // console.log(res);
+        if (res?.data?.data?._id) {
+          formData.append('chatId', res.data?.data?._id);
+          if (data?.image) {
+            formData.append('image', data?.image);
+          }
+          if (data?.audio) {
+            formData.append('audio', data.audio);
+          }
+          if (data?.text) {
+            formData.append('text', data?.text);
+          }
+          if (data?.path) {
+            formData.append('path', data?.path);
+          }
+// console.log(formData);
+          createMessage(formData).then(ms => {
+            // console.log(res);
+          });
         }
-        // if(createMessageInfo?.path){
-        //   formData.append("path")
-        // }
-  
-        createMessage(formData).then((res)=>{
-          console.log(res);
-        })
-       }
-    })
-  },[createChartInfo, createMessageInfo])
+      });
+    },
+    [createChartInfo, createMessageInfo],
+  );
+
+
+
   return (
     <>
       <Animated.View
@@ -466,13 +538,13 @@ const ConversationalModal = ({
 
             borderRadius: 100,
             // width: '100%',
-           
+
             alignSelf: 'center',
-            transform : [
+            transform: [
               {
-                scale : isSmall() ? .8 : 1
-              }
-            ]
+                scale: isSmall() ? 0.8 : 1,
+              },
+            ],
           },
           rVoiceModalStyle,
         ]}>
@@ -504,21 +576,19 @@ const ConversationalModal = ({
             // bottom: 65,
             // width: '100%',
             // alignSelf: 'center',
-            
-       
+
             marginHorizontal: '5%',
             width: width * 0.9,
-            height : isTablet() ? height * 0.05 : height * 0.09,
+            height: isTablet() ? height * 0.05 : height * 0.09,
           },
           rLiveCardStyle,
         ]}>
         <View
           style={{
-            
             backgroundColor: colors.bg,
             flexDirection: 'row',
-            
-            paddingHorizontal: isTablet() ? "4%" : '10%',
+
+            paddingHorizontal: isTablet() ? '4%' : '10%',
             paddingVertical: '3%',
             // elevation: 5,
             borderRadius: 1000,
@@ -651,7 +721,7 @@ const ConversationalModal = ({
               bottom: '5%',
               justifyContent: 'center',
               alignItems: 'center',
-              height: isSmall() ? height * 0.35 : height * 0.30,
+              height: isSmall() ? height * 0.35 : height * 0.3,
               // gap: -20,
               zIndex: 99999,
             }}>
@@ -669,17 +739,20 @@ const ConversationalModal = ({
               onSnapToItem={(index: number) => {
                 setActiveIndex(index);
                 // console.log(index);
-                 setCreateChatInfo({ ...createChartInfo, type: items![index]?.type})
+                setCreateChatInfo({
+                  ...createChartInfo,
+                  type: items![index]?.type,
+                });
               }}
               renderItem={({index, item, animationValue}) => (
                 <TouchableOpacity
                   style={{
                     width: 100,
                     height: 100,
-                    transform : [
+                    transform: [
                       {
-                        scale : isSmall() ? .8 : 1
-                      }
+                        scale: isSmall() ? 0.8 : 1,
+                      },
                     ],
                     alignItems: 'center',
                   }}>
@@ -768,13 +841,14 @@ const ConversationalModal = ({
               data={data}
               onSnapToItem={(index: number) => {
                 // setActiveIndexBigButton(index);
+             
                 setRecordOn(false);
                 setRecordOnDone(false);
                 letsBorderAnimationValue.value = 25;
               }}
               renderItem={({index, item, animationValue}) => (
                 <TouchableOpacity
-                  onPress={() => {
+                  onPress={ async() => {
                     if (item.name === 'Share photo') {
                       // handleImagePick('camera');
                       setImageModal(!imageModal);
@@ -790,18 +864,7 @@ const ConversationalModal = ({
                     }
                     if (item.name === 'Let’s talk') {
                       // handleImagePick('camera');
-                      setRecordOn(!recordOn);
-
-                      letsBorderAnimationValue.value =
-                        letsBorderAnimationValue.value === 8
-                          ? withTiming(25, {
-                              duration: 200,
-                              easing: Easing.ease,
-                            })
-                          : withTiming(8, {
-                              duration: 200,
-                            });
-                      recordOnDone && setRecordOnDone(!recordOnDone);
+                      recodingOn()
                     }
                     if (item.name === 'Type a message') {
                       setTextInputModal(!textInputModal);
@@ -821,10 +884,10 @@ const ConversationalModal = ({
                     width: 95,
                     height: 95,
                     // justifyContent: 'center',
-                    transform : [
+                    transform: [
                       {
-                        scale : isSmall() ? .8 : 1
-                      }
+                        scale: isSmall() ? 0.8 : 1,
+                      },
                     ],
                     alignItems: 'center',
                   }}>
@@ -853,21 +916,10 @@ const ConversationalModal = ({
                   item.name === 'Let’s talk' &&
                   recordOn ? (
                     <TouchableOpacity
-                      onPress={() => {
-                        setAddNewVoiceCard([
-                          ...addNewVoiceCard,
-                          {
-                            id: addNewVoiceCard?.length + 1,
-                            content: `Start with a new voice ${
-                              addNewVoiceCard?.length + 1
-                            }`,
-                            image: '',
-                            style: 'single',
-                          },
-                        ]);
-                        setConversationalModal(false);
-                        setRecordOn(false);
-                        letsBorderAnimationValue.value = 25;
+                      onPress={ async() => {
+                      
+                        recodingOn()
+                      
                       }}>
                       {recordOnDone ? (
                         <Animated.View
@@ -1108,7 +1160,7 @@ const ConversationalModal = ({
             <TextInput
               ref={textInputRef}
               placeholder="Type your message"
-              onChangeText={(text) => {
+              onChangeText={text => {
                 setCreateMessageInfo({text});
               }}
               placeholderTextColor={colors.textColor.neutralColor}
@@ -1123,7 +1175,7 @@ const ConversationalModal = ({
             />
             <TouchableOpacity
               onPress={() => {
-               handleCreateNewChat();
+                handleCreateNewChat(createChartInfo?.text);
                 setConversationalModal(false);
                 setTextInputModal(false);
               }}
@@ -1562,58 +1614,62 @@ const ConversationalModal = ({
             }}
             renderItem={item => (
               <TouchableOpacity
-              onPress={() => {
-                setBooksModal(false)
-                setSelectBook(item?.item.image)
-                // navigation?.navigate('BookShare', {data: item.item});
-              }}
-              style={{
-                // elevation: 2,
-                // backgroundColor: colors.bg,
-                // padding: 2,
-                borderRadius: 24,
-                // height: height * 0.243,
-                // alignItems : "center",
-                // justifyContent : "center",
-              }}>
-           <View style={{
-            elevation : 1,
-            padding : 3,
-         
-         
-           }}>
-           <Image
-              resizeMode='stretch'
-                style={{
-                  height: height * 0.24,
-                  width: width * 0.41,
-                  borderRadius: 24,
-                  borderWidth : 2,
-                  borderColor : colors.bg
+                onPress={() => {
+                  setBooksModal(false);
+                  setSelectBook(item?.item.image);
+                  // navigation?.navigate('BookShare', {data: item.item});
                 }}
-                source={item.item.image}
-              />
-           </View>
-              <View style={{
-                marginTop : 10,
-                alignItems : "center",
-                gap : 5,
-                maxWidth : width * 0.41,
-              }}>
-              <Text style={{
-                color: colors.textColor.light,
-                fontSize: 14,
-                fontFamily: font.PoppinsMedium,
-                
-              }}>{item.item.title}</Text>
-              <Text style={{
-                color: colors.textColor.neutralColor,
-                fontSize: 12,
-                fontFamily: font.Poppins,
-                
-              }}>{item.item.publisher}</Text>
-              </View>
-            </TouchableOpacity>
+                style={{
+                  // elevation: 2,
+                  // backgroundColor: colors.bg,
+                  // padding: 2,
+                  borderRadius: 24,
+                  // height: height * 0.243,
+                  // alignItems : "center",
+                  // justifyContent : "center",
+                }}>
+                <View
+                  style={{
+                    elevation: 1,
+                    padding: 3,
+                  }}>
+                  <Image
+                    resizeMode="stretch"
+                    style={{
+                      height: height * 0.24,
+                      width: width * 0.41,
+                      borderRadius: 24,
+                      borderWidth: 2,
+                      borderColor: colors.bg,
+                    }}
+                    source={item.item.image}
+                  />
+                </View>
+                <View
+                  style={{
+                    marginTop: 10,
+                    alignItems: 'center',
+                    gap: 5,
+                    maxWidth: width * 0.41,
+                  }}>
+                  <Text
+                    style={{
+                      color: colors.textColor.light,
+                      fontSize: 14,
+                      fontFamily: font.PoppinsMedium,
+                    }}>
+                    {item.item.title}
+                  </Text>
+                  <Text
+                    style={{
+                      color: colors.textColor.neutralColor,
+                      fontSize: 12,
+                      fontFamily: font.Poppins,
+                    }}>
+                    {item.item.publisher}
+                  </Text>
+                </View>
+              </TouchableOpacity>
             )}
           />
         </>
@@ -1622,6 +1678,6 @@ const ConversationalModal = ({
   );
 };
 
-export default ConversationalModal;
+export default React.memo(ConversationalModal);
 
 const styles = StyleSheet.create({});

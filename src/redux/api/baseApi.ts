@@ -1,6 +1,8 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { getStorageToken, removeStorageToken } from '../../utils/utils';
 
+import { Alert } from 'react-native';
+
 const baseQuery = fetchBaseQuery({
   baseUrl: 'http://192.168.10.202:5000/api/v1',
   prepareHeaders: async (headers, { getState }) => {
@@ -17,7 +19,6 @@ const baseQuery = fetchBaseQuery({
 
 const baseQueryWithRath: typeof baseQuery = async (args, api, extraOptions) => {
   // const socket = getSocket();
-
   // if (!socket){
   //   initiateSocket();
   // }
@@ -25,7 +26,7 @@ const baseQueryWithRath: typeof baseQuery = async (args, api, extraOptions) => {
   let result = await baseQuery(args, api, extraOptions);
   // console.log(result);
   if(result?.error?.status === "FETCH_ERROR"){
-    // Alert.alert(result.error.error)
+    Alert.alert(result.error.error)
   }
   if (result?.error?.status === 401) {
     // Handle token refresh logic here if needed
@@ -33,6 +34,7 @@ const baseQueryWithRath: typeof baseQuery = async (args, api, extraOptions) => {
     // removeStorageRole();
     removeStorageToken();
   }
+
   return result;
 };
 

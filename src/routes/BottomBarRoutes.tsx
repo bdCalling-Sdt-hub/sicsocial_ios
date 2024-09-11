@@ -1,21 +1,22 @@
 // App.tsx
-import React from 'react';
+
 import {
-  View,
+  BottomTabBarProps,
+  createBottomTabNavigator,
+} from '@react-navigation/bottom-tabs';
+import {
   Image,
-  TouchableOpacity,
   StatusBar,
   StyleSheet,
+  TouchableOpacity,
+  View,
 } from 'react-native';
-import {NavigationContainer} from '@react-navigation/native';
-import {
-  createBottomTabNavigator,
-  BottomTabBarProps,
-} from '@react-navigation/bottom-tabs';
+import { useContextApi, useStyles } from '../context/ContextApi';
+
+import React from 'react';
 import LinearGradient from 'react-native-linear-gradient';
-import HomeScreen from '../screens/home/HomeScreen';
-import {useContextApi, useStyles} from '../context/ContextApi';
 import FriendsScreen from '../screens/friends/FriendsScreen';
+import HomeScreen from '../screens/home/HomeScreen';
 import MassageScreen from '../screens/message/MassageScreen';
 import ProfileScreen from '../screens/profile/ProfileScreen';
 
@@ -91,10 +92,10 @@ const MyTabBar: React.FC<BottomTabBarProps> = ({
           });
         };
 
-        console.log(
-          routeAssets.find(item => item.name === route.name && item.icon_fill)
-            ?.icon_fill,
-        );
+        // console.log(
+        //   routeAssets.find(item => item.name === route.name && item.icon_fill)
+        //     ?.icon_fill,
+        // );
 
         return (
           <TouchableOpacity
@@ -200,4 +201,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default BottomBarRoutes;
+export default React.memo(BottomBarRoutes);

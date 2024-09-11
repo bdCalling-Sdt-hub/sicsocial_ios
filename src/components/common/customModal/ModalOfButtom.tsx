@@ -275,4 +275,4 @@ const ModalOfBottom = ({
   );
 };
 
-export default ModalOfBottom;
+export default React.memo(ModalOfBottom);

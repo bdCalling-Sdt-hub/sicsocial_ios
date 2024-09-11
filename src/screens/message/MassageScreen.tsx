@@ -10,11 +10,13 @@ import {
 } from 'react-native';
 import { useContextApi, useStyles } from '../../context/ContextApi';
 
+import { format } from 'date-fns';
 import React from 'react';
 import { SvgXml } from 'react-native-svg';
 import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
 import MessageCard from '../../components/conversation/MessageCard';
 import { NavigProps } from '../../interfaces/NaviProps';
+import { useGetChatListQuery } from '../../redux/apiSlices/chatSlices';
 import { height } from '../../utils/utils';
 
 const friends = [
@@ -96,6 +98,8 @@ const Conversations = [
 ];
 
 const MassageScreen = ({navigation}: NavigProps<null>) => {
+  const {data : chatList} = useGetChatListQuery({})
+  // console.log(cat);
   const {colors, font} = useStyles();
   const {isDark} = useContextApi()
   const [modalVisible, setModalVisible] = React.useState(false);
@@ -286,7 +290,7 @@ const MassageScreen = ({navigation}: NavigProps<null>) => {
     
       > 
       {
-        Conversations.map((item,index)=>{
+        chatList?.data?.map((item,index)=>{
           return(
             <MessageCard
             key={index}
@@ -297,11 +301,11 @@ const MassageScreen = ({navigation}: NavigProps<null>) => {
                 navigation?.navigate('NormalConversation');
               }
             }}
-            img={item.img}
-            lastMessage={item?.lastMessage}
-            lastTime="9:51 am"
-            name={item.name}
-            people={item.group ? 'two' : 'one'}
+            img={item.participants[0].avatar}
+            lastMessage={item.lastMessage.audio ? "send a audio message" : item.lastMessage.image ? "send an image message" : item.lastMessage.text ? item.lastMessage.text : item.lastMessage.path ? "send a book" : "Start a chat"}
+            lastTime={format(new Date(item.updatedAt), "hh :mm a")}
+            name={item.participants[0].fullName}
+            people={item.participants.length === 2 ? 'two' : 'one'}
           />
           )
         })

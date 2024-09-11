@@ -1,13 +1,13 @@
 import {
   Image,
-  Pressable,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from 'react-native';
+
 import React from 'react';
-import {useStyles} from '../../context/ContextApi';
+import { useStyles } from '../../context/ContextApi';
 
 interface IMessageCardProps {
   name: string;
@@ -89,11 +89,13 @@ const MessageCard = ({
                     width: 65,
                     height: 65,
                     borderRadius: 28,
-                    resizeMode: 'contain',
+                    resizeMode: 'cover',
                     borderColor: 'rgba(255,255,255,1)',
                     borderWidth: 2,
                   }}
-                  source={img}
+                  source={{
+                    uri :
+                    img}}
                 />
               </View>
             </View>

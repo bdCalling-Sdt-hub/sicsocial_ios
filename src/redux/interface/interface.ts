@@ -28,13 +28,7 @@ export interface IParticipants {
   }>;
 }
 
-export interface INewFeed extends IParticipants {
-  _id: string;
-  type: string;
-  facedown: any;
-  createdAt: Date;
-  updatedAt: Date;
-  __v: 0;
+export interface ILastMessage {
   lastMessage: {
     _id: string;
     sender: {
@@ -48,8 +42,30 @@ export interface INewFeed extends IParticipants {
     createdAt: Date;
   };
 }
+
+export interface INewFeed extends IParticipants ,ILastMessage {
+  _id: string;
+  type: string;
+  facedown: any;
+  createdAt: Date;
+  updatedAt: Date;
+  __v: 0;
+
+}
 export interface INewFeeds extends IFetchStatus {
   data: Array<INewFeed>;
+}
+
+export interface Chat extends IParticipants, ILastMessage {
+  _id: string;
+  type: 'private';
+  createdAt: string;
+  updatedAt: string;
+  __v: 0;
+}
+
+export interface IChats extends IFetchStatus {
+  data: Array<Chat>;
 }
 
 export interface ICreateChat {
@@ -58,9 +74,9 @@ export interface ICreateChat {
   facedown?: string;
 }
 export interface ICreateMessage {
-  chatId : string;
-  image ?: File | string;
-  text ?: string;
-  audio ?: File | string;
-  path ?: string;
+  chatId: string;
+  image?: File | string;
+  text?: string;
+  audio?: File | string;
+  path?: string;
 }

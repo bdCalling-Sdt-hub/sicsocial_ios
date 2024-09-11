@@ -1,10 +1,10 @@
 import {
-    FlatList,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View
+  FlatList,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
 } from 'react-native';
 import { useContextApi, useStyles } from '../../context/ContextApi';
 
@@ -13,6 +13,7 @@ import { SvgXml } from 'react-native-svg';
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
 import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
 import { NavigProps } from '../../interfaces/NaviProps';
+import { removeStorageToken } from '../../utils/utils';
 
 const settingsData = [
   {
@@ -185,7 +186,8 @@ const SettingScreen = ({navigation}: NavigProps<null>) => {
                   navigation?.navigate('Feedback');
                 }
                 if (item.item.option === 'logout') {
-                  navigation?.navigate('Login');
+                  removeStorageToken()
+                  navigation?.navigate('Loading');
                 }
               }}
               style={{

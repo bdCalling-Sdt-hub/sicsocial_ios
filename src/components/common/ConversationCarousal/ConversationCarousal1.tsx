@@ -1,31 +1,29 @@
+import React, { Dispatch, SetStateAction, useEffect } from 'react';
 import {
-  Easing,
   FlatList,
   Image,
-  Keyboard,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  useWindowDimensions,
   View,
+  useWindowDimensions
 } from 'react-native';
-import React, {Dispatch, SetStateAction, useEffect} from 'react';
+import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import Animated, {
   interpolate,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
-import {useStyles} from '../../../context/ContextApi';
-import Carousel, {ICarouselInstance} from 'react-native-reanimated-carousel';
-import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
-import {NavigProps} from '../../../interfaces/NaviProps';
-import {AnimatedCircularProgress} from 'react-native-circular-progress';
-import ModalOfBottom from '../customModal/ModalOfButtom';
-import {SvgXml} from 'react-native-svg';
-import {messagePros} from '../../../screens/message/NormalConversationScreen';
+
+import { AnimatedCircularProgress } from 'react-native-circular-progress';
+import { SvgXml } from 'react-native-svg';
+import { useStyles } from '../../../context/ContextApi';
+import { NavigProps } from '../../../interfaces/NaviProps';
+import { messagePros } from '../../../screens/message/NormalConversationScreen';
 import CustomModal from '../customModal/CustomModal';
+import ModalOfBottom from '../customModal/ModalOfButtom';
 
 const data = [
   {
@@ -823,20 +821,7 @@ const ConversationCarousal1 = ({
             renderItem={item => (
               <TouchableOpacity
                 onPress={() => {
-                  setMessages &&
-                    setMessages([
-                      ...messages,
-                      {
-                        id: messages.length + 1,
-                        createdAt: new Date(),
-                        bookImage: item.item.image,
-                        user: {
-                          _id: 1,
-                          name: 'Amina',
-                          avatar: require('../../../assets/tempAssets/3a906b3de8eaa53e14582edf5c918b5d.jpg'),
-                        },
-                      },
-                    ]);
+              
 
                   setBooksModal(false);
                 }}
@@ -865,6 +850,6 @@ const ConversationCarousal1 = ({
   );
 };
 
-export default ConversationCarousal1;
+export default React.memo(ConversationCarousal1);
 
 const styles = StyleSheet.create({});

@@ -9,6 +9,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Provider } from 'react-redux';
 import store from '../redux/store';
+import LoadingSplash from '../screens/LoadingSplash';
 import ChangePassword from '../screens/Logins/ChnagePassword';
 import DeleteAccount from '../screens/Logins/DeleteAccount';
 import EmailConfirmationScreen from '../screens/Logins/EmailConfirmationScreen';
@@ -76,6 +77,7 @@ const Routes = () => {
           {/* <Stack.Screen name="TEsting" component={TestScreen} /> */}
           {/* <Stack.Screen name="Splash" component={SplashScreen} /> */}
           <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="Loading" component={LoadingSplash} />
           <Stack.Screen name="SignUp" component={SignUpScreen} />
           <Stack.Screen
             name="EmailConfirmation"
@@ -90,8 +92,11 @@ const Routes = () => {
           />
           <Stack.Screen name="DeleteAccount" component={DeleteAccount} />
 
-          {/*=================== under the home ====================== */}
-          <Stack.Screen name="HomeRoutes" component={BottomBarRoutes} />
+         
+         {
+          token && <>
+           {/*=================== under the home ====================== */}
+           <Stack.Screen name="HomeRoutes" component={BottomBarRoutes} />
           <Stack.Screen
             name="donation"
             component={DonationScreen}
@@ -325,6 +330,10 @@ const Routes = () => {
             }}
           />
           {/*======================== Profile end ============================ */}
+          
+          </>
+         }
+         
         </Stack.Navigator>
       </NavigationContainer>
     </GestureHandlerRootView>

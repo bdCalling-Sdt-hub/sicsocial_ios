@@ -45,7 +45,7 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
   >([]);
   // lines of modal animation
 
-  const scrollViewGapHight = useSharedValue('20%');
+  const scrollViewGapHight = useSharedValue('0%');
 
   useEffect(() => {
     if (isLive) {
@@ -58,6 +58,7 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
         duration: 1000,
       });
     }
+    return () => {};
   }, [isLive]);
 
   // is live  card have checker and create animation asaa
@@ -167,13 +168,15 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
        
    
         {/*========================== conversation card start ======================= */}
+     
 
         <FlatList
          showsVerticalScrollIndicator={false}
          showsHorizontalScrollIndicator={false}
          contentContainerStyle={{
           gap: 16,
-          paddingTop: 16,
+          paddingVertical: 16,
+          
           // paddingBottom: isLive ? LIVE_ACTIVE_VALUE + 30 : 16,
           paddingHorizontal: '5%',
         }}
@@ -190,10 +193,9 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
       lastMessageTime={format(new Date(item.updatedAt), "hh :mm a")}
       lastMessage={item.lastMessage.audio ? "send a audio message" : item.lastMessage.image ? "send an image message" : item.lastMessage.text ? item.lastMessage.text : item.lastMessage.path ? "send a book" : "Start a chat"}
     />
-      )}
+  )}
       // estimatedItemSize={150}
     />
-
         {/* <ConversationalCard
           disabled
           conversationStyle="donation"
