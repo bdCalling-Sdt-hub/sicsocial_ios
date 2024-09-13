@@ -2,12 +2,12 @@
 
 import * as React from 'react';
 
+import { Provider, useSelector } from 'react-redux';
 import ContextApi, { useContextApi, useStyles } from '../context/ContextApi';
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { Provider } from 'react-redux';
 import store from '../redux/store';
 import LoadingSplash from '../screens/LoadingSplash';
 import ChangePassword from '../screens/Logins/ChnagePassword';
@@ -50,7 +50,6 @@ import SearchScreen from '../screens/search/SearchScreen';
 import BookShareScreen from '../screens/sharebooks/BookShareScreen';
 import BookShareWithCategory from '../screens/sharebooks/BookShareWithCategory';
 import BooksScreen from '../screens/sharebooks/BooksScreen';
-import { getStorageToken } from '../utils/utils';
 import BottomBarRoutes from './BottomBarRoutes';
 
 const Stack = createNativeStackNavigator();
@@ -59,13 +58,13 @@ const Routes = () => {
   const {colors} = useStyles();
   const {isDark} = useContextApi();
 
-  const token = getStorageToken()
-
+  
+  const {token} = useSelector((state: any) => state?.token)
   return (
     <GestureHandlerRootView>
       <NavigationContainer>
         <Stack.Navigator
-        initialRouteName={token ? "HomeRoutes" : "Login"}
+        initialRouteName={token ? 'HomeRoutes' : 'Login'}
           screenOptions={{
             headerShown: false,
             statusBarAnimation: 'fade',
@@ -342,7 +341,7 @@ const Routes = () => {
 
 function AppRoutes() {
   const [isSplash, setIsSplash] = React.useState(true);
-
+ 
   return (
     <Provider store={store}>
       <ContextApi>

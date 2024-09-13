@@ -143,7 +143,7 @@ const MyTabBar: React.FC<BottomTabBarProps> = ({
   );
 };
 
-const BottomBarRoutes: React.FC = () => {
+const BottomBarRoutes = () => {
   return (
     <Tab.Navigator
       tabBar={props => <MyTabBar {...props} />}
@@ -201,4 +201,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default React.memo(BottomBarRoutes);
+export default BottomBarRoutes;

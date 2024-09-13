@@ -12,10 +12,12 @@ import { Formik } from 'formik';
 import React from 'react';
 import { Checkbox } from 'react-native-ui-lib';
 import Feather from 'react-native-vector-icons/Feather';
+import { useDispatch } from 'react-redux';
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
 import { useStyles } from '../../context/ContextApi';
 import { NavigProps } from '../../interfaces/NaviProps';
 import { useLoginUserMutation } from '../../redux/apiSlices/authSlice';
+import { setToken } from '../../redux/apiSlices/tokenSlice';
 import { lStorage } from '../../utils/utils';
 
 const LoginScreen = ({navigation}: NavigProps<null>) => {
@@ -28,7 +30,7 @@ const LoginScreen = ({navigation}: NavigProps<null>) => {
   })
   const [isShow, setIsShow] = React.useState(false);
   const [check, setCheck] = React.useState( lStorage.getBool('check') ||false);
-
+  const dispatch = useDispatch()
   const [loginUser] = useLoginUserMutation()
 
   const OnSubmit = (values) => {
@@ -57,6 +59,7 @@ const LoginScreen = ({navigation}: NavigProps<null>) => {
         }
         if (res?.data) {
           console.log(res.data?.data?.accessToken);
+          dispatch(setToken(res.data?.data?.accessToken))
          lStorage.setString("token", res.data?.data?.accessToken);
           navigation?.navigate('Loading');
         }

@@ -2,13 +2,13 @@ import { ImageBackground, StyleSheet, View } from 'react-native';
 
 import LottieView from 'lottie-react-native';
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { NavigProps } from '../interfaces/NaviProps';
-import { lStorage } from '../utils/utils';
 
 const LoadingSplash = ({navigation}: NavigProps<null>) => {
-  
-  const token = lStorage.getString('token');
-
+  const {token} = useSelector((state: any) => state?.token)
+   
+    // console.log(token);
  
   setTimeout(() => {
     if(token){

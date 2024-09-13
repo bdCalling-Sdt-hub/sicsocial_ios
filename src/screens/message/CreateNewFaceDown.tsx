@@ -1,12 +1,11 @@
 import {
-  FlatList,
-  Image,
-  ScrollView,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-  useWindowDimensions
+    Image,
+    ScrollView,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
+    useWindowDimensions
 } from 'react-native';
 import React, { SetStateAction } from 'react';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
@@ -14,6 +13,7 @@ import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
 import CustomModal from '../../components/common/customModal/CustomModal';
 import DateTimePicker from 'react-native-ui-datepicker';
+import { GridList } from 'react-native-ui-lib';
 import { LinkPreview } from '@flyerhq/react-native-link-preview';
 import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
 import { NavigProps } from '../../interfaces/NaviProps';
@@ -882,7 +882,7 @@ sed Quisque ac lobortis, Quisque urna ipsum Nam id tempor placerat. Morbi ipsum 
         modalVisible={imageModal}
         setModalVisible={setImageModal}
         onlyTopRadius={20}
-        panOf
+       
         containerColor={colors.bg}>
         <View
           style={{

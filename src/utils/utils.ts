@@ -3,9 +3,14 @@
 import { Dimensions, PixelRatio } from 'react-native';
 
 import { MMKVLoader } from 'react-native-mmkv-storage';
+import { imageUrl } from '../redux/api/baseApi';
 
 export const {width, height} = Dimensions.get('screen')
 export const lStorage = new MMKVLoader().initialize();
+
+export const makeImage = (url: string) => {
+  return  url.startsWith('https') ? url : imageUrl + url
+}
 
 //  three size like sm md or tablet 
 const fontScale = PixelRatio.getFontScale();

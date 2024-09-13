@@ -5,7 +5,7 @@ import { Alert } from 'react-native';
 
 const baseQuery = fetchBaseQuery({
   baseUrl: 'http://192.168.10.202:5000/api/v1',
-  prepareHeaders: async (headers, { getState }) => {
+  prepareHeaders: async (headers, {getState}) => {
     const token = getStorageToken();
     // console.log(token);
     if (token) {
@@ -22,11 +22,11 @@ const baseQueryWithRath: typeof baseQuery = async (args, api, extraOptions) => {
   // if (!socket){
   //   initiateSocket();
   // }
-  
+
   let result = await baseQuery(args, api, extraOptions);
   // console.log(result);
-  if(result?.error?.status === "FETCH_ERROR"){
-    Alert.alert(result.error.error)
+  if (result?.error?.status === 'FETCH_ERROR') {
+    Alert.alert(result.error.error);
   }
   if (result?.error?.status === 401) {
     // Handle token refresh logic here if needed
@@ -38,15 +38,23 @@ const baseQueryWithRath: typeof baseQuery = async (args, api, extraOptions) => {
   return result;
 };
 
-
 export const api = createApi({
   reducerPath: 'api',
   // keepUnusedDataFor: 0,
   baseQuery: baseQueryWithRath,
-  
+
   endpoints: () => ({}),
-  tagTypes: ['user',"message","chat","news_feed"],
+  tagTypes: [
+    'user',
+    'message',
+    'chat',
+    'news_feed',
+    'facedown',
+    'friend',
+    'additional',
+    'book',
+    'payment',
+  ],
 });
 
-
-export const imageUrl = 'http://192.168.10.202:5000/api/v1';
+export const imageUrl = 'http://192.168.10.202:5000/';

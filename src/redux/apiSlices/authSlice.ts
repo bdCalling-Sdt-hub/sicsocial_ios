@@ -1,5 +1,6 @@
 import { api } from "../api/baseApi";
-import { IUser } from "../interface/interface";
+import { IFetchStatus } from "../interface/main";
+import { IUser } from "../interface/user";
 
 const authSlice = api.injectEndpoints({
     endpoints: (builder) => ({
@@ -36,6 +37,14 @@ const authSlice = api.injectEndpoints({
             }),
             invalidatesTags : ["user"]
           }),
+   userUpdate: builder.mutation<IFetchStatus, any>({
+            query: (data) => ({
+              url: `/users/update-profile`,
+              method: 'PATCH',
+              body: data,
+            }),
+            invalidatesTags : ["user"]
+          }),
         sendCodeAgain: builder.mutation({
             query: (data) => ({
               url: `/auth/resend-email`,
@@ -52,5 +61,6 @@ export const {
   useCreateUserMutation,
   useLoginUserMutation,
   useVerifyUserMutation,
-  useSendCodeAgainMutation
+  useSendCodeAgainMutation,
+  useUserUpdateMutation
 } = authSlice;

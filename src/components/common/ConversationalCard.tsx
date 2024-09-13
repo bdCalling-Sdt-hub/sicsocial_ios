@@ -11,8 +11,10 @@ import React from 'react';
 import { SvgXml } from 'react-native-svg';
 import { useStyles } from '../../context/ContextApi';
 import { NavigProps } from '../../interfaces/NaviProps';
+import { IParticipants } from '../../redux/interface/participants';
+import { makeImage } from '../../utils/utils';
 
-interface ConversationalCardProps extends NavigProps<null> {
+interface ConversationalCardProps extends NavigProps<null> , IParticipants {
   conversationTitle?: string;
   conversationSubtitle?: string;
   lastMessage?: string;
@@ -54,6 +56,7 @@ const ConversationalCard = ({
   paddingHorizontal,
   havNotUser,
   manyPeople,
+  participants
 }: ConversationalCardProps) => {
   const {colors, font} = useStyles();
   return (
@@ -71,7 +74,7 @@ const ConversationalCard = ({
           style={{
             backgroundColor: colors.secondaryColor,
             paddingHorizontal: 16,
-            paddingVertical: 10,
+            paddingVertical: 15,
             borderRadius: 16,
             flexDirection: 'row',
             justifyContent: 'space-between',
@@ -445,7 +448,7 @@ const ConversationalCard = ({
                   <View
                     style={{
                       // height: 76,
-
+                      backgroundColor : colors.white,
                       borderRadius: 35,
                       elevation: 1,
                       justifyContent: 'center',
@@ -461,7 +464,7 @@ const ConversationalCard = ({
                         borderColor: 'white',
                         borderWidth: 2,
                       }}
-                      source={require('../../assets/tempAssets/4005b22a3c1c23d7c04f6c9fdbd85468.jpg')}
+                      source={{uri : makeImage(participants![0]?.avatar)}}
                     />
                   </View>
                 </>
@@ -471,7 +474,7 @@ const ConversationalCard = ({
                   <View
                     style={{
                       // height: 76,
-
+                      backgroundColor : colors.white,
                       borderRadius: 28,
                       elevation: 2,
                       justifyContent: 'center',
@@ -487,7 +490,7 @@ const ConversationalCard = ({
                           translateX: 25,
                         },
                         {
-                          translateY: 0,
+                          translateY: -6,
                         },
                       ],
                     }}>
@@ -500,16 +503,16 @@ const ConversationalCard = ({
                         borderColor: 'white',
                         borderWidth: 2,
                       }}
-                      source={require('../../assets/tempAssets/51ad46951bbdc28be4cf7e384964f309.jpg')}
+                      source={{uri : makeImage(participants![0]?.avatar)}}
                     />
                   </View>
                   <View
                     style={{
                       // height: 76,
-
+                      backgroundColor : colors.white,
                       borderRadius: 28,
                       elevation: havNotUser ? 0 : 2,
-                      bottom: havNotUser ? 10 : 25,
+                      // bottom: havNotUser ? 10 : 25,
                       position: 'absolute',
                       right: havNotUser ? 40 : 40,
                       // zIndex: 2,
@@ -521,7 +524,7 @@ const ConversationalCard = ({
                           translateX: havNotUser ? -25 : -25,
                         },
                         {
-                          translateY: 0,
+                          translateY: -6,
                         },
                       ],
                     }}>
@@ -563,7 +566,7 @@ const ConversationalCard = ({
                           borderColor: 'white',
                           borderWidth: 2,
                         }}
-                        source={require('../../assets/tempAssets/691af02d3a7ca8be2811716f82d9212b.jpg')}
+                        source={{uri : makeImage(participants![1]?.avatar)}}
                       />
                     )}
                   </View>
@@ -575,7 +578,7 @@ const ConversationalCard = ({
                   <View
                     style={{
                       // height: 76,
-
+                      backgroundColor : colors.white,
                       borderRadius: 24,
                       elevation: 2,
                       bottom: -25,
@@ -600,13 +603,13 @@ const ConversationalCard = ({
                         borderColor: 'white',
                         borderWidth: 2,
                       }}
-                      source={require('../../assets/tempAssets/7261c2ae940abab762a6e0130b36b3a9.jpg')}
+                      source={{uri : makeImage(participants![0]?.avatar)}}
                     />
                   </View>
                   <View
                     style={{
                       // height: 76,
-
+                      backgroundColor : colors.white,
                       borderRadius: 24,
                       elevation: 2,
                       bottom: -25,
@@ -631,7 +634,7 @@ const ConversationalCard = ({
                         borderColor: 'white',
                         borderWidth: 2,
                       }}
-                      source={require('../../assets/tempAssets/86efa3df337e8c215dd8095476bb6513.jpg')}
+                      source={{uri : makeImage(participants![1]?.avatar)}}
                     />
                   </View>
 
@@ -703,7 +706,7 @@ const ConversationalCard = ({
                           borderColor: 'white',
                           borderWidth: 2,
                         }}
-                        source={require('../../assets/tempAssets/ad868d019f92ce267e6de23af3413e5b.jpg')}
+                        source={{uri : makeImage(participants![2]?.avatar)}}
                       />
                     )}
                   </View>
@@ -720,7 +723,7 @@ const ConversationalCard = ({
                   <View
                     style={{
                       // height: 76,
-
+                      backgroundColor : colors.white,
                       borderRadius: 24,
                       elevation: 2,
                       bottom: 6,
@@ -748,13 +751,13 @@ const ConversationalCard = ({
                         borderColor: 'white',
                         borderWidth: 2,
                       }}
-                      source={require('../../assets/tempAssets/ae1e058c2ed75ab981a9f8bb62e96a13.jpg')}
+                      source={{uri : makeImage(participants![0]?.avatar)}}
                     />
                   </View>
                   <View
                     style={{
                       // height: 76,
-
+                      backgroundColor : colors.white,
                       borderRadius: 24,
                       elevation: 2,
                       bottom: 0,
@@ -782,13 +785,13 @@ const ConversationalCard = ({
                         borderColor: 'white',
                         borderWidth: 2,
                       }}
-                      source={require('../../assets/tempAssets/bdf7eaf41f82746f243dbd6e48280274.jpg')}
+                      source={{uri : makeImage(participants![1]?.avatar)}}
                     />
                   </View>
                   <View
                     style={{
                       // height: 76,
-
+                         backgroundColor : colors.white,
                       borderRadius: 24,
                       elevation: 2,
                       bottom: 6,
@@ -816,13 +819,13 @@ const ConversationalCard = ({
                         borderColor: 'white',
                         borderWidth: 2,
                       }}
-                      source={require('../../assets/tempAssets/f94d91c8643f6698b126e7dec5854350.jpg')}
+                      source={{uri : makeImage(participants![2]?.avatar)}}
                     />
                   </View>
                   <View
                     style={{
                       // height: 76,
-
+                      backgroundColor : colors.white,
                       borderRadius: 24,
                       elevation: 2,
                       bottom: 0,
@@ -850,7 +853,7 @@ const ConversationalCard = ({
                         borderColor: 'white',
                         borderWidth: 2,
                       }}
-                      source={require('../../assets/tempAssets/ad868d019f92ce267e6de23af3413e5b.jpg')}
+                      source={{uri : makeImage(participants![3]?.avatar)}}
                     />
                   </View>
                 </View>

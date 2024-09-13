@@ -8,10 +8,10 @@ import {
 
 import React from 'react';
 import { useStyles } from '../../context/ContextApi';
+import { IParticipants } from '../../redux/interface/participants';
 
-interface IMessageCardProps {
+interface IMessageCardProps extends IParticipants {
   name: string;
-  img: string;
   lastMessage: string;
   lastTime: string;
   active?: boolean;
@@ -21,12 +21,12 @@ interface IMessageCardProps {
 
 const MessageCard = ({
   active,
-  img,
   lastMessage,
   lastTime,
   name,
   onPress,
   people,
+participants
 }: IMessageCardProps) => {
   const {colors, font} = useStyles();
   return (
@@ -79,7 +79,8 @@ const MessageCard = ({
               <View
                 style={{
                   // padding: 2,
-                  // backgroundColor: 'white',
+                  
+                  backgroundColor : colors.white,
                   elevation: 2,
                   width: 65,
                   borderRadius: 28,
@@ -95,11 +96,11 @@ const MessageCard = ({
                   }}
                   source={{
                     uri :
-                    img}}
+                    participants[0].avatar}}
                 />
               </View>
             </View>
-          ) : people === 'two' ? (
+          ) :  (
             <>
               <View
                 style={{
@@ -120,6 +121,7 @@ const MessageCard = ({
                     elevation: 2,
                     width: 47,
                     borderRadius: 28,
+                    backgroundColor : colors.white,
                   }}>
                   <Image
                     style={{
@@ -130,7 +132,9 @@ const MessageCard = ({
                       borderColor: 'rgba(255,255,255,1)',
                       borderWidth: 2,
                     }}
-                    source={img}
+                    source={{
+                      uri :
+                      participants[0].avatar}}
                   />
                 </View>
               </View>
@@ -154,6 +158,7 @@ const MessageCard = ({
                     elevation: 2,
                     width: 47,
                     borderRadius: 28,
+                    backgroundColor : colors.white,
                   }}>
                   <Image
                     style={{
@@ -164,104 +169,11 @@ const MessageCard = ({
                       borderColor: 'rgba(255,255,255,1)',
                       borderWidth: 2,
                     }}
-                    source={require('../../assets/tempAssets/ad868d019f92ce267e6de23af3413e5b.jpg')}
+                    source={{
+                      uri :
+                      participants[1].avatar}}
                   />
                 </View>
-              </View>
-            </>
-          ) : (
-            <>
-              <View
-                style={{
-                  position: 'relative',
-                  padding: 2,
-                  //   backgroundColor: 'white',
-                  // elevation: 1,
-                  // borderWidth: 0.5,
-                  // borderColor: 'rgba(0,0,0,.2)',
-                  borderRadius: 28,
-                  transform: [
-                    {
-                      rotate: '-7deg',
-                    },
-                    {
-                      translateX: -5,
-                    },
-                    {
-                      translateY: -3,
-                    },
-                  ],
-                }}>
-                <Image
-                  style={{
-                    width: 46,
-                    height: 48,
-                    borderRadius: 28,
-                    resizeMode: 'cover',
-                  }}
-                  source={img}
-                />
-              </View>
-              <View
-                style={{
-                  position: 'relative',
-                  padding: 2,
-                  //   backgroundColor: 'white',
-                  // elevation: 1,
-                  // borderWidth: 0.5,
-                  // borderColor: 'rgba(0,0,0,.2)',
-                  borderRadius: 28,
-                  transform: [
-                    {
-                      rotate: '-20deg',
-                    },
-                    {
-                      translateX: 2,
-                    },
-                    {
-                      translateY: -35,
-                    },
-                  ],
-                }}>
-                <Image
-                  style={{
-                    width: 46,
-                    height: 48,
-                    borderRadius: 28,
-                    resizeMode: 'cover',
-                  }}
-                  source={img}
-                />
-              </View>
-              <View
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  padding: 2,
-                  backgroundColor: 'white',
-                  // elevation: 1,
-                  // borderWidth: 0.5,
-                  // borderColor: 'rgba(0,0,0,.2)',
-                  borderRadius: 28,
-                  transform: [
-                    {
-                      translateX: 15,
-                    },
-                    {
-                      translateY: 15,
-                    },
-                  ],
-                }}>
-                <Image
-                  style={{
-                    width: 46,
-                    height: 48,
-                    borderRadius: 28,
-                    resizeMode: 'cover',
-                  }}
-                  source={img}
-                />
               </View>
             </>
           )}

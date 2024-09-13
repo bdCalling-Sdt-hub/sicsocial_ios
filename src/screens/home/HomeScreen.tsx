@@ -91,7 +91,9 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
           position: 'absolute',
           zIndex: 99999,
         }}>
-        <View
+        <TouchableOpacity
+        activeOpacity={0.8}
+        onPress={()=>navigation?.navigate("UserProfile")}
           style={{
             flexDirection: 'row',
             gap: 8,
@@ -131,7 +133,7 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
               {userProfile?.data?.fullName}
             </Text>
           </View>
-        </View>
+        </TouchableOpacity>
         <View
           style={{
             flexDirection: 'row',
@@ -187,7 +189,9 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
       onPress={() => {
         navigation?.navigate('NormalConversation');
       }}
-      cardStyle="four"
+      participants={item.participants}
+      cardStyle={item.participants.length > 4 ? "three" : item?.participants.length === 4 ? "four" : item?.participants.length === 3 ? "three" : item?.participants.length === 2 ? "two" : "single"}
+      manyPeople={item.participants.length > 4 ? true : false}
       conversationTitle={item.lastMessage.sender._id === userProfile?.data?._id ? "You" : userProfile?.data?.fullName}
       conversationSubtitle={item.lastMessage.sender._id === userProfile?.data?._id ? "send a message" : "Reply to the message"}
       lastMessageTime={format(new Date(item.updatedAt), "hh :mm a")}
@@ -324,9 +328,6 @@ is recognize for SIC "
       {/*==================== Body part Start ===================  */}
 
       <ConversationalModal
-      
-        addNewVoiceCard={addNewVoiceCard}
-        setAddNewVoiceCard={setAddNewVoiceCard}
         navigation={navigation}
       />
 
@@ -335,7 +336,7 @@ is recognize for SIC "
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
         onlyTopRadius={20}
-        panOf
+       
         // backButton
       >
         <View>

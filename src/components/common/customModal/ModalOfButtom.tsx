@@ -34,7 +34,7 @@ type CustomModalProps = {
   transparent?: boolean;
   containerColor?: string;
   backButtonColor?: string;
-  panOf?: boolean;
+   panOf ?: boolean;
 };
 
 const ModalOfBottom = ({
@@ -85,7 +85,7 @@ const ModalOfBottom = ({
   });
 
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
-  console.log(isKeyboardVisible);
+  // console.log(isKeyboardVisible);
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -109,93 +109,7 @@ const ModalOfBottom = ({
   }, []);
 
   return (
-    // <Modal
-    //   // presentationStyle="pageSheet"
-    //   animationType={'slide'}
-    //   transparent={true}
-    //   visible={modalVisible}>
-    //   <Pressable
-    //     disabled={normal || false}
-    //     onPressIn={() => {
-    //       containerColorValue.value = 'transparent';
-    //       containerOpacity.value = withTiming(0, {duration: 250});
-    //     }}
-    //     onPress={() => {
-    //       setModalVisible(false);
-    //     }}
-    //     // onPressOut={() => {
-    //     //   containerOpacity.value = withTiming(0, {duration: 10});
-    //     //   setModalVisible(false);
-    //     //   // setTimeout(() => {
-    //     //   // }, 50);
-    //     // }}
-    //   >
-    //     <Animated.View
-    //       style={[
-    //         {
-    //           justifyContent: containerAlign ? containerAlign : 'flex-end',
-    //           alignItems: 'center',
-
-    //           height: '100%',
-    //           width: '100%',
-    //         },
-    //         modalAnimationStyle,
-    //       ]}>
-    //       <Pressable
-    //         style={{
-    //           borderRadius: Radius ? 9 : 0,
-    //           borderTopRightRadius: onlyTopRadius ? onlyTopRadius : 0,
-    //           borderTopLeftRadius: onlyTopRadius ? onlyTopRadius : 0,
-    //           backgroundColor: colors.bg,
-    //           height: height ? height : '40%',
-    //           width: width ? width : '100%',
-    //           padding: 30,
-    //           justifyContent: center && 'center',
-    //           position: 'relative',
-    //         }}>
-    //         {backButton && (
-    //           <TouchableOpacity
-    //             onPressIn={() => {
-    //               containerColorValue.value = withTiming('transparent');
-    //             }}
-    //             onPressOut={() => {
-    //               setTimeout(() => {
-    //                 setModalVisible(false);
-    //               }, 50);
-    //             }}
-    //             style={{
-    //               position: 'absolute',
-    //               right: 8,
-    //               top: 8,
-    //               zIndex: 999,
-    //             }}>
-    //             <View
-    //               style={{
-    //                 width: 30,
-    //                 height: 30,
-    //                 // backgroundColor: globalStyle.primary,
-    //                 //   backgroundColor: 'gray',
-    //                 justifyContent: 'center',
-    //                 alignItems: 'center',
-    //                 borderRadius: 100,
-    //               }}>
-    //               <AntDesign
-    //                 name="close"
-    //                 size={24}
-    //                 color={
-    //                   backButtonColor
-    //                     ? backButtonColor
-    //                     : colors.textColor.normal
-    //                 }
-    //               />
-    //             </View>
-    //           </TouchableOpacity>
-    //         )}
-    //         {children}
-    //       </Pressable>
-    //     </Animated.View>
-    //   </Pressable>
-    // </Modal>
+ 
     <>
       <KeyboardAvoidingView
         onLayout={e => {

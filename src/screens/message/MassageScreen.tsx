@@ -301,7 +301,7 @@ const MassageScreen = ({navigation}: NavigProps<null>) => {
                 navigation?.navigate('NormalConversation');
               }
             }}
-            img={item.participants[0].avatar}
+            participants={item.participants}
             lastMessage={item.lastMessage.audio ? "send a audio message" : item.lastMessage.image ? "send an image message" : item.lastMessage.text ? item.lastMessage.text : item.lastMessage.path ? "send a book" : "Start a chat"}
             lastTime={format(new Date(item.updatedAt), "hh :mm a")}
             name={item.participants[0].fullName}
@@ -318,7 +318,7 @@ const MassageScreen = ({navigation}: NavigProps<null>) => {
 
       <TouchableOpacity
         onPress={() => {
-          navigation?.navigate('MakeGroup');
+          navigation?.navigate('MakeGroup',{data : {option : "group" , screenTitle : "Make Group"}});
         }}
         style={{
           position: 'absolute',

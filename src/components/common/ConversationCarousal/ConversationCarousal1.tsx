@@ -1,20 +1,20 @@
 import React, { Dispatch, SetStateAction, useEffect } from 'react';
 import {
-  FlatList,
-  Image,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-  useWindowDimensions
+    FlatList,
+    Image,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
+    useWindowDimensions
 } from 'react-native';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import Animated, {
-  interpolate,
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
+    interpolate,
+    useAnimatedStyle,
+    useSharedValue,
+    withTiming,
 } from 'react-native-reanimated';
 
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
@@ -591,11 +591,11 @@ const ConversationCarousal1 = ({
         )}
         // customAnimation={animationStyle}
       />
-      <ModalOfBottom
+     <ModalOfBottom
         modalVisible={imageModal}
         setModalVisible={setImageModal}
         onlyTopRadius={20}
-        height={'20%'}
+ 
         containerColor={colors.bg}>
         <View
           style={{

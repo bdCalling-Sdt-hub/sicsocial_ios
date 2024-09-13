@@ -10,9 +10,11 @@ import { useContextApi, useStyles } from '../../context/ContextApi';
 
 import React from 'react';
 import { SvgXml } from 'react-native-svg';
+import { useDispatch } from 'react-redux';
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
 import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
 import { NavigProps } from '../../interfaces/NaviProps';
+import { clearToken } from '../../redux/apiSlices/tokenSlice';
 import { removeStorageToken } from '../../utils/utils';
 
 const settingsData = [
@@ -122,7 +124,8 @@ const SettingScreen = ({navigation}: NavigProps<null>) => {
   const {isDark, setDark} = useContextApi();
   const [languageModal, setLanguageModal] = React.useState(false);
   const [selectedLanguage, setSelectedLanguage] = React.useState<any[]>();
-  console.log(selectedLanguage);
+  // console.log(selectedLanguage);
+  const dispatch = useDispatch();
   return (
     <View
       style={{
@@ -186,6 +189,7 @@ const SettingScreen = ({navigation}: NavigProps<null>) => {
                   navigation?.navigate('Feedback');
                 }
                 if (item.item.option === 'logout') {
+                  dispatch(clearToken())
                   removeStorageToken()
                   navigation?.navigate('Loading');
                 }

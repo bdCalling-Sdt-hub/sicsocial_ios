@@ -1,42 +1,31 @@
 import React, { useState } from 'react';
 import {
-    Image,
-    Pressable,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  Image,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
+import { useGetUserProfileQuery, useUserUpdateMutation } from '../../redux/apiSlices/authSlice';
 
 import { SvgXml } from 'react-native-svg';
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
 import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
 import { useStyles } from '../../context/ContextApi';
 import { NavigProps } from '../../interfaces/NaviProps';
+import { makeImage } from '../../utils/utils';
 
 const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
+  const {data : userProfile} = useGetUserProfileQuery({});
+  const [userUpdate] = useUserUpdateMutation();
   const {colors, font} = useStyles();
   const [imageModal, setImageModal] = React.useState(false);
 
-  const [userInfo, setUserInfo] = React.useState({
-    profile_image: '',
-    bio: 'Hello everyone , I am so simple person. i am working as a ux ui designer. ',
-    details: {
-      name: 'Asadullah',
-      email: 'Gabrail101@gmail.com',
-      contact_no: '+9900000000000',
-      live_in: 'Bangladesh',
-      occupations: 'Business',
-      organization_company: 'google',
-      studied_at: 'DIU',
-      relationship_status: 'Single',
-    },
-    link: 'https://www.instagram.com/as.ad1679...',
-    interests: [],
-  });
+  const [userInfo, setUserInfo] = React.useState(userProfile?.data);
 
   const [imageAssets, setImageAssets] = React.useState<any>({});
 
@@ -61,12 +50,12 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
         });
 
         if (!result.didCancel) {
-          setUserInfo({
-            ...userInfo,
-            profile_image: result?.assets![0].uri as string,
-          });
+          setImageAssets(
+            result?.assets![0],
+          );
           setImageModal(false);
           // console.log(result);
+          handleUserUpdated();
         }
       }
       if (option === 'library') {
@@ -79,18 +68,37 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
         });
 
         if (!result.didCancel) {
-          setUserInfo({
-            ...userInfo,
-            profile_image: result?.assets![0].uri as string,
-          });
+          setImageAssets(
+            result?.assets![0],
+          );
           setImageModal(false);
           // console.log(result);
+          handleUserUpdated();
         }
       }
     } catch (error) {
       console.log(error);
     }
   };
+
+  const handleUserUpdated = React.useCallback(async()=>{
+    const formData = new FormData();
+
+    if (imageAssets?.uri) {
+      formData.append('avatar', {
+        name: imageAssets.fileName,
+        type: imageAssets.type,
+        uri: imageAssets.uri,
+      });
+    }
+    formData.append('data', JSON.stringify(userInfo));
+
+    const result = await userUpdate(formData);
+    console.log(result);
+    if (result) {
+      // navigation?.goBack();
+    }
+  },[userInfo, imageAssets]);
 
   return (
     <View
@@ -193,11 +201,11 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
                   borderColor: colors.white,
                 }}
                 source={
-                  userInfo?.profile_image
-                    ? {
-                        uri: userInfo.profile_image,
+                
+                     {
+                        uri:   imageAssets?.uri || makeImage(userInfo?.avatar)
                       }
-                    : require('../../assets/tempAssets/EptyImageUser.jpg')
+              
                 }
               />
             </View>
@@ -241,6 +249,7 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
                 <TouchableOpacity
                   onPress={() => {
                     setEdit({...edit, bio: false});
+                    handleUserUpdated();
                   }}
                   style={{
                     borderWidth: 1,
@@ -300,7 +309,7 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
               verticalAlign="top"
               textAlignVertical="top"
               numberOfLines={4}
-              value={userInfo.bio}
+              value={userInfo?.bio}
               style={{
                 height: 80,
                 padding: 12,
@@ -309,7 +318,7 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
                 color: colors.textColor.neutralColor,
               }}
               placeholderTextColor={colors.textColor.neutralColor}
-              placeholder={edit.bio ? 'Describe yourself...' : userInfo.bio}
+              placeholder={edit.bio ? 'Describe yourself...' : userInfo?.bio}
             />
           </View>
         </View>
@@ -351,6 +360,7 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
                 <TouchableOpacity
                   onPress={() => {
                     setEdit({...edit, details: false});
+                    handleUserUpdated();
                   }}
                   style={{
                     borderWidth: 1,
@@ -424,11 +434,11 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
                       color: colors.textColor.neutralColor,
                       fontSize: 14,
                     }}
-                    value={userInfo?.details?.name}
+                    value={userInfo?.fullName}
                     onChangeText={text =>
                       setUserInfo({
                         ...userInfo,
-                        details: {...userInfo.details, name: text as string},
+                        fullName : text,
                       })
                     }
                   />
@@ -458,14 +468,13 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
                       color: colors.textColor.neutralColor,
                       fontSize: 14,
                     }}
-                    value={userInfo?.details?.contact_no}
+                    value={userInfo?.phoneNumber}
                     onChangeText={text =>
                       setUserInfo({
                         ...userInfo,
-                        details: {
-                          ...userInfo.details,
-                          contact_no: text as string,
-                        },
+                      
+                          phoneNumber: text,
+                        
                       })
                     }
                   />
@@ -496,11 +505,11 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
                       color: colors.textColor.neutralColor,
                       fontSize: 14,
                     }}
-                    value={userInfo?.details?.live_in}
+                    value={userInfo?.address}
                     onChangeText={text =>
                       setUserInfo({
                         ...userInfo,
-                        details: {...userInfo.details, live_in: text as string},
+                        address: text,
                       })
                     }
                   />
@@ -530,14 +539,11 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
                       color: colors.textColor.neutralColor,
                       fontSize: 14,
                     }}
-                    value={userInfo?.details?.occupations}
+                    value={userInfo?.occupations}
                     onChangeText={text =>
                       setUserInfo({
                         ...userInfo,
-                        details: {
-                          ...userInfo.details,
-                          occupations: text as string,
-                        },
+                        occupations: text
                       })
                     }
                   />
@@ -567,14 +573,11 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
                       color: colors.textColor.neutralColor,
                       fontSize: 14,
                     }}
-                    value={userInfo?.details?.organization_company}
+                    value={userInfo?.worksAt}
                     onChangeText={text =>
                       setUserInfo({
                         ...userInfo,
-                        details: {
-                          ...userInfo.details,
-                          organization_company: text as string,
-                        },
+                        worksAt: text,
                       })
                     }
                   />
@@ -604,14 +607,11 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
                       color: colors.textColor.neutralColor,
                       fontSize: 14,
                     }}
-                    value={userInfo?.details?.studied_at}
+                    value={userInfo?.studiedAt}
                     onChangeText={text =>
                       setUserInfo({
                         ...userInfo,
-                        details: {
-                          ...userInfo.details,
-                          studied_at: text as string,
-                        },
+                        studiedAt: text
                       })
                     }
                   />
@@ -641,14 +641,11 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
                       color: colors.textColor.neutralColor,
                       fontSize: 14,
                     }}
-                    value={userInfo?.details?.relationship_status}
+                    value={userInfo?.relationshipStatus}
                     onChangeText={text =>
                       setUserInfo({
                         ...userInfo,
-                        details: {
-                          ...userInfo.details,
-                          relationship_status: text as string,
-                        },
+                        relationshipStatus: text
                       })
                     }
                   />
@@ -676,7 +673,7 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
                       color: colors.textColor.neutralColor,
                       fontFamily: font.Poppins,
                     }}>
-                    {userInfo.details.name}
+                    {userInfo?.fullName}
                   </Text>
                 </View>
                 <View
@@ -699,7 +696,7 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
                       color: colors.textColor.neutralColor,
                       fontFamily: font.Poppins,
                     }}>
-                    {userInfo.details.email}
+                    {userInfo?.email}
                   </Text>
                 </View>
                 <View
@@ -722,7 +719,7 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
                       color: colors.textColor.neutralColor,
                       fontFamily: font.Poppins,
                     }}>
-                    {userInfo.details.contact_no}
+                    {userInfo?.phoneNumber}
                   </Text>
                 </View>
                 <View
@@ -745,7 +742,7 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
                       color: colors.textColor.neutralColor,
                       fontFamily: font.Poppins,
                     }}>
-                    {userInfo.details.live_in}
+                    {userInfo?.address}
                   </Text>
                 </View>
                 <View
@@ -768,7 +765,7 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
                       color: colors.textColor.neutralColor,
                       fontFamily: font.Poppins,
                     }}>
-                    {userInfo.details.occupations}
+                    {userInfo?.occupations}
                   </Text>
                 </View>
                 <View
@@ -791,7 +788,7 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
                       color: colors.textColor.neutralColor,
                       fontFamily: font.Poppins,
                     }}>
-                    {userInfo.details.organization_company}
+                    {userInfo?.worksAt}
                   </Text>
                 </View>
                 <View
@@ -814,7 +811,7 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
                       color: colors.textColor.neutralColor,
                       fontFamily: font.Poppins,
                     }}>
-                    {userInfo.details.studied_at}
+                    {userInfo?.studiedAt}
                   </Text>
                 </View>
                 <View
@@ -837,7 +834,7 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
                       color: colors.textColor.neutralColor,
                       fontFamily: font.Poppins,
                     }}>
-                    {userInfo.details.relationship_status}
+                    {userInfo?.relationshipStatus}
                   </Text>
                 </View>
                 <View
@@ -857,17 +854,23 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
                   </Text>
                   <Pressable
                     onPress={() =>
-                      setEdit({...edit, private_profile: !edit.private_profile})
+                  {
+                    console.log(userInfo?.isPrivateProfile)
+                    setUserInfo({
+                      ...userInfo,
+                      isPrivateProfile: userInfo?.isPrivateProfile ? false : true
+                    })
+                  }
                     }
                     style={{
                       width: 50,
                       height: 20,
                       borderRadius: 10,
-                      backgroundColor: privateProfile
+                      backgroundColor: userInfo?.isPrivateProfile
                         ? colors.secondaryColor
                         : 'rgba(217, 217, 217, 1)',
                       justifyContent: 'center',
-                      alignItems: edit.private_profile
+                      alignItems: userInfo?.isPrivateProfile
                         ? 'flex-end'
                         : 'flex-start',
                     }}>
@@ -876,7 +879,7 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
                         width: 25,
                         height: 25,
                         borderRadius: 100,
-                        backgroundColor: edit.private_profile
+                        backgroundColor: userInfo?.isPrivateProfile
                           ? colors.redis
                           : 'rgba(238, 238, 238, 1)',
                       }}></View>
@@ -924,6 +927,7 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
                 <TouchableOpacity
                   onPress={() => {
                     setEdit({...edit, link: false});
+                    handleUserUpdated();
                   }}
                   style={{
                     borderWidth: 1,
@@ -993,7 +997,7 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
             <TextInput
               editable={edit.link}
               placeholder="https://www.instagram.com/example"
-              value={userInfo?.link}
+              value={userInfo?.instagramUrl}
               style={{
                 color: colors.textColor.light,
               }}
@@ -1061,7 +1065,10 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
               gap: 12,
               minHeight: 100,
             }}>
-            <Text
+          {
+            userProfile?.data?.interests?.map((ins,index)=>
+              <Text
+              key={index}
               style={{
                 fontSize: 12,
                 color: colors.textColor.neutralColor,
@@ -1072,56 +1079,20 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
                 borderRadius: 100,
                 elevation: 1,
               }}>
-              Family
+             {ins}
             </Text>
-            <Text
-              style={{
-                fontSize: 12,
-                color: colors.textColor.neutralColor,
-                fontFamily: font.PoppinsMedium,
-                backgroundColor: colors.secondaryColor,
-                paddingHorizontal: 10,
-                paddingVertical: 5,
-                borderRadius: 100,
-                elevation: 1,
-              }}>
-              Friend
-            </Text>
-            <Text
-              style={{
-                fontSize: 12,
-                color: colors.textColor.neutralColor,
-                fontFamily: font.PoppinsMedium,
-                backgroundColor: colors.secondaryColor,
-                paddingHorizontal: 10,
-                paddingVertical: 5,
-                borderRadius: 100,
-                elevation: 1,
-              }}>
-              Business
-            </Text>
-            <Text
-              style={{
-                fontSize: 12,
-                color: colors.textColor.neutralColor,
-                fontFamily: font.PoppinsMedium,
-                backgroundColor: colors.secondaryColor,
-                paddingHorizontal: 10,
-                paddingVertical: 5,
-                borderRadius: 100,
-                elevation: 1,
-              }}>
-              Business
-            </Text>
+          
+            )
+          }
           </View>
         </View>
       </ScrollView>
 
-      <ModalOfBottom
+     <ModalOfBottom
         modalVisible={imageModal}
         setModalVisible={setImageModal}
         onlyTopRadius={20}
-        height={'20%'}
+ 
         containerColor={colors.bg}>
         <View
           style={{

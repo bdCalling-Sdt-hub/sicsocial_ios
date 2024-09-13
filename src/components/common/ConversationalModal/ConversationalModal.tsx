@@ -118,8 +118,8 @@ const options = {
 };
 
 interface ConversationalModalProps extends NavigProps<null> {
-  addNewVoiceCard: Array<IConversationProps>;
-  setAddNewVoiceCard: React.Dispatch<
+  addNewVoiceCard ?: Array<IConversationProps>;
+  setAddNewVoiceCard ?: React.Dispatch<
     React.SetStateAction<Array<IConversationProps>>
   >;
 }
@@ -520,6 +520,17 @@ const ConversationalModal = ({
 // console.log(formData);
           createMessage(formData).then(ms => {
             // console.log(res);
+           if(createChartInfo?.title === 'Friends'){
+            //  console.log(createChartInfo);
+            setConversationalModal(false);
+             navigation?.navigate('MakeGroup', {
+              data : {
+                id: res?.data?.data?._id,
+                screenTitle : "Send Message",
+                option : "friend",
+              }
+             });
+           }
           });
         }
       });
@@ -739,10 +750,9 @@ const ConversationalModal = ({
               onSnapToItem={(index: number) => {
                 setActiveIndex(index);
                 // console.log(index);
-                setCreateChatInfo({
-                  ...createChartInfo,
-                  type: items![index]?.type,
-                });
+                setCreateChatInfo(
+                   items![index]
+                );
               }}
               renderItem={({index, item, animationValue}) => (
                 <TouchableOpacity
@@ -1096,7 +1106,7 @@ const ConversationalModal = ({
         modalVisible={imageModal}
         setModalVisible={setImageModal}
         onlyTopRadius={20}
-        panOf
+       
         height={height * 0.15}
         containerColor={colors.bg}>
         <View
@@ -1139,12 +1149,14 @@ const ConversationalModal = ({
           </TouchableOpacity>
         </View>
       </ModalOfBottom>
+
+      {/*============================== text message modal =================================== */}
       <ModalOfBottom
         modalVisible={textInputModal}
         setModalVisible={setTextInputModal}
         onlyTopRadius={20}
         height={height * 0.1}
-        panOf
+       
         containerColor={colors.bg}>
         <View
           style={{
@@ -1175,7 +1187,8 @@ const ConversationalModal = ({
             />
             <TouchableOpacity
               onPress={() => {
-                handleCreateNewChat(createChartInfo?.text);
+              
+                handleCreateNewChat(createMessageInfo);
                 setConversationalModal(false);
                 setTextInputModal(false);
               }}
@@ -1197,12 +1210,13 @@ const ConversationalModal = ({
           </View>
         </View>
       </ModalOfBottom>
+      {/*======================== live setup modal =================== */}
       <ModalOfBottom
         modalVisible={liveModal}
         setModalVisible={setLiveModal}
         onlyTopRadius={20}
         // backButton
-        panOf
+       
         height={height * 0.8}
         containerColor={colors.bg}>
         <View
@@ -1509,7 +1523,7 @@ const ConversationalModal = ({
         </View>
       </ModalOfBottom>
 
-      {/* book selection modal  */}
+      {/*===================== book selection modal  =====================================*/}
       <CustomModal
         modalVisible={booksModal}
         setModalVisible={setBooksModal}
