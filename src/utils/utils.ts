@@ -11,6 +11,9 @@ export const lStorage = new MMKVLoader().initialize();
 export const makeImage = (url: string) => {
   return  url.startsWith('https') ? url : imageUrl + url
 }
+export const makeImageUrl = (url: string) => {
+  return imageUrl + url
+}
 
 //  three size like sm md or tablet 
 const fontScale = PixelRatio.getFontScale();

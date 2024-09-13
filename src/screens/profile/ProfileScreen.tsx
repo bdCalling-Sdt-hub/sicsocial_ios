@@ -1,4 +1,5 @@
 import {
+  Alert,
   FlatList,
   Image,
   Linking,
@@ -150,7 +151,19 @@ const ProfileScreen = ({navigation}: NavigProps<null>) => {
             {
               userProfile?.data?.instagramUrl && <TouchableOpacity
               onPress={() => {
-                Linking.openURL(userProfile?.data?.instagramUrl || "https://www.instagram.com/");
+                Alert.alert("Open this link", userProfile?.data?.instagramUrl,[
+                  {
+                    text: "Cancel",
+                    // onPress: () => console.log("Cancel Pressed"),
+                    style: "cancel"
+                  },
+                  {
+                    text: "OK",
+                    onPress: () => {
+                      Linking.openURL(userProfile?.data?.instagramUrl);
+                    }
+                  }
+                ]);
               }}
               style={{
                 marginTop: 16,

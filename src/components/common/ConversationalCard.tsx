@@ -92,7 +92,9 @@ const ConversationalCard = ({
                 }}>
                 {conversationTitle && (
                   <Text
+                    numberOfLines={1}
                     style={{
+                      maxWidth : "90%",
                       fontFamily: font.PoppinsSemiBold,
                       fontSize: 17,
                       color: colors.textColor.secondaryColor,
@@ -100,14 +102,17 @@ const ConversationalCard = ({
                     {conversationTitle}
                   </Text>
                 )}
-                {lastMessage && (
+                {conversationSubtitle && (
                   <Text
+                    numberOfLines={2}
                     style={{
                       fontFamily: font.Poppins,
                       fontSize: 12,
                       color: colors.textColor.secondaryColor,
+                      opacity: 0.5,
+                      maxWidth : "80%"
                     }}>
-                    {lastMessage}
+                    {conversationSubtitle}
                   </Text>
                 )}
                 <View

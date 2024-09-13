@@ -1,4 +1,5 @@
 import { api } from "../api/baseApi";
+import { IDonationsStatus } from "../interface/donation";
 
 export const additionalSlices = api.injectEndpoints({
     endpoints: (builder) => ({
@@ -37,7 +38,7 @@ export const additionalSlices = api.injectEndpoints({
             }),
             providesTags : ["additional",]
         }),
-        getDonation: builder.query<null,unknown>({
+        getDonation: builder.query<IDonationsStatus,unknown>({
             query: ({id,page,limit}) => ({
                 url: `/donations`,
               

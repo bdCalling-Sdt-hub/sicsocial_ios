@@ -27,6 +27,7 @@ import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
 import { IConversationProps } from '../../interfaces/Interface';
 import { NavigProps } from '../../interfaces/NaviProps';
 import { imageUrl } from '../../redux/api/baseApi';
+import { useGetDonationQuery } from '../../redux/apiSlices/additionalSlices';
 import { useGetUserProfileQuery } from '../../redux/apiSlices/authSlice';
 import { useGetNewsFeetQuery } from '../../redux/apiSlices/homeSlices';
 import { isTablet } from '../../utils/utils';
@@ -36,6 +37,7 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
 
   const {data : newsFeet} = useGetNewsFeetQuery({});
   const {data : userProfile} = useGetUserProfileQuery({});
+  const {data : donations} = useGetDonationQuery({})
   // console.log(userProfile);
   const {colors, font} = useStyles();
   const [modalVisible, setModalVisible] = React.useState(false);
@@ -61,6 +63,23 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
     return () => {};
   }, [isLive]);
 
+
+  const renderDonations = () => {
+    if (!donations?.data) return null;
+    return donations.data.map((item, index) => (
+      <ConversationalCard 
+        disabled 
+        key={index} 
+        participants={[]} 
+        conversationStyle="donation" 
+        conversationTitle={item?.details?.title} 
+        conversationSubtitle={item?.details?.content}
+        onDonationShearPress={() => setModalVisible(true)}
+        onDonationViewDetailsPress={() => navigation?.navigate('donation', { data: item })}
+      />
+    ));
+  };
+ 
   // is live  card have checker and create animation asaa
  const profileImage = userProfile?.data?.avatar.startsWith("https") ? userProfile?.data?.avatar : `${imageUrl}/${userProfile?.data?.avatar}`
   return (
@@ -171,35 +190,34 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
    
         {/*========================== conversation card start ======================= */}
      
-
-        <FlatList
-         showsVerticalScrollIndicator={false}
-         showsHorizontalScrollIndicator={false}
-         contentContainerStyle={{
-          gap: 16,
-          paddingVertical: 16,
-          
-          // paddingBottom: isLive ? LIVE_ACTIVE_VALUE + 30 : 16,
-          paddingHorizontal: '5%',
-        }}
-      data={newsFeet?.data}
-      renderItem={({ item }) => (
-        <ConversationalCard
-      conversationStyle="normal"
-      onPress={() => {
-        navigation?.navigate('NormalConversation');
-      }}
-      participants={item.participants}
-      cardStyle={item.participants.length > 4 ? "three" : item?.participants.length === 4 ? "four" : item?.participants.length === 3 ? "three" : item?.participants.length === 2 ? "two" : "single"}
-      manyPeople={item.participants.length > 4 ? true : false}
-      conversationTitle={item.lastMessage.sender._id === userProfile?.data?._id ? "You" : userProfile?.data?.fullName}
-      conversationSubtitle={item.lastMessage.sender._id === userProfile?.data?._id ? "send a message" : "Reply to the message"}
-      lastMessageTime={format(new Date(item.updatedAt), "hh :mm a")}
-      lastMessage={item.lastMessage.audio ? "send a audio message" : item.lastMessage.image ? "send an image message" : item.lastMessage.text ? item.lastMessage.text : item.lastMessage.path ? "send a book" : "Start a chat"}
-    />
-  )}
-      // estimatedItemSize={150}
-    />
+   {/*====================== donations cards ========================= */}
+       
+    {/*===================== normal cards ======================= */}
+    <FlatList
+    showsVerticalScrollIndicator={false}
+    showsHorizontalScrollIndicator={false}
+    contentContainerStyle={{
+      gap : 16,
+      paddingVertical: 16,
+      paddingHorizontal: '5%',
+    }}
+    data={newsFeet?.data}
+    ListHeaderComponent={renderDonations}
+    renderItem={({ item }) => (
+      <ConversationalCard
+        conversationStyle="normal"
+        onPress={() => navigation?.navigate('NormalConversation')}
+        participants={item.participants}
+        cardStyle={item.participants.length > 4 ? "three" : item?.participants.length === 4 ? "four" : item?.participants.length === 3 ? "three" : item?.participants.length === 2 ? "two" : "single"}
+        manyPeople={item.participants.length > 4}
+        conversationTitle={item.lastMessage.sender._id === userProfile?.data?._id ? "You" : userProfile?.data?.fullName}
+        conversationSubtitle={item.lastMessage.sender._id === userProfile?.data?._id ? "send a message" : "Reply to the message"}
+        lastMessageTime={format(new Date(item.updatedAt), "hh :mm a")}
+        lastMessage={item.lastMessage.audio ? "send an audio message" : item.lastMessage.image ? "send an image message" : item.lastMessage.text ? item.lastMessage.text : item.lastMessage.path ? "send a book" : "Start a chat"}
+      />
+    )}
+    // estimatedItemSize={600}
+  />
         {/* <ConversationalCard
           disabled
           conversationStyle="donation"

@@ -3,13 +3,15 @@ import {
   ActivityIndicator,
   Image,
   Modal,
+  NativeModules,
   PermissionsAndroid,
   Pressable,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from 'react-native';
+import AudioRecorderPlayer from 'react-native-audio-recorder-player';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import Animated, {
   Easing,
@@ -27,7 +29,6 @@ import {
 import { isSmall, isTablet } from '../../../utils/utils';
 
 import { LinkPreview } from '@flyerhq/react-native-link-preview';
-import AudioRecord from 'react-native-audio-record';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import { TextInput } from 'react-native-gesture-handler';
 import { SvgXml } from 'react-native-svg';
@@ -117,17 +118,16 @@ const options = {
   wavFile: 'voice.wav', // default 'audio.wav'
 };
 
+const audioRecorderPlayer = new AudioRecorderPlayer();
 interface ConversationalModalProps extends NavigProps<null> {
   addNewVoiceCard ?: Array<IConversationProps>;
   setAddNewVoiceCard ?: React.Dispatch<
     React.SetStateAction<Array<IConversationProps>>
   >;
 }
-
+const { RNAudioRecord  } = NativeModules;
 const ConversationalModal = ({
   navigation,
-  addNewVoiceCard,
-  setAddNewVoiceCard,
 }: ConversationalModalProps) => {
   const [createChat, createChartResults] = useCreateChatMutation({});
   const [createMessage, createMessageResult] = useCreateMessageMutation({});
@@ -408,8 +408,7 @@ const ConversationalModal = ({
       
       setRecordOn(true);
       setRecordOnDone(false);
-      AudioRecord.init(options);
-      AudioRecord.start();
+     await audioRecorderPlayer.startRecorder();
       letsBorderAnimationValue.value =
         letsBorderAnimationValue.value === 8
           ? withTiming(25, {
@@ -424,14 +423,13 @@ const ConversationalModal = ({
     setRecordOn(false);
     setRecordOnDone(true);
     letsBorderAnimationValue.value = 20
-    const audioPath = await AudioRecord.stop();
-
+    const audioPath =  await audioRecorderPlayer.stopRecorder();
+    console.log(audioPath);
     const audio = {
-      uri: `file://${audioPath}`,   
+      uri: audioPath,   
       type: 'audio/wav', // Try changing this if 'audio/x-wav' doesn't work
       name: 'voice.wav',
     };
- 
     handleCreateNewChat({audio})
    }
    
