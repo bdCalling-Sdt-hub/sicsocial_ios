@@ -4,9 +4,12 @@ import React from 'react';
 import BackButtonWithTitle from '../../../components/common/BackButtonWithTitle';
 import { useStyles } from '../../../context/ContextApi';
 import { NavigProps } from '../../../interfaces/NaviProps';
+import { useGetAboutSicQuery } from '../../../redux/apiSlices/additionalSlices';
 
 const AboutSicScreen = ({navigation}: NavigProps<null>) => {
   const {colors, font} = useStyles();
+
+  const {data : aboutSic} = useGetAboutSicQuery({})
 
   return (
     <View
@@ -37,7 +40,23 @@ const AboutSicScreen = ({navigation}: NavigProps<null>) => {
           marginTop: 10,
           paddingBottom: 20,
         }}>
-        <Text
+          {
+            aboutSic?.data?.map((item)=>{
+              return <Text
+              key={item?._id}
+              style={{
+                fontSize: 14,
+                fontFamily: font.Poppins,
+                color: colors.textColor.neutralColor,
+                letterSpacing: 0.3,
+                lineHeight: 24,
+                textAlign: 'justify',
+              }}>
+                {item?.content}
+              </Text>
+            })
+          }
+        {/* <Text
           style={{
             fontSize: 14,
             fontFamily: font.Poppins,
@@ -53,7 +72,7 @@ Sic is secretive about numbers, but interest has definitely cooled over the last
 There’s still room for growth, though. Clubhouse has become a popular venue for discussing global and political topics. For example, a room for discussion on the situation in Ukraine reached one million users in mid-April.
 The app is still drawing big names, too. In April 2022, former InStyle magazine editor Laura Brown announced a new Club (more on those later) featuring weekly interviews with celebrities like Elle Fanning, Sophie Turner, and Rebel Wilson.
          `}
-        </Text>
+        </Text> */}
       </ScrollView>
     </View>
   );

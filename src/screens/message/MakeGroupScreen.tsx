@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { useAddMemberMutation, useCreateChatMutation } from '../../redux/apiSlices/chatSlices';
 
 import React from 'react';
 import { SvgXml } from 'react-native-svg';
@@ -15,11 +16,11 @@ import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
 import GroupUserCard from '../../components/conversation/GroupUserCard';
 import { useStyles } from '../../context/ContextApi';
 import { NavigProps } from '../../interfaces/NaviProps';
-import { useAddMemberMutation } from '../../redux/apiSlices/chatSlices';
 import { useGetFriendQuery } from '../../redux/apiSlices/friendsSlices';
 import { IFriend } from '../../redux/interface/friends';
 
 const MakeGroupScreen = ({navigation,route}: NavigProps<any>) => {
+  const [createChat, createChartResults] = useCreateChatMutation({});
    const {data : friends} = useGetFriendQuery({})  
    const [addMember,results] = useAddMemberMutation()
   // console.log(friends);
@@ -31,12 +32,34 @@ const MakeGroupScreen = ({navigation,route}: NavigProps<any>) => {
 
   // console.log(route?.params?.data);
 
-  const handleAddMessage = (id) => {
+  const handleAddSingleParticipant = (id) => {
     // console.log({id : route?.params?.data?.id, participants : id});
     addMember({id : route?.params?.data?.id, participants : id}).then((res)=>{
       // console.log(res);
       navigation?.navigate("Chats")
     })
+  };
+
+  const handleAddMultipleParticipant = async (selectUser) => {
+    // console.log({id : route?.params?.data?.id, participants : id});
+    let all = selectUser.map((item)=>item?._id)
+  
+
+     if(!route?.params?.data?.id){
+      createChat('private').then((res)=>{
+        addMember({id : res?.data?.data?._id, participants : all}).then((res)=>{
+          // console.log(res);
+          navigation?.navigate('GroupConversation');
+        })
+      })
+     }
+     if(route?.params?.data?.id) {
+       addMember({id : route?.params?.data?.id, participants : all}).then((res)=>{
+         // console.log(res);
+         navigation?.navigate('GroupConversation');
+       })
+     }
+
   };
 
 
@@ -153,7 +176,7 @@ const MakeGroupScreen = ({navigation,route}: NavigProps<any>) => {
                     color: colors.textColor.neutralColor,
                     textAlign: 'center',
                   }}>
-                  Amina
+                 {item.item?.fullName}
                 </Text>
               </View>
             )}
@@ -187,7 +210,7 @@ const MakeGroupScreen = ({navigation,route}: NavigProps<any>) => {
                   }
                 }
                 if(route?.params?.data?.option === "friend"){
-                  handleAddMessage(item.item._id);
+                  handleAddSingleParticipant(item.item._id);
                   // navigation?.replace("HomeRoutes")
                 }
               }}
@@ -203,7 +226,8 @@ const MakeGroupScreen = ({navigation,route}: NavigProps<any>) => {
         <TouchableOpacity
           activeOpacity={0.9}
           onPress={() => {
-            navigation?.navigate('GroupConversation');
+            handleAddMultipleParticipant(selectedUser);
+          
           }}
           style={{
             position: 'absolute',

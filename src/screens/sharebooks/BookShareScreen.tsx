@@ -1,12 +1,12 @@
 import {
-  Image,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-  useWindowDimensions
+    Image,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
+    useWindowDimensions
 } from 'react-native';
 import { useContextApi, useStyles } from '../../context/ContextApi';
 import { useCreateChatMutation, useCreateMessageMutation } from '../../redux/apiSlices/chatSlices';
@@ -266,7 +266,7 @@ const BookShareScreen = ({navigation, route}: NavigProps<Books>) => {
       <ModalOfBottom
         modalVisible={liveModal}
         setModalVisible={setLiveModal}
-        onlyTopRadius={20}
+       
         // backButton
 
         height={height * 0.8}

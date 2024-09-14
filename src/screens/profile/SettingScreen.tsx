@@ -14,6 +14,7 @@ import { useDispatch } from 'react-redux';
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
 import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
 import { NavigProps } from '../../interfaces/NaviProps';
+import { useGetDonationQuery } from '../../redux/apiSlices/additionalSlices';
 import { clearToken } from '../../redux/apiSlices/tokenSlice';
 import { removeStorageToken } from '../../utils/utils';
 
@@ -121,6 +122,7 @@ const Languages = [
 
 const SettingScreen = ({navigation}: NavigProps<null>) => {
   const {colors, font} = useStyles();
+  const {data : donations} = useGetDonationQuery({})
   const {isDark, setDark} = useContextApi();
   const [languageModal, setLanguageModal] = React.useState(false);
   const [selectedLanguage, setSelectedLanguage] = React.useState<any[]>();
@@ -183,7 +185,7 @@ const SettingScreen = ({navigation}: NavigProps<null>) => {
                   navigation?.navigate('AboutSic');
                 }
                 if (item.item.option === 'integrity_donation') {
-                  navigation?.navigate('donation');
+                  navigation?.navigate('donation', { data: donations?.data![0] });
                 }
                 if (item.item.option === 'your_feedback') {
                   navigation?.navigate('Feedback');
@@ -252,7 +254,7 @@ const SettingScreen = ({navigation}: NavigProps<null>) => {
       <ModalOfBottom
         setModalVisible={setLanguageModal}
         modalVisible={languageModal}
-        onlyTopRadius={10}
+   
         backButton>
         <View>
           <Text

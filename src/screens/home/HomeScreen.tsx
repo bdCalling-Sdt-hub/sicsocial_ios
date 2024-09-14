@@ -353,9 +353,6 @@ is recognize for SIC "
       <ModalOfBottom
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
-        onlyTopRadius={20}
-       
-        // backButton
       >
         <View>
           <Text

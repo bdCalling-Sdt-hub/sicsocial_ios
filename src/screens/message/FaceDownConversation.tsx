@@ -780,7 +780,7 @@ const FaceDownConversation = ({navigation}: NavigProps<null>) => {
       <ModalOfBottom
         modalVisible={liveModal}
         setModalVisible={setLiveModal}
-        onlyTopRadius={20}
+       
        
         containerColor={colors.bg}>
          

@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import {
-  Image,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
+    Image,
+    Pressable,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { useGetUserProfileQuery, useUserUpdateMutation } from '../../redux/apiSlices/authSlice';
@@ -1091,7 +1091,7 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
      <ModalOfBottom
         modalVisible={imageModal}
         setModalVisible={setImageModal}
-        onlyTopRadius={20}
+       
  
         containerColor={colors.bg}>
         <View

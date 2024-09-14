@@ -48,7 +48,7 @@ const ProfileScreen = ({navigation}: NavigProps<null>) => {
   const {data : newsFeet} = useGetNewsFeetQuery({});
   const {data : friends} = useGetFriendQuery({})  
   const {data : facedowns} = useGetFaceDownQuery({})  
-  
+
   const {data : userProfile} = useGetUserProfileQuery({});
   const [modalVisible, setModalVisible] = React.useState(false);
   const {isLive, setIsLive} = useContextApi();
@@ -650,7 +650,7 @@ const ProfileScreen = ({navigation}: NavigProps<null>) => {
         key={"modal"}
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
-        onlyTopRadius={20}
+       
         backButton
         containerColor={colors.bg}>
         <View>

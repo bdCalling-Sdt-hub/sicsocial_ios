@@ -11,7 +11,6 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
-import AudioRecorderPlayer from 'react-native-audio-recorder-player';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import Animated, {
   Easing,
@@ -29,6 +28,7 @@ import {
 import { isSmall, isTablet } from '../../../utils/utils';
 
 import { LinkPreview } from '@flyerhq/react-native-link-preview';
+import AudioRecorderPlayer from 'react-native-audio-recorder-player';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import { TextInput } from 'react-native-gesture-handler';
 import { SvgXml } from 'react-native-svg';
@@ -518,6 +518,16 @@ const ConversationalModal = ({
 // console.log(formData);
           createMessage(formData).then(ms => {
             // console.log(res);
+            if(createChartInfo?.title === 'Chosen buddies'){
+              setConversationalModal(false);
+             navigation?.navigate('MakeGroup', {
+              data : {
+                id: res?.data?.data?._id,
+                screenTitle : "Make Group",
+                option : "group",
+              }
+             });
+            }
            if(createChartInfo?.title === 'Friends'){
             //  console.log(createChartInfo);
             setConversationalModal(false);
@@ -1103,7 +1113,7 @@ const ConversationalModal = ({
       <ModalOfBottom
         modalVisible={imageModal}
         setModalVisible={setImageModal}
-        onlyTopRadius={20}
+       
        
         height={height * 0.15}
         containerColor={colors.bg}>
@@ -1152,7 +1162,7 @@ const ConversationalModal = ({
       <ModalOfBottom
         modalVisible={textInputModal}
         setModalVisible={setTextInputModal}
-        onlyTopRadius={20}
+       
         height={height * 0.1}
        
         containerColor={colors.bg}>
@@ -1212,7 +1222,7 @@ const ConversationalModal = ({
       <ModalOfBottom
         modalVisible={liveModal}
         setModalVisible={setLiveModal}
-        onlyTopRadius={20}
+       
         // backButton
        
         height={height * 0.8}

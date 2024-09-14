@@ -982,7 +982,7 @@ const LiveConversationScreen = ({navigation}: NavigProps<null>) => {
       <ModalOfBottom
         modalVisible={showShortProfile}
         setModalVisible={setShowShortProfile}
-        onlyTopRadius={20}>
+       >
         <View>
           <View
             style={{
@@ -1306,7 +1306,7 @@ const LiveConversationScreen = ({navigation}: NavigProps<null>) => {
       <ModalOfBottom
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
-        onlyTopRadius={20}
+       
         backButton
         containerColor={colors.bg}
         height={'30%'}>
@@ -1374,7 +1374,7 @@ const LiveConversationScreen = ({navigation}: NavigProps<null>) => {
       <ModalOfBottom
         modalVisible={liveModal}
         setModalVisible={setLiveModal}
-        onlyTopRadius={20}
+       
         // backButton
        
         height={height * 0.8}

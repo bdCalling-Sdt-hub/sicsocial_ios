@@ -1,3 +1,4 @@
+import React, { SetStateAction } from 'react';
 import {
     Image,
     ScrollView,
@@ -7,19 +8,18 @@ import {
     View,
     useWindowDimensions
 } from 'react-native';
-import React, { SetStateAction } from 'react';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 
-import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
-import CustomModal from '../../components/common/customModal/CustomModal';
+import { LinkPreview } from '@flyerhq/react-native-link-preview';
+import { SvgXml } from 'react-native-svg';
 import DateTimePicker from 'react-native-ui-datepicker';
 import { GridList } from 'react-native-ui-lib';
-import { LinkPreview } from '@flyerhq/react-native-link-preview';
+import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
+import CustomModal from '../../components/common/customModal/CustomModal';
 import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
-import { NavigProps } from '../../interfaces/NaviProps';
 import NormalButton from '../../components/common/NormalButton';
-import { SvgXml } from 'react-native-svg';
 import { useStyles } from '../../context/ContextApi';
+import { NavigProps } from '../../interfaces/NaviProps';
 
 const CreateNewFaceDown = ({navigation}: NavigProps<null>) => {
   const {colors, font, window} = useStyles();
@@ -881,7 +881,7 @@ sed Quisque ac lobortis, Quisque urna ipsum Nam id tempor placerat. Morbi ipsum 
   <ModalOfBottom
         modalVisible={imageModal}
         setModalVisible={setImageModal}
-        onlyTopRadius={20}
+       
        
         containerColor={colors.bg}>
         <View

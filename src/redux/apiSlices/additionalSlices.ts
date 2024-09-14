@@ -1,37 +1,39 @@
 import { api } from "../api/baseApi";
+import { ITermsAndPolicies } from "../interface/additional";
 import { IDonationsStatus } from "../interface/donation";
+import { IFAQs } from "../interface/faq";
 
 export const additionalSlices = api.injectEndpoints({
     endpoints: (builder) => ({
-        getAboutSic: builder.query<null,unknown>({
+        getAboutSic: builder.query<ITermsAndPolicies,unknown>({
             query: ({id,page,limit}) => ({
                 url: `/about-sic`,
               
             }),
             providesTags : ["additional"]
         }),
-        getFAQ: builder.query<null,unknown>({
+        getFAQ: builder.query<IFAQs,unknown>({
             query: ({id,page,limit}) => ({
                 url: `/faqs`,
               
             }),
             providesTags : ["additional"]
         }),
-        getTermsAndConditions: builder.query<null,unknown>({
+        getTermsAndConditions: builder.query<ITermsAndPolicies,unknown>({
             query: ({id,page,limit}) => ({
                 url: `/terms-and-conditions`,
               
             }),
             providesTags : ["additional",]
         }),
-        getPrivacyPolicy: builder.query<null,unknown>({
+        getPrivacyPolicy: builder.query<ITermsAndPolicies,unknown>({
             query: ({id,page,limit}) => ({
                 url: `/privacy-policy`,
               
             }),
             providesTags : ["additional",]
         }),
-        getSicGuideLines: builder.query<null,unknown>({
+        getSicGuideLines: builder.query<ITermsAndPolicies,unknown>({
             query: ({id,page,limit}) => ({
                 url: `/sic-guidelines`,
               

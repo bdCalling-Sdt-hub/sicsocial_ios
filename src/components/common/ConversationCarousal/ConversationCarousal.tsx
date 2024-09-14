@@ -1,19 +1,19 @@
 import React, { Dispatch, SetStateAction, useEffect } from 'react';
 import {
-    Image,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
-    useWindowDimensions
+  Image,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+  useWindowDimensions
 } from 'react-native';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import Animated, {
-    interpolate,
-    useAnimatedStyle,
-    useSharedValue,
-    withTiming,
+  interpolate,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
 } from 'react-native-reanimated';
 
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
@@ -235,11 +235,6 @@ const ConversationCarousal = ({
     }
   };
 
-  const recordingAnimation = useSharedValue('0%');
-
-  const recodingOn = () => {
-    recordingAnimation.value = withTiming('100%', {duration: 10000});
-  };
 
   const animationStyle = React.useCallback(
     (value: number) => {
@@ -562,7 +557,7 @@ const ConversationCarousal = ({
       <ModalOfBottom
         modalVisible={imageModal}
         setModalVisible={setImageModal}
-        onlyTopRadius={20}
+       
        
         containerColor={colors.bg}>
         <View
@@ -608,7 +603,7 @@ const ConversationCarousal = ({
       <ModalOfBottom
         modalVisible={textInputModal}
         setModalVisible={setTextInputModal}
-        onlyTopRadius={20}
+       
        
         containerColor={colors.bg}>
         <View

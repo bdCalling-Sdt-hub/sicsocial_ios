@@ -1,10 +1,11 @@
-import {FlatList, StyleSheet, Text, View} from 'react-native';
+import { FlatList, StyleSheet, Text, View } from 'react-native';
+
 import React from 'react';
-import {useStyles} from '../../../context/ContextApi';
-import {NavigProps} from '../../../interfaces/NaviProps';
 import BackButtonWithTitle from '../../../components/common/BackButtonWithTitle';
-import {SvgXml} from 'react-native-svg';
 import FaqCard from '../../../components/FAQ/FaqCard';
+import { useStyles } from '../../../context/ContextApi';
+import { NavigProps } from '../../../interfaces/NaviProps';
+import { useGetFAQQuery } from '../../../redux/apiSlices/additionalSlices';
 
 const data = [
   {
@@ -72,7 +73,7 @@ const data = [
 
 const FAQScreen = ({navigation}: NavigProps<null>) => {
   const {colors, font} = useStyles();
-
+   const {data : faps} = useGetFAQQuery({});
   return (
     <View
       style={{
@@ -114,9 +115,9 @@ const FAQScreen = ({navigation}: NavigProps<null>) => {
           paddingHorizontal: '4%',
           paddingBottom: 20,
         }}
-        data={data}
+        data={faps?.data}
         renderItem={item => {
-          return <FaqCard item={item.item} />;
+          return <FaqCard item={item?.item} />;
         }}
       />
     </View>

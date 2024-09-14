@@ -594,7 +594,7 @@ const ConversationCarousal1 = ({
      <ModalOfBottom
         modalVisible={imageModal}
         setModalVisible={setImageModal}
-        onlyTopRadius={20}
+       
  
         containerColor={colors.bg}>
         <View
@@ -640,7 +640,7 @@ const ConversationCarousal1 = ({
       <ModalOfBottom
         modalVisible={textInputModal}
         setModalVisible={setTextInputModal}
-        onlyTopRadius={20}
+       
         height={'17%'}
         containerColor={colors.bg}>
         <View
