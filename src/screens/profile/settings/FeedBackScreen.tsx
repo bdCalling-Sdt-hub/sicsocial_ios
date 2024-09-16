@@ -1,5 +1,7 @@
 import {
+  Easing,
   Image,
+  PermissionsAndroid,
   ScrollView,
   StyleSheet,
   Text,
@@ -8,9 +10,10 @@ import {
   View,
   useWindowDimensions,
 } from 'react-native';
-import Animated, { useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
 import React from 'react';
+import AudioRecorderPlayer from 'react-native-audio-recorder-player';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import BackButtonWithTitle from '../../../components/common/BackButtonWithTitle';
 import NormalButton from '../../../components/common/NormalButton';
@@ -19,6 +22,7 @@ import { NavigProps } from '../../../interfaces/NaviProps';
 import { useSendFeedBackMutation } from '../../../redux/apiSlices/additionalSlices';
 import { isSmall } from '../../../utils/utils';
 
+const audioRecorderPlayer = new AudioRecorderPlayer();
 const FeedBackScreen = ({navigation}: NavigProps<null>) => {
   const {colors, font} = useStyles();
   const {height} = useWindowDimensions();
@@ -33,9 +37,48 @@ const FeedBackScreen = ({navigation}: NavigProps<null>) => {
       borderWidth: letsBorderAnimationValue.value,
     };
   });
+
+  
+  const recodingOn =  async() => {
+    if(!recordOn){
+      await PermissionsAndroid.requestMultiple([
+        PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+      ]);
+      
+      setRecordOn(true);
+      setRecordOnDone(false);
+     await audioRecorderPlayer.startRecorder();
+      letsBorderAnimationValue.value =
+        letsBorderAnimationValue.value === 8
+          ? withTiming(25, {
+              duration: 200,
+              easing: Easing.ease,
+            })
+          : withTiming(8, {
+              duration: 200,
+            });
+    }
+   else{
+    setRecordOn(false);
+    setRecordOnDone(true);
+    letsBorderAnimationValue.value = 20
+    const audioPath =  await audioRecorderPlayer.stopRecorder();
+    // console.log(audioPath);
+    const audio = {
+      uri: audioPath,   
+      type: 'audio/wav', // Try changing this if 'audio/x-wav' doesn't work
+      name: 'voice.wav',
+    };
+    sendFeedBackHandler(audio)
+   }
+   
+  };
+
   const sendFeedBackHandler = async (audio) => {
+    let text = feedbackTest;
+    
     try {
-      await sendFeedBack({message:""})
+      await sendFeedBack({message:text})
     } catch (error) {
     }
   };
@@ -81,22 +124,11 @@ const FeedBackScreen = ({navigation}: NavigProps<null>) => {
             padding: 16,
             backgroundColor: colors.secondaryColor,
             borderRadius: 20,
-            // height: height * 0.65,
+            minHeight : "90%"
           }}>
           <TextInput
             textAlignVertical="top"
-            placeholder="type feedback"
-            defaultValue=" Sic is a social audio app — think of it as a call-in radio show for
-            the 21st century. Users enter “Rooms,” where they can listen to (and
-            participate in) conversations about specific topics. Sic is a social audio app — think of it as a call-in radio show for
-            the 21st century. Users enter “Rooms,” where they can listen to (and
-            participate in) conversations about specific topics. Sic is a social audio app — think of it as a call-in radio show for
-            the 21st century. Users enter “Rooms,” where they can listen to (and
-            participate  Sic is a social audio app — think of it as a call-in radio show for
-            the 21st century. Users enter “Rooms,” where they can listen to (and
-            participate in) conversations about specific topics. conversations about specific topics. Sic is a social audio app — think of it as a call-in radio show for
-            the 21st century. Users enter “Rooms,” where they can listen to (and
-            participate in) conversations about specific topics."
+            placeholder="Write your feedback here"
             multiline
             placeholderTextColor={colors.textColor.neutralColor}
             style={{
@@ -105,7 +137,7 @@ const FeedBackScreen = ({navigation}: NavigProps<null>) => {
               color: colors.textColor.light,
               lineHeight: 24,
               marginBottom: 16,
-              flex: 2,
+             
             }}
           />
         </View>
@@ -122,8 +154,7 @@ const FeedBackScreen = ({navigation}: NavigProps<null>) => {
        }}>
        <TouchableOpacity
             onPress={() => {
-              setRecordOn(!recordOn);
-              setRecordOnDone(!recordOnDone);
+              recodingOn();
             }}
             style={{
               width: 95,

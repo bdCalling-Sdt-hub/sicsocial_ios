@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { getStorageToken, removeStorageToken } from '../../utils/utils';
+import { clearToken } from '../apiSlices/tokenSlice';
 
 import { Alert } from 'react-native';
 
@@ -33,6 +34,8 @@ const baseQueryWithRath: typeof baseQuery = async (args, api, extraOptions) => {
     // For now, we'll log out the user
     // removeStorageRole();
     removeStorageToken();
+    api.dispatch(clearToken());
+    // result = await baseQuery(args, api, extraOptions);
   }
 
   return result;

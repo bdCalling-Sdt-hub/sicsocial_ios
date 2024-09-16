@@ -250,7 +250,7 @@ const MakeGroupScreen = ({navigation,route}: NavigProps<any>) => {
 
       <ModalOfBottom
       
-        onlyTopRadius={15}
+        
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}>
         <View style={{gap: 3}}>

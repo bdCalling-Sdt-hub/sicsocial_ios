@@ -1,12 +1,13 @@
 import React, { SetStateAction } from 'react';
 import {
-    Image,
-    ScrollView,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
-    useWindowDimensions
+  FlatList,
+  Image,
+  ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+  useWindowDimensions,
 } from 'react-native';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 
@@ -20,23 +21,30 @@ import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
 import NormalButton from '../../components/common/NormalButton';
 import { useStyles } from '../../context/ContextApi';
 import { NavigProps } from '../../interfaces/NaviProps';
+import { useCreateChatMutation } from '../../redux/apiSlices/chatSlices';
+import { useCreateFaceDownMutation } from '../../redux/apiSlices/facedwonSlice';
+import { IParticipant } from '../../redux/interface/participants';
+import { TemBooks } from '../../utils/GetRandomColor';
+import { makeImage } from '../../utils/utils';
 
-const CreateNewFaceDown = ({navigation}: NavigProps<null>) => {
+const CreateNewFaceDown = ({navigation,route}: NavigProps<any>) => {
   const {colors, font, window} = useStyles();
   const {height, width} = useWindowDimensions();
+  const [createFaceDown, results] = useCreateFaceDownMutation();
+  const [createChat] = useCreateChatMutation();
   const [modalVisible, setModalVisible] = React.useState(false);
   const [dateModal, setDateModal] = React.useState(false);
-  const [selectSchedule, setSelectSchedule] = React.useState('Weekly');
+  const [participants, setParticipants] = React.useState<Array<IParticipant>>();
   const [imageAssets, setImageAssets] = React.useState<boolean>(false);
   const [imageModal, setImageModal] = React.useState<string>('');
-  const [linkUrl, setLinkUrl] = React.useState('');
   const [selectDate, setSelectDate] = React.useState<SetStateAction<Date>>(
     new Date(),
   );
+ 
   const [booksModal, setBooksModal] = React.useState(false);
-  const [selectOptionItem, setSelectOptionItem] = React.useState<number>();
   const [selectBook, setSelectBook] = React.useState<number>();
-
+  const [faceDownInfo, setFaceDownInfo] = React.useState<{}>();
+// console.log(route,participants);
   const handleImagePick = async (option: 'camera' | 'library') => {
     try {
       if (option === 'camera') {
@@ -45,12 +53,23 @@ const CreateNewFaceDown = ({navigation}: NavigProps<null>) => {
           maxWidth: 500,
           maxHeight: 500,
           quality: 0.5,
-          includeBase64: true,
         });
 
         if (!result.didCancel) {
           setImageAssets(result?.assets![0].uri);
           // console.log(result);
+          setFaceDownInfo({
+            ...faceDownInfo,
+            image: {
+              uri: result?.assets![0].uri,
+              type: result?.assets![0].type,
+              name: result?.assets![0].fileName,
+              size: result?.assets![0].fileSize,
+              lastModified: new Date().getTime(), // Assuming current time as last modified
+              lastModifiedDate: new Date(),
+              webkitRelativePath: '',
+            },
+          });
         }
       }
       if (option === 'library') {
@@ -59,12 +78,23 @@ const CreateNewFaceDown = ({navigation}: NavigProps<null>) => {
           maxWidth: 500,
           maxHeight: 500,
           quality: 0.5,
-          includeBase64: true,
         });
 
         if (!result.didCancel) {
           setImageAssets(result?.assets![0].uri);
           // console.log(result);
+          setFaceDownInfo({
+            ...faceDownInfo,
+            image: {
+              uri: result?.assets![0].uri,
+              type: result?.assets![0].type,
+              name: result?.assets![0].fileName,
+              size: result?.assets![0].fileSize,
+              lastModified: new Date().getTime(), // Assuming current time as last modified
+              lastModifiedDate: new Date(),
+              webkitRelativePath: '',
+            },
+          });
         }
       }
     } catch (error) {
@@ -72,8 +102,35 @@ const CreateNewFaceDown = ({navigation}: NavigProps<null>) => {
     }
   };
 
-  console.log(selectSchedule);
-  console.log(selectDate);
+  // console.log(selectSchedule);
+  // console.log(selectDate);
+
+  // console.log(faceDownInfo);
+  const handleCreateFaceDown = React.useCallback(
+    async Udata => {
+      console.log(Udata);
+      // navigation?.navigate('FaceDownConversation');
+     createFaceDown(Udata).then((res)=>{
+       console.log(res.data);
+      if(res.data?.data?._id){
+        createChat({
+          participants: participants,
+          type: 'public',
+          facedown: res.data?.data?._id,
+        });
+      }
+     })
+     
+    },
+    [faceDownInfo],
+  );
+
+  React.useEffect(()=>{
+    if(route?.params){
+      setParticipants(route?.params)
+    }
+  },[route?.params])
+
   return (
     <View
       style={{
@@ -93,10 +150,10 @@ const CreateNewFaceDown = ({navigation}: NavigProps<null>) => {
           fontFamily: font.PoppinsSemiBold,
         }}
       />
-       
-    <ScrollView
-       showsVerticalScrollIndicator={false}
-       showsHorizontalScrollIndicator={false}
+
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        showsHorizontalScrollIndicator={false}
         keyboardShouldPersistTaps="always"
         contentContainerStyle={{
           paddingBottom: '8%',
@@ -142,7 +199,7 @@ const CreateNewFaceDown = ({navigation}: NavigProps<null>) => {
             <TouchableOpacity
               onPress={() => {
                 // handleImagePick('camera');
-                setImageModal(true)
+                setImageModal(true);
               }}
               activeOpacity={0.9}
               style={{
@@ -202,7 +259,15 @@ const CreateNewFaceDown = ({navigation}: NavigProps<null>) => {
               height: 56,
               color: colors.textColor.neutralColor,
             }}
-            defaultValue="Asadullah charity house "
+            
+            placeholder="name"
+            onChangeText={text =>
+              setFaceDownInfo({
+                ...faceDownInfo,
+                name: text,
+              })
+            }
+            placeholderTextColor={colors.textColor.gray}
           />
         </View>
 
@@ -222,24 +287,143 @@ const CreateNewFaceDown = ({navigation}: NavigProps<null>) => {
             Face Dwn members
           </Text>
 
-          <TouchableOpacity
+          {participants?.length !== 0 && (
+        <View
+          style={{
+            borderBottomWidth: 1,
+            borderBottomColor: 'rgba(217, 217, 217, 1)',
+
+            paddingBottom: 10,
+          }}>
+     
+          <FlatList
+            showsHorizontalScrollIndicator={false}
+            keyboardShouldPersistTaps="always"
+            horizontal
+            contentContainerStyle={{
+              gap: 16,
+              paddingHorizontal: 20,
+            }}
+            data={participants}
+            keyExtractor={item => item?._id + Math.random() }
+            renderItem={item => (
+              <View style={{gap: 6}}>
+                <TouchableOpacity
+                  onPress={() => {
+                    if (
+                      participants.find(friend => friend._id === item.item._id)
+                    ) {
+                      setParticipants(
+                        participants.filter(
+                          friend => friend._id !== item.item._id,
+                        ),
+                      );
+                    }
+                  }}
+                  style={{
+                    backgroundColor: colors.secondaryColor,
+                    // paddingVertical: 5,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    elevation: 2,
+                    borderRadius: 50,
+                    padding: 2,
+                    position: 'relative',
+                  }}>
+                  <View
+                    style={{
+                      width: 16,
+                      height: 16,
+                      borderRadius: 50,
+                      backgroundColor: colors.green['#00B047'],
+                      position: 'absolute',
+                      right: 0,
+                      zIndex: +1,
+                      bottom: 5,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}>
+                    <View
+                      style={{
+                        backgroundColor: 'white',
+                        width: 8,
+                        height: 2,
+                      }}
+                    />
+                  </View>
+                  <Image
+                    style={{
+                      width: 65,
+                      height: 65,
+                      borderRadius: 28,
+                      resizeMode: 'contain',
+                    }}
+                    source={{
+                      uri : makeImage(item.item.avatar)
+                    }}
+                  />
+                </TouchableOpacity>
+                <Text
+                  style={{
+                    fontSize: 12,
+                    fontFamily: font.Poppins,
+                    color: colors.textColor.neutralColor,
+                    textAlign: 'center',
+                  }}>
+                  {item.item?.fullName}
+                </Text>
+              </View>
+            )}
+
+            ListFooterComponent={() => (
+              <TouchableOpacity
             activeOpacity={0.9}
             onPress={() => {
-              navigation?.navigate('FaceDownAddMember');
+              navigation?.navigate('FaceDownAddMember',participants);
             }}>
             <Image
               resizeMode="cover"
               style={{
                 borderRadius: 24,
 
-                height: 80,
-                width: 80,
+                height: 70,
+                width: 70,
                 justifyContent: 'center',
                 alignItems: 'center',
               }}
               source={require('../../assets/icons/unknown/addMember.png')}
             />
           </TouchableOpacity>
+            )}
+          />
+        </View>
+      )}
+
+          {
+            participants?.length === 0 && (
+              <TouchableOpacity
+              activeOpacity={0.9}
+              onPress={() => {
+                navigation?.navigate('FaceDownAddMember',participants);
+              }}>
+              <Image
+                resizeMode="cover"
+                style={{
+                  borderRadius: 24,
+  
+                  height: 80,
+                  width: 80,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+                source={require('../../assets/icons/unknown/addMember.png')}
+              />
+            </TouchableOpacity>
+            
+            )
+          }
+
+          
         </View>
         <View
           style={{
@@ -256,9 +440,9 @@ const CreateNewFaceDown = ({navigation}: NavigProps<null>) => {
             }}>
             Share content
           </Text>
-          {linkUrl ? (
+          {faceDownInfo?.bookUrl ? (
             <LinkPreview
-              text={linkUrl}
+              text={faceDownInfo?.bookUrl}
               enableAnimation
               renderLinkPreview={({
                 aspectRatio,
@@ -340,7 +524,7 @@ const CreateNewFaceDown = ({navigation}: NavigProps<null>) => {
                 }}
                 source={
                   selectBook
-                    ?  selectBook
+                    ? selectBook
                     : require('../../assets/tempAssets/book.jpg')
                 }
               />
@@ -353,7 +537,12 @@ const CreateNewFaceDown = ({navigation}: NavigProps<null>) => {
               gap: 10,
             }}>
             <TextInput
-              onChangeText={text => setLinkUrl(text)}
+              onChangeText={text =>
+                setFaceDownInfo({
+                  ...faceDownInfo,
+                  bookUrl: text,
+                })
+              }
               style={{
                 fontFamily: font.Poppins,
                 backgroundColor: colors.secondaryColor,
@@ -364,7 +553,8 @@ const CreateNewFaceDown = ({navigation}: NavigProps<null>) => {
                 flex: 1,
                 color: colors.textColor.neutralColor,
               }}
-              defaultValue="write image /book/url link"
+              placeholder="write image /book/url link"
+              placeholderTextColor={colors.textColor.gray}
             />
             <TouchableOpacity
               onPress={() => {
@@ -468,9 +658,14 @@ const CreateNewFaceDown = ({navigation}: NavigProps<null>) => {
               height: window.height * 0.25,
               color: colors.textColor.neutralColor,
             }}
-            defaultValue="elit. placerat ex non, elit. In ac nibh Ut non non urna porta dui sapien enim. elit placerat. sed Ut tincidunt amet, vitae sit enim. facilisis vel volutpat Ut 
-
-sed Quisque ac lobortis, Quisque urna ipsum Nam id tempor placerat. Morbi ipsum sollicitudin. dui. urna nulla, Donec vitae vehicula, quis libero, commodo ex "
+            onChangeText={text =>
+              setFaceDownInfo({
+                ...faceDownInfo,
+                description: text,
+              })
+            }
+            placeholder="write a description"
+            placeholderTextColor={colors.textColor.gray}
           />
         </View>
         <View
@@ -508,7 +703,9 @@ sed Quisque ac lobortis, Quisque urna ipsum Nam id tempor placerat. Morbi ipsum 
                 fontSize: 14,
                 color: colors.textColor.neutralColor,
               }}>
-              {selectSchedule ? selectSchedule : selectDate.toString()}
+              {faceDownInfo?.schedule
+                ? faceDownInfo?.schedule
+                : selectDate.toString()}
             </Text>
             <SvgXml
               xml={`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -536,20 +733,23 @@ sed Quisque ac lobortis, Quisque urna ipsum Nam id tempor placerat. Morbi ipsum 
         <NormalButton
           title="Create Face Dwn"
           onPress={() => {
-            navigation?.navigate('FaceDownConversation');
+            handleCreateFaceDown(faceDownInfo);
+            // navigation?.navigate('FaceDownConversation');
           }}
         />
       </View>
 
       <ModalOfBottom
-        height={'32%'}
-        onlyTopRadius={15}
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}>
         <View style={{gap: 3}}>
           <TouchableOpacity
             onPress={() => {
-              setSelectSchedule('Daily');
+              setModalVisible(false);
+              setFaceDownInfo({
+                ...faceDownInfo,
+                schedule: 'Daily',
+              });
             }}
             style={{
               paddingHorizontal: 10,
@@ -568,7 +768,11 @@ sed Quisque ac lobortis, Quisque urna ipsum Nam id tempor placerat. Morbi ipsum 
             onPress={() => {
               setModalVisible(false);
               //   navigation?.navigate('FriendsProfile');
-              setSelectSchedule('2 Day');
+
+              setFaceDownInfo({
+                ...faceDownInfo,
+                schedule: '2 Day',
+              });
             }}
             style={{
               paddingHorizontal: 10,
@@ -587,7 +791,11 @@ sed Quisque ac lobortis, Quisque urna ipsum Nam id tempor placerat. Morbi ipsum 
             onPress={() => {
               setModalVisible(false);
               //   navigation?.navigate('FriendsProfile');
-              setSelectSchedule('Weekly');
+
+              setFaceDownInfo({
+                ...faceDownInfo,
+                schedule: 'Weekly',
+              });
             }}
             style={{
               paddingHorizontal: 10,
@@ -606,7 +814,11 @@ sed Quisque ac lobortis, Quisque urna ipsum Nam id tempor placerat. Morbi ipsum 
             onPress={() => {
               setModalVisible(false);
               //   navigation?.navigate('FriendsProfile');
-              setSelectSchedule('Monthly');
+
+              setFaceDownInfo({
+                ...faceDownInfo,
+                schedule: 'Monthly',
+              });
             }}
             style={{
               paddingHorizontal: 10,
@@ -623,7 +835,7 @@ sed Quisque ac lobortis, Quisque urna ipsum Nam id tempor placerat. Morbi ipsum 
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
-              setSelectSchedule('');
+         
               setModalVisible(false);
               setDateModal(!dateModal);
               //   navigation?.navigate('FriendsProfile');
@@ -710,7 +922,10 @@ sed Quisque ac lobortis, Quisque urna ipsum Nam id tempor placerat. Morbi ipsum 
           mode="single"
           date={selectDate}
           onChange={(params: any) => {
-            setSelectDate(params.date);
+            setFaceDownInfo({
+              ...faceDownInfo,
+              schedule: params.date,
+            });
             setDateModal(false);
           }}
         />
@@ -723,7 +938,7 @@ sed Quisque ac lobortis, Quisque urna ipsum Nam id tempor placerat. Morbi ipsum 
         Radius={20}
         appearance
         backButton>
-     <>
+        <>
           <View
             style={{
               paddingHorizontal: '4%',
@@ -819,70 +1034,71 @@ sed Quisque ac lobortis, Quisque urna ipsum Nam id tempor placerat. Morbi ipsum 
             }}
             renderItem={item => (
               <TouchableOpacity
-              onPress={() => {
-                setBooksModal(false)
-                setSelectBook(item?.item.image)
-                // navigation?.navigate('BookShare', {data: item.item});
-              }}
-              style={{
-                // elevation: 2,
-                // backgroundColor: colors.bg,
-                // padding: 2,
-                borderRadius: 24,
-                // height: height * 0.243,
-                // alignItems : "center",
-                // justifyContent : "center",
-              }}>
-           <View style={{
-            elevation : 1,
-            padding : 3,
-         
-         
-           }}>
-           <Image
-              resizeMode='stretch'
-                style={{
-                  height: height * 0.24,
-                  width: width * 0.41,
-                  borderRadius: 24,
-                  borderWidth : 2,
-                  borderColor : colors.bg
+                onPress={() => {
+                  setBooksModal(false);
+                  setSelectBook(item?.item.image);
+                  // navigation?.navigate('BookShare', {data: item.item});
                 }}
-                source={item.item.image}
-              />
-           </View>
-              <View style={{
-                marginTop : 10,
-                alignItems : "center",
-                gap : 5,
-                maxWidth : width * 0.41,
-              }}>
-              <Text style={{
-                color: colors.textColor.light,
-                fontSize: 14,
-                fontFamily: font.PoppinsMedium,
-                
-              }}>{item.item.title}</Text>
-              <Text style={{
-                color: colors.textColor.neutralColor,
-                fontSize: 12,
-                fontFamily: font.Poppins,
-                
-              }}>{item.item.publisher}</Text>
-              </View>
-            </TouchableOpacity>
+                style={{
+                  // elevation: 2,
+                  // backgroundColor: colors.bg,
+                  // padding: 2,
+                  borderRadius: 24,
+                  // height: height * 0.243,
+                  // alignItems : "center",
+                  // justifyContent : "center",
+                }}>
+                <View
+                  style={{
+                    elevation: 1,
+                    padding: 3,
+                  }}>
+                  <Image
+                    resizeMode="stretch"
+                    style={{
+                      height: height * 0.24,
+                      width: width * 0.41,
+                      borderRadius: 24,
+                      borderWidth: 2,
+                      borderColor: colors.bg,
+                    }}
+                    source={item.item.image}
+                  />
+                </View>
+                <View
+                  style={{
+                    marginTop: 10,
+                    alignItems: 'center',
+                    gap: 5,
+                    maxWidth: width * 0.41,
+                  }}>
+                  <Text
+                    style={{
+                      color: colors.textColor.light,
+                      fontSize: 14,
+                      fontFamily: font.PoppinsMedium,
+                    }}>
+                    {item.item.title}
+                  </Text>
+                  <Text
+                    style={{
+                      color: colors.textColor.neutralColor,
+                      fontSize: 12,
+                      fontFamily: font.Poppins,
+                    }}>
+                    {item.item.publisher}
+                  </Text>
+                </View>
+              </TouchableOpacity>
             )}
           />
         </>
       </CustomModal>
 
-
-  {/* "image modal" */}
-  <ModalOfBottom
+      {/* "image modal" */}
+      <ModalOfBottom
         modalVisible={imageModal}
         setModalVisible={setImageModal}
-       
-       
         containerColor={colors.bg}>
         <View
           style={{
@@ -924,8 +1140,6 @@ sed Quisque ac lobortis, Quisque urna ipsum Nam id tempor placerat. Morbi ipsum 
           </TouchableOpacity>
         </View>
       </ModalOfBottom>
-
-
     </View>
   );
 };

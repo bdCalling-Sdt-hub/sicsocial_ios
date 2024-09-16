@@ -2,10 +2,10 @@
 
 import * as React from 'react';
 
+import { NavigationContainer } from '@react-navigation/native';
 import { Provider, useSelector } from 'react-redux';
 import ContextApi, { useContextApi, useStyles } from '../context/ContextApi';
 
-import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import store from '../redux/store';
@@ -58,44 +58,43 @@ const Routes = () => {
   const {colors} = useStyles();
   const {isDark} = useContextApi();
 
-  
-  const {token} = useSelector((state: any) => state?.token)
+  const {token} = useSelector((state: any) => state?.token);
+
+
+
   return (
-    <GestureHandlerRootView>
-      <NavigationContainer>
-        <Stack.Navigator
-        initialRouteName={token ? 'HomeRoutes' : 'Login'}
-          screenOptions={{
-            headerShown: false,
-            statusBarAnimation: 'fade',
-            statusBarColor: colors.bg,
-            statusBarStyle: isDark ? 'light' : 'dark',
-          }}>
-          {/* <Stack.Screen name="Test" component={TestScreen} /> */}
+    <Stack.Navigator
+      initialRouteName={token ? 'HomeRoutes' : 'Login'}
+      screenOptions={{
+        headerShown: false,
+        statusBarAnimation: 'fade',
+        statusBarColor: colors.bg,
+        statusBarStyle: isDark ? 'light' : 'dark',
+      }}>
+      {/* <Stack.Screen name="Test" component={TestScreen} /> */}
 
-          {/* <Stack.Screen name="TEsting" component={TestScreen} /> */}
-          {/* <Stack.Screen name="Splash" component={SplashScreen} /> */}
-          <Stack.Screen name="Login" component={LoginScreen} />
-          <Stack.Screen name="Loading" component={LoadingSplash} />
-          <Stack.Screen name="SignUp" component={SignUpScreen} />
-          <Stack.Screen
-            name="EmailConfirmation"
-            component={EmailConfirmationScreen}
-          />
-          <Stack.Screen name="VerifyEmail" component={VerifyEmailScreen} />
-          <Stack.Screen name="ResetPassword" component={ResetPasswordScreen} />
-          <Stack.Screen name="ChangePassword" component={ChangePassword} />
-          <Stack.Screen
-            name="VerifySuccessful"
-            component={VerifySuccessfulScreen}
-          />
-          <Stack.Screen name="DeleteAccount" component={DeleteAccount} />
+      {/* <Stack.Screen name="TEsting" component={TestScreen} /> */}
+      {/* <Stack.Screen name="Splash" component={SplashScreen} /> */}
+      <Stack.Screen name="Login" component={LoginScreen} />
+      <Stack.Screen name="Loading" component={LoadingSplash} />
+      <Stack.Screen name="SignUp" component={SignUpScreen} />
+      <Stack.Screen
+        name="EmailConfirmation"
+        component={EmailConfirmationScreen}
+      />
+      <Stack.Screen name="VerifyEmail" component={VerifyEmailScreen} />
+      <Stack.Screen name="ResetPassword" component={ResetPasswordScreen} />
+      <Stack.Screen name="ChangePassword" component={ChangePassword} />
+      <Stack.Screen
+        name="VerifySuccessful"
+        component={VerifySuccessfulScreen}
+      />
+      <Stack.Screen name="DeleteAccount" component={DeleteAccount} />
 
-         
-         {
-          token && <>
-           {/*=================== under the home ====================== */}
-           <Stack.Screen name="HomeRoutes" component={BottomBarRoutes} />
+      {token && (
+        <>
+          {/*=================== under the home ====================== */}
+          <Stack.Screen name="HomeRoutes" component={BottomBarRoutes} />
           <Stack.Screen
             name="donation"
             component={DonationScreen}
@@ -329,24 +328,28 @@ const Routes = () => {
             }}
           />
           {/*======================== Profile end ============================ */}
-          
-          </>
-         }
-         
-        </Stack.Navigator>
-      </NavigationContainer>
-    </GestureHandlerRootView>
+        </>
+      )}
+    </Stack.Navigator>
   );
 };
 
 function AppRoutes() {
   const [isSplash, setIsSplash] = React.useState(true);
- 
+
   return (
     <Provider store={store}>
       <ContextApi>
-        {isSplash ? <SplashScreen setIsSplash={setIsSplash} /> : <Routes />}
-      {/* <Routes /> */}
+        {isSplash ? (
+          <SplashScreen setIsSplash={setIsSplash} />
+        ) : (
+          <GestureHandlerRootView>
+            <NavigationContainer>
+              <Routes />
+            </NavigationContainer>
+          </GestureHandlerRootView>
+        )}
+        {/* <Routes /> */}
       </ContextApi>
     </Provider>
   );

@@ -1,11 +1,11 @@
 import {
-    FlatList,
-    Image,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  FlatList,
+  Image,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 
 import React from 'react';
@@ -15,49 +15,18 @@ import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
 import GroupUserCard from '../../components/conversation/GroupUserCard';
 import { useStyles } from '../../context/ContextApi';
 import { NavigProps } from '../../interfaces/NaviProps';
+import { useGetFriendQuery } from '../../redux/apiSlices/friendsSlices';
+import { IParticipant } from '../../redux/interface/participants';
+import { makeImage } from '../../utils/utils';
 
-const friends = [
-  {
-    id: 1,
-    name: 'Amina',
-    img: require('../../assets/tempAssets/3a906b3de8eaa53e14582edf5c918b5d.jpg'),
-    lastMessage: 'Assalamuallikum, how are...',
-  },
-  {
-    id: 2,
-    name: 'Arif',
-    img: require('../../assets/tempAssets/4005b22a3c1c23d7c04f6c9fdbd85468.jpg'),
-    lastMessage: 'Sir you are great.',
-  },
-  {
-    id: 3,
-    name: 'Rahman',
-    img: require('../../assets/tempAssets/51ad46951bbdc28be4cf7e384964f309.jpg'),
-    lastMessage: 'Brother eid mubarak',
-  },
-  {
-    id: 4,
-    name: 'Mithila',
-    img: require('../../assets/tempAssets/691af02d3a7ca8be2811716f82d9212b.jpg'),
-    lastMessage: 'you: I’m feeling good',
-  },
-  {
-    id: 5,
-    name: 'Samina',
-    img: require('../../assets/tempAssets/7261c2ae940abab762a6e0130b36b3a9.jpg'),
-    lastMessage: 'you: I’m feeling good',
-    group: false,
-  },
-];
-
-const FaceDownAddMember = ({navigation}: NavigProps<null>) => {
+const FaceDownAddMember = ({navigation ,route }: NavigProps<any>) => {
   const {colors, font} = useStyles();
+  const {data : friends} = useGetFriendQuery({})  
   const [modalVisible, setModalVisible] = React.useState(false);
   const [selectedUser, setSelectUser] = React.useState<
-    Array<{name: string; img: string; lastMessage: string; id: number}>
-  >([...friends.slice(0, 1)]);
-
-  //   console.log(selectedUser);
+    Array<IParticipant>
+  >(route?.params || []);
+    // console.log(selectedUser);
   return (
     <View
       style={{
@@ -80,7 +49,7 @@ const FaceDownAddMember = ({navigation}: NavigProps<null>) => {
               flex: 1,
             }}>
             <TouchableOpacity
-              onPress={() => navigation?.goBack()}
+              onPress={() => navigation?.navigate("CreateFaceDown",selectedUser)}
               style={{
                 alignItems: 'flex-end',
                 backgroundColor: colors.green['#00B047'],
@@ -107,64 +76,7 @@ const FaceDownAddMember = ({navigation}: NavigProps<null>) => {
           fontFamily: font.PoppinsSemiBold,
         }}
       />
-      {/* <View
-            style={{
-              height: 80,
-              width: '100%',
-              paddingHorizontal: '4%',
-              padding: 8,
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }}>
-            <View
-              style={{
-                flexDirection: 'row',
-                gap: 8,
-                alignItems: 'center',
-              }}>
-              <View style={{}}>
-                <Text
-                  style={{
-                    fontFamily: font.PoppinsSemiBold,
-                    fontSize: 20,
-                    color: colors.textColor.primaryColor,
-                  }}>
-                  Messages Box
-                </Text>
-              </View>
-            </View>
-            <View
-              style={{
-                flexDirection: 'row',
-                gap: 19,
-                alignItems: 'center',
-              }}>
-              <TouchableOpacity
-                onPress={() => {
-                  navigation?.navigate('Search');
-                }}>
-                <SvgXml
-                  xml={`<svg width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M16.031 14.6168L20.3137 18.8995L18.8995 20.3137L14.6168 16.031C13.0769 17.263 11.124 18 9 18C4.032 18 0 13.968 0 9C0 4.032 4.032 0 9 0C13.968 0 18 4.032 18 9C18 11.124 17.263 13.0769 16.031 14.6168ZM14.0247 13.8748C15.2475 12.6146 16 10.8956 16 9C16 5.1325 12.8675 2 9 2C5.1325 2 2 5.1325 2 9C2 12.8675 5.1325 16 9 16C10.8956 16 12.6146 15.2475 13.8748 14.0247L14.0247 13.8748Z" fill="${colors.textColor.secondaryColor}"/>
-      </svg>
-      `}
-                />
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => {
-                  navigation?.navigate('Notifications');
-                  // setDark(!isDark);
-                }}>
-                <SvgXml
-                  xml={`<svg width="18" height="22" viewBox="0 0 18 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M17 17.5H1L1.39999 16.9667L1.5 16.8334V16.6667V8C1.5 3.85786 4.85786 0.5 9 0.5C13.1422 0.5 16.5 3.85786 16.5 8V16.6667V16.8334L16.6 16.9667L17 17.5ZM17 17.5L17 17.5L17 17.5L17 17.5L17 17.5L17 17.5ZM2.5 16V16.5H3H15H15.5V16V8C15.5 4.41015 12.5898 1.5 9 1.5C5.41015 1.5 2.5 4.41015 2.5 8V16ZM10.937 19.5C10.715 20.3626 9.93191 21 9 21C8.06809 21 7.28504 20.3626 7.06301 19.5H10.937Z" fill="${colors.textColor.secondaryColor}" stroke="${colors.textColor.secondaryColor}"/>
-      </svg>
-      `}
-                />
-              </TouchableOpacity>
-            </View>
-          </View> */}
+    
       <View
         style={{
           paddingHorizontal: '4%',
@@ -196,7 +108,8 @@ const FaceDownAddMember = ({navigation}: NavigProps<null>) => {
           />
         </View>
       </View>
-      {selectedUser?.length !== 0 && (
+      {/* want to join the group */}
+      {/* {selectedUser?.length !== 0 && (
         <View
           style={{
             borderBottomWidth: 1,
@@ -222,7 +135,7 @@ const FaceDownAddMember = ({navigation}: NavigProps<null>) => {
               gap: 16,
               paddingHorizontal: 20,
             }}
-            data={friends}
+            data={selectedUser}
             renderItem={item => (
               <View style={{gap: 6}}>
                 <TouchableOpacity
@@ -262,7 +175,7 @@ const FaceDownAddMember = ({navigation}: NavigProps<null>) => {
             )}
           />
         </View>
-      )}
+      )} */}
       {selectedUser?.length !== 0 && (
         <View
           style={{
@@ -342,7 +255,9 @@ const FaceDownAddMember = ({navigation}: NavigProps<null>) => {
                       borderRadius: 28,
                       resizeMode: 'contain',
                     }}
-                    source={item.item.img}
+                    source={{
+                      uri : makeImage(item.item.avatar)
+                    }}
                   />
                 </TouchableOpacity>
                 <Text
@@ -352,7 +267,7 @@ const FaceDownAddMember = ({navigation}: NavigProps<null>) => {
                     color: colors.textColor.neutralColor,
                     textAlign: 'center',
                   }}>
-                  Amina
+                  {item.item?.fullName}
                 </Text>
               </View>
             )}
@@ -360,41 +275,41 @@ const FaceDownAddMember = ({navigation}: NavigProps<null>) => {
         </View>
       )}
 
-      <FlatList
+        <FlatList
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="always"
         contentContainerStyle={{
           paddingHorizontal: 8,
           paddingBottom: 100,
         }}
-        data={friends}
+        data={friends?.data}
         renderItem={item => (
           <>
             <GroupUserCard
+            option={"group"}
               isSelect={selectedUser?.find(
-                friend => friend.id === item.item.id,
+                friend => friend._id === item.item._id,
               )}
-              selectOnPress={() => {
-                if (selectedUser.find(friend => friend.id === item.item.id)) {
+              onPress={() => {
+                if (selectedUser.find(friend => friend._id === item.item._id)) {
                   setSelectUser(
-                    selectedUser.filter(friend => friend.id !== item.item.id),
+                    selectedUser.filter(friend => friend._id !== item.item._id),
                   );
                 } else {
                   setSelectUser([...selectedUser, item.item]);
                 }
               }}
-              img={item.item.img}
-              lastMessage={item.item?.lastMessage}
-              lastTime="9:51 am"
-              name={item.item.name}
+              img={item.item.avatar}
+              // lastMessage={item.item?.lastMessage}
+              // lastTime="9:51 am"
+              name={item.item.fullName}
             />
           </>
         )}
       />
 
       <ModalOfBottom
-        height={'18%'}
-        onlyTopRadius={15}
+     
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}>
         <View style={{gap: 3}}>
