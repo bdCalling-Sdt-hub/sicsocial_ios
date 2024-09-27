@@ -4,10 +4,11 @@ import React from 'react';
 import BackButtonWithTitle from '../../../components/common/BackButtonWithTitle';
 import { useStyles } from '../../../context/ContextApi';
 import { NavigProps } from '../../../interfaces/NaviProps';
+import { useGetSicGuideLinesQuery } from '../../../redux/apiSlices/additionalSlices';
 
 const SicGuidelinesScreen = ({navigation}: NavigProps<null>) => {
   const {colors, font} = useStyles();
-
+  const {data : sicGuidelines} = useGetSicGuideLinesQuery({})
   return (
     <View
       style={{
@@ -42,7 +43,21 @@ const SicGuidelinesScreen = ({navigation}: NavigProps<null>) => {
             marginVertical: 20,
             gap: 5,
           }}>
-          <Text
+            {
+              sicGuidelines?.data?.map((item)=>{
+                return <Text
+                key={item?._id}
+                style={{
+                  fontSize: 14,
+                  fontFamily: font.PoppinsSemiBold,
+                  color: colors.textColor.neutralColor,
+                  letterSpacing: 0.3,
+                }}>
+                  {item?.content}
+                </Text>
+              })
+            }
+          {/* <Text
             style={{
               fontSize: 14,
               fontFamily: font.PoppinsSemiBold,
@@ -161,7 +176,7 @@ const SicGuidelinesScreen = ({navigation}: NavigProps<null>) => {
               letterSpacing: 0.3,
             }}>
             follow this link : https://www.youtube.com/
-          </Text>
+          </Text> */}
         </View>
       </ScrollView>
     </View>

@@ -11,8 +11,10 @@ import React from 'react';
 import { SvgXml } from 'react-native-svg';
 import { useStyles } from '../../context/ContextApi';
 import { NavigProps } from '../../interfaces/NaviProps';
+import { IParticipants } from '../../redux/interface/participants';
+import { makeImage } from '../../utils/utils';
 
-interface ConversationalCardProps extends NavigProps<null> {
+interface ConversationalCardProps extends NavigProps<null> , IParticipants {
   conversationTitle?: string;
   conversationSubtitle?: string;
   lastMessage?: string;
@@ -54,6 +56,7 @@ const ConversationalCard = ({
   paddingHorizontal,
   havNotUser,
   manyPeople,
+  participants
 }: ConversationalCardProps) => {
   const {colors, font} = useStyles();
   return (
@@ -71,13 +74,13 @@ const ConversationalCard = ({
           style={{
             backgroundColor: colors.secondaryColor,
             paddingHorizontal: 16,
-            paddingVertical: 10,
+            paddingVertical: 15,
             borderRadius: 16,
             flexDirection: 'row',
             justifyContent: 'space-between',
             alignItems: 'center',
             elevation: 0.8,
-            height: 120,
+            // height: cardStyle == "four" ? 120 : undefined,
           }}>
           {/*================= donation card Start ============= */}
           {conversationStyle === 'donation' && (
@@ -87,22 +90,31 @@ const ConversationalCard = ({
                   gap: 4,
                   marginRight: 1,
                 }}>
-                <Text
-                  style={{
-                    fontFamily: font.PoppinsSemiBold,
-                    fontSize: 17,
-                    color: colors.textColor.secondaryColor,
-                  }}>
-                  {conversationTitle ? conversationTitle : 'empty'}
-                </Text>
-                <Text
-                  style={{
-                    fontFamily: font.Poppins,
-                    fontSize: 12,
-                    color: colors.textColor.secondaryColor,
-                  }}>
-                  {lastMessage ? lastMessage : 'empty'}
-                </Text>
+                {conversationTitle && (
+                  <Text
+                    numberOfLines={1}
+                    style={{
+                      maxWidth : "90%",
+                      fontFamily: font.PoppinsSemiBold,
+                      fontSize: 17,
+                      color: colors.textColor.secondaryColor,
+                    }}>
+                    {conversationTitle}
+                  </Text>
+                )}
+                {conversationSubtitle && (
+                  <Text
+                    numberOfLines={2}
+                    style={{
+                      fontFamily: font.Poppins,
+                      fontSize: 12,
+                      color: colors.textColor.secondaryColor,
+                      opacity: 0.5,
+                      maxWidth : "80%"
+                    }}>
+                    {conversationSubtitle}
+                  </Text>
+                )}
                 <View
                   style={{
                     flexDirection: 'row',
@@ -211,55 +223,70 @@ const ConversationalCard = ({
                       flexDirection: 'row',
                       gap: 5,
                     }}>
+                    {conversationTitle && (
+                      <Text
+                        style={{
+                          fontFamily: font.PoppinsMedium,
+                          fontSize: 12,
+                          color: colors.textColor.secondaryColor,
+                        }}>
+                        {conversationTitle}
+                      </Text>
+                    )}
+                    {cardStyle === 'book_promotion' ? (
+                      <>
+                        {conversationSubtitle && (
+                          <Text
+                            style={{
+                              fontFamily: font.PoppinsMedium,
+                              fontSize: 13,
+                              color: '#8C5719',
+                            }}>
+                            {conversationSubtitle.toLocaleUpperCase()}
+                          </Text>
+                        )}
+                      </>
+                    ) : (
+                      <>
+                        {conversationSubtitle && (
+                          <Text
+                            style={{
+                              fontFamily: font.PoppinsMedium,
+                              fontSize: 13,
+                              color: colors.textColor.neutralColor,
+                            }}>
+                            {conversationSubtitle}
+                          </Text>
+                        )}
+                      </>
+                    )}
+                  </View>
+                  {lastMessageTime && (
                     <Text
                       style={{
                         fontFamily: font.PoppinsMedium,
-                        fontSize: 12,
-                        color: colors.textColor.secondaryColor,
+                        fontSize: 13,
+                        color: colors.textColor.yellowis,
                       }}>
-                      {conversationTitle ? conversationTitle : 'empty'}
+                      {lastMessageTime}
                     </Text>
-                    {cardStyle === 'book_promotion' ? (
-                      <Text
-                        style={{
-                          fontFamily: font.PoppinsMedium,
-                          fontSize: 13,
-                          color: '#8C5719',
-                        }}>
-                        {conversationSubtitle
-                          ? conversationSubtitle.toLocaleUpperCase()
-                          : 'empty '}
-                      </Text>
-                    ) : (
-                      <Text
-                        style={{
-                          fontFamily: font.PoppinsMedium,
-                          fontSize: 13,
-                          color: colors.textColor.neutralColor,
-                        }}>
-                        {conversationSubtitle ? conversationSubtitle : 'empty '}
-                      </Text>
-                    )}
-                  </View>
-                  <Text
-                    style={{
-                      fontFamily: font.PoppinsMedium,
-                      fontSize: 13,
-                      color:  colors.textColor.yellowis,
-                    }}>
-                    {lastMessageTime ? lastMessageTime : 'empty'}
-                  </Text>
-                  <Text
-                    style={{
-                      fontFamily: isReply ? font.PoppinsSemiBold : font.Poppins,
-                      fontSize: 13,
-                      color: isReply
-                        ? colors.textColor.neutralColor
-                        : colors.textColor.neutralColor,
-                    }}
-                    numberOfLines={2}>
-                    {lastMessage ? lastMessage : 'empty'}
-                  </Text>
+                  )}
+                  {lastMessage && (
+                    <Text
+                    
+                      style={{
+                        fontFamily: isReply
+                          ? font.PoppinsSemiBold
+                          : font.Poppins,
+                        fontSize: 13,
+                        color: isReply
+                          ? colors.textColor.neutralColor
+                          : colors.textColor.neutralColor,
+                      }}
+                      numberOfLines={2}>
+                      {lastMessage}
+                    </Text>
+                  )}
                 </View>
               </View>
               {cardStyle === 'book_promotion' && (
@@ -426,7 +453,7 @@ const ConversationalCard = ({
                   <View
                     style={{
                       // height: 76,
-
+                      backgroundColor : colors.white,
                       borderRadius: 35,
                       elevation: 1,
                       justifyContent: 'center',
@@ -442,7 +469,7 @@ const ConversationalCard = ({
                         borderColor: 'white',
                         borderWidth: 2,
                       }}
-                      source={require('../../assets/tempAssets/4005b22a3c1c23d7c04f6c9fdbd85468.jpg')}
+                      source={{uri : makeImage(participants![0]?.avatar)}}
                     />
                   </View>
                 </>
@@ -452,7 +479,7 @@ const ConversationalCard = ({
                   <View
                     style={{
                       // height: 76,
-
+                      backgroundColor : colors.white,
                       borderRadius: 28,
                       elevation: 2,
                       justifyContent: 'center',
@@ -468,7 +495,7 @@ const ConversationalCard = ({
                           translateX: 25,
                         },
                         {
-                          translateY: 0,
+                          translateY: -6,
                         },
                       ],
                     }}>
@@ -481,16 +508,16 @@ const ConversationalCard = ({
                         borderColor: 'white',
                         borderWidth: 2,
                       }}
-                      source={require('../../assets/tempAssets/51ad46951bbdc28be4cf7e384964f309.jpg')}
+                      source={{uri : makeImage(participants![0]?.avatar)}}
                     />
                   </View>
                   <View
                     style={{
                       // height: 76,
-
+                      backgroundColor : colors.white,
                       borderRadius: 28,
                       elevation: havNotUser ? 0 : 2,
-                      bottom: havNotUser ? 10 : 25,
+                      // bottom: havNotUser ? 10 : 25,
                       position: 'absolute',
                       right: havNotUser ? 40 : 40,
                       // zIndex: 2,
@@ -502,7 +529,7 @@ const ConversationalCard = ({
                           translateX: havNotUser ? -25 : -25,
                         },
                         {
-                          translateY: 0,
+                          translateY: -6,
                         },
                       ],
                     }}>
@@ -544,7 +571,7 @@ const ConversationalCard = ({
                           borderColor: 'white',
                           borderWidth: 2,
                         }}
-                        source={require('../../assets/tempAssets/691af02d3a7ca8be2811716f82d9212b.jpg')}
+                        source={{uri : makeImage(participants![1]?.avatar)}}
                       />
                     )}
                   </View>
@@ -556,7 +583,7 @@ const ConversationalCard = ({
                   <View
                     style={{
                       // height: 76,
-
+                      backgroundColor : colors.white,
                       borderRadius: 24,
                       elevation: 2,
                       bottom: -25,
@@ -581,13 +608,13 @@ const ConversationalCard = ({
                         borderColor: 'white',
                         borderWidth: 2,
                       }}
-                      source={require('../../assets/tempAssets/7261c2ae940abab762a6e0130b36b3a9.jpg')}
+                      source={{uri : makeImage(participants![0]?.avatar)}}
                     />
                   </View>
                   <View
                     style={{
                       // height: 76,
-
+                      backgroundColor : colors.white,
                       borderRadius: 24,
                       elevation: 2,
                       bottom: -25,
@@ -612,7 +639,7 @@ const ConversationalCard = ({
                         borderColor: 'white',
                         borderWidth: 2,
                       }}
-                      source={require('../../assets/tempAssets/86efa3df337e8c215dd8095476bb6513.jpg')}
+                      source={{uri : makeImage(participants![1]?.avatar)}}
                     />
                   </View>
 
@@ -684,18 +711,24 @@ const ConversationalCard = ({
                           borderColor: 'white',
                           borderWidth: 2,
                         }}
-                        source={require('../../assets/tempAssets/ad868d019f92ce267e6de23af3413e5b.jpg')}
+                        source={{uri : makeImage(participants![2]?.avatar)}}
                       />
                     )}
                   </View>
                 </View>
               )}
               {cardStyle === 'four' && (
-                <View>
+                <View style={{
+                  transform : [
+                    {
+                      scale : 0.8
+                    }
+                  ]
+                }}> 
                   <View
                     style={{
                       // height: 76,
-
+                      backgroundColor : colors.white,
                       borderRadius: 24,
                       elevation: 2,
                       bottom: 6,
@@ -723,13 +756,13 @@ const ConversationalCard = ({
                         borderColor: 'white',
                         borderWidth: 2,
                       }}
-                      source={require('../../assets/tempAssets/ae1e058c2ed75ab981a9f8bb62e96a13.jpg')}
+                      source={{uri : makeImage(participants![0]?.avatar)}}
                     />
                   </View>
                   <View
                     style={{
                       // height: 76,
-
+                      backgroundColor : colors.white,
                       borderRadius: 24,
                       elevation: 2,
                       bottom: 0,
@@ -757,13 +790,13 @@ const ConversationalCard = ({
                         borderColor: 'white',
                         borderWidth: 2,
                       }}
-                      source={require('../../assets/tempAssets/bdf7eaf41f82746f243dbd6e48280274.jpg')}
+                      source={{uri : makeImage(participants![1]?.avatar)}}
                     />
                   </View>
                   <View
                     style={{
                       // height: 76,
-
+                         backgroundColor : colors.white,
                       borderRadius: 24,
                       elevation: 2,
                       bottom: 6,
@@ -791,13 +824,13 @@ const ConversationalCard = ({
                         borderColor: 'white',
                         borderWidth: 2,
                       }}
-                      source={require('../../assets/tempAssets/f94d91c8643f6698b126e7dec5854350.jpg')}
+                      source={{uri : makeImage(participants![2]?.avatar)}}
                     />
                   </View>
                   <View
                     style={{
                       // height: 76,
-
+                      backgroundColor : colors.white,
                       borderRadius: 24,
                       elevation: 2,
                       bottom: 0,
@@ -825,7 +858,7 @@ const ConversationalCard = ({
                         borderColor: 'white',
                         borderWidth: 2,
                       }}
-                      source={require('../../assets/tempAssets/ad868d019f92ce267e6de23af3413e5b.jpg')}
+                      source={{uri : makeImage(participants![3]?.avatar)}}
                     />
                   </View>
                 </View>
@@ -840,6 +873,6 @@ const ConversationalCard = ({
   );
 };
 
-export default ConversationalCard;
+export default React.memo(ConversationalCard);
 
 const styles = StyleSheet.create({});

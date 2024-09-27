@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import {
+  FlatList,
   Image,
   Linking,
   SafeAreaView,
@@ -16,36 +17,28 @@ import {
 } from '../../context/ContextApi';
 
 import Clipboard from '@react-native-clipboard/clipboard';
-import { ScrollView } from 'react-native-gesture-handler';
+import { format } from 'date-fns';
 import LinearGradient from 'react-native-linear-gradient';
 import { SvgXml } from 'react-native-svg';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import ConversationalCard from '../../components/common/ConversationalCard';
 import ConversationalModal from '../../components/common/ConversationalModal/ConversationalModal';
 import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
+import { IConversationProps } from '../../interfaces/Interface';
 import { NavigProps } from '../../interfaces/NaviProps';
+import { imageUrl } from '../../redux/api/baseApi';
+import { useGetDonationQuery } from '../../redux/apiSlices/additionalSlices';
+import { useGetUserProfileQuery } from '../../redux/apiSlices/authSlice';
+import { useGetNewsFeetQuery } from '../../redux/apiSlices/homeSlices';
 import { isTablet } from '../../utils/utils';
-
-export interface IConversationProps {
-  id: number;
-  content?: string;
-  image?: string;
-  style?:
-    | 'book_promotion'
-    | 'shear_book'
-    | 'image'
-    | 'two'
-    | 'single'
-    | 'three'
-    | 'four';
-  user?: {
-    name: string;
-    image: string;
-  };
-}
 
 const HomeScreen = ({navigation}: NavigProps<null>) => {
   const {isLive, setIsLive, isDark} = useContextApi();
+
+  const {data : newsFeet} = useGetNewsFeetQuery({});
+  const {data : userProfile} = useGetUserProfileQuery({});
+  const {data : donations} = useGetDonationQuery({})
+  // console.log(userProfile);
   const {colors, font} = useStyles();
   const [modalVisible, setModalVisible] = React.useState(false);
 
@@ -54,7 +47,7 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
   >([]);
   // lines of modal animation
 
-  const scrollViewGapHight = useSharedValue('20%');
+  const scrollViewGapHight = useSharedValue('0%');
 
   useEffect(() => {
     if (isLive) {
@@ -67,10 +60,28 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
         duration: 1000,
       });
     }
+    return () => {};
   }, [isLive]);
 
-  // is live  card have checker and create animation asaa
 
+  const renderDonations = () => {
+    if (!donations?.data) return null;
+    return donations.data.map((item, index) => (
+      <ConversationalCard 
+        disabled 
+        key={index} 
+        participants={[]} 
+        conversationStyle="donation" 
+        conversationTitle={item?.details?.title} 
+        conversationSubtitle={item?.details?.content}
+        onDonationShearPress={() => setModalVisible(true)}
+        onDonationViewDetailsPress={() => navigation?.navigate('donation', { data: item })}
+      />
+    ));
+  };
+ 
+  // is live  card have checker and create animation asaa
+ const profileImage = userProfile?.data?.avatar.startsWith("https") ? userProfile?.data?.avatar : `${imageUrl}/${userProfile?.data?.avatar}`
   return (
     <SafeAreaView
       style={{
@@ -99,7 +110,9 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
           position: 'absolute',
           zIndex: 99999,
         }}>
-        <View
+        <TouchableOpacity
+        activeOpacity={0.8}
+        onPress={()=>navigation?.navigate("UserProfile")}
           style={{
             flexDirection: 'row',
             gap: 8,
@@ -114,7 +127,9 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
               justifyContent: 'center',
               alignItems: 'center',
             }}
-            source={require('../../assets/tempAssets/86efa3df337e8c215dd8095476bb6513.jpg')}
+            source={{
+              uri : profileImage
+            }}
           />
           <View
             style={{
@@ -134,10 +149,10 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
                 fontSize: 16,
                 color: colors.textColor.primaryColor,
               }}>
-              Asadullah
+              {userProfile?.data?.fullName}
             </Text>
           </View>
-        </View>
+        </TouchableOpacity>
         <View
           style={{
             flexDirection: 'row',
@@ -172,22 +187,41 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
 
       {/*==================== profile card end ===================  */}
        
-     <ScrollView
-       showsVerticalScrollIndicator={false}
-       showsHorizontalScrollIndicator={false}
-     
-        contentContainerStyle={{
-          gap: 16,
-          paddingTop: 16,
-          // paddingBottom: isLive ? LIVE_ACTIVE_VALUE + 30 : 16,
-          paddingHorizontal: '5%',
-        }}>
+   
         {/*========================== conversation card start ======================= */}
-
-        <ConversationalCard
+     
+   {/*====================== donations cards ========================= */}
+       
+    {/*===================== normal cards ======================= */}
+    <FlatList
+    showsVerticalScrollIndicator={false}
+    showsHorizontalScrollIndicator={false}
+    contentContainerStyle={{
+      gap : 16,
+      paddingVertical: 16,
+      paddingHorizontal: '5%',
+    }}
+    data={newsFeet?.data}
+    ListHeaderComponent={renderDonations}
+    renderItem={({ item }) => (
+      <ConversationalCard
+        conversationStyle="normal"
+        onPress={() => navigation?.navigate('NormalConversation')}
+        participants={item.participants}
+        cardStyle={item.participants.length > 4 ? "three" : item?.participants.length === 4 ? "four" : item?.participants.length === 3 ? "three" : item?.participants.length === 2 ? "two" : "single"}
+        manyPeople={item.participants.length > 4}
+        conversationTitle={item.lastMessage.sender._id === userProfile?.data?._id ? "You" : userProfile?.data?.fullName}
+        conversationSubtitle={item.lastMessage.sender._id === userProfile?.data?._id ? "send a message" : "Reply to the message"}
+        lastMessageTime={format(new Date(item.updatedAt), "hh :mm a")}
+        lastMessage={item.lastMessage.audio ? "send an audio message" : item.lastMessage.image ? "send an image message" : item.lastMessage.text ? item.lastMessage.text : item.lastMessage.path ? "send a book" : "Start a chat"}
+      />
+    )}
+    // estimatedItemSize={600}
+  />
+        {/* <ConversationalCard
           disabled
           conversationStyle="donation"
-          conversationTitle="Hello Asadullah"
+          conversationTitle={`Hello ${userProfile?.data?.fullName}`}
           // conversationSubtitle="Contribute and share with others."
           lastMessage="Contribute and share with others."
           onDonationShearPress={() => {
@@ -197,22 +231,7 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
             navigation?.navigate('donation');
           }}
         />
-        {addNewVoiceCard
-          .sort((a, b) => b.id - a.id)
-          .map(card => (
-            <ConversationalCard
-              key={card.id}
-              conversationStyle="normal"
-              onPress={() => {
-                navigation?.navigate('NormalConversation');
-              }}
-              cardStyle={card?.style}
-              conversationTitle="You"
-              conversationSubtitle={card.content}
-              lastMessageTime="9:30 am"
-              lastMessage="Hello"
-            />
-          ))}
+  
 
         <ConversationalCard
           conversationStyle="normal"
@@ -316,19 +335,17 @@ is recognize for SIC "
           conversationSubtitle="join room"
           lastMessageTime="8:10 am"
           lastMessage="nadin invite you in room"
-        />
+        /> */}
 
         <Animated.View
           style={{
             paddingBottom: scrollViewGapHight,
           }}
         />
-      </ScrollView>
+    
       {/*==================== Body part Start ===================  */}
 
       <ConversationalModal
-        addNewVoiceCard={addNewVoiceCard}
-        setAddNewVoiceCard={setAddNewVoiceCard}
         navigation={navigation}
       />
 
@@ -336,9 +353,6 @@ is recognize for SIC "
       <ModalOfBottom
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
-        onlyTopRadius={20}
-        panOf
-        // backButton
       >
         <View>
           <Text

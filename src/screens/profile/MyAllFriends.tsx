@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
+import { isTablet, makeImage } from '../../utils/utils';
 
 import { Image } from 'react-native';
 import {
@@ -13,84 +14,10 @@ import {
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
 import { useStyles } from '../../context/ContextApi';
 import { NavigProps } from '../../interfaces/NaviProps';
-import { isTablet } from '../../utils/utils';
+import { useGetFriendQuery } from '../../redux/apiSlices/friendsSlices';
 
-const friends = [
-  {
-    id: 1,
-    name: 'Amina',
-    img: require('../../assets/tempAssets/3a906b3de8eaa53e14582edf5c918b5d.jpg'),
-    lastMessage: 'Assalamuallikum, how are...',
-  },
-  {
-    id: 2,
-    name: 'Arif',
-    img: require('../../assets/tempAssets/4005b22a3c1c23d7c04f6c9fdbd85468.jpg'),
-    lastMessage: 'Sir you are great.',
-  },
-  {
-    id: 2,
-    name: 'Arif',
-
-    lastMessage: 'Sir you are great.',
-  },
-  {
-    id: 2,
-    name: 'Arif',
-    img: require('../../assets/tempAssets/4005b22a3c1c23d7c04f6c9fdbd85468.jpg'),
-    lastMessage: 'Sir you are great.',
-  },
-  {
-    id: 3,
-    name: 'Rahman',
-    img: require('../../assets/tempAssets/51ad46951bbdc28be4cf7e384964f309.jpg'),
-    lastMessage: 'Brother eid mubarak',
-  },
-  {
-    id: 3,
-    name: 'Rahman',
-
-    lastMessage: 'Brother eid mubarak',
-  },
-  {
-    id: 3,
-    name: 'Rahman',
-
-    lastMessage: 'Brother eid mubarak',
-  },
-  {
-    id: 3,
-    name: 'Rahman',
-    img: require('../../assets/tempAssets/51ad46951bbdc28be4cf7e384964f309.jpg'),
-    lastMessage: 'Brother eid mubarak',
-  },
-  {
-    id: 4,
-    name: 'Mithila',
-    img: require('../../assets/tempAssets/691af02d3a7ca8be2811716f82d9212b.jpg'),
-    lastMessage: 'you: I’m feeling good',
-  },
-  {
-    id: 5,
-    name: 'Samina',
-    img: require('../../assets/tempAssets/7261c2ae940abab762a6e0130b36b3a9.jpg'),
-    lastMessage: 'you: I’m feeling good',
-  },
-  {
-    id: 5,
-    name: 'Samina',
-
-    lastMessage: 'you: I’m feeling good',
-  },
-  // {
-  //   id: 5,
-  //   name: 'Samina',
-  //   img: require('../../assets/tempAssets/7261c2ae940abab762a6e0130b36b3a9.jpg'),
-  //   lastMessage: 'you: I’m feeling good',
-  // },
-];
-
-const MyAllFriends = ({navigation}: NavigProps<null>) => {
+const MyAllFriends = ({navigation,route}: NavigProps<null>) => {
+  const {data : friends} = useGetFriendQuery({})  
   const {colors, font, window} = useStyles();
   const [test, setTest] = useState(false);
   return (
@@ -117,7 +44,7 @@ const MyAllFriends = ({navigation}: NavigProps<null>) => {
           textAlign: 'right',
           paddingHorizontal: '5%',
         }}>
-        {friends.length} friends
+        {friends?.data.length} friends
       </Text>
 
       <GridList
@@ -126,9 +53,10 @@ const MyAllFriends = ({navigation}: NavigProps<null>) => {
         containerWidth={window.width * 0.9}
         contentContainerStyle={{
           marginTop: 15,
-          alignSelf: 'center',
+          // alignSelf: 'center',
+          paddingHorizontal : "2%"
         }}
-        data={friends}
+        data={friends?.data}
         renderItem={item => (
           <View style={{gap: 6 , alignItems: 'center',
             justifyContent: 'center',}}>
@@ -169,9 +97,10 @@ const MyAllFriends = ({navigation}: NavigProps<null>) => {
                   borderWidth: 2,
                 }}
                 source={
-                  item.item.img
-                    ? item.item.img
-                    : require('../../assets/tempAssets/EptyImageUser.jpg')
+                {
+                  uri : makeImage(item.item.avatar)
+                }
+                  
                 }
               />
             </TouchableOpacity>
@@ -182,7 +111,7 @@ const MyAllFriends = ({navigation}: NavigProps<null>) => {
                 color: colors.textColor.neutralColor,
                 textAlign: 'center',
               }}>
-              {item.item.name}
+              {item.item.fullName}
             </Text>
           </View>
         )}

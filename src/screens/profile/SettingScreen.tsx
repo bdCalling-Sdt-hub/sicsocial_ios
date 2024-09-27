@@ -1,18 +1,22 @@
 import {
-    FlatList,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View
+  FlatList,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
 } from 'react-native';
 import { useContextApi, useStyles } from '../../context/ContextApi';
 
 import React from 'react';
 import { SvgXml } from 'react-native-svg';
+import { useDispatch } from 'react-redux';
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
 import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
 import { NavigProps } from '../../interfaces/NaviProps';
+import { useGetDonationQuery } from '../../redux/apiSlices/additionalSlices';
+import { clearToken } from '../../redux/apiSlices/tokenSlice';
+import { removeStorageToken } from '../../utils/utils';
 
 const settingsData = [
   {
@@ -118,10 +122,12 @@ const Languages = [
 
 const SettingScreen = ({navigation}: NavigProps<null>) => {
   const {colors, font} = useStyles();
+  const {data : donations} = useGetDonationQuery({})
   const {isDark, setDark} = useContextApi();
   const [languageModal, setLanguageModal] = React.useState(false);
   const [selectedLanguage, setSelectedLanguage] = React.useState<any[]>();
-  console.log(selectedLanguage);
+  // console.log(selectedLanguage);
+  const dispatch = useDispatch();
   return (
     <View
       style={{
@@ -179,13 +185,15 @@ const SettingScreen = ({navigation}: NavigProps<null>) => {
                   navigation?.navigate('AboutSic');
                 }
                 if (item.item.option === 'integrity_donation') {
-                  navigation?.navigate('donation');
+                  navigation?.navigate('donation', { data: donations?.data![0] });
                 }
                 if (item.item.option === 'your_feedback') {
                   navigation?.navigate('Feedback');
                 }
                 if (item.item.option === 'logout') {
-                  navigation?.navigate('Login');
+                  dispatch(clearToken())
+                  removeStorageToken()
+                  navigation?.navigate('Loading');
                 }
               }}
               style={{
@@ -246,7 +254,7 @@ const SettingScreen = ({navigation}: NavigProps<null>) => {
       <ModalOfBottom
         setModalVisible={setLanguageModal}
         modalVisible={languageModal}
-        onlyTopRadius={10}
+   
         backButton>
         <View>
           <Text

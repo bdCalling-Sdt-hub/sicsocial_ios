@@ -1,23 +1,98 @@
 import {
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
+import PopUpModal, {
+  PopUpModalRef,
+} from '../../components/common/modals/PopUpModal';
 
 import { Formik } from 'formik';
 import React from 'react';
 import Feather from 'react-native-vector-icons/Feather';
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
+import NormalButton from '../../components/common/NormalButton';
 import { useStyles } from '../../context/ContextApi';
 import { NavigProps } from '../../interfaces/NaviProps';
+import { useCreateUserMutation } from '../../redux/apiSlices/authSlice';
 
 const SignUpScreen = ({navigation}: NavigProps<null>) => {
+  const modalRef = React.useRef<PopUpModalRef>();
+  const [createUser, results] = useCreateUserMutation();
   const {colors, font} = useStyles();
   const [isShow, setIsShow] = React.useState(false);
   const [check, setCheck] = React.useState(false);
+  const OnSubmitHandler = values => {
+    console.log(values);
+    if (!values?.fullName) {
+      modalRef.current?.open({
+        // title : "Error",
+        content: 'Please enter your name',
+      });
+    } else if (!values?.email) {
+      modalRef.current?.open({
+        // title : "Error",
+        content: 'Please enter your email',
+      });
+    } else if (!values?.password) {
+      modalRef.current?.open({
+        // title : "Error",
+        content: 'Please enter your password',
+      });
+    }
+    // password maust be at least 8 characters
+    else if (values?.password?.length < 8) {
+      modalRef.current?.open({
+        // title : "Error",
+        content: 'Password must be at least 8 characters',
+      });
+    }
+    // password or confirm password not match
+    else if (values?.password !== values?.confirm_password) {
+      modalRef.current?.open({
+        // title : "Error",
+        content: 'Password or confirm password not match',
+      });
+    }
+    // email not valid
+    else if (!values?.email?.match(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/)) {
+      modalRef.current?.open({
+        // title : "Error",
+        content: 'Email not valid',
+      });
+    } else if (!values?.confirm_password) {
+      modalRef.current?.open({
+        // title : "Error",
+        content: 'Please enter your confirm password',
+      });
+    } else {
+      createUser(values).then(res => {
+        console.log(res);
+        if (res.error) {
+          modalRef.current?.open({
+            // title : "Error",
+            content: res?.error?.data?.message,
+          });
+        }
+        if (res?.data) {
+          // console.log(res.data);
+          if (res.data?.success) {
+            navigation?.navigate('VerifyEmail', {
+              data: {
+                email: values?.email,
+                otp : "",
+                verificationType: 'emailVerification',
+              },
+            });
+          }
+          // lStorage.setString("token", res.data?.data?.accessToken);
+        }
+      });
+    }
+  };
   return (
     <View
       style={{
@@ -40,10 +115,11 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
 
         // thirdRoll
       />
-       
-     <ScrollView
-       showsVerticalScrollIndicator={false}
-       showsHorizontalScrollIndicator={false}>
+
+      <ScrollView
+        keyboardShouldPersistTaps="always"
+        showsVerticalScrollIndicator={false}
+        showsHorizontalScrollIndicator={false}>
         <View>
           <Text
             style={{
@@ -56,13 +132,13 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
         </View>
         <Formik
           initialValues={{
-            name: 'Asadullah Khan',
-            email: 'Gabrail101@gmail.com',
-            contract: '+99000000000000',
-            password: 'asdfsadf',
-            confirm_password: 'asdfsadf',
+            fullName: '',
+            email: '',
+            phoneNumber: '',
+            password: '',
+            confirm_password: '',
           }}
-          onSubmit={values => console.log(values)}>
+          onSubmit={values => OnSubmitHandler(values)}>
           {({handleChange, handleBlur, handleSubmit, values}) => (
             <View
               style={{
@@ -83,7 +159,6 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
                   Full name
                 </Text>
                 <TextInput
-                  value="Asadullah"
                   style={{
                     fontFamily: font.Poppins,
                     backgroundColor: colors.secondaryColor,
@@ -93,10 +168,11 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
                     height: 56,
                     color: colors.textColor.neutralColor,
                   }}
-                  placeholder="type "
-                  onChangeText={handleChange('name')}
-                  onBlur={handleBlur('name')}
-                  value={values?.name}
+                  placeholder="John Doe"
+                  placeholderTextColor={colors.textColor.gray}
+                  onChangeText={handleChange('fullName')}
+                  onBlur={handleBlur('fullName')}
+                  value={values?.fullName}
                 />
               </View>
               <View
@@ -112,7 +188,6 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
                   Email
                 </Text>
                 <TextInput
-                  value="Gabrail101@gmail.com"
                   style={{
                     fontFamily: font.Poppins,
                     backgroundColor: colors.secondaryColor,
@@ -122,7 +197,8 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
                     height: 56,
                     color: colors.textColor.neutralColor,
                   }}
-                  placeholder="type "
+                  placeholder="johndoe@gmail.com"
+                  placeholderTextColor={colors.textColor.gray}
                   onChangeText={handleChange('email')}
                   onBlur={handleBlur('email')}
                   value={values?.email}
@@ -141,7 +217,6 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
                   Contact no
                 </Text>
                 <TextInput
-                  value="+99000000000000"
                   style={{
                     fontFamily: font.Poppins,
                     backgroundColor: colors.secondaryColor,
@@ -151,10 +226,11 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
                     height: 56,
                     color: colors.textColor.neutralColor,
                   }}
-                  placeholder="type "
-                  onChangeText={handleChange('contract')}
-                  onBlur={handleBlur('contract')}
-                  value={values?.contract}
+                  placeholderTextColor={colors.textColor.gray}
+                  placeholder="+000000000000"
+                  onChangeText={handleChange('phoneNumber')}
+                  onBlur={handleBlur('phoneNumber')}
+                  value={values?.phoneNumber}
                 />
               </View>
               <View
@@ -170,7 +246,6 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
                   Password
                 </Text>
                 <TextInput
-                  value="Gabrail10"
                   style={{
                     fontFamily: font.Poppins,
                     backgroundColor: colors.secondaryColor,
@@ -180,7 +255,8 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
                     height: 56,
                     color: colors.textColor.neutralColor,
                   }}
-                  placeholder="type "
+                  placeholderTextColor={colors.textColor.gray}
+                  // placeholder="********"
                   secureTextEntry={!isShow}
                   onChangeText={handleChange('password')}
                   onBlur={handleBlur('password')}
@@ -222,7 +298,6 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
                   Confirm Password
                 </Text>
                 <TextInput
-                  value="Gabrail10"
                   style={{
                     fontFamily: font.Poppins,
                     backgroundColor: colors.secondaryColor,
@@ -232,7 +307,10 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
                     height: 56,
                     color: colors.textColor.neutralColor,
                   }}
-                  placeholder="type "
+                  onChangeText={handleChange('confirm_password')}
+                  onBlur={handleBlur('confirm_password')}
+                  placeholderTextColor={colors.textColor.gray}
+                  // placeholder="********"
                   secureTextEntry={!isShow}
                 />
                 <TouchableOpacity
@@ -259,35 +337,20 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
                 </TouchableOpacity>
               </View>
 
-              <View>
-                <TouchableOpacity
+              <View style={{marginTop: 20}}>
+                <NormalButton
+                  isLoading={results?.isLoading}
+                  title="Sign Up"
                   onPress={() => {
-                    navigation?.navigate('VerifyEmail');
-                    // navigation?.navigate('EmailConfirmation');
-                    // handleSubmit();
+                    handleSubmit();
                   }}
-                  style={{
-                    backgroundColor: colors.primaryColor,
-                    borderRadius: 100,
-                    height: 56,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    marginVertical: 24,
-                  }}>
-                  <Text
-                    style={{
-                      fontFamily: font.PoppinsSemiBold,
-                      fontSize: 16,
-                      color: 'white',
-                    }}>
-                    Sign up
-                  </Text>
-                </TouchableOpacity>
+                />
               </View>
             </View>
           )}
         </Formik>
       </ScrollView>
+      <PopUpModal ref={modalRef} />
     </View>
   );
 };

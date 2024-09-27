@@ -1,57 +1,30 @@
 import {
-    FlatList,
-    Image,
-    Linking,
-    ScrollView,
-    StyleSheet,
-    Text,
-    ToastAndroid,
-    TouchableOpacity,
-    View,
+  Alert,
+  FlatList,
+  Image,
+  Linking,
+  ScrollView,
+  StyleSheet,
+  Text,
+  ToastAndroid,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { useContextApi, useStyles } from '../../context/ContextApi';
+import { isSmall, makeImage } from '../../utils/utils';
 
 import Clipboard from '@react-native-clipboard/clipboard';
+import { format } from 'date-fns';
 import React from 'react';
 import { SvgXml } from 'react-native-svg';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import ConversationalCard from '../../components/common/ConversationalCard';
 import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
 import { NavigProps } from '../../interfaces/NaviProps';
-import { isSmall } from '../../utils/utils';
-
-const friends = [
-  {
-    id: 1,
-    name: 'Amina',
-    img: require('../../assets/tempAssets/3a906b3de8eaa53e14582edf5c918b5d.jpg'),
-    lastMessage: 'Assalamuallikum, how are...',
-  },
-  {
-    id: 2,
-    name: 'Arif',
-    img: require('../../assets/tempAssets/4005b22a3c1c23d7c04f6c9fdbd85468.jpg'),
-    lastMessage: 'Sir you are great.',
-  },
-  {
-    id: 3,
-    name: 'Rahman',
-    img: require('../../assets/tempAssets/51ad46951bbdc28be4cf7e384964f309.jpg'),
-    lastMessage: 'Brother eid mubarak',
-  },
-  {
-    id: 4,
-    name: 'Mithila',
-    img: require('../../assets/tempAssets/691af02d3a7ca8be2811716f82d9212b.jpg'),
-    lastMessage: 'you: I’m feeling good',
-  },
-  {
-    id: 5,
-    name: 'Samina',
-    img: require('../../assets/tempAssets/7261c2ae940abab762a6e0130b36b3a9.jpg'),
-    lastMessage: 'you: I’m feeling good',
-  },
-];
+import { useGetUserProfileQuery } from '../../redux/apiSlices/authSlice';
+import { useGetFaceDownQuery } from '../../redux/apiSlices/facedwonSlice';
+import { useGetFriendQuery } from '../../redux/apiSlices/friendsSlices';
+import { useGetNewsFeetQuery } from '../../redux/apiSlices/homeSlices';
 
 const FaceDown = [
   {
@@ -72,6 +45,11 @@ const FaceDown = [
 ];
 
 const ProfileScreen = ({navigation}: NavigProps<null>) => {
+  const {data : newsFeet} = useGetNewsFeetQuery({});
+  const {data : friends} = useGetFriendQuery({})  
+  const {data : facedowns} = useGetFaceDownQuery({})  
+
+  const {data : userProfile} = useGetUserProfileQuery({});
   const [modalVisible, setModalVisible] = React.useState(false);
   const {isLive, setIsLive} = useContextApi();
   const {colors, font} = useStyles();
@@ -115,7 +93,7 @@ const ProfileScreen = ({navigation}: NavigProps<null>) => {
                 borderRadius: 46,
                 alignSelf: 'center',
               }}
-              source={require('../../assets/tempAssets/7261c2ae940abab762a6e0130b36b3a9.jpg')}
+              source={ userProfile?.data?.avatar ?{uri : makeImage(userProfile?.data?.avatar)} : require("../../assets/tempAssets/EptyImageUser.jpg")}
             />
           </View>
           <View
@@ -132,7 +110,7 @@ const ProfileScreen = ({navigation}: NavigProps<null>) => {
                   fontSize: 17,
                   color: colors.textColor.primaryColor,
                 }}>
-                Asadullah
+            {userProfile?.data?.fullName}
               </Text>
               <Text
                 style={{
@@ -140,7 +118,7 @@ const ProfileScreen = ({navigation}: NavigProps<null>) => {
                   fontSize: 13,
                   color: colors.textColor.neutralColor,
                 }}>
-                asadullah@gmail.com
+               {userProfile?.data?.email}
               </Text>
             </View>
             <View
@@ -153,7 +131,7 @@ const ProfileScreen = ({navigation}: NavigProps<null>) => {
                   fontSize: 17,
                   color: colors.primaryColor,
                 }}>
-                7
+                {friends?.data?.length}
               </Text>
               <Text
                 style={{
@@ -161,7 +139,7 @@ const ProfileScreen = ({navigation}: NavigProps<null>) => {
                   fontSize: 13,
                   color: colors.primaryColor,
                 }}>
-                friend
+                friends
               </Text>
             </View>
           </View>
@@ -170,43 +148,61 @@ const ProfileScreen = ({navigation}: NavigProps<null>) => {
           style={{
             paddingHorizontal: '5%',
           }}>
-          <TouchableOpacity
-            onPress={() => {
-              Linking.openURL('https://asadullah@insta.com');
-            }}
-            style={{
-              marginTop: 16,
-              flexDirection: 'row',
-
-              alignItems: 'center',
-              gap: 8,
-            }}>
-            <Image
-              style={{
-                width: 16,
-                height: 16,
+            {
+              userProfile?.data?.instagramUrl && <TouchableOpacity
+              onPress={() => {
+                Alert.alert("Open this link", userProfile?.data?.instagramUrl,[
+                  {
+                    text: "Cancel",
+                    // onPress: () => console.log("Cancel Pressed"),
+                    style: "cancel"
+                  },
+                  {
+                    text: "OK",
+                    onPress: () => {
+                      Linking.openURL(userProfile?.data?.instagramUrl);
+                    }
+                  }
+                ]);
               }}
-              source={require('../../assets/icons/instagram/instagram.png')}
-            />
-            <Text
               style={{
-                fontFamily: font.Poppins,
-                fontSize: 14,
-                color: colors.textColor.rare,
+                marginTop: 16,
+                flexDirection: 'row',
+  
+                alignItems: 'center',
+                gap: 8,
               }}>
-              asadullah@insta.com
-            </Text>
-          </TouchableOpacity>
-          <Text
+              <Image
+                style={{
+                  width: 16,
+                  height: 16,
+                }}
+                source={require('../../assets/icons/instagram/instagram.png')}
+              />
+              <Text
+                style={{
+                  fontFamily: font.Poppins,
+                  fontSize: 14,
+                  color: colors.textColor.rare,
+                }}>
+                {userProfile?.data?.instagramUrl}
+              </Text>
+            </TouchableOpacity>
+            }
+          {
+            userProfile?.data?.bio &&   <Text
             style={{
               marginTop: 10,
               fontFamily: font.Poppins,
               fontSize: 14,
               color: colors.textColor.neutralColor,
             }}>
-            scelerisque Praesent Donec amet, eget lorem. consectetur id varius
-            at, nec nec dolor quam amet, tincidunt quis vitae In Ut laoreet
+            {
+              userProfile?.data?.bio
+            }
           </Text>
+          }
+        
         </View>
         <View
           style={{
@@ -391,7 +387,7 @@ const ProfileScreen = ({navigation}: NavigProps<null>) => {
               color: colors.textColor.neutralColor,
               paddingHorizontal: '5%',
             }}>
-            14 friends
+            {friends?.data?.length} friends
           </Text>
           <FlatList
             horizontal
@@ -401,7 +397,7 @@ const ProfileScreen = ({navigation}: NavigProps<null>) => {
               paddingRight: 20,
               paddingHorizontal: '5%',
             }}
-            data={friends}
+            data={friends?.data}
             renderItem={item => (
               <View style={{gap: 6}}>
                 <TouchableOpacity
@@ -435,9 +431,13 @@ const ProfileScreen = ({navigation}: NavigProps<null>) => {
                       width: 65,
                       height: 65,
                       borderRadius: 28,
-                      resizeMode: 'contain',
+                      resizeMode: 'cover',
+                      borderColor: 'white',
+                      borderWidth: 2,
                     }}
-                    source={item.item.img}
+                    source={{
+                      uri : makeImage(item.item.avatar)
+                    }}
                   />
                 </TouchableOpacity>
                 <Text
@@ -447,7 +447,7 @@ const ProfileScreen = ({navigation}: NavigProps<null>) => {
                     color: colors.textColor.neutralColor,
                     textAlign: 'center',
                   }}>
-                  {item.item.name}{' '}
+                  {item.item.fullName}{' '}
                 </Text>
               </View>
             )}
@@ -502,7 +502,7 @@ const ProfileScreen = ({navigation}: NavigProps<null>) => {
               paddingRight: 20,
               paddingHorizontal: '5%',
             }}
-            data={FaceDown}
+            data={facedowns?.data}
             ListFooterComponent={() => {
               return (
                 <View style={{gap: 6}}>
@@ -562,7 +562,9 @@ const ProfileScreen = ({navigation}: NavigProps<null>) => {
                       borderRadius: 20,
                       resizeMode: 'stretch',
                     }}
-                    source={item.item.img}
+                    source={{
+                      uri : makeImage(item.item.image)
+                    }}
                   />
                 </TouchableOpacity>
                 <Text
@@ -580,12 +582,13 @@ const ProfileScreen = ({navigation}: NavigProps<null>) => {
         </View>
         <View
           style={{
-            marginHorizontal: '5%',
+          
             marginTop: 20,
             gap: 20,
           }}>
           <Text
             style={{
+              marginHorizontal: '5%',
               fontFamily: font.PoppinsMedium,
               fontSize: 17,
               color: colors.textColor.primaryColor,
@@ -615,103 +618,39 @@ const ProfileScreen = ({navigation}: NavigProps<null>) => {
           </Text>
         </TouchableOpacity> */}
 
-          <ConversationalCard
-            conversationStyle="normal"
-            onPress={() => {
-              navigation?.navigate('NormalConversation');
-            }}
-            cardStyle="single"
-            conversationTitle="You"
-            conversationSubtitle="Start a chat"
-            lastMessageTime="9:30 am"
-            lastMessage="All of my friends pleas 
-            Share your story my friends"
-          />
-          <ConversationalCard
-            conversationStyle="normal"
-            cardStyle="two"
-            // havNotUser
-            onPress={() => {
-              navigation?.navigate('GroupConversation');
-            }}
-            conversationTitle="Khushi Aktar"
-            isReply
-            conversationSubtitle="replied in chat"
-            lastMessageTime="9:30 am"
-            lastMessage="Hello asad vai, i`m 
-coming from Banasri"
-          />
-          <ConversationalCard
-            conversationStyle="normal"
-            cardStyle="two"
-            onPress={() => {
-              navigation?.navigate('GroupConversation');
-            }}
-            havNotUser
-            conversationTitle="Khushi Aktar"
-            isReply
-            conversationSubtitle="replied in chat"
-            lastMessageTime="9:30 am"
-            lastMessage="Hello asad vai, i`m 
-coming from Banasri"
-          />
-          <ConversationalCard
-            conversationStyle="normal"
-            cardStyle="shear_book"
-            onPress={() => {
-              navigation?.navigate('BookShare');
-            }}
-            conversationTitle="SIC Discussion"
-            conversationSubtitle="recommendations"
-            lastMessageTime="9:30 am"
-            lastMessage="Hello Asadullah some books
-is recognize for SIC "
-          />
-          <ConversationalCard
-            conversationStyle="normal"
-            cardStyle="three"
-            onPress={() => {
-              navigation?.navigate('FaceDownConversation');
-            }}
-            conversationTitle="Reader lovers"
-            conversationSubtitle="join FaceDwn"
-            lastMessageTime="8:10 am"
-            lastMessage="nadin invite you in facedwn"
-          />
-          <ConversationalCard
-            conversationStyle="normal"
-            cardStyle="four"
-            conversationTitle="COFFE HOUSE"
-            onPress={() => {
-              setIsLive(!isLive);
-              navigation?.navigate('LiveConversation');
-            }}
-            conversationSubtitle="join room"
-            lastMessageTime="8:10 am"
-            lastMessage="Hello Asadullah some books
-is recognize for SIC "
-          />
-          <ConversationalCard
-            conversationStyle="normal"
-            cardStyle="three"
-            manyPeople
-            havNotUser
-            onPress={() => {
-              setIsLive(!isLive);
-              navigation?.navigate('LiveConversation');
-            }}
-            conversationTitle="COFFE HOUSE"
-            conversationSubtitle="join room"
-            lastMessageTime="8:10 am"
-            lastMessage="nadin invite you in room"
-          />
+  {
+    newsFeet?.data?.map((item,index) =>
+      <View 
+    key={index}
+      style={{
+        marginHorizontal: '4%',
+      }}>
+      <ConversationalCard
+      conversationStyle="normal"
+      onPress={() => {
+        navigation?.navigate('NormalConversation');
+      }}
+      participants={item.participants}
+      cardStyle={item.participants.length > 4 ? "three" : item?.participants.length === 4 ? "four" : item?.participants.length === 3 ? "three" : item?.participants.length === 2 ? "two" : "single"}
+      manyPeople={item.participants.length > 4 ? true : false}
+      conversationTitle={item.lastMessage.sender._id === userProfile?.data?._id ? "You" : userProfile?.data?.fullName}
+      conversationSubtitle={item.lastMessage.sender._id === userProfile?.data?._id ? "send a message" : "Reply to the message"}
+      lastMessageTime={format(new Date(item.updatedAt), "hh :mm a")}
+      lastMessage={item.lastMessage.audio ? "send a audio message" : item.lastMessage.image ? "send an image message" : item.lastMessage.text ? item.lastMessage.text : item.lastMessage.path ? "send a book" : "Start a chat"}
+    />
+    </View>
+    )
+  }
+      
+
         </View>
       </ScrollView>
 
       <ModalOfBottom
+        key={"modal"}
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
-        onlyTopRadius={20}
+       
         backButton
         containerColor={colors.bg}>
         <View>

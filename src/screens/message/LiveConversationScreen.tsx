@@ -1,21 +1,21 @@
 import {
-  ActivityIndicator,
-  FlatList,
-  Image,
-  Linking,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  ToastAndroid,
-  TouchableOpacity,
-  View,
-  useWindowDimensions
+    ActivityIndicator,
+    FlatList,
+    Image,
+    Linking,
+    SafeAreaView,
+    StyleSheet,
+    Text,
+    ToastAndroid,
+    TouchableOpacity,
+    View,
+    useWindowDimensions
 } from 'react-native';
 import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withRepeat,
-  withTiming
+    useAnimatedStyle,
+    useSharedValue,
+    withRepeat,
+    withTiming
 } from 'react-native-reanimated';
 import { useContextApi, useStyles } from '../../context/ContextApi';
 import { isSmall, isTablet } from '../../utils/utils';
@@ -982,7 +982,7 @@ const LiveConversationScreen = ({navigation}: NavigProps<null>) => {
       <ModalOfBottom
         modalVisible={showShortProfile}
         setModalVisible={setShowShortProfile}
-        onlyTopRadius={20}>
+       >
         <View>
           <View
             style={{
@@ -1306,7 +1306,7 @@ const LiveConversationScreen = ({navigation}: NavigProps<null>) => {
       <ModalOfBottom
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
-        onlyTopRadius={20}
+       
         backButton
         containerColor={colors.bg}
         height={'30%'}>
@@ -1374,9 +1374,9 @@ const LiveConversationScreen = ({navigation}: NavigProps<null>) => {
       <ModalOfBottom
         modalVisible={liveModal}
         setModalVisible={setLiveModal}
-        onlyTopRadius={20}
+       
         // backButton
-        panOf
+       
         height={height * 0.8}
         containerColor={colors.bg}>
         <View

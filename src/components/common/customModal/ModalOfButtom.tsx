@@ -1,17 +1,11 @@
-import React, { useEffect, useState } from 'react';
 import {
-  Keyboard,
   KeyboardAvoidingView,
   ScrollView,
   TouchableOpacity,
   View
 } from 'react-native';
-import {
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming
-} from 'react-native-reanimated';
 
+import React from 'react';
 import { Dialog } from 'react-native-ui-lib';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { useStyles } from '../../../context/ContextApi';
@@ -20,187 +14,26 @@ type CustomModalProps = {
   modalVisible: boolean;
   setModalVisible?: Function | any;
   children: JSX.Element;
-  height?: number;
-  paddingHorizontal?: string;
-  slide?: 'slide' | 'fade';
-  onlyTopRadius?: number;
-  Radius?: number;
-  width?: string | number;
-  center?: string;
-  appearance?: boolean;
   backButton?: boolean;
-  containerAlign?: 'center' | 'flex-start' | 'flex-end';
-  backGroundColor?: string;
-  transparent?: boolean;
   containerColor?: string;
   backButtonColor?: string;
-  panOf?: boolean;
+
 };
 
 const ModalOfBottom = ({
-  children,
-  modalVisible,
-  setModalVisible,
-  // height,
-
-  Radius,
-  // width,
-  center,
-  appearance: normal,
-  backButton,
-  containerAlign,
-  onlyTopRadius,
-  backButtonColor,
-  containerColor,
-  panOf,
+  children = <></>,
+  modalVisible = false,
+  setModalVisible = () => {},
+  backButton = false,
+  backButtonColor = '',
+  containerColor = '',
 }: CustomModalProps) => {
-  const containerColorValue = useSharedValue('transparent');
-  const containerOpacity = useSharedValue(0);
   const {colors, window, font} = useStyles();
-  const [layout, setLayout] = useState<number>();
-
-  useEffect(() => {
-    if (modalVisible) {
-      containerColorValue.value = withTiming('rgba(0,0,0,0.2)', {
-        duration: 700,
-      });
-      containerOpacity.value = 1;
-    }
-    if (!modalVisible) {
-      containerColorValue.value = 'transparent';
-      containerOpacity.value = 0;
-    }
-
-    return () => {
-      containerColorValue.value = 'transparent';
-      containerOpacity.value = 1;
-    };
-  }, [modalVisible]);
-
-  const modalAnimationStyle = useAnimatedStyle(() => {
-    return {
-      backgroundColor: containerColorValue.value,
-      opacity: containerOpacity.value,
-    };
-  });
-
-  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
-  console.log(isKeyboardVisible);
-
-  useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener(
-      'keyboardDidShow',
-      () => {
-        setKeyboardVisible(true);
-      },
-    );
-    const keyboardDidHideListener = Keyboard.addListener(
-      'keyboardDidHide',
-      () => {
-        setKeyboardVisible(false);
-      },
-    );
-
-    // Cleanup event listeners on component unmount
-    return () => {
-      keyboardDidShowListener.remove();
-      keyboardDidHideListener.remove();
-    };
-  }, []);
 
   return (
-    // <Modal
-    //   // presentationStyle="pageSheet"
-    //   animationType={'slide'}
-    //   transparent={true}
-    //   visible={modalVisible}>
-    //   <Pressable
-    //     disabled={normal || false}
-    //     onPressIn={() => {
-    //       containerColorValue.value = 'transparent';
-    //       containerOpacity.value = withTiming(0, {duration: 250});
-    //     }}
-    //     onPress={() => {
-    //       setModalVisible(false);
-    //     }}
-    //     // onPressOut={() => {
-    //     //   containerOpacity.value = withTiming(0, {duration: 10});
-    //     //   setModalVisible(false);
-    //     //   // setTimeout(() => {
-    //     //   // }, 50);
-    //     // }}
-    //   >
-    //     <Animated.View
-    //       style={[
-    //         {
-    //           justifyContent: containerAlign ? containerAlign : 'flex-end',
-    //           alignItems: 'center',
-
-    //           height: '100%',
-    //           width: '100%',
-    //         },
-    //         modalAnimationStyle,
-    //       ]}>
-    //       <Pressable
-    //         style={{
-    //           borderRadius: Radius ? 9 : 0,
-    //           borderTopRightRadius: onlyTopRadius ? onlyTopRadius : 0,
-    //           borderTopLeftRadius: onlyTopRadius ? onlyTopRadius : 0,
-    //           backgroundColor: colors.bg,
-    //           height: height ? height : '40%',
-    //           width: width ? width : '100%',
-    //           padding: 30,
-    //           justifyContent: center && 'center',
-    //           position: 'relative',
-    //         }}>
-    //         {backButton && (
-    //           <TouchableOpacity
-    //             onPressIn={() => {
-    //               containerColorValue.value = withTiming('transparent');
-    //             }}
-    //             onPressOut={() => {
-    //               setTimeout(() => {
-    //                 setModalVisible(false);
-    //               }, 50);
-    //             }}
-    //             style={{
-    //               position: 'absolute',
-    //               right: 8,
-    //               top: 8,
-    //               zIndex: 999,
-    //             }}>
-    //             <View
-    //               style={{
-    //                 width: 30,
-    //                 height: 30,
-    //                 // backgroundColor: globalStyle.primary,
-    //                 //   backgroundColor: 'gray',
-    //                 justifyContent: 'center',
-    //                 alignItems: 'center',
-    //                 borderRadius: 100,
-    //               }}>
-    //               <AntDesign
-    //                 name="close"
-    //                 size={24}
-    //                 color={
-    //                   backButtonColor
-    //                     ? backButtonColor
-    //                     : colors.textColor.normal
-    //                 }
-    //               />
-    //             </View>
-    //           </TouchableOpacity>
-    //         )}
-    //         {children}
-    //       </Pressable>
-    //     </Animated.View>
-    //   </Pressable>
-    // </Modal>
+ 
     <>
-      <KeyboardAvoidingView
-        onLayout={e => {
-          // e.nativeEvent.layout.y && setLayout(e.nativeEvent.layout.y);
-        }}>
+      <KeyboardAvoidingView>
         <Dialog
           visible={modalVisible}
           bottom={true}
@@ -224,9 +57,7 @@ const ModalOfBottom = ({
             }}>
             {backButton && (
               <TouchableOpacity
-                onPressIn={() => {
-                  containerColorValue.value = withTiming('transparent');
-                }}
+              
                 onPressOut={() => {
                   setTimeout(() => {
                     setModalVisible(false);
@@ -275,4 +106,4 @@ const ModalOfBottom = ({
   );
 };
 
-export default ModalOfBottom;
+export default React.memo(ModalOfBottom);

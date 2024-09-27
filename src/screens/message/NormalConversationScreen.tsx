@@ -416,7 +416,7 @@ const NormalConversationScreen = ({navigation}: NavigProps<null>) => {
                             }}>
                             <Image
                               resizeMode="stretch"
-                              source={{uri: item.item.bookImage}}
+                              source={item.item.bookImage}
                               style={{
                                 // marginBottom: 20,
                                 // aspectRatio: 1,

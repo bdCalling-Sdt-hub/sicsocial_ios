@@ -1,6 +1,5 @@
 import React, { Dispatch, SetStateAction, useEffect } from 'react';
 import {
-  FlatList,
   Image,
   StyleSheet,
   Text,
@@ -171,7 +170,7 @@ const ConversationCarousal = ({
   const [imageAssets, setImageAssets] = React.useState<any>();
   const [textMessage, setTextMessage] = React.useState<string>('');
   const textInputRef = React.useRef<TextInput>(null);
-  const [BookModal, setBooksModal] = React.useState(false);
+  const [booksModal, setBooksModal] = React.useState(false);
   const [selectItem, setSelectIItem] = React.useState<number>(1);
   const letsBorderAnimationValue = useSharedValue(23);
 
@@ -236,11 +235,6 @@ const ConversationCarousal = ({
     }
   };
 
-  const recordingAnimation = useSharedValue('0%');
-
-  const recodingOn = () => {
-    recordingAnimation.value = withTiming('100%', {duration: 10000});
-  };
 
   const animationStyle = React.useCallback(
     (value: number) => {
@@ -341,7 +335,7 @@ const ConversationCarousal = ({
               }
               if (item.name === 'Share Books') {
                 // all modal false
-                setBooksModal(!BookModal); //
+                setBooksModal(!booksModal); //
               }
               if (item.name === 'Let’s talk') {
                 // handleImagePick('camera');
@@ -559,11 +553,12 @@ const ConversationCarousal = ({
         )}
         customAnimation={animationStyle}
       />
+      {/* "image modal" */}
       <ModalOfBottom
         modalVisible={imageModal}
         setModalVisible={setImageModal}
-        onlyTopRadius={20}
-        panOf
+       
+       
         containerColor={colors.bg}>
         <View
           style={{
@@ -608,8 +603,8 @@ const ConversationCarousal = ({
       <ModalOfBottom
         modalVisible={textInputModal}
         setModalVisible={setTextInputModal}
-        onlyTopRadius={20}
-        panOf
+       
+       
         containerColor={colors.bg}>
         <View
           style={{
@@ -685,8 +680,9 @@ const ConversationCarousal = ({
           </View>
         </View>
       </ModalOfBottom>
-      <CustomModal
-        modalVisible={BookModal}
+    {/* book selection modal  */}
+    <CustomModal
+        modalVisible={booksModal}
         setModalVisible={setBooksModal}
         height={'85%'}
         containerColor={colors.bg}
@@ -697,7 +693,7 @@ const ConversationCarousal = ({
           <View
             style={{
               paddingHorizontal: '4%',
-              marginTop: 15,
+              marginTop: 25,
             }}>
             <View
               style={{
@@ -722,7 +718,7 @@ const ConversationCarousal = ({
               />
             </View>
           </View>
-          <View
+          {/* <View
             style={{
               borderBottomWidth: 1,
               borderBlockColor: 'rgba(217, 217, 217, 1)',
@@ -737,16 +733,16 @@ const ConversationCarousal = ({
                 paddingTop: 20,
                 paddingBottom: 15,
               }}
-              data={options}
+              data={TemBooks}
               renderItem={item => (
                 <>
                   <TouchableOpacity
                     onPress={() => {
-                      setSelectIItem(item.index);
+                      setSelectOptionItem(item.index);
                     }}
                     style={{
                       backgroundColor:
-                        selectItem === item.index
+                        selectOptionItem === item.index
                           ? colors.primaryColor
                           : colors.secondaryColor,
                       height: 35,
@@ -759,7 +755,7 @@ const ConversationCarousal = ({
                     <Text
                       style={{
                         color:
-                          selectItem === item.index
+                          selectOptionItem === item.index
                             ? colors.textColor.white
                             : colors.textColor.light,
                         fontSize: 12,
@@ -772,12 +768,12 @@ const ConversationCarousal = ({
                 </>
               )}
             />
-          </View>
+          </View> */}
 
           <GridList
             showsVerticalScrollIndicator={false}
+            containerWidth={width * 0.82}
             numColumns={2}
-            containerWidth={width * .844}
             data={TemBooks}
             columnWrapperStyle={{
               gap: 20,
@@ -789,39 +785,73 @@ const ConversationCarousal = ({
             }}
             renderItem={item => (
               <TouchableOpacity
-                onPress={() => {
-                  setMessages &&
-                    setMessages([
-                      ...messages,
-                      {
-                        id: messages.length + 1,
-                        createdAt: new Date(),
-                        bookImage: item.item.image,
-                        user: {
-                          _id: 1,
-                          name: 'Amina',
-                          avatar: require('../../../assets/tempAssets/3a906b3de8eaa53e14582edf5c918b5d.jpg'),
-                        },
-                      },
-                    ]);
+              onPress={() => {
+                setMessages &&
+                setMessages([
+                  ...messages,
+                  {
+                    id: messages.length + 1,
+                    createdAt: new Date(),
+                    bookImage: item.item.image,
+                    user: {
+                      _id: 1,
+                      name: 'Amina',
+                      avatar: require('../../../assets/tempAssets/3a906b3de8eaa53e14582edf5c918b5d.jpg'),
+                    },
+                  },
+                ]);
 
-                  setBooksModal(false);
-                }}
+              setBooksModal(false);
+                // setSelectBook(item?.item.image)
+                // navigation?.navigate('BookShare', {data: item.item});
+              }}
+              style={{
+                // elevation: 2,
+                // backgroundColor: colors.bg,
+                // padding: 2,
+                borderRadius: 24,
+                // height: height * 0.243,
+                // alignItems : "center",
+                // justifyContent : "center",
+              }}>
+           <View style={{
+            elevation : 1,
+            padding : 3,
+         
+         
+           }}>
+           <Image
+              resizeMode='stretch'
                 style={{
-                  elevation: 2,
-                  backgroundColor: colors.bg,
-                  padding: 2,
+                  height: height * 0.24,
+                  width: width * 0.41,
                   borderRadius: 24,
-                }}>
-                <Image
-                  style={{
-                    height: height * 0.24,
-                    width: "100%",
-                    borderRadius: 24,
-                  }}
-                  source={item.item.image}
-                />
-              </TouchableOpacity>
+                  borderWidth : 2,
+                  borderColor : colors.bg
+                }}
+                source={item.item.image}
+              />
+           </View>
+              <View style={{
+                marginTop : 10,
+                alignItems : "center",
+                gap : 5,
+                maxWidth : width * 0.41,
+              }}>
+              <Text style={{
+                color: colors.textColor.light,
+                fontSize: 14,
+                fontFamily: font.PoppinsMedium,
+                
+              }}>{item.item.title}</Text>
+              <Text style={{
+                color: colors.textColor.neutralColor,
+                fontSize: 12,
+                fontFamily: font.Poppins,
+                
+              }}>{item.item.publisher}</Text>
+              </View>
+            </TouchableOpacity>
             )}
           />
         </>

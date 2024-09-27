@@ -7,74 +7,44 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-  useWindowDimensions
+  useWindowDimensions,
 } from 'react-native';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 
 import { LinkPreview } from '@flyerhq/react-native-link-preview';
 import { SvgXml } from 'react-native-svg';
 import DateTimePicker from 'react-native-ui-datepicker';
+import { GridList } from 'react-native-ui-lib';
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
 import CustomModal from '../../components/common/customModal/CustomModal';
 import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
 import NormalButton from '../../components/common/NormalButton';
 import { useStyles } from '../../context/ContextApi';
 import { NavigProps } from '../../interfaces/NaviProps';
+import { useCreateChatMutation } from '../../redux/apiSlices/chatSlices';
+import { useCreateFaceDownMutation } from '../../redux/apiSlices/facedwonSlice';
+import { IParticipant } from '../../redux/interface/participants';
+import { TemBooks } from '../../utils/GetRandomColor';
+import { makeImage } from '../../utils/utils';
 
-const Books = [
-  {
-    id: 1,
-    content: 'All',
-    image:
-      'https://s3-alpha-sig.figma.com/img/b585/a027/7f388786571d771f17b0126f4f4b800e?Expires=1722211200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=OC~YaczzAJGqizqlco5iCX~PGxyzUApVZAXbAVgFyiyI~8CT~WCcRn-9uBCMYkGYfbxfNB~3IJZ-TR7UZXX-eFstZmoOkurN4MPc5zQkcaBeYbACaOlbU-ht7rC3nvPJLR1fdDGViukbtJFIcqJsbFEAVBI4fjbrMA~ZB6HkVQEYxWZk5fPyIhUiqdR5tzOzeK8GYVYWtAsJ9Mn1oDpquODytUnzuIn8iLPf~lPyp44TAcERVyIwFG8U~a8h3bkUFzuejdt~LW7~9ESbOwwS0koDiTvrT5eotZI5vzriZZJ2n-4zF1nI39CHpG3pvqL9VfVDSNgctcQMnzANzH2xqg__',
-  },
-  {
-    id: 2,
-    content: 'Way of Life',
-    image:
-      'https://s3-alpha-sig.figma.com/img/b485/2fe5/af0552a10655c69b712579ca828ea910?Expires=1722211200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=UFuFuMAqtH233TU3imgCV05rZeo~aNm15BTdHNp6FVrQ4brkHBB9gVIr5K58pimYDt54lSZKdiCmA-vwuC3vwI8abuJ8jfXrnYnwA4Sodia3aVJ2zFcQEIPoE2A48~Vx96K40jMsZicVbWcSmhMN3uyrvfKwOc7hnH22PZLcze0WoS7H7josWXf0AMYfHy11ryvlcyVQ0IM5WXn2o-S~M8JfP84vhqyO3-O2xI4ry2XUQZtvYc3KToGENW1NgR2DeyyViajAQKzXetyMbwiFYXBxxT9LqQpkh~YMAH0~9LxEPApmTiSyj7aQsn6LU2U~MOnWb9sgi8MmgYMfwO7J3A__',
-  },
-  {
-    id: 3,
-    content: 'Business',
-    image:
-      'https://s3-alpha-sig.figma.com/img/ac94/a291/488b4f850f0251fe5ba556fe9da20e2e?Expires=1722211200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=lU30ivlnQY21xTbRlkrFvj6pGnG1JjeU~NrbRVoCvwEr4LLzjpFVmDt2GSZbNa0cXEH0GLV1ClbXE9MSrE-GFcwmBRSt6XM8DasUDCdRX3Xls0Y6J39oZRkmrsDpXL-odwKSEv8zzE2qBESxljPDZmBWYUSMWNueiliCXoDLPaSl3tNU18ZHs0ajIO-gp62LT0LQ6ytNlJgl9Ki8NIZ8HS6Em1brLMC7V9eF1LyZ9HFkhiKV5Z1IXZAzO~3aVsiULYyGHSPcAothJ1T~7SALoNqbwE3ScAPFwYBX50n-v88mXDDo5YgF7uhP6~dfEk9m39hMqvmTzN9erqtSAczWPg__',
-  },
-  {
-    id: 4,
-    content: 'Human Family',
-    image:
-      'https://s3-alpha-sig.figma.com/img/668f/869c/1019d2e044ead62f3eb08738a899354c?Expires=1722211200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=C7NCI29l1S-7lBg-fBKMTxYfFI7Wz5tnea1OTf3k2chLtJW22V27J~328Ok-DI~IpJiQuHx~RQ-H87Ncz8N~aj92mLRJdIvZoflHwaaCI9DYkBd7I~hT03tJN6IDvh2eErhOPYhyfE3bH56-o3Eck3~Q5Ku3jPiIhP~Z4BuCuvsqZTrcA4Vd9Bqb6Ej-XzPjEtpVY14ISlWxhymCkMgdLnScOaIX6ue~UKaD5lxWUd03C71wDbwZi3Lao-7Xop599-bNfVSG525Xq7c2e63lxxLSYhDFRv7ietjecAiNiEIsXMRhnmP-cgnxMYDT2QK~CTZLV~R6KEowdLSt0aXwjA__',
-  },
-  {
-    id: 5,
-    content: 'Worldview',
-    image:
-      'https://s3-alpha-sig.figma.com/img/e98c/1a54/ee547a642f63a9a135f7b2b7d4b37956?Expires=1722211200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=mGk4oV79QgAFlUfUGDlGutahqQXvpOYOIHhcR2LBxVpJIARIaReonfDBmXYqtA1d4oO2vC3lVp8UmptZ7~yCh~Xkn~z5DKXMkzpvT2oKsWEx~fcshksYJH24oWEinepfhnRh6rry8ZCSJK1qHMxwqDll-9ujtqr-EmdEkSlpOeKD9RtviWCgxtk-UhDFAVabFHsEORW4Ju4qkjBxjWenW8UqFxKUQgfbwBy-gTrF5x0vrMwAxhLm5S4lWppWjONOLNX6t98jQFrwo1oxiG-jzeHRmN4rlDnzN6ip6uFhM4sgCfcqsVW3M5N1iAz96ed50aoo2qRPSCamSF6ZFroRXw__',
-  },
-  {
-    id: 6,
-    content: 'Worldview',
-    image:
-      'https://s3-alpha-sig.figma.com/img/d180/9195/da84fbcfb6556b63dea67af8844a57d8?Expires=1722211200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=XU8OsCuvhuriTh0fx0mDKR5Vz8K81jB6N5Yc~CS44rIvRCRRp4t~rZdYZ6mKP14C4Q8wt3a5WB8B0V1SZQv4gzft-iRV0ZzIFX1yDmy~6IIZmAIeywM2HxOfhutarGZtMxdOguZGlPF4OH4ScrSjjV5RQu5Zy9OHNUw-tPCdwT2oYgNEwtNYcJqAYBfw1IQWsB9l5VpGMsEjprp8QpZADhfvrL5w6Gq2BW1-B6~1cBQhfKV3Y0JefajMOIuI8YH~crtfuXWRP7Rfz7STD3q~iKtsT6fV8HG5e22X9c1RnLyAXIJj43Dd2jRC5kA4QAFkk-hzhihBAS3T5~2Q3rp7Jg__',
-  },
-];
-
-const CreateNewFaceDown = ({navigation}: NavigProps<null>) => {
+const CreateNewFaceDown = ({navigation,route}: NavigProps<any>) => {
   const {colors, font, window} = useStyles();
   const {height, width} = useWindowDimensions();
+  const [createFaceDown, results] = useCreateFaceDownMutation();
+  const [createChat] = useCreateChatMutation();
   const [modalVisible, setModalVisible] = React.useState(false);
   const [dateModal, setDateModal] = React.useState(false);
-  const [selectSchedule, setSelectSchedule] = React.useState('Weekly');
-  const [imageAssets, setImageAssets] = React.useState<string>('');
-  const [linkUrl, setLinkUrl] = React.useState('');
+  const [participants, setParticipants] = React.useState<Array<IParticipant>>();
+  const [imageAssets, setImageAssets] = React.useState<boolean>(false);
+  const [imageModal, setImageModal] = React.useState<string>('');
   const [selectDate, setSelectDate] = React.useState<SetStateAction<Date>>(
     new Date(),
   );
+ 
   const [booksModal, setBooksModal] = React.useState(false);
-  const [selectOptionItem, setSelectOptionItem] = React.useState<number>();
   const [selectBook, setSelectBook] = React.useState<number>();
-
+  const [faceDownInfo, setFaceDownInfo] = React.useState<{}>();
+// console.log(route,participants);
   const handleImagePick = async (option: 'camera' | 'library') => {
     try {
       if (option === 'camera') {
@@ -83,12 +53,23 @@ const CreateNewFaceDown = ({navigation}: NavigProps<null>) => {
           maxWidth: 500,
           maxHeight: 500,
           quality: 0.5,
-          includeBase64: true,
         });
 
         if (!result.didCancel) {
           setImageAssets(result?.assets![0].uri);
           // console.log(result);
+          setFaceDownInfo({
+            ...faceDownInfo,
+            image: {
+              uri: result?.assets![0].uri,
+              type: result?.assets![0].type,
+              name: result?.assets![0].fileName,
+              size: result?.assets![0].fileSize,
+              lastModified: new Date().getTime(), // Assuming current time as last modified
+              lastModifiedDate: new Date(),
+              webkitRelativePath: '',
+            },
+          });
         }
       }
       if (option === 'library') {
@@ -97,12 +78,23 @@ const CreateNewFaceDown = ({navigation}: NavigProps<null>) => {
           maxWidth: 500,
           maxHeight: 500,
           quality: 0.5,
-          includeBase64: true,
         });
 
         if (!result.didCancel) {
           setImageAssets(result?.assets![0].uri);
           // console.log(result);
+          setFaceDownInfo({
+            ...faceDownInfo,
+            image: {
+              uri: result?.assets![0].uri,
+              type: result?.assets![0].type,
+              name: result?.assets![0].fileName,
+              size: result?.assets![0].fileSize,
+              lastModified: new Date().getTime(), // Assuming current time as last modified
+              lastModifiedDate: new Date(),
+              webkitRelativePath: '',
+            },
+          });
         }
       }
     } catch (error) {
@@ -110,8 +102,35 @@ const CreateNewFaceDown = ({navigation}: NavigProps<null>) => {
     }
   };
 
-  console.log(selectSchedule);
-  console.log(selectDate);
+  // console.log(selectSchedule);
+  // console.log(selectDate);
+
+  // console.log(faceDownInfo);
+  const handleCreateFaceDown = React.useCallback(
+    async Udata => {
+      console.log(Udata);
+      // navigation?.navigate('FaceDownConversation');
+     createFaceDown(Udata).then((res)=>{
+       console.log(res.data);
+      if(res.data?.data?._id){
+        createChat({
+          participants: participants,
+          type: 'public',
+          facedown: res.data?.data?._id,
+        });
+      }
+     })
+     
+    },
+    [faceDownInfo],
+  );
+
+  React.useEffect(()=>{
+    if(route?.params){
+      setParticipants(route?.params)
+    }
+  },[route?.params])
+
   return (
     <View
       style={{
@@ -131,10 +150,10 @@ const CreateNewFaceDown = ({navigation}: NavigProps<null>) => {
           fontFamily: font.PoppinsSemiBold,
         }}
       />
-       
-    <ScrollView
-       showsVerticalScrollIndicator={false}
-       showsHorizontalScrollIndicator={false}
+
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        showsHorizontalScrollIndicator={false}
         keyboardShouldPersistTaps="always"
         contentContainerStyle={{
           paddingBottom: '8%',
@@ -179,7 +198,8 @@ const CreateNewFaceDown = ({navigation}: NavigProps<null>) => {
             }}>
             <TouchableOpacity
               onPress={() => {
-                handleImagePick('camera');
+                // handleImagePick('camera');
+                setImageModal(true);
               }}
               activeOpacity={0.9}
               style={{
@@ -239,7 +259,15 @@ const CreateNewFaceDown = ({navigation}: NavigProps<null>) => {
               height: 56,
               color: colors.textColor.neutralColor,
             }}
-            defaultValue="Asadullah charity house "
+            
+            placeholder="name"
+            onChangeText={text =>
+              setFaceDownInfo({
+                ...faceDownInfo,
+                name: text,
+              })
+            }
+            placeholderTextColor={colors.textColor.gray}
           />
         </View>
 
@@ -259,24 +287,143 @@ const CreateNewFaceDown = ({navigation}: NavigProps<null>) => {
             Face Dwn members
           </Text>
 
-          <TouchableOpacity
+          {participants?.length !== 0 && (
+        <View
+          style={{
+            borderBottomWidth: 1,
+            borderBottomColor: 'rgba(217, 217, 217, 1)',
+
+            paddingBottom: 10,
+          }}>
+     
+          <FlatList
+            showsHorizontalScrollIndicator={false}
+            keyboardShouldPersistTaps="always"
+            horizontal
+            contentContainerStyle={{
+              gap: 16,
+              paddingHorizontal: 20,
+            }}
+            data={participants}
+            keyExtractor={item => item?._id + Math.random() }
+            renderItem={item => (
+              <View style={{gap: 6}}>
+                <TouchableOpacity
+                  onPress={() => {
+                    if (
+                      participants.find(friend => friend._id === item.item._id)
+                    ) {
+                      setParticipants(
+                        participants.filter(
+                          friend => friend._id !== item.item._id,
+                        ),
+                      );
+                    }
+                  }}
+                  style={{
+                    backgroundColor: colors.secondaryColor,
+                    // paddingVertical: 5,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    elevation: 2,
+                    borderRadius: 50,
+                    padding: 2,
+                    position: 'relative',
+                  }}>
+                  <View
+                    style={{
+                      width: 16,
+                      height: 16,
+                      borderRadius: 50,
+                      backgroundColor: colors.green['#00B047'],
+                      position: 'absolute',
+                      right: 0,
+                      zIndex: +1,
+                      bottom: 5,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}>
+                    <View
+                      style={{
+                        backgroundColor: 'white',
+                        width: 8,
+                        height: 2,
+                      }}
+                    />
+                  </View>
+                  <Image
+                    style={{
+                      width: 65,
+                      height: 65,
+                      borderRadius: 28,
+                      resizeMode: 'contain',
+                    }}
+                    source={{
+                      uri : makeImage(item.item.avatar)
+                    }}
+                  />
+                </TouchableOpacity>
+                <Text
+                  style={{
+                    fontSize: 12,
+                    fontFamily: font.Poppins,
+                    color: colors.textColor.neutralColor,
+                    textAlign: 'center',
+                  }}>
+                  {item.item?.fullName}
+                </Text>
+              </View>
+            )}
+
+            ListFooterComponent={() => (
+              <TouchableOpacity
             activeOpacity={0.9}
             onPress={() => {
-              navigation?.navigate('FaceDownAddMember');
+              navigation?.navigate('FaceDownAddMember',participants);
             }}>
             <Image
               resizeMode="cover"
               style={{
                 borderRadius: 24,
 
-                height: 80,
-                width: 80,
+                height: 70,
+                width: 70,
                 justifyContent: 'center',
                 alignItems: 'center',
               }}
               source={require('../../assets/icons/unknown/addMember.png')}
             />
           </TouchableOpacity>
+            )}
+          />
+        </View>
+      )}
+
+          {
+            participants?.length === 0 && (
+              <TouchableOpacity
+              activeOpacity={0.9}
+              onPress={() => {
+                navigation?.navigate('FaceDownAddMember',participants);
+              }}>
+              <Image
+                resizeMode="cover"
+                style={{
+                  borderRadius: 24,
+  
+                  height: 80,
+                  width: 80,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+                source={require('../../assets/icons/unknown/addMember.png')}
+              />
+            </TouchableOpacity>
+            
+            )
+          }
+
+          
         </View>
         <View
           style={{
@@ -293,9 +440,9 @@ const CreateNewFaceDown = ({navigation}: NavigProps<null>) => {
             }}>
             Share content
           </Text>
-          {linkUrl ? (
+          {faceDownInfo?.bookUrl ? (
             <LinkPreview
-              text={linkUrl}
+              text={faceDownInfo?.bookUrl}
               enableAnimation
               renderLinkPreview={({
                 aspectRatio,
@@ -377,7 +524,7 @@ const CreateNewFaceDown = ({navigation}: NavigProps<null>) => {
                 }}
                 source={
                   selectBook
-                    ? {uri: selectBook}
+                    ? selectBook
                     : require('../../assets/tempAssets/book.jpg')
                 }
               />
@@ -390,7 +537,12 @@ const CreateNewFaceDown = ({navigation}: NavigProps<null>) => {
               gap: 10,
             }}>
             <TextInput
-              onChangeText={text => setLinkUrl(text)}
+              onChangeText={text =>
+                setFaceDownInfo({
+                  ...faceDownInfo,
+                  bookUrl: text,
+                })
+              }
               style={{
                 fontFamily: font.Poppins,
                 backgroundColor: colors.secondaryColor,
@@ -401,7 +553,8 @@ const CreateNewFaceDown = ({navigation}: NavigProps<null>) => {
                 flex: 1,
                 color: colors.textColor.neutralColor,
               }}
-              defaultValue="write image /book/url link"
+              placeholder="write image /book/url link"
+              placeholderTextColor={colors.textColor.gray}
             />
             <TouchableOpacity
               onPress={() => {
@@ -505,9 +658,14 @@ const CreateNewFaceDown = ({navigation}: NavigProps<null>) => {
               height: window.height * 0.25,
               color: colors.textColor.neutralColor,
             }}
-            defaultValue="elit. placerat ex non, elit. In ac nibh Ut non non urna porta dui sapien enim. elit placerat. sed Ut tincidunt amet, vitae sit enim. facilisis vel volutpat Ut 
-
-sed Quisque ac lobortis, Quisque urna ipsum Nam id tempor placerat. Morbi ipsum sollicitudin. dui. urna nulla, Donec vitae vehicula, quis libero, commodo ex "
+            onChangeText={text =>
+              setFaceDownInfo({
+                ...faceDownInfo,
+                description: text,
+              })
+            }
+            placeholder="write a description"
+            placeholderTextColor={colors.textColor.gray}
           />
         </View>
         <View
@@ -545,7 +703,9 @@ sed Quisque ac lobortis, Quisque urna ipsum Nam id tempor placerat. Morbi ipsum 
                 fontSize: 14,
                 color: colors.textColor.neutralColor,
               }}>
-              {selectSchedule ? selectSchedule : selectDate.toString()}
+              {faceDownInfo?.schedule
+                ? faceDownInfo?.schedule
+                : selectDate.toString()}
             </Text>
             <SvgXml
               xml={`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -573,20 +733,23 @@ sed Quisque ac lobortis, Quisque urna ipsum Nam id tempor placerat. Morbi ipsum 
         <NormalButton
           title="Create Face Dwn"
           onPress={() => {
-            navigation?.navigate('FaceDownConversation');
+            handleCreateFaceDown(faceDownInfo);
+            // navigation?.navigate('FaceDownConversation');
           }}
         />
       </View>
 
       <ModalOfBottom
-        height={'32%'}
-        onlyTopRadius={15}
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}>
         <View style={{gap: 3}}>
           <TouchableOpacity
             onPress={() => {
-              setSelectSchedule('Daily');
+              setModalVisible(false);
+              setFaceDownInfo({
+                ...faceDownInfo,
+                schedule: 'Daily',
+              });
             }}
             style={{
               paddingHorizontal: 10,
@@ -605,7 +768,11 @@ sed Quisque ac lobortis, Quisque urna ipsum Nam id tempor placerat. Morbi ipsum 
             onPress={() => {
               setModalVisible(false);
               //   navigation?.navigate('FriendsProfile');
-              setSelectSchedule('2 Day');
+
+              setFaceDownInfo({
+                ...faceDownInfo,
+                schedule: '2 Day',
+              });
             }}
             style={{
               paddingHorizontal: 10,
@@ -624,7 +791,11 @@ sed Quisque ac lobortis, Quisque urna ipsum Nam id tempor placerat. Morbi ipsum 
             onPress={() => {
               setModalVisible(false);
               //   navigation?.navigate('FriendsProfile');
-              setSelectSchedule('Weekly');
+
+              setFaceDownInfo({
+                ...faceDownInfo,
+                schedule: 'Weekly',
+              });
             }}
             style={{
               paddingHorizontal: 10,
@@ -643,7 +814,11 @@ sed Quisque ac lobortis, Quisque urna ipsum Nam id tempor placerat. Morbi ipsum 
             onPress={() => {
               setModalVisible(false);
               //   navigation?.navigate('FriendsProfile');
-              setSelectSchedule('Monthly');
+
+              setFaceDownInfo({
+                ...faceDownInfo,
+                schedule: 'Monthly',
+              });
             }}
             style={{
               paddingHorizontal: 10,
@@ -660,7 +835,7 @@ sed Quisque ac lobortis, Quisque urna ipsum Nam id tempor placerat. Morbi ipsum 
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
-              setSelectSchedule('');
+         
               setModalVisible(false);
               setDateModal(!dateModal);
               //   navigation?.navigate('FriendsProfile');
@@ -747,7 +922,10 @@ sed Quisque ac lobortis, Quisque urna ipsum Nam id tempor placerat. Morbi ipsum 
           mode="single"
           date={selectDate}
           onChange={(params: any) => {
-            setSelectDate(params.date);
+            setFaceDownInfo({
+              ...faceDownInfo,
+              schedule: params.date,
+            });
             setDateModal(false);
           }}
         />
@@ -764,7 +942,7 @@ sed Quisque ac lobortis, Quisque urna ipsum Nam id tempor placerat. Morbi ipsum 
           <View
             style={{
               paddingHorizontal: '4%',
-              marginTop: 15,
+              marginTop: 25,
             }}>
             <View
               style={{
@@ -789,7 +967,7 @@ sed Quisque ac lobortis, Quisque urna ipsum Nam id tempor placerat. Morbi ipsum 
               />
             </View>
           </View>
-          <View
+          {/* <View
             style={{
               borderBottomWidth: 1,
               borderBlockColor: 'rgba(217, 217, 217, 1)',
@@ -804,7 +982,7 @@ sed Quisque ac lobortis, Quisque urna ipsum Nam id tempor placerat. Morbi ipsum 
                 paddingTop: 20,
                 paddingBottom: 15,
               }}
-              data={Books}
+              data={TemBooks}
               renderItem={item => (
                 <>
                   <TouchableOpacity
@@ -839,12 +1017,13 @@ sed Quisque ac lobortis, Quisque urna ipsum Nam id tempor placerat. Morbi ipsum 
                 </>
               )}
             />
-          </View>
+          </View> */}
 
-          <FlatList
+          <GridList
             showsVerticalScrollIndicator={false}
+            containerWidth={width * 0.82}
             numColumns={2}
-            data={Books}
+            data={TemBooks}
             columnWrapperStyle={{
               gap: 20,
               alignSelf: 'center',
@@ -856,30 +1035,111 @@ sed Quisque ac lobortis, Quisque urna ipsum Nam id tempor placerat. Morbi ipsum 
             renderItem={item => (
               <TouchableOpacity
                 onPress={() => {
-                  setSelectBook(item.item.image);
                   setBooksModal(false);
+                  setSelectBook(item?.item.image);
+                  // navigation?.navigate('BookShare', {data: item.item});
                 }}
                 style={{
-                  elevation: 2,
-                  backgroundColor: colors.bg,
-                  padding: 2,
+                  // elevation: 2,
+                  // backgroundColor: colors.bg,
+                  // padding: 2,
                   borderRadius: 24,
+                  // height: height * 0.243,
+                  // alignItems : "center",
+                  // justifyContent : "center",
                 }}>
-                <Image
+                <View
                   style={{
-                    height: height * 0.24,
-                    width: width * 0.4,
-                    borderRadius: 24,
-                  }}
-                  source={{
-                    uri: item.item.image,
-                  }}
-                />
+                    elevation: 1,
+                    padding: 3,
+                  }}>
+                  <Image
+                    resizeMode="stretch"
+                    style={{
+                      height: height * 0.24,
+                      width: width * 0.41,
+                      borderRadius: 24,
+                      borderWidth: 2,
+                      borderColor: colors.bg,
+                    }}
+                    source={item.item.image}
+                  />
+                </View>
+                <View
+                  style={{
+                    marginTop: 10,
+                    alignItems: 'center',
+                    gap: 5,
+                    maxWidth: width * 0.41,
+                  }}>
+                  <Text
+                    style={{
+                      color: colors.textColor.light,
+                      fontSize: 14,
+                      fontFamily: font.PoppinsMedium,
+                    }}>
+                    {item.item.title}
+                  </Text>
+                  <Text
+                    style={{
+                      color: colors.textColor.neutralColor,
+                      fontSize: 12,
+                      fontFamily: font.Poppins,
+                    }}>
+                    {item.item.publisher}
+                  </Text>
+                </View>
               </TouchableOpacity>
             )}
           />
         </>
       </CustomModal>
+
+      {/* "image modal" */}
+      <ModalOfBottom
+        modalVisible={imageModal}
+        setModalVisible={setImageModal}
+        containerColor={colors.bg}>
+        <View
+          style={{
+            gap: 10,
+          }}>
+          <TouchableOpacity
+            onPress={() => {
+              handleImagePick('camera');
+              setImageModal(!imageModal);
+            }}
+            style={{
+              paddingVertical: 5,
+            }}>
+            <Text
+              style={{
+                fontFamily: font.PoppinsMedium,
+                fontSize: 14,
+                color: colors.textColor.neutralColor,
+              }}>
+              Take Photo
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              handleImagePick('library');
+              setImageModal(!imageModal);
+            }}
+            style={{
+              paddingVertical: 5,
+            }}>
+            <Text
+              style={{
+                fontFamily: font.PoppinsMedium,
+                fontSize: 14,
+                color: colors.textColor.neutralColor,
+              }}>
+              Image form gallery
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </ModalOfBottom>
     </View>
   );
 };

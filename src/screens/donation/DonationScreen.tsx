@@ -1,10 +1,10 @@
 import {
-    Image,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 
 import React from 'react';
@@ -13,6 +13,8 @@ import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
 import NormalButton from '../../components/common/NormalButton';
 import { useStyles } from '../../context/ContextApi';
 import { NavigProps } from '../../interfaces/NaviProps';
+import { IDonation } from '../../redux/interface/donation';
+import { makeImageUrl } from '../../utils/utils';
 
 const data = [
   {
@@ -29,9 +31,15 @@ const data = [
   },
 ];
 
-const DonationScreen = ({navigation}: NavigProps<null>) => {
+const DonationScreen = ({navigation,route}: NavigProps<IDonation>) => {
+
+  const Item = route?.params?.data
+
   const {colors, font} = useStyles();
   const [selectItem, setSelectItem] = React.useState<number>(0);
+
+
+
   return (
     <View
       style={{
@@ -50,12 +58,14 @@ const DonationScreen = ({navigation}: NavigProps<null>) => {
         }}
       />
 
-      <FlatList
+     <View>
+     <FlatList
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={{
           paddingHorizontal: 20,
           paddingBottom: 15,
+    
         }}
         data={data}
         renderItem={item => (
@@ -83,6 +93,7 @@ const DonationScreen = ({navigation}: NavigProps<null>) => {
           </TouchableOpacity>
         )}
       />
+     </View>
        
      <ScrollView
        showsVerticalScrollIndicator={false}
@@ -102,9 +113,11 @@ const DonationScreen = ({navigation}: NavigProps<null>) => {
                 height: 200,
                 borderRadius: 16,
                 marginBottom: 20,
-                alignSelf: 'center',
+                
               }}
-              source={require('../../assets/tempAssets/charity.jpg')}
+              source={{
+                uri : makeImageUrl(Item?.details?.image || '')
+              }}
             />
             <View>
               <Text
@@ -114,7 +127,7 @@ const DonationScreen = ({navigation}: NavigProps<null>) => {
                   color: colors.textColor.light,
                   marginBottom: 16,
                 }}>
-                Donation for childrens
+               {Item?.details?.title}
               </Text>
               <Text
                 style={{
@@ -124,18 +137,8 @@ const DonationScreen = ({navigation}: NavigProps<null>) => {
                   fontFamily: font.Poppins,
                   color: colors.textColor.light,
                 }}>
-                {`Integrity Donation is a concept or practice where individuals or organizations contribute resources, usually financial, in a manner that is ethical, transparent, and aligned with the principles of integrity. Here are some details that typically characterize Integrity Donations:
-
-Transparency: The donation process and the use of funds are clear and open to scrutiny. Donors and recipients provide full disclosure about the amount donated, the source of funds, and how the funds will be used.
-Ethical Sources: Donations come from ethical sources. Funds should not come from illegal or unethical activities, and donors should have a good reputation.
-Purpose Alignment: The donation should align with the donor's values and the recipient's mission. Both parties should have a clear understanding of the intended use of the funds and how it supports the recipient's goals.
-Accountability: There are mechanisms in place to ensure that the funds are used as intended. This includes regular reporting, audits, and feedback from beneficiaries.
-Impact Focus: The donation is intended to create a positive impact. Donors often seek to support projects or initiatives that have a measurable and sustainable impact on the community or cause they care about.
-Non-conditional: Integrity Donations are often made without strings attached, meaning that they are not tied to specific expectations or demands that could compromise the recipient’s integrity or independence.
-Recognition and Privacy: Donors can choose to be recognized for their contributions or remain anonymous, based on their preference and the norms of the recipient organization.
-Legal Compliance: All donations comply with the relevant laws and regulations in both the donor's and recipient's jurisdictions.
-                        
-                        `}
+                {Item?.details?.content}
+                lorem200
               </Text>
             </View>
           </View>
@@ -145,7 +148,7 @@ Legal Compliance: All donations comply with the relevant laws and regulations in
             style={{
               paddingHorizontal: 20,
             }}>
-            <Text
+            {/* <Text
               style={{
                 fontSize: 16,
                 fontFamily: font.PoppinsSemiBold,
@@ -153,8 +156,8 @@ Legal Compliance: All donations comply with the relevant laws and regulations in
                 marginBottom: 16,
                 textAlign: 'justify',
               }}>
-              Rules and regulations
-            </Text>
+             {Item?.rulesAndRegulations.content}
+            </Text> */}
             <Text
               style={{
                 textAlign: 'justify',
@@ -163,16 +166,7 @@ Legal Compliance: All donations comply with the relevant laws and regulations in
                 fontFamily: font.Poppins,
                 color: colors.textColor.light,
               }}>
-              {`Integrity Donation is a concept or practice where individuals or organizations contribute resources, usually financial, in a manner that is ethical, transparent, and aligned with the principles of integrity. Here are some details that typically characterize Integrity Donations:
-
-Transparency: The donation process and the use of funds are clear and open to scrutiny. Donors and recipients provide full disclosure about the amount donated, the source of funds, and how the funds will be used.
-Ethical Sources: Donations come from ethical sources. Funds should not come from illegal or unethical activities, and donors should have a good reputation.
-Purpose Alignment: The donation should align with the donor's values and the recipient's mission. Both parties should have a clear understanding of the intended use of the funds and how it supports the recipient's goals.
-Accountability: There are mechanisms in place to ensure that the funds are used as intended. This includes regular reporting, audits, and feedback from beneficiaries.
-Impact Focus: The donation is intended to create a positive impact. Donors often seek to support projects or initiatives that have a measurable and sustainable impact on the community or cause they care about.
-Non-conditional: Integrity Donations are often made without strings attached, meaning that they are not tied to specific expectations or demands that could compromise the recipient’s integrity or independence.
-Recognition and Privacy: Donors can choose to be recognized for their contributions or remain anonymous, based on their preference and the norms of the recipient organization.
-Legal Compliance: All donations comply with the relevant laws and regulations in both the donor's and recipient's jurisdictions.`}
+                {Item?.rulesAndRegulations.content}
             </Text>
           </View>
         )}
@@ -181,7 +175,7 @@ Legal Compliance: All donations comply with the relevant laws and regulations in
             style={{
               paddingHorizontal: 20,
             }}>
-            <Text
+            {/* <Text
               style={{
                 fontSize: 16,
                 fontFamily: font.PoppinsSemiBold,
@@ -189,7 +183,7 @@ Legal Compliance: All donations comply with the relevant laws and regulations in
                 marginBottom: 16,
               }}>
               Terms & conditions for donations
-            </Text>
+            </Text> */}
             <Text
               style={{
                 textAlign: 'justify',
@@ -198,22 +192,7 @@ Legal Compliance: All donations comply with the relevant laws and regulations in
                 fontFamily: font.Poppins,
                 color: colors.textColor.light,
               }}>
-              {`Integrity Donation is a concept or practice where individuals or organizations contribute resources, usually financial, in a manner that is ethical, transparent, and aligned with the principles of integrity. Here are some details that typically characterize Integrity Donations:
-
-Transparency: The donation process and the use of funds are clear and open to scrutiny. Donors and recipients provide full disclosure about the amount donated, the source of funds, and how the funds will be used.
-Ethical Sources: Donations come from ethical sources. Funds should not come from illegal or unethical activities, and donors should have a good reputation.
-Purpose Alignment: The donation should align with the donor's values and the recipient's mission. Both parties should have a clear understanding of the intended use of the funds and how it supports the recipient's goals.
-Accountability: There are mechanisms in place to ensure that the funds are used as intended. This includes regular reporting, audits, and feedback from beneficiaries.
-Impact Focus: The donation is intended to create a positive impact. Donors often seek to support projects or initiatives that have a measurable and sustainable impact on the community or cause they care about.
-Non-conditional: Integrity Donations are often made without strings attached, meaning that they are not tied to specific expectations or demands that could compromise the recipient’s integrity or independence.
-Recognition and Privacy: Donors can choose to be recognized for their contributions or remain anonymous, based on their preference and the norms of the recipient organization.
-Impact Focus: The donation is intended to create a positive impact. Donors often seek to support projects or initiatives that have a measurable and sustainable impact on the community or cause they care about.
-Non-conditional: Integrity Donations are often made without strings attached, meaning that they are not tied to specific expectations or demands that could compromise the recipient’s integrity or independence.
-Recognition and Privacy: Donors can choose to be recognized for their contributions or remain anonymous, based on their preference and the norms of the recipient organization.
-Impact Focus: The donation is intended to create a positive impact. Donors often seek to support projects or initiatives that have a measurable and sustainable impact on the community or cause they care about.
-Non-conditional: Integrity Donations are often made without strings attached, meaning that they are not tied to specific expectations or demands that could compromise the recipient’s integrity or independence.
-Recognition and Privacy: Donors can choose to be recognized for their contributions or remain anonymous, based on their preference and the norms of the recipient organization.
-Legal Compliance: All donations comply with the relevant laws and regulations in both the donor's and recipient's jurisdictions.`}
+               {Item?.termsAndConditions.content}
             </Text>
           </View>
         )}

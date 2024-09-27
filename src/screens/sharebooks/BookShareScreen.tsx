@@ -1,14 +1,15 @@
 import {
-  Image,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-  useWindowDimensions
+    Image,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
+    useWindowDimensions
 } from 'react-native';
 import { useContextApi, useStyles } from '../../context/ContextApi';
+import { useCreateChatMutation, useCreateMessageMutation } from '../../redux/apiSlices/chatSlices';
 
 import React from 'react';
 import { SvgXml } from 'react-native-svg';
@@ -19,12 +20,37 @@ import { NavigProps } from '../../interfaces/NaviProps';
 import { Books } from './ShareBooksScreen';
 
 const BookShareScreen = ({navigation, route}: NavigProps<Books>) => {
+  const [createChat, createChartResults] = useCreateChatMutation({});
+  const [createMessage, createMessageResult] = useCreateMessageMutation({});
   const {colors, font} = useStyles();
   const {height, width} = useWindowDimensions();
   const [modalVisible, setModalVisible] = React.useState(false);
   const {isDark, isLive, setIsLive} = useContextApi();
 
   const [liveModal, setLiveModal] = React.useState(false);
+
+  
+  // console.log(createChartInfo);
+  const handleCreateNewChat = React.useCallback(
+    data => {
+      const formData = new FormData();
+
+      createChat({type:'public'}).then(res => {
+        // console.log(res);
+        if (res?.data?.data?._id) {
+          formData.append('chatId', res.data?.data?._id);
+          if (data?.path) {
+            formData.append('path', data?.path);
+          }
+          createMessage(formData).then(ms => {
+            // console.log(res);
+          });
+        }
+      });
+    },
+    [],
+  );
+
 
   return (
     <View
@@ -173,6 +199,9 @@ const BookShareScreen = ({navigation, route}: NavigProps<Books>) => {
               // setConfirmationModal(!confirmationModal);
               // setIsFriendRequest(false);
               // setIsFriendRequestSent(false);
+              handleCreateNewChat({
+                path : 'CreateNewChat'
+              })
               setModalVisible(false);
             }}
             style={{
@@ -237,9 +266,9 @@ const BookShareScreen = ({navigation, route}: NavigProps<Books>) => {
       <ModalOfBottom
         modalVisible={liveModal}
         setModalVisible={setLiveModal}
-        onlyTopRadius={20}
+       
         // backButton
-        panOf
+
         height={height * 0.8}
         containerColor={colors.bg}>
         <View

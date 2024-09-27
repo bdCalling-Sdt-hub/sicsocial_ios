@@ -6,11 +6,14 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+
 import React from 'react';
-import {useStyles} from '../../context/ContextApi';
+import { SvgXml } from 'react-native-svg';
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
-import {NavigProps} from '../../interfaces/NaviProps';
-import {SvgXml} from 'react-native-svg';
+import { useStyles } from '../../context/ContextApi';
+import { NavigProps } from '../../interfaces/NaviProps';
+import { useGetFaceDownQuery } from '../../redux/apiSlices/facedwonSlice';
+import { makeImage } from '../../utils/utils';
 
 const MyFaceDown = [
   {
@@ -32,6 +35,7 @@ const FaceDown = [
   },
 ];
 const ViewAllFaceDown = ({navigation}: NavigProps<null>) => {
+  const {data : myFaceDowns} = useGetFaceDownQuery({})  
   const {colors, font} = useStyles();
   return (
     <View
@@ -78,7 +82,7 @@ const ViewAllFaceDown = ({navigation}: NavigProps<null>) => {
               paddingRight: 20,
               paddingHorizontal: '5%',
             }}
-            data={MyFaceDown}
+            data={myFaceDowns?.data}
             ListFooterComponent={() => {
               return (
                 <View style={{gap: 6}}>
@@ -138,7 +142,9 @@ const ViewAllFaceDown = ({navigation}: NavigProps<null>) => {
                       borderRadius: 20,
                       resizeMode: 'stretch',
                     }}
-                    source={item.item.img}
+                    source={{
+                      uri : makeImage(item.item.image)
+                    }}
                   />
                 </TouchableOpacity>
                 <Text
@@ -175,7 +181,7 @@ const ViewAllFaceDown = ({navigation}: NavigProps<null>) => {
               paddingRight: 20,
               paddingHorizontal: '5%',
             }}
-            data={FaceDown}
+            data={myFaceDowns?.data}
             renderItem={item => (
               <View style={{gap: 6}}>
                 <TouchableOpacity
@@ -199,7 +205,9 @@ const ViewAllFaceDown = ({navigation}: NavigProps<null>) => {
                       borderRadius: 20,
                       resizeMode: 'stretch',
                     }}
-                    source={item.item.img}
+                    source={{
+                      uri : makeImage(item.item.image)
+                    }}
                   />
                 </TouchableOpacity>
                 <Text

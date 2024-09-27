@@ -1,13 +1,23 @@
 // devices screen size
 
-import { MMKVLoader } from 'react-native-mmkv-storage';
+import { Dimensions, PixelRatio } from 'react-native';
 
-import { Dimensions } from 'react-native';
+import { MMKVLoader } from 'react-native-mmkv-storage';
+import { imageUrl } from '../redux/api/baseApi';
 
 export const {width, height} = Dimensions.get('screen')
-const storage = new MMKVLoader().initialize();
+export const lStorage = new MMKVLoader().initialize();
+
+export const makeImage = (url: string) => {
+  return  url.startsWith('https') ? url : imageUrl + url
+}
+export const makeImageUrl = (url: string) => {
+  return imageUrl + url
+}
 
 //  three size like sm md or tablet 
+const fontScale = PixelRatio.getFontScale();
+export const FontSize = (size : number) => size / fontScale;
 
 export const isSmall = () => {
     return width < 375
@@ -24,27 +34,27 @@ export const isMobile = () => {
 
 
 export const setStorageToken = (token: string) => {
-  storage.set('token', token);
+  lStorage.setString('token', token);
 };
 
 export const getStorageToken = () => {
-  return storage.getString('token');
+  return lStorage.getString('token');
 };
 
 export const removeStorageToken = () => {
-  storage.delete('token');
+  lStorage.removeItem('token');
 };
 
 export const setStorageRole = (role: string) => {
-  storage.set('role', role);
+  lStorage.setString('role', role);
 };
 
 export const getStorageRole = () => {
-  return storage.getString('role');
+  return lStorage.getString('role');
 };
 
 export const removeStorageRole = () => {
-  storage.delete('role');
+  lStorage.removeItem('role');
 };
 
 

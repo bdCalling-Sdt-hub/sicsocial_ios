@@ -1,14 +1,12 @@
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+
 import React from 'react';
-import {useStyles} from '../../context/ContextApi';
-import {SvgXml} from 'react-native-svg';
+import { SvgXml } from 'react-native-svg';
+import { useStyles } from '../../context/ContextApi';
+import { IFAQ } from '../../redux/interface/faq';
 
 interface FaqCardProps {
-  item: {
-    id: number;
-    question: string;
-    answer: string;
-  };
+  item: IFAQ
 }
 
 const FaqCard = ({item}: FaqCardProps) => {

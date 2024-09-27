@@ -384,7 +384,7 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
       <ModalOfBottom
         setModalVisible={setPaymentModal}
         modalVisible={paymentModal}
-        panOf
+       
         backButton
         backButtonColor={'white'}
         containerColor="#333333">

@@ -1,13 +1,14 @@
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, Text, View } from 'react-native';
 
 import React from 'react';
 import BackButtonWithTitle from '../../../components/common/BackButtonWithTitle';
 import { useStyles } from '../../../context/ContextApi';
 import { NavigProps } from '../../../interfaces/NaviProps';
+import { useGetTermsAndConditionsQuery } from '../../../redux/apiSlices/additionalSlices';
 
 const TermsAndConditions = ({navigation}: NavigProps<null>) => {
   const {colors, font} = useStyles();
-
+   const {data : termsAndConditions} = useGetTermsAndConditionsQuery({})
   return (
     <View
       style={{
@@ -37,7 +38,23 @@ const TermsAndConditions = ({navigation}: NavigProps<null>) => {
           marginTop: 10,
           paddingBottom: 20,
         }}>
-        <Text
+          {
+            termsAndConditions?.data?.map((item)=>{
+              return <Text
+              key={item?._id}
+              style={{
+                fontSize: 14,
+                fontFamily: font.Poppins,
+                color: colors.textColor.neutralColor,
+                letterSpacing: 0.3,
+                lineHeight: 24,
+                textAlign: 'justify',
+              }}>
+                {item?.content}
+              </Text>
+            })
+          }
+        {/* <Text
           style={{
             fontSize: 14,
             fontFamily: font.Poppins,
@@ -86,7 +103,7 @@ const TermsAndConditions = ({navigation}: NavigProps<null>) => {
           foregoing, these provisions set out in these Terms which by their very
           nature survive are meant to survive termination, shall survive the
           termination/expiry of this agreement.
-        </Text>
+        </Text> */}
       </ScrollView>
     </View>
   );

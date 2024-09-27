@@ -1,5 +1,9 @@
-import {View, Text, Appearance, Dimensions} from 'react-native';
-import React, {createContext, useContext, useState} from 'react';
+import React, { createContext, useContext, useState } from 'react';
+import { Appearance, Dimensions } from 'react-native';
+
+import { useDispatch } from 'react-redux';
+import { setToken } from '../redux/apiSlices/tokenSlice';
+import { getStorageToken } from '../utils/utils';
 
 interface ProviderProps {
   isDark?: boolean;
@@ -144,6 +148,13 @@ const ContextApi = ({children}: ContextApiProps) => {
   const [isDark, setDark] = useState(darkMode === 'dark' ? true : false);
   const [isLive, setIsLive] = useState(false);
   const shearValue = {isDark, setDark, isLive, setIsLive};
+
+  const storageToken = getStorageToken()
+  const dispatch = useDispatch()
+  if(storageToken){
+      dispatch(setToken(storageToken))
+  }
+
   return (
     <ContextProvider.Provider value={shearValue}>
       {children}
