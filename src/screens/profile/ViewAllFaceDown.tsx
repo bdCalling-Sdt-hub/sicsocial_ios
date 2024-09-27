@@ -8,12 +8,12 @@ import {
 } from 'react-native';
 
 import React from 'react';
-import { SvgXml } from 'react-native-svg';
+import {SvgXml} from 'react-native-svg';
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
-import { useStyles } from '../../context/ContextApi';
-import { NavigProps } from '../../interfaces/NaviProps';
-import { useGetFaceDownQuery } from '../../redux/apiSlices/facedwonSlice';
-import { makeImage } from '../../utils/utils';
+import {useStyles} from '../../context/ContextApi';
+import {NavigProps} from '../../interfaces/NaviProps';
+import {useGetFaceDownQuery} from '../../redux/apiSlices/facedwonSlice';
+import {makeImage} from '../../utils/utils';
 
 const MyFaceDown = [
   {
@@ -35,7 +35,7 @@ const FaceDown = [
   },
 ];
 const ViewAllFaceDown = ({navigation}: NavigProps<null>) => {
-  const {data : myFaceDowns} = useGetFaceDownQuery({})  
+  const {data: myFaceDowns} = useGetFaceDownQuery({});
   const {colors, font} = useStyles();
   return (
     <View
@@ -131,6 +131,7 @@ const ViewAllFaceDown = ({navigation}: NavigProps<null>) => {
                     alignItems: 'center',
                     justifyContent: 'center',
                     elevation: 2,
+                    width: 67,
                     borderRadius: 20,
                     padding: 2,
                     position: 'relative',
@@ -140,19 +141,21 @@ const ViewAllFaceDown = ({navigation}: NavigProps<null>) => {
                       width: 65,
                       height: 65,
                       borderRadius: 20,
-                      resizeMode: 'stretch',
+                      resizeMode: 'cover',
                     }}
                     source={{
-                      uri : makeImage(item.item.image)
+                      uri: makeImage(item.item.image),
                     }}
                   />
                 </TouchableOpacity>
                 <Text
+                  numberOfLines={1}
                   style={{
                     fontSize: 12,
                     fontFamily: font.Poppins,
                     color: colors.textColor.neutralColor,
                     textAlign: 'center',
+                    width: 67,
                   }}>
                   {item.item.name}
                 </Text>
@@ -194,6 +197,7 @@ const ViewAllFaceDown = ({navigation}: NavigProps<null>) => {
                     alignItems: 'center',
                     justifyContent: 'center',
                     elevation: 2,
+                    width: 67,
                     borderRadius: 20,
                     padding: 2,
                     position: 'relative',
@@ -203,19 +207,21 @@ const ViewAllFaceDown = ({navigation}: NavigProps<null>) => {
                       width: 65,
                       height: 65,
                       borderRadius: 20,
-                      resizeMode: 'stretch',
+                      resizeMode: 'cover',
                     }}
                     source={{
-                      uri : makeImage(item.item.image)
+                      uri: makeImage(item.item.image),
                     }}
                   />
                 </TouchableOpacity>
                 <Text
+                  numberOfLines={1}
                   style={{
                     fontSize: 12,
                     fontFamily: font.Poppins,
                     color: colors.textColor.neutralColor,
                     textAlign: 'center',
+                    width: 67,
                   }}>
                   {item.item.name}
                 </Text>

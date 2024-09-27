@@ -1,16 +1,11 @@
-import {
-  Image,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View
-} from 'react-native';
+import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 
 import React from 'react';
-import { useStyles } from '../../context/ContextApi';
-import { IParticipants } from '../../redux/interface/participants';
+import {useStyles} from '../../context/ContextApi';
+import {IParticipant} from '../../redux/interface/participants';
+import {makeImage} from '../../utils/utils';
 
-interface IMessageCardProps extends IParticipants {
+interface IMessageCardProps extends IParticipant {
   name: string;
   lastMessage: string;
   lastTime: string;
@@ -26,8 +21,11 @@ const MessageCard = ({
   name,
   onPress,
   people,
-participants
+  _id,
+  avatar,
+  fullName,
 }: IMessageCardProps) => {
+  console.log(avatar);
   const {colors, font} = useStyles();
   return (
     <TouchableOpacity
@@ -79,8 +77,8 @@ participants
               <View
                 style={{
                   // padding: 2,
-                  
-                  backgroundColor : colors.white,
+
+                  backgroundColor: colors.white,
                   elevation: 2,
                   width: 65,
                   borderRadius: 28,
@@ -95,12 +93,12 @@ participants
                     borderWidth: 2,
                   }}
                   source={{
-                    uri :
-                    participants[0].avatar}}
+                    uri: makeImage(avatar || ''),
+                  }}
                 />
               </View>
             </View>
-          ) :  (
+          ) : (
             <>
               <View
                 style={{
@@ -121,7 +119,7 @@ participants
                     elevation: 2,
                     width: 47,
                     borderRadius: 28,
-                    backgroundColor : colors.white,
+                    backgroundColor: colors.white,
                   }}>
                   <Image
                     style={{
@@ -133,8 +131,8 @@ participants
                       borderWidth: 2,
                     }}
                     source={{
-                      uri :
-                      participants[0].avatar}}
+                      uri: makeImage(avatar || ''),
+                    }}
                   />
                 </View>
               </View>
@@ -158,7 +156,7 @@ participants
                     elevation: 2,
                     width: 47,
                     borderRadius: 28,
-                    backgroundColor : colors.white,
+                    backgroundColor: colors.white,
                   }}>
                   <Image
                     style={{
@@ -170,8 +168,8 @@ participants
                       borderWidth: 2,
                     }}
                     source={{
-                      uri :
-                      participants[1].avatar}}
+                      uri: makeImage(avatar || ''),
+                    }}
                   />
                 </View>
               </View>

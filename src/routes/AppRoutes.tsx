@@ -2,12 +2,12 @@
 
 import * as React from 'react';
 
-import { NavigationContainer } from '@react-navigation/native';
-import { Provider, useSelector } from 'react-redux';
-import ContextApi, { useContextApi, useStyles } from '../context/ContextApi';
+import {Provider, useSelector} from 'react-redux';
+import ContextApi, {useContextApi, useStyles} from '../context/ContextApi';
 
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import store from '../redux/store';
 import LoadingSplash from '../screens/LoadingSplash';
 import ChangePassword from '../screens/Logins/ChnagePassword';
@@ -59,8 +59,6 @@ const Routes = () => {
   const {isDark} = useContextApi();
 
   const {token} = useSelector((state: any) => state?.token);
-
-
 
   return (
     <Stack.Navigator

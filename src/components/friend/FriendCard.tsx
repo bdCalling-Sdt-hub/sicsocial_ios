@@ -4,21 +4,15 @@ import {
   Text,
   TouchableOpacity,
   View,
-  useWindowDimensions
+  useWindowDimensions,
 } from 'react-native';
-import { height, isSmall, isTablet } from '../../utils/utils';
+import {height, isSmall, isTablet} from '../../utils/utils';
 
 import React from 'react';
-import { useStyles } from '../../context/ContextApi';
+import {useStyles} from '../../context/ContextApi';
 
 interface FriendCardProps {
-  item?: {
-    name?: string | undefined;
-    image?: string | undefined;
-    status?: string | undefined;
-    lastSeen?: string | undefined;
-    id?: number | undefined;
-  };
+  item?: any;
   onPress?: () => void;
   onLongPress?: () => void;
   isFriendRequest?: boolean;
@@ -62,12 +56,20 @@ const FriendCard = ({
         <View
           style={{
             gap: 20,
-            height: isTablet() ? height * 0.5 : isSmall() ? height * 0.52 :  height * 0.43,
-            width: isTablet() ? width * 0.5 : isSmall() ? width * 0.7 :  width * 0.73,
+            height: isTablet()
+              ? height * 0.5
+              : isSmall()
+              ? height * 0.52
+              : height * 0.43,
+            width: isTablet()
+              ? width * 0.5
+              : isSmall()
+              ? width * 0.7
+              : width * 0.73,
             backgroundColor: colors.cardBg,
             borderRadius: 42,
-            paddingHorizontal:isTablet() ? "3%" : '6%',
-            paddingVertical:isTablet() ? "3%" : '8%',
+            paddingHorizontal: isTablet() ? '3%' : '6%',
+            paddingVertical: isTablet() ? '3%' : '8%',
             elevation: 2,
           }}>
           <View
@@ -167,7 +169,7 @@ const FriendCard = ({
                 alignItems: 'center',
                 gap: 15,
               }}>
-              <View
+              {/* <View
                 style={{
                   flexDirection: 'row',
                 }}>
@@ -207,7 +209,7 @@ const FriendCard = ({
                     source={require('../../assets/tempAssets/ae1e058c2ed75ab981a9f8bb62e96a13.jpg')}
                   />
                 </View>
-              </View>
+              </View> */}
               <Text
                 style={{
                   fontFamily: font.Poppins,
@@ -218,7 +220,7 @@ const FriendCard = ({
               </Text>
             </View>
             <Text
-              numberOfLines={isSmall() ?  2 : 4 }
+              numberOfLines={isSmall() ? 2 : 4}
               style={{
                 fontFamily: font.Poppins,
                 fontSize: 12,

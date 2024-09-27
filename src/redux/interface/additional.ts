@@ -1,4 +1,4 @@
-import { IFetchStatus } from "./main";
+import {IFetchStatus} from './main';
 
 export interface ITermsAndPolicy {
   _id: string;
@@ -9,7 +9,12 @@ export interface ITermsAndPolicy {
   __v: 0;
 }
 
-
 export interface ITermsAndPolicies extends IFetchStatus {
   data: Array<ITermsAndPolicy>;
+}
+
+export interface IInputPagination {
+  id?: string;
+  page?: string;
+  limit?: string;
 }

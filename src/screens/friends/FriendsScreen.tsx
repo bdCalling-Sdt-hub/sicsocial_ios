@@ -3,18 +3,22 @@ import {
   Text,
   TouchableOpacity,
   View,
-  useWindowDimensions
+  useWindowDimensions,
 } from 'react-native';
-import Carousel, { ICarouselInstance } from 'react-native-reanimated-carousel';
-import { isSmall, isTablet } from '../../utils/utils';
+import Carousel, {ICarouselInstance} from 'react-native-reanimated-carousel';
+import {
+  useGetFriendReceivedRequestsQuery,
+  useGetSuggestionsQuery,
+} from '../../redux/apiSlices/friendsSlices';
+import {isSmall, isTablet} from '../../utils/utils';
 
 import React from 'react';
 import LinearGradient from 'react-native-linear-gradient';
-import { useSharedValue } from 'react-native-reanimated';
-import { SvgXml } from 'react-native-svg';
+import {useSharedValue} from 'react-native-reanimated';
+import {SvgXml} from 'react-native-svg';
 import FriendCard from '../../components/friend/FriendCard';
-import { useStyles } from '../../context/ContextApi';
-import { NavigProps } from '../../interfaces/NaviProps';
+import {useStyles} from '../../context/ContextApi';
+import {NavigProps} from '../../interfaces/NaviProps';
 
 const data = [
   {
@@ -42,6 +46,9 @@ const data = [
 ];
 
 const FriendsScreen = ({navigation}: NavigProps<null>) => {
+  const {data: suggestedFriends} = useGetSuggestionsQuery({});
+  const {data: receivedRequestFriend} = useGetFriendReceivedRequestsQuery({});
+  // console.log(suggestedFriends);
   const {colors, font} = useStyles();
   const [isRequest, setIsRequest] = React.useState<boolean>(false);
   const {height, width} = useWindowDimensions();
@@ -160,7 +167,7 @@ const FriendsScreen = ({navigation}: NavigProps<null>) => {
         style={{
           paddingHorizontal: '10%',
           flexDirection: 'row',
-          justifyContent : "center",
+          justifyContent: 'center',
           gap: 24,
           paddingVertical: 20,
           borderBottomWidth: 0.3,
@@ -180,7 +187,7 @@ const FriendsScreen = ({navigation}: NavigProps<null>) => {
             justifyContent: 'center',
             alignItems: 'center',
             borderRadius: 100,
-            elevation: isRequest ? 0 :  2,
+            elevation: isRequest ? 0 : 2,
           }}>
           <Text
             style={{
@@ -220,7 +227,12 @@ const FriendsScreen = ({navigation}: NavigProps<null>) => {
         </TouchableOpacity>
       </View>
 
-      <View style={{flex: 1, marginTop: isTablet() ? "2%" : isSmall() ? "3%" : '10%', position: 'relative'}}>
+      <View
+        style={{
+          flex: 1,
+          marginTop: isTablet() ? '2%' : isSmall() ? '3%' : '10%',
+          position: 'relative',
+        }}>
         <TouchableOpacity
           onPress={() => onLeftSwipe()}
           style={{
@@ -257,26 +269,49 @@ const FriendsScreen = ({navigation}: NavigProps<null>) => {
           />
         </TouchableOpacity>
 
-        <Carousel
-          ref={ref}
-          width={width}
-          height={height}
-          mode="parallax"
-          modeConfig={{
-            parallaxScrollingScale: 0.99,
-            parallaxScrollingOffset: 80,
-          }}
-          data={data}
-          renderItem={item => (
-            <FriendCard
-              isFriendRequest={isRequest}
-              item={item.item}
-              onPress={() => {
-                navigation?.navigate('FriendsProfile');
-              }}
-            />
-          )}
-        />
+        {!isRequest ? (
+          <Carousel
+            ref={ref}
+            width={width}
+            height={height}
+            mode="parallax"
+            modeConfig={{
+              parallaxScrollingScale: 0.99,
+              parallaxScrollingOffset: 80,
+            }}
+            data={suggestedFriends?.data || []}
+            renderItem={item => (
+              <FriendCard
+                isFriendRequest={isRequest}
+                item={item}
+                onPress={() => {
+                  navigation?.navigate('FriendsProfile');
+                }}
+              />
+            )}
+          />
+        ) : (
+          <Carousel
+            ref={ref}
+            width={width}
+            height={height}
+            mode="parallax"
+            modeConfig={{
+              parallaxScrollingScale: 0.99,
+              parallaxScrollingOffset: 80,
+            }}
+            data={receivedRequestFriend?.data || []}
+            renderItem={item => (
+              <FriendCard
+                isFriendRequest={isRequest}
+                item={item}
+                onPress={() => {
+                  navigation?.navigate('FriendsProfile');
+                }}
+              />
+            )}
+          />
+        )}
       </View>
       <View
         style={{

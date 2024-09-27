@@ -1,11 +1,9 @@
-
-
 export interface IParticipant {
-  _id: string;
-  fullName: string;
-  avatar: string;
-} 
+  _id?: string;
+  fullName?: string;
+  avatar?: string;
+}
 
 export interface IParticipants {
-    participants: Array<IParticipant>;
-  }
+  participants: Array<IParticipant>;
+}

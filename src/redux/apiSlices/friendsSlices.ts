@@ -1,21 +1,32 @@
-import { api } from '../api/baseApi';
-import { IFriends } from '../interface/friends';
+import {IFriendReceivedRequests, IFriends} from '../interface/friends';
+
+import {api} from '../api/baseApi';
+import {IInputPagination} from '../interface/additional';
 
 export const friendSlices = api.injectEndpoints({
   endpoints: builder => ({
-    getFriend: builder.query<IFriends, unknown>({
+    getFriend: builder.query<IFriends, IInputPagination>({
       query: ({id, page, limit}) => ({
         url: `/friends`,
       }),
       providesTags: ['friend'],
     }),
-    getFriendRequests: builder.query<null, unknown>({
+    getSuggestions: builder.query<IFriends, IInputPagination>({
+      query: ({id, page, limit}) => ({
+        url: `/friends/suggestions`,
+      }),
+      providesTags: ['friend'],
+    }),
+    getFriendRequests: builder.query<null, IInputPagination>({
       query: ({id, page, limit}) => ({
         url: `/friends/requests/sent`,
       }),
       providesTags: ['friend'],
     }),
-    getFriendReceivedRequests: builder.query<null, unknown>({
+    getFriendReceivedRequests: builder.query<
+      IFriendReceivedRequests,
+      IInputPagination
+    >({
       query: ({id, page, limit}) => ({
         url: `/friends/requests/received`,
       }),
@@ -53,7 +64,6 @@ export const friendSlices = api.injectEndpoints({
       }),
       invalidatesTags: ['friend'],
     }),
- 
   }),
 });
 
@@ -65,5 +75,5 @@ export const {
   useGetFriendRequestsQuery,
   useRemoveFriendRequestMutation,
   useSendFriendRequestMutation,
-
+  useGetSuggestionsQuery,
 } = friendSlices;

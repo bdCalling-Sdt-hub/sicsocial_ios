@@ -10,21 +10,21 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { useContextApi, useStyles } from '../../context/ContextApi';
-import { isSmall, makeImage } from '../../utils/utils';
+import {useContextApi, useStyles} from '../../context/ContextApi';
+import {isSmall, makeImage} from '../../utils/utils';
 
 import Clipboard from '@react-native-clipboard/clipboard';
-import { format } from 'date-fns';
+import {format} from 'date-fns';
 import React from 'react';
-import { SvgXml } from 'react-native-svg';
+import {SvgXml} from 'react-native-svg';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import ConversationalCard from '../../components/common/ConversationalCard';
 import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
-import { NavigProps } from '../../interfaces/NaviProps';
-import { useGetUserProfileQuery } from '../../redux/apiSlices/authSlice';
-import { useGetFaceDownQuery } from '../../redux/apiSlices/facedwonSlice';
-import { useGetFriendQuery } from '../../redux/apiSlices/friendsSlices';
-import { useGetNewsFeetQuery } from '../../redux/apiSlices/homeSlices';
+import {NavigProps} from '../../interfaces/NaviProps';
+import {useGetUserProfileQuery} from '../../redux/apiSlices/authSlice';
+import {useGetFaceDownQuery} from '../../redux/apiSlices/facedwonSlice';
+import {useGetFriendQuery} from '../../redux/apiSlices/friendsSlices';
+import {useGetNewsFeetQuery} from '../../redux/apiSlices/homeSlices';
 
 const FaceDown = [
   {
@@ -45,11 +45,11 @@ const FaceDown = [
 ];
 
 const ProfileScreen = ({navigation}: NavigProps<null>) => {
-  const {data : newsFeet} = useGetNewsFeetQuery({});
-  const {data : friends} = useGetFriendQuery({})  
-  const {data : facedowns} = useGetFaceDownQuery({})  
+  const {data: newsFeet} = useGetNewsFeetQuery({});
+  const {data: friends} = useGetFriendQuery({});
+  const {data: facedowns} = useGetFaceDownQuery({});
 
-  const {data : userProfile} = useGetUserProfileQuery({});
+  const {data: userProfile} = useGetUserProfileQuery({});
   const [modalVisible, setModalVisible] = React.useState(false);
   const {isLive, setIsLive} = useContextApi();
   const {colors, font} = useStyles();
@@ -59,10 +59,9 @@ const ProfileScreen = ({navigation}: NavigProps<null>) => {
         height: '100%',
         backgroundColor: colors.bg,
       }}>
-       
-     <ScrollView
-          showsVerticalScrollIndicator={false}
-       showsHorizontalScrollIndicator={false}
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        showsHorizontalScrollIndicator={false}
         contentContainerStyle={{
           paddingBottom: 25,
         }}>
@@ -93,7 +92,11 @@ const ProfileScreen = ({navigation}: NavigProps<null>) => {
                 borderRadius: 46,
                 alignSelf: 'center',
               }}
-              source={ userProfile?.data?.avatar ?{uri : makeImage(userProfile?.data?.avatar)} : require("../../assets/tempAssets/EptyImageUser.jpg")}
+              source={
+                userProfile?.data?.avatar
+                  ? {uri: makeImage(userProfile?.data?.avatar)}
+                  : require('../../assets/tempAssets/EptyImageUser.jpg')
+              }
             />
           </View>
           <View
@@ -110,7 +113,7 @@ const ProfileScreen = ({navigation}: NavigProps<null>) => {
                   fontSize: 17,
                   color: colors.textColor.primaryColor,
                 }}>
-            {userProfile?.data?.fullName}
+                {userProfile?.data?.fullName}
               </Text>
               <Text
                 style={{
@@ -118,7 +121,7 @@ const ProfileScreen = ({navigation}: NavigProps<null>) => {
                   fontSize: 13,
                   color: colors.textColor.neutralColor,
                 }}>
-               {userProfile?.data?.email}
+                {userProfile?.data?.email}
               </Text>
             </View>
             <View
@@ -148,27 +151,27 @@ const ProfileScreen = ({navigation}: NavigProps<null>) => {
           style={{
             paddingHorizontal: '5%',
           }}>
-            {
-              userProfile?.data?.instagramUrl && <TouchableOpacity
+          {userProfile?.data?.instagramUrl && (
+            <TouchableOpacity
               onPress={() => {
-                Alert.alert("Open this link", userProfile?.data?.instagramUrl,[
+                Alert.alert('Open this link', userProfile?.data?.instagramUrl, [
                   {
-                    text: "Cancel",
+                    text: 'Cancel',
                     // onPress: () => console.log("Cancel Pressed"),
-                    style: "cancel"
+                    style: 'cancel',
                   },
                   {
-                    text: "OK",
+                    text: 'OK',
                     onPress: () => {
                       Linking.openURL(userProfile?.data?.instagramUrl);
-                    }
-                  }
+                    },
+                  },
                 ]);
               }}
               style={{
                 marginTop: 16,
                 flexDirection: 'row',
-  
+
                 alignItems: 'center',
                 gap: 8,
               }}>
@@ -188,21 +191,18 @@ const ProfileScreen = ({navigation}: NavigProps<null>) => {
                 {userProfile?.data?.instagramUrl}
               </Text>
             </TouchableOpacity>
-            }
-          {
-            userProfile?.data?.bio &&   <Text
-            style={{
-              marginTop: 10,
-              fontFamily: font.Poppins,
-              fontSize: 14,
-              color: colors.textColor.neutralColor,
-            }}>
-            {
-              userProfile?.data?.bio
-            }
-          </Text>
-          }
-        
+          )}
+          {userProfile?.data?.bio && (
+            <Text
+              style={{
+                marginTop: 10,
+                fontFamily: font.Poppins,
+                fontSize: 14,
+                color: colors.textColor.neutralColor,
+              }}>
+              {userProfile?.data?.bio}
+            </Text>
+          )}
         </View>
         <View
           style={{
@@ -436,7 +436,7 @@ const ProfileScreen = ({navigation}: NavigProps<null>) => {
                       borderWidth: 2,
                     }}
                     source={{
-                      uri : makeImage(item.item.avatar)
+                      uri: makeImage(item.item.avatar),
                     }}
                   />
                 </TouchableOpacity>
@@ -551,6 +551,7 @@ const ProfileScreen = ({navigation}: NavigProps<null>) => {
                     alignItems: 'center',
                     justifyContent: 'center',
                     elevation: 2,
+                    width: 67,
                     borderRadius: 20,
                     padding: 2,
                     position: 'relative',
@@ -560,19 +561,21 @@ const ProfileScreen = ({navigation}: NavigProps<null>) => {
                       width: 65,
                       height: 65,
                       borderRadius: 20,
-                      resizeMode: 'stretch',
+                      resizeMode: 'cover',
                     }}
                     source={{
-                      uri : makeImage(item.item.image)
+                      uri: makeImage(item.item.image),
                     }}
                   />
                 </TouchableOpacity>
                 <Text
+                  numberOfLines={1}
                   style={{
                     fontSize: 12,
                     fontFamily: font.Poppins,
                     color: colors.textColor.neutralColor,
                     textAlign: 'center',
+                    width: 67,
                   }}>
                   {item.item.name}
                 </Text>
@@ -582,7 +585,6 @@ const ProfileScreen = ({navigation}: NavigProps<null>) => {
         </View>
         <View
           style={{
-          
             marginTop: 20,
             gap: 20,
           }}>
@@ -618,39 +620,62 @@ const ProfileScreen = ({navigation}: NavigProps<null>) => {
           </Text>
         </TouchableOpacity> */}
 
-  {
-    newsFeet?.data?.map((item,index) =>
-      <View 
-    key={index}
-      style={{
-        marginHorizontal: '4%',
-      }}>
-      <ConversationalCard
-      conversationStyle="normal"
-      onPress={() => {
-        navigation?.navigate('NormalConversation');
-      }}
-      participants={item.participants}
-      cardStyle={item.participants.length > 4 ? "three" : item?.participants.length === 4 ? "four" : item?.participants.length === 3 ? "three" : item?.participants.length === 2 ? "two" : "single"}
-      manyPeople={item.participants.length > 4 ? true : false}
-      conversationTitle={item.lastMessage.sender._id === userProfile?.data?._id ? "You" : userProfile?.data?.fullName}
-      conversationSubtitle={item.lastMessage.sender._id === userProfile?.data?._id ? "send a message" : "Reply to the message"}
-      lastMessageTime={format(new Date(item.updatedAt), "hh :mm a")}
-      lastMessage={item.lastMessage.audio ? "send a audio message" : item.lastMessage.image ? "send an image message" : item.lastMessage.text ? item.lastMessage.text : item.lastMessage.path ? "send a book" : "Start a chat"}
-    />
-    </View>
-    )
-  }
-      
-
+          {newsFeet?.data?.map((item, index) => (
+            <View
+              key={index}
+              style={{
+                marginHorizontal: '4%',
+              }}>
+              <ConversationalCard
+                conversationStyle="normal"
+                onPress={() => {
+                  navigation?.navigate('NormalConversation');
+                }}
+                participants={item.participants}
+                cardStyle={
+                  item.participants.length > 4
+                    ? 'three'
+                    : item?.participants.length === 4
+                    ? 'four'
+                    : item?.participants.length === 3
+                    ? 'three'
+                    : item?.participants.length === 2
+                    ? 'two'
+                    : 'single'
+                }
+                manyPeople={item.participants.length > 4 ? true : false}
+                conversationTitle={
+                  item.lastMessage.sender._id === userProfile?.data?._id
+                    ? 'You'
+                    : userProfile?.data?.fullName
+                }
+                conversationSubtitle={
+                  item.lastMessage.sender._id === userProfile?.data?._id
+                    ? 'send a message'
+                    : 'Reply to the message'
+                }
+                lastMessageTime={format(new Date(item.updatedAt), 'hh :mm a')}
+                lastMessage={
+                  item.lastMessage.audio
+                    ? 'send a audio message'
+                    : item.lastMessage.image
+                    ? 'send an image message'
+                    : item.lastMessage.text
+                    ? item.lastMessage.text
+                    : item.lastMessage.path
+                    ? 'send a book'
+                    : 'Start a chat'
+                }
+              />
+            </View>
+          ))}
         </View>
       </ScrollView>
 
       <ModalOfBottom
-        key={"modal"}
+        key={'modal'}
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
-       
         backButton
         containerColor={colors.bg}>
         <View>

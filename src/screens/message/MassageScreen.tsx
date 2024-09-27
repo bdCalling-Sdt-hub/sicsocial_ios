@@ -8,16 +8,17 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { useContextApi, useStyles } from '../../context/ContextApi';
+import {useContextApi, useStyles} from '../../context/ContextApi';
 
-import { format } from 'date-fns';
+import {format} from 'date-fns';
 import React from 'react';
-import { SvgXml } from 'react-native-svg';
+import {SvgXml} from 'react-native-svg';
 import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
 import MessageCard from '../../components/conversation/MessageCard';
-import { NavigProps } from '../../interfaces/NaviProps';
-import { useGetChatListQuery } from '../../redux/apiSlices/chatSlices';
-import { height } from '../../utils/utils';
+import {NavigProps} from '../../interfaces/NaviProps';
+import {useGetUserProfileQuery} from '../../redux/apiSlices/authSlice';
+import {useGetChatListQuery} from '../../redux/apiSlices/chatSlices';
+import {height} from '../../utils/utils';
 
 const friends = [
   {
@@ -98,10 +99,12 @@ const Conversations = [
 ];
 
 const MassageScreen = ({navigation}: NavigProps<null>) => {
-  const {data : chatList} = useGetChatListQuery({})
+  const {data: chatList} = useGetChatListQuery({});
+  const {data: userInfo} = useGetUserProfileQuery({});
+  // console.log(userInfo);
   // console.log(cat);
   const {colors, font} = useStyles();
-  const {isDark} = useContextApi()
+  const {isDark} = useContextApi();
   const [modalVisible, setModalVisible] = React.useState(false);
   return (
     <View
@@ -191,134 +194,148 @@ const MassageScreen = ({navigation}: NavigProps<null>) => {
           <TextInput
             style={{flex: 1, color: colors.textColor.neutralColor}}
             placeholder="Search your books"
-            
             placeholderTextColor={colors.textColor.neutralColor}
           />
         </View>
       </View>
-     
-      
-     <ScrollView
-       showsVerticalScrollIndicator={false}
-       showsHorizontalScrollIndicator={false}
-  
-       scrollEnabled={true}
-       nestedScrollEnabled={true}
-       keyboardShouldPersistTaps="always"
-     >
-     <View
-        style={{
-          borderBottomWidth: 1,
-          borderTopWidth: 1,
-          borderTopColor: isDark ? "rgba(217, 217, 217, 0.1)" : 'rgba(217, 217, 217, 1)',
-          borderBlockColor: isDark ? "rgba(217, 217, 217, 0.1)" : 'rgba(217, 217, 217, 1)',
-          paddingVertical: 10,
-          marginTop: 10,
-        }}>
-        <FlatList
-          showsHorizontalScrollIndicator={false}
-          keyboardShouldPersistTaps="always"
-          horizontal
-          contentContainerStyle={{
-            gap: 16,
-            paddingHorizontal: 20,
-          }}
-          data={friends}
-          renderItem={item => (
-            <View style={{gap: 6}}>
-              <TouchableOpacity
-                onPress={() => {
-                  setModalVisible(!modalVisible);
-                }}
-                style={{
-                  backgroundColor: colors.secondaryColor,
-                  // paddingVertical: 5,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  elevation: 2,
-                  borderRadius: 50,
-                  padding: 2,
-                  position: 'relative',
-                }}>
-                <View
-                  style={{
-                    width: 12,
-                    height: 12,
-                    borderRadius: 50,
-                    backgroundColor: colors.green['#00B047'],
-                    position: 'absolute',
-                    right: 0,
-                    zIndex: +1,
-                    bottom: 5,
-                    elevation: 2,
-                  }}
-                />
-                <Image
-                  style={{
-                    width: 65,
-                    height: 65,
-                    borderRadius: 28,
-                    resizeMode: 'contain',
-                    borderColor: 'rgba(255,255,255,1)',
-                    borderWidth: 2,
-                  }}
-                  source={item.item.img}
-                />
-              </TouchableOpacity>
-              <Text
-                style={{
-                  fontSize: 12,
-                  fontFamily: font.Poppins,
-                  color: colors.textColor.neutralColor,
-                  textAlign: 'center',
-                }}>
-                Amina
-              </Text>
-            </View>
-          )}
-        />
-      </View>
 
-      <View
-     
-        style={{
-          gap: 10,
-          paddingHorizontal: 8,
-          paddingBottom: 25,
-          paddingTop: 15,
-        }}
-    
-      > 
-      {
-        chatList?.data?.map((item,index)=>{
-          return(
-            <MessageCard
-            key={index}
-            onPress={() => {
-              if (item.group) {
-                navigation?.navigate('GroupConversation');
-              } else {
-                navigation?.navigate('NormalConversation');
-              }
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        showsHorizontalScrollIndicator={false}
+        scrollEnabled={true}
+        nestedScrollEnabled={true}
+        keyboardShouldPersistTaps="always">
+        <View
+          style={{
+            borderBottomWidth: 1,
+            borderTopWidth: 1,
+            borderTopColor: isDark
+              ? 'rgba(217, 217, 217, 0.1)'
+              : 'rgba(217, 217, 217, 1)',
+            borderBlockColor: isDark
+              ? 'rgba(217, 217, 217, 0.1)'
+              : 'rgba(217, 217, 217, 1)',
+            paddingVertical: 10,
+            marginTop: 10,
+          }}>
+          <FlatList
+            showsHorizontalScrollIndicator={false}
+            keyboardShouldPersistTaps="always"
+            horizontal
+            contentContainerStyle={{
+              gap: 16,
+              paddingHorizontal: 20,
             }}
-            participants={item.participants}
-            lastMessage={item.lastMessage.audio ? "send a audio message" : item.lastMessage.image ? "send an image message" : item.lastMessage.text ? item.lastMessage.text : item.lastMessage.path ? "send a book" : "Start a chat"}
-            lastTime={format(new Date(item.updatedAt), "hh :mm a")}
-            name={item.participants[0].fullName}
-            people={item.participants.length === 2 ? 'two' : 'one'}
+            data={friends}
+            renderItem={item => (
+              <View style={{gap: 6}}>
+                <TouchableOpacity
+                  onPress={() => {
+                    setModalVisible(!modalVisible);
+                  }}
+                  style={{
+                    backgroundColor: colors.secondaryColor,
+                    // paddingVertical: 5,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    elevation: 2,
+                    borderRadius: 50,
+                    padding: 2,
+                    position: 'relative',
+                  }}>
+                  <View
+                    style={{
+                      width: 12,
+                      height: 12,
+                      borderRadius: 50,
+                      backgroundColor: colors.green['#00B047'],
+                      position: 'absolute',
+                      right: 0,
+                      zIndex: +1,
+                      bottom: 5,
+                      elevation: 2,
+                    }}
+                  />
+                  <Image
+                    style={{
+                      width: 65,
+                      height: 65,
+                      borderRadius: 28,
+                      resizeMode: 'contain',
+                      borderColor: 'rgba(255,255,255,1)',
+                      borderWidth: 2,
+                    }}
+                    source={item.item.img}
+                  />
+                </TouchableOpacity>
+                <Text
+                  style={{
+                    fontSize: 12,
+                    fontFamily: font.Poppins,
+                    color: colors.textColor.neutralColor,
+                    textAlign: 'center',
+                  }}>
+                  Amina
+                </Text>
+              </View>
+            )}
           />
-          )
-        })
+        </View>
 
-      }
-      </View>
-     </ScrollView>
+        <View
+          style={{
+            gap: 10,
+            paddingHorizontal: 8,
+            paddingBottom: 25,
+            paddingTop: 15,
+          }}>
+          {chatList?.data?.map((item, index) => {
+            return (
+              <MessageCard
+                key={index}
+                onPress={() => {
+                  if (item.group) {
+                    navigation?.navigate('GroupConversation');
+                  } else {
+                    navigation?.navigate('NormalConversation');
+                  }
+                }}
+                avatar={
+                  item?.participants[0]?._id === userInfo?.data?._id
+                    ? item?.participants![1]?.avatar
+                    : item?.participants![0]?.avatar
+                }
+                lastMessage={
+                  item.lastMessage.audio
+                    ? 'send a audio message'
+                    : item.lastMessage.image
+                    ? 'send an image message'
+                    : item.lastMessage.text
+                    ? item.lastMessage.text
+                    : item.lastMessage.path
+                    ? 'send a book'
+                    : 'Start a chat'
+                }
+                lastTime={format(new Date(item.updatedAt), 'hh :mm a')}
+                name={
+                  item?.participants[0]?._id === userInfo?.data?._id
+                    ? item?.participants![1]?.fullName
+                    : item?.participants![0]?.fullName
+                }
+                people={'one'}
+              />
+            );
+          })}
+        </View>
+      </ScrollView>
 
       {/* floating button  */}
 
       <TouchableOpacity
         onPress={() => {
-          navigation?.navigate('MakeGroup',{data : {option : "group" , screenTitle : "Make Group"}});
+          navigation?.navigate('MakeGroup', {
+            data: {option: 'group', screenTitle: 'Make Group'},
+          });
         }}
         style={{
           position: 'absolute',
@@ -328,16 +345,18 @@ const MassageScreen = ({navigation}: NavigProps<null>) => {
           // backgroundColor: 'rgba(0,0,0,.04)',
           borderRadius: 100,
         }}>
-       
-      <Image style={{
-        height: height * 0.07,
-        aspectRatio : 1,
-        resizeMode: 'contain'
-      }} source={require("../../assets/icons/message/makeGroup.png")} />
+        <Image
+          style={{
+            height: height * 0.07,
+            aspectRatio: 1,
+            resizeMode: 'contain',
+          }}
+          source={require('../../assets/icons/message/makeGroup.png')}
+        />
       </TouchableOpacity>
       <ModalOfBottom
         // height={'18%'}
-        onlyTopRadius={15}
+
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}>
         <View style={{gap: 3}}>

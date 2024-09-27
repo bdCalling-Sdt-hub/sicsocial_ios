@@ -1,4 +1,4 @@
-import { IFetchStatus } from "./main";
+import {IFetchStatus} from './main';
 
 export interface IFriend {
   _id: string;
@@ -7,4 +7,13 @@ export interface IFriend {
 }
 export interface IFriends extends IFetchStatus {
   data: Array<IFriend>;
+}
+
+export interface IFriendReceivedRequest extends IFriend {
+  email: string;
+  totalFriends: number;
+}
+
+export interface IFriendReceivedRequests extends IFetchStatus {
+  data: Array<IFriendReceivedRequest>;
 }
