@@ -44,9 +44,9 @@ const NormalConversationScreen = ({
   const {width, height} = useWindowDimensions();
   const {colors, font} = useStyles();
   const {data: messages} = useGetMessageQuery({id: route?.params?.data?.id});
-  const {data: userIno} = useGetUserProfileQuery({});
+  const {data: userInfo} = useGetUserProfileQuery({});
   const [AllMessages, setAllMessages] = React.useState<IMessage[]>([]);
-  // console.log(userIno);
+  // console.log(userInfo);
   const [isPlaying, setIsPlaying] = React.useState<boolean>(false);
 
   const onPlayAudio = async (audioUrl: string) => {
@@ -259,7 +259,7 @@ const NormalConversationScreen = ({
               <View
                 style={{
                   alignItems:
-                    item.item?.sender._id === userIno?.data?._id
+                    item.item?.sender._id === userInfo?.data?._id
                       ? 'flex-end'
                       : 'flex-start',
                   marginTop: 20,
@@ -272,12 +272,12 @@ const NormalConversationScreen = ({
                     maxWidth: '90%',
                     minWidth: '50%',
                     backgroundColor:
-                      item.item?.sender._id === userIno?.data?._id
+                      item.item?.sender._id === userInfo?.data?._id
                         ? colors.secondaryColor
                         : colors.redisExtraLight,
                     flexDirection: 'row',
                   }}>
-                  {item.item?.sender._id !== userIno?.data?._id && (
+                  {item.item?.sender._id !== userInfo?.data?._id && (
                     <View>
                       <Image
                         source={{uri: makeImage(item.item.sender.avatar)}}
@@ -307,7 +307,7 @@ const NormalConversationScreen = ({
                         paddingHorizontal: 10,
                         paddingVertical: 5,
                         alignItems:
-                          item.item?.sender._id === userIno?.data?._id
+                          item.item?.sender._id === userInfo?.data?._id
                             ? 'flex-end'
                             : 'flex-start',
                       }}>

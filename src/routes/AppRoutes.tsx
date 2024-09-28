@@ -63,7 +63,7 @@ const Routes = () => {
 
   return (
     <Stack.Navigator
-      // initialRouteName={token ? 'HomeRoutes' : 'Login'}
+      initialRouteName={token ? 'HomeRoutes' : 'Login'}
       screenOptions={{
         headerShown: false,
         statusBarAnimation: 'fade',

@@ -15,7 +15,7 @@ import {
   View,
   useWindowDimensions,
 } from 'react-native';
-import React, {Dispatch, SetStateAction, useEffect} from 'react';
+import React, {Dispatch, SetStateAction} from 'react';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 
 import {AnimatedCircularProgress} from 'react-native-circular-progress';
@@ -27,7 +27,6 @@ import ModalOfBottom from '../customModal/ModalOfButtom';
 import {NavigProps} from '../../../interfaces/NaviProps';
 import {SvgXml} from 'react-native-svg';
 import {TemBooks} from '../../../utils/GetRandomColor';
-import Voice from '@react-native-voice/voice';
 import {isSmall} from '../../../utils/utils';
 import {messagePros} from '../../../screens/message/NormalConversationScreen';
 import {useCreateMessageMutation} from '../../../redux/apiSlices/chatSlices';
@@ -122,19 +121,11 @@ const ConversationCarousal = ({
   books,
   faceDown,
   chatIt,
-  live,
   photo,
   record,
   room,
-  route,
   type,
-  onSendTextMessage,
-  // setTextMessage,
-  // setImageAssets,
   setMessages,
-  onSendImageMessage,
-  ImageMessage,
-  TextMessage,
   messages,
   onPressLive,
 }: ConversationCarousalProps) => {
@@ -164,22 +155,15 @@ const ConversationCarousal = ({
 
   const {height, width} = useWindowDimensions();
   const {colors, font} = useStyles();
-  const [modalVisible, setModalVisible] = React.useState(false);
-  const [conversationalModal, setConversationalModal] = React.useState(false);
   const [imageModal, setImageModal] = React.useState(false);
   const [textInputModal, setTextInputModal] = React.useState(false);
-  const [activeIndex, setActiveIndex] = React.useState(0);
   const [activeIndexBigButton, setActiveIndexBigButton] = React.useState(0);
   const [recordOn, setRecordOn] = React.useState(false);
   const [recordOnDone, setRecordOnDone] = React.useState(false);
-  const [imageAssets, setImageAssets] = React.useState<any>();
   const [textMessage, setTextMessage] = React.useState<string>('');
   const textInputRef = React.useRef<TextInput>(null);
   const [booksModal, setBooksModal] = React.useState(false);
-  const [selectItem, setSelectIItem] = React.useState<number>(1);
   const letsBorderAnimationValue = useSharedValue(23);
-  const [recognizedText, setRecognizedText] = React.useState('');
-  const [isListening, setIsListening] = React.useState(false);
 
   const itemSize = 100;
   const centerOffset = width / 2 - itemSize / 2;
@@ -303,14 +287,14 @@ const ConversationCarousal = ({
   );
   const recodingOn = async () => {
     if (!recordOn) {
+      // startListening(); // Start listening for speech recognition
+      // setRecognizedText('');
       await PermissionsAndroid.requestMultiple([
         PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
       ]);
 
-      startListening(); // Start listening for speech recognition
       setRecordOn(true);
       setRecordOnDone(false);
-      // await audioRecorderPlayer.startRecorder();
       letsBorderAnimationValue.value =
         letsBorderAnimationValue.value === 8
           ? withTiming(25, {
@@ -320,8 +304,9 @@ const ConversationCarousal = ({
           : withTiming(8, {
               duration: 200,
             });
+      await audioRecorderPlayer.startRecorder();
     } else {
-      stopListening(); // Stop listening
+      // stopListening(); // Stop listening
       setRecordOn(false);
       setRecordOnDone(true);
       letsBorderAnimationValue.value = 20;
@@ -332,81 +317,48 @@ const ConversationCarousal = ({
         type: 'audio/wav', // Adjust this if needed
         name: 'voice.wav',
       };
+      console.log(audio);
       handleCreateNewChat({audio});
     }
   };
 
-  console.log(recognizedText);
-
-  const onSpeechStart = () => {
-    console.log('Listening started...');
-    setIsListening(true);
-  };
-
-  const onSpeechResults = (event: any) => {
-    console.log('Speech results: ', event.value);
-    if (event.value && event.value.length > 0) {
-      setRecognizedText(event.value[0]); // Capture first recognized text
-    }
-  };
-
-  const onSpeechError = (event: any) => {
-    console.error('Speech error: ', event.error);
-    setIsListening(false);
-  };
-
-  const startListening = async () => {
-    try {
-      // Start listening in a specific language
-      await Voice.start('bn-BD'); // Change 'en-US' to 'bn-BD' for Bengali
-      setIsListening(true);
-    } catch (error) {
-      console.log('Error starting speech recognition: ', error);
-    }
-  };
-
-  const stopListening = async () => {
-    try {
-      // Stop listening
-      await Voice.stop();
-      setIsListening(false);
-    } catch (error) {
-      console.log('Error stopping speech recognition: ', error);
-    }
-  };
-
   const [createMessage, createMessageResult] = useCreateMessageMutation({});
-  const handleCreateNewChat = React.useCallback(data => {
+  const handleCreateNewChat = async (data: any) => {
     const formData = new FormData();
+    // console.log(chatIt, 'chatIt');
+    // console.log(data, 'data');
     formData.append('chatId', chatIt);
 
     if (data?.image) {
       formData.append('image', data?.image);
+      createMessage(formData).then(ms => {
+        // Handle success or error here
+        console.log(ms);
+      });
     }
     if (data?.audio) {
       formData.append('audio', data.audio);
+      createMessage(formData).then(ms => {
+        // Handle success or error here
+        console.log(ms);
+      });
     }
     if (data?.text) {
       formData.append('text', data?.text);
+      createMessage(formData).then(ms => {
+        // Handle success or error here
+        console.log(ms);
+      });
     }
     if (data?.path) {
       formData.append('path', data?.path);
+      createMessage(formData).then(ms => {
+        // Handle success or error here
+        console.log(ms);
+      });
     }
-    createMessage(formData).then(ms => {
-      // Handle success or error here
-    });
-  }, []);
+  };
 
-  useEffect(() => {
-    Voice.onSpeechStart = onSpeechStart;
-    Voice.onSpeechResults = onSpeechResults;
-    Voice.onSpeechError = onSpeechError;
-
-    return () => {
-      // Remove voice event listeners when the component unmounts
-      Voice.destroy().then(Voice.removeAllListeners);
-    };
-  }, []);
   return (
     <>
       <Carousel
@@ -741,7 +693,6 @@ const ConversationCarousal = ({
               onPress={() => {
                 setTextInputModal(false);
                 handleCreateNewChat({text: textMessage});
-                setImageAssets && setImageAssets('');
                 setTextMessage && setTextMessage('');
               }}
               style={{
