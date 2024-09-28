@@ -4,19 +4,20 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
 } from 'react-native';
-import { useContextApi, useStyles } from '../../context/ContextApi';
+import {lStorage, removeStorageToken} from '../../utils/utils';
+import {useContextApi, useStyles} from '../../context/ContextApi';
 
-import React from 'react';
-import { SvgXml } from 'react-native-svg';
-import { useDispatch } from 'react-redux';
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
 import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
-import { NavigProps } from '../../interfaces/NaviProps';
-import { useGetDonationQuery } from '../../redux/apiSlices/additionalSlices';
-import { clearToken } from '../../redux/apiSlices/tokenSlice';
-import { removeStorageToken } from '../../utils/utils';
+import {NavigProps} from '../../interfaces/NaviProps';
+import React from 'react';
+import {SvgXml} from 'react-native-svg';
+import {clearToken} from '../../redux/apiSlices/tokenSlice';
+import language from '../../assets/lang/language.json';
+import {useDispatch} from 'react-redux';
+import {useGetDonationQuery} from '../../redux/apiSlices/additionalSlices';
 
 const settingsData = [
   {
@@ -76,56 +77,14 @@ const settingsData = [
   },
 ];
 
-const Languages = [
-  //  list 20 country codes and langues
-  {
-    id: 1,
-    code: 'en',
-    name: 'English',
-  },
-  {
-    id: 2,
-    name: 'Spanish',
-    code: 'sp',
-  },
-  {
-    id: 3,
-    name: 'Chinese',
-    code: 'ch',
-  },
-  {
-    id: 4,
-    name: 'Korean',
-    code: 'ko',
-  },
-  {
-    id: 5,
-    name: 'Vietnamese',
-    code: 'vi',
-  },
-  {
-    id: 6,
-    name: 'Arabic',
-    code: 'ar',
-  },
-  {
-    id: 7,
-    name: 'French',
-    code: 'fr',
-  },
-  {
-    id: 8,
-    name: 'Russian',
-    code: 'ru',
-  },
-];
-
 const SettingScreen = ({navigation}: NavigProps<null>) => {
   const {colors, font} = useStyles();
-  const {data : donations} = useGetDonationQuery({})
+  const {data: donations} = useGetDonationQuery({});
   const {isDark, setDark} = useContextApi();
   const [languageModal, setLanguageModal] = React.useState(false);
-  const [selectedLanguage, setSelectedLanguage] = React.useState<any[]>();
+  const [selectedLanguage, setSelectedLanguage] = React.useState<string>(
+    lStorage.getString('language') || 'English',
+  );
   // console.log(selectedLanguage);
   const dispatch = useDispatch();
   return (
@@ -185,14 +144,14 @@ const SettingScreen = ({navigation}: NavigProps<null>) => {
                   navigation?.navigate('AboutSic');
                 }
                 if (item.item.option === 'integrity_donation') {
-                  navigation?.navigate('donation', { data: donations?.data![0] });
+                  navigation?.navigate('donation', {data: donations?.data![0]});
                 }
                 if (item.item.option === 'your_feedback') {
                   navigation?.navigate('Feedback');
                 }
                 if (item.item.option === 'logout') {
-                  dispatch(clearToken())
-                  removeStorageToken()
+                  dispatch(clearToken());
+                  removeStorageToken();
                   navigation?.navigate('Loading');
                 }
               }}
@@ -254,7 +213,6 @@ const SettingScreen = ({navigation}: NavigProps<null>) => {
       <ModalOfBottom
         setModalVisible={setLanguageModal}
         modalVisible={languageModal}
-   
         backButton>
         <View>
           <Text
@@ -269,33 +227,24 @@ const SettingScreen = ({navigation}: NavigProps<null>) => {
             }}>
             Language
           </Text>
-           
-     <ScrollView
-       showsVerticalScrollIndicator={false}
-       showsHorizontalScrollIndicator={false}
+
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            showsHorizontalScrollIndicator={false}
             style={
               {
                 // gap: 10,
               }
             }>
-            {Languages.map(lang => (
+            {language.map(lang => (
               <TouchableOpacity
-                key={lang.id}
+                key={lang.country_code}
                 onPress={() => {
                   // change language
                   // navigation?.navigate('Home');
                   // setLanguageModal(false);
-                  if (selectedLanguage?.includes(lang.name)) {
-                    setSelectedLanguage(
-                      selectedLanguage?.filter(item => item !== lang.name),
-                    );
-                  } else {
-                    setSelectedLanguage(
-                      selectedLanguage
-                        ? [...selectedLanguage, lang?.name as string]
-                        : [lang.name],
-                    );
-                  }
+                  lStorage.setString('language', lang.language_code);
+                  setSelectedLanguage(lang.language_code);
                 }}
                 style={{
                   backgroundColor: colors.bg,
@@ -314,7 +263,7 @@ const SettingScreen = ({navigation}: NavigProps<null>) => {
                     color: colors.textColor.light,
                     fontFamily: font.Poppins,
                   }}>
-                  {lang.name}
+                  {lang.country}
                 </Text>
                 <View
                   style={{
@@ -326,7 +275,7 @@ const SettingScreen = ({navigation}: NavigProps<null>) => {
                     justifyContent: 'center',
                     alignItems: 'center',
                   }}>
-                  {selectedLanguage?.includes(lang.name) && (
+                  {selectedLanguage?.includes(lang.language_code) && (
                     <View
                       style={{
                         width: 16,

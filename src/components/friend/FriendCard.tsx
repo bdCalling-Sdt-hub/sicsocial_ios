@@ -6,7 +6,7 @@ import {
   View,
   useWindowDimensions,
 } from 'react-native';
-import {height, isSmall, isTablet} from '../../utils/utils';
+import {height, isSmall, isTablet, makeImage} from '../../utils/utils';
 
 import React from 'react';
 import {useStyles} from '../../context/ContextApi';
@@ -42,7 +42,7 @@ const FriendCard = ({
   const [acceptBtnPress, setAcceptBtnPress] = React.useState(false);
 
   const [rejectBtnPress, setRejectBtnPress] = React.useState(false);
-
+  console.log(item);
   return (
     <>
       {/*============== card start ============ */}
@@ -52,6 +52,8 @@ const FriendCard = ({
         style={{
           justifyContent: 'center',
           alignItems: 'center',
+          // marginHorizontal: '5%',
+          width: width,
         }}>
         <View
           style={{
@@ -89,7 +91,7 @@ const FriendCard = ({
               }}>
               <View
                 style={{
-                  elevation: 10,
+                  elevation: 5,
                   backgroundColor: colors.normal,
                   padding: 1,
                   // width: 106,
@@ -104,7 +106,9 @@ const FriendCard = ({
                     borderRadius: 46,
                     alignSelf: 'center',
                   }}
-                  source={require('../../assets/tempAssets/51ad46951bbdc28be4cf7e384964f309.jpg')}
+                  source={{
+                    uri: makeImage(item?.avatar),
+                  }}
                 />
               </View>
               <View
@@ -117,12 +121,13 @@ const FriendCard = ({
                     gap: -2,
                   }}>
                   <Text
+                    numberOfLines={1}
                     style={{
                       fontFamily: font.PoppinsSemiBold,
                       fontSize: 17,
                       color: colors.textColor.primaryColor,
                     }}>
-                    Mithila
+                    {item?.fullName}
                   </Text>
                   <Text
                     numberOfLines={1}
@@ -131,7 +136,7 @@ const FriendCard = ({
                       fontSize: 13,
                       color: colors.textColor.neutralColor,
                     }}>
-                    amina111@gmail.com
+                    {item?.email}
                   </Text>
                 </View>
                 <View
@@ -144,7 +149,7 @@ const FriendCard = ({
                       fontSize: 17,
                       color: colors.primaryColor,
                     }}>
-                    420
+                    {item?.totalFriends}
                   </Text>
                   <Text
                     style={{
@@ -162,14 +167,14 @@ const FriendCard = ({
             style={{
               gap: 10,
             }}>
-            <View
+            {/* <View
               style={{
                 flexDirection: 'row',
                 // justifyContent: 'center',
                 alignItems: 'center',
                 gap: 15,
               }}>
-              {/* <View
+              <View
                 style={{
                   flexDirection: 'row',
                 }}>
@@ -209,16 +214,16 @@ const FriendCard = ({
                     source={require('../../assets/tempAssets/ae1e058c2ed75ab981a9f8bb62e96a13.jpg')}
                   />
                 </View>
-              </View> */}
+              </View>
               <Text
                 style={{
                   fontFamily: font.Poppins,
                   fontSize: 14,
                   color: colors.textColor.light,
                 }}>
-                2 mutual friend
+                {item.totalFriends} mutual friend
               </Text>
-            </View>
+            </View> */}
             <Text
               numberOfLines={isSmall() ? 2 : 4}
               style={{
@@ -228,12 +233,7 @@ const FriendCard = ({
                 letterSpacing: 0.4,
                 textAlign: 'justify',
               }}>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Eligendi
-              eos numquam nostrum vitae corporis, autem illo totam adipisci
-              perferendis cum impedit. Alias, dolore ut atque voluptates, porro
-              distinctio quo sequi cum ullam veniam ex magnam dolorum enim!
-              Possimus eos itaque quam iure illo maiores. Sequi dolore
-              blanditiis ducimus reprehenderit nisi.
+              {item?.bio}
             </Text>
           </View>
 

@@ -1,17 +1,14 @@
-import React, { useEffect } from 'react';
 import {
   ActivityIndicator,
   Image,
   Modal,
-  NativeModules,
   PermissionsAndroid,
   Pressable,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
 } from 'react-native';
-import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import Animated, {
   Easing,
   interpolate,
@@ -19,27 +16,29 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
-import Carousel, { TAnimationStyle } from 'react-native-reanimated-carousel';
-import { useContextApi, useStyles } from '../../../context/ContextApi';
+import Carousel, {TAnimationStyle} from 'react-native-reanimated-carousel';
+import React, {useEffect} from 'react';
+import {isSmall, isTablet} from '../../../utils/utils';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import {useContextApi, useStyles} from '../../../context/ContextApi';
 import {
   useCreateChatMutation,
   useCreateMessageMutation,
 } from '../../../redux/apiSlices/chatSlices';
-import { isSmall, isTablet } from '../../../utils/utils';
 
-import { LinkPreview } from '@flyerhq/react-native-link-preview';
+import {AnimatedCircularProgress} from 'react-native-circular-progress';
 import AudioRecorderPlayer from 'react-native-audio-recorder-player';
-import { AnimatedCircularProgress } from 'react-native-circular-progress';
-import { TextInput } from 'react-native-gesture-handler';
-import { SvgXml } from 'react-native-svg';
-import { GridList } from 'react-native-ui-lib';
 import CustomModal from '../../../components/common/customModal/CustomModal';
+import {GridList} from 'react-native-ui-lib';
+import {IConversationProps} from '../../../screens/home/HomeScreen';
+import {ICreateMessage} from '../../../redux/interface/interface';
+import {LinkPreview} from '@flyerhq/react-native-link-preview';
 import ModalOfBottom from '../../../components/common/customModal/ModalOfButtom';
+import {NavigProps} from '../../../interfaces/NaviProps';
 import NormalButton from '../../../components/common/NormalButton';
-import { NavigProps } from '../../../interfaces/NaviProps';
-import { ICreateMessage } from '../../../redux/interface/interface';
-import { IConversationProps } from '../../../screens/home/HomeScreen';
-import { TemBooks } from '../../../utils/GetRandomColor';
+import {SvgXml} from 'react-native-svg';
+import {TemBooks} from '../../../utils/GetRandomColor';
+import {TextInput} from 'react-native-gesture-handler';
 
 const data = [
   {
@@ -120,15 +119,13 @@ const options = {
 
 const audioRecorderPlayer = new AudioRecorderPlayer();
 interface ConversationalModalProps extends NavigProps<null> {
-  addNewVoiceCard ?: Array<IConversationProps>;
-  setAddNewVoiceCard ?: React.Dispatch<
+  addNewVoiceCard?: Array<IConversationProps>;
+  setAddNewVoiceCard?: React.Dispatch<
     React.SetStateAction<Array<IConversationProps>>
   >;
 }
-const { RNAudioRecord  } = NativeModules;
-const ConversationalModal = ({
-  navigation,
-}: ConversationalModalProps) => {
+
+const ConversationalModal = ({navigation}: ConversationalModalProps) => {
   const [createChat, createChartResults] = useCreateChatMutation({});
   const [createMessage, createMessageResult] = useCreateMessageMutation({});
   const {
@@ -177,7 +174,11 @@ const ConversationalModal = ({
       duration: 200,
     });
     modalHight.value = withTiming(
-      isSmall() ? height * 0.777 : isTablet() ? height * 0.6444 : height * 0.6222,
+      isSmall()
+        ? height * 0.777
+        : isTablet()
+        ? height * 0.6444
+        : height * 0.6222,
       {
         duration: 200,
       },
@@ -398,17 +399,15 @@ const ConversationalModal = ({
     }
   };
 
-
-
-  const recodingOn =  async() => {
-    if(!recordOn){
+  const recodingOn = async () => {
+    if (!recordOn) {
       await PermissionsAndroid.requestMultiple([
         PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
       ]);
-      
+
       setRecordOn(true);
       setRecordOnDone(false);
-     await audioRecorderPlayer.startRecorder();
+      await audioRecorderPlayer.startRecorder();
       letsBorderAnimationValue.value =
         letsBorderAnimationValue.value === 8
           ? withTiming(25, {
@@ -418,21 +417,19 @@ const ConversationalModal = ({
           : withTiming(8, {
               duration: 200,
             });
+    } else {
+      setRecordOn(false);
+      setRecordOnDone(true);
+      letsBorderAnimationValue.value = 20;
+      const audioPath = await audioRecorderPlayer.stopRecorder();
+      console.log(audioPath);
+      const audio = {
+        uri: audioPath,
+        type: 'audio/wav', // Try changing this if 'audio/x-wav' doesn't work
+        name: 'voice.wav',
+      };
+      handleCreateNewChat({audio});
     }
-   else{
-    setRecordOn(false);
-    setRecordOnDone(true);
-    letsBorderAnimationValue.value = 20
-    const audioPath =  await audioRecorderPlayer.stopRecorder();
-    console.log(audioPath);
-    const audio = {
-      uri: audioPath,   
-      type: 'audio/wav', // Try changing this if 'audio/x-wav' doesn't work
-      name: 'voice.wav',
-    };
-    handleCreateNewChat({audio})
-   }
-   
   };
 
   const liveCardAnimationPositionY = useSharedValue('-8.5%');
@@ -498,7 +495,6 @@ const ConversationalModal = ({
   const handleCreateNewChat = React.useCallback(
     data => {
       const formData = new FormData();
-
       createChat({type: createChartInfo?.type || 'public'}).then(res => {
         // console.log(res);
         if (res?.data?.data?._id) {
@@ -515,38 +511,36 @@ const ConversationalModal = ({
           if (data?.path) {
             formData.append('path', data?.path);
           }
-// console.log(formData);
+          // console.log(formData);
           createMessage(formData).then(ms => {
-            // console.log(res);
-            if(createChartInfo?.title === 'Chosen buddies'){
+            console.log(ms);
+            if (createChartInfo?.title === 'Chosen buddies') {
               setConversationalModal(false);
-             navigation?.navigate('MakeGroup', {
-              data : {
-                id: res?.data?.data?._id,
-                screenTitle : "Make Group",
-                option : "group",
-              }
-             });
+              navigation?.navigate('MakeGroup', {
+                data: {
+                  id: res?.data?.data?._id,
+                  screenTitle: 'Make Group',
+                  option: 'group',
+                },
+              });
             }
-           if(createChartInfo?.title === 'Friends'){
-            //  console.log(createChartInfo);
-            setConversationalModal(false);
-             navigation?.navigate('MakeGroup', {
-              data : {
-                id: res?.data?.data?._id,
-                screenTitle : "Send Message",
-                option : "friend",
-              }
-             });
-           }
+            if (createChartInfo?.title === 'Friends') {
+              //  console.log(createChartInfo);
+              setConversationalModal(false);
+              navigation?.navigate('MakeGroup', {
+                data: {
+                  id: res?.data?.data?._id,
+                  screenTitle: 'Send Message',
+                  option: 'friend',
+                },
+              });
+            }
           });
         }
       });
     },
     [createChartInfo, createMessageInfo],
   );
-
-
 
   return (
     <>
@@ -758,9 +752,7 @@ const ConversationalModal = ({
               onSnapToItem={(index: number) => {
                 setActiveIndex(index);
                 // console.log(index);
-                setCreateChatInfo(
-                   items![index]
-                );
+                setCreateChatInfo(items![index]);
               }}
               renderItem={({index, item, animationValue}) => (
                 <TouchableOpacity
@@ -859,14 +851,14 @@ const ConversationalModal = ({
               data={data}
               onSnapToItem={(index: number) => {
                 // setActiveIndexBigButton(index);
-             
+
                 setRecordOn(false);
                 setRecordOnDone(false);
                 letsBorderAnimationValue.value = 25;
               }}
               renderItem={({index, item, animationValue}) => (
                 <TouchableOpacity
-                  onPress={ async() => {
+                  onPress={async () => {
                     if (item.name === 'Share photo') {
                       // handleImagePick('camera');
                       setImageModal(!imageModal);
@@ -882,7 +874,7 @@ const ConversationalModal = ({
                     }
                     if (item.name === 'Let’s talk') {
                       // handleImagePick('camera');
-                      recodingOn()
+                      recodingOn();
                     }
                     if (item.name === 'Type a message') {
                       setTextInputModal(!textInputModal);
@@ -934,10 +926,8 @@ const ConversationalModal = ({
                   item.name === 'Let’s talk' &&
                   recordOn ? (
                     <TouchableOpacity
-                      onPress={ async() => {
-                      
-                        recodingOn()
-                      
+                      onPress={async () => {
+                        recodingOn();
                       }}>
                       {recordOnDone ? (
                         <Animated.View
@@ -1113,8 +1103,6 @@ const ConversationalModal = ({
       <ModalOfBottom
         modalVisible={imageModal}
         setModalVisible={setImageModal}
-       
-       
         height={height * 0.15}
         containerColor={colors.bg}>
         <View
@@ -1162,9 +1150,7 @@ const ConversationalModal = ({
       <ModalOfBottom
         modalVisible={textInputModal}
         setModalVisible={setTextInputModal}
-       
         height={height * 0.1}
-       
         containerColor={colors.bg}>
         <View
           style={{
@@ -1195,7 +1181,6 @@ const ConversationalModal = ({
             />
             <TouchableOpacity
               onPress={() => {
-              
                 handleCreateNewChat(createMessageInfo);
                 setConversationalModal(false);
                 setTextInputModal(false);
@@ -1222,9 +1207,8 @@ const ConversationalModal = ({
       <ModalOfBottom
         modalVisible={liveModal}
         setModalVisible={setLiveModal}
-       
         // backButton
-       
+
         height={height * 0.8}
         containerColor={colors.bg}>
         <View

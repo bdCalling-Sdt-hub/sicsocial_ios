@@ -1,28 +1,27 @@
 import {
   FlatList,
   Image,
-  KeyboardAvoidingView,
-  Platform,
+  Linking,
   StyleSheet,
   Text,
   TouchableOpacity,
-  useWindowDimensions,
   View,
+  useWindowDimensions,
 } from 'react-native';
-import React, {useEffect, useRef} from 'react';
-import {NavigProps} from '../../interfaces/NaviProps';
-import {useStyles} from '../../context/ContextApi';
-import ConversationHeader from '../../components/conversation/ConversationHeader';
+import React, {useEffect} from 'react';
+import {useSharedValue, withTiming} from 'react-native-reanimated';
 
+import AudioRecorderPlayer from 'react-native-audio-recorder-player';
 import ConversationCarousal from '../../components/common/ConversationCarousal/ConversationCarousal';
-import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
+import ConversationHeader from '../../components/conversation/ConversationHeader';
 import CustomModal from '../../components/common/customModal/CustomModal';
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
-} from 'react-native-reanimated';
-import ConversationCarousal1 from '../../components/common/ConversationCarousal/ConversationCarousal1';
+import {IMessage} from '../../redux/interface/message';
+import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
+import {NavigProps} from '../../interfaces/NaviProps';
+import {makeImage} from '../../utils/utils';
+import {useGetMessageQuery} from '../../redux/apiSlices/chatSlices';
+import {useGetUserProfileQuery} from '../../redux/apiSlices/authSlice';
+import {useStyles} from '../../context/ContextApi';
 
 export interface messagePros {
   id: number;
@@ -37,119 +36,65 @@ export interface messagePros {
     avatar: string;
   };
 }
-
-const NormalConversationScreen = ({navigation}: NavigProps<null>) => {
+const audioRecorderPlayer = new AudioRecorderPlayer();
+const NormalConversationScreen = ({
+  navigation,
+  route,
+}: NavigProps<{id: string}>) => {
   const {width, height} = useWindowDimensions();
   const {colors, font} = useStyles();
+  const {data: messages} = useGetMessageQuery({id: route?.params?.data?.id});
+  const {data: userIno} = useGetUserProfileQuery({});
+  const [AllMessages, setAllMessages] = React.useState<IMessage[]>([]);
+  // console.log(userIno);
+  const [isPlaying, setIsPlaying] = React.useState<boolean>(false);
 
-  const [messages, setMessages] = React.useState<Array<messagePros>>([
-    {
-      id: 1,
+  const onPlayAudio = async (audioUrl: string) => {
+    try {
+      setIsPlaying(true);
+      await audioRecorderPlayer.startPlayer(audioUrl);
 
-      text: 'Hello, how are you ?',
-      createdAt: new Date(),
-      image: null,
-      user: {
-        _id: 1,
-        name: 'Amina',
-        avatar: require('../../assets/tempAssets/3a906b3de8eaa53e14582edf5c918b5d.jpg'),
-      },
-    },
-    {
-      id: 2,
+      // Optional: Stop the player after playback finishes
+      audioRecorderPlayer.addPlayBackListener(e => {
+        if (e?.current_position === e.duration) {
+          onStopAudio();
+        }
+      });
+    } catch (error) {
+      console.log('Error playing audio:', error);
+    }
+  };
 
-      text: 'Hello Amina ?',
-      createdAt: new Date(),
-      image: null,
-      user: {
-        _id: 1,
-        name: 'Amina',
-        avatar: require('../../assets/tempAssets/3a906b3de8eaa53e14582edf5c918b5d.jpg'),
-      },
-    },
-    {
-      id: 3,
-
-      text: 'Hi, how are you?',
-      createdAt: new Date(),
-      image: null,
-      user: {
-        _id: 2,
-        name: 'Amina',
-        avatar: require('../../assets/tempAssets/4005b22a3c1c23d7c04f6c9fdbd85468.jpg'),
-      },
-    },
-    {
-      id: 4,
-
-      text: 'This view is so basinful asdfsa asdf a',
-      createdAt: new Date(),
-      image: null,
-      user: {
-        _id: 2,
-        name: 'Amina',
-        avatar: require('../../assets/tempAssets/4005b22a3c1c23d7c04f6c9fdbd85468.jpg'),
-      },
-    },
-    // {
-    //   id: 5,
-
-    //   text: 'This view is so basinful',
-    //   createdAt: new Date(),
-    //   image: require('../../assets/tempAssets/17056fa449ccef1fb1a124b63c0048d2.jpg'),
-    //   user: {
-    //     _id: 2,
-    //     name: 'Amina',
-    //     avatar: require('../../assets/tempAssets/3a906b3de8eaa53e14582edf5c918b5d.jpg'),
-    //   },
-    // },
-    // {
-    //   id: 6,
-
-    //   text: 'This view is so basinful',
-    //   createdAt: new Date(),
-    //   image: require('../../assets/tempAssets/17056fa449ccef1fb1a124b63c0048d2.jpg'),
-    //   user: {
-    //     _id: 1,
-    //     name: 'Amina',
-    //     avatar: require('../../assets/tempAssets/3a906b3de8eaa53e14582edf5c918b5d.jpg'),
-    //   },
-    // },
-    // {
-    //   id: 7,
-
-    //   text: 'I am agree is so basinful',
-    //   createdAt: new Date(),
-    //   image: require('../../assets/tempAssets/17056fa449ccef1fb1a124b63c0048d2.jpg'),
-    //   user: {
-    //     _id: 2,
-    //     name: 'Amina',
-    //     avatar: require('../../assets/tempAssets/3a906b3de8eaa53e14582edf5c918b5d.jpg'),
-    //   },
-    // },
-  ]);
+  const onStopAudio = async () => {
+    try {
+      setIsPlaying(false);
+      await audioRecorderPlayer.stopPlayer();
+      audioRecorderPlayer.removePlayBackListener();
+    } catch (error) {
+      console.log('Error stopping audio:', error);
+    }
+  };
 
   const [volume, setVolume] = React.useState<number>(1);
-  const [newMessages, setNewMessages] = React.useState<string>('');
-  const [newImage, setNewImage] = React.useState<string>('');
   const [modalVisible, setModalVisible] = React.useState(false);
   const [confirmationModal, setConfirmationModal] = React.useState(false);
-
-  const scrollRef = useRef();
 
   const animatePosition = useSharedValue(height * 0.07);
   const animateOpacity = useSharedValue(1);
 
-  const animationStyleForUserConversation = useAnimatedStyle(() => {
-    return {
-      top: animatePosition.value,
-      opacity: animateOpacity.value,
-    };
-  });
-  // console.log(messages);
-  // console.log(messages.length);
+  useEffect(() => {
+    if (messages) {
+      // Create a shallow copy of the messages data before sorting
+      const sortedMessages = [...(messages?.data || [])].sort((a, b) => {
+        return (
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+      });
 
-  const currentUser = messages.find(message => message.user._id === 1)?.user;
+      // Set the sorted messages
+      setAllMessages(sortedMessages);
+    }
+  }, [messages]);
 
   return (
     <View
@@ -185,7 +130,7 @@ const NormalConversationScreen = ({navigation}: NavigProps<null>) => {
         navigation={navigation}
       />
 
-      <Animated.View
+      {/* <Animated.View
         style={[
           {
             paddingHorizontal: 15,
@@ -267,7 +212,7 @@ const NormalConversationScreen = ({navigation}: NavigProps<null>) => {
           }}>
           Amina
         </Text>
-      </Animated.View>
+      </Animated.View> */}
 
       <FlatList
         scrollEventThrottle={10}
@@ -301,7 +246,7 @@ const NormalConversationScreen = ({navigation}: NavigProps<null>) => {
           }
         }}
         inverted
-        data={messages.sort((a, b) => b.id - a.id)}
+        data={AllMessages}
         renderItem={item => {
           return (
             <View
@@ -314,7 +259,7 @@ const NormalConversationScreen = ({navigation}: NavigProps<null>) => {
               <View
                 style={{
                   alignItems:
-                    item.item.user._id === currentUser?._id
+                    item.item?.sender._id === userIno?.data?._id
                       ? 'flex-end'
                       : 'flex-start',
                   marginTop: 20,
@@ -327,15 +272,15 @@ const NormalConversationScreen = ({navigation}: NavigProps<null>) => {
                     maxWidth: '90%',
                     minWidth: '50%',
                     backgroundColor:
-                      item.item.user._id === currentUser?._id
+                      item.item?.sender._id === userIno?.data?._id
                         ? colors.secondaryColor
                         : colors.redisExtraLight,
                     flexDirection: 'row',
                   }}>
-                  {item.item.user._id !== currentUser?._id && (
+                  {item.item?.sender._id !== userIno?.data?._id && (
                     <View>
                       <Image
-                        source={item.item.user.avatar}
+                        source={{uri: makeImage(item.item.sender.avatar)}}
                         style={{
                           width: 45,
                           height: 45,
@@ -362,7 +307,7 @@ const NormalConversationScreen = ({navigation}: NavigProps<null>) => {
                         paddingHorizontal: 10,
                         paddingVertical: 5,
                         alignItems:
-                          item.item.user._id === currentUser?._id
+                          item.item?.sender._id === userIno?.data?._id
                             ? 'flex-end'
                             : 'flex-start',
                       }}>
@@ -371,14 +316,17 @@ const NormalConversationScreen = ({navigation}: NavigProps<null>) => {
                           <View
                             style={{
                               backgroundColor: colors.bg,
-                              elevation: 2,
+                              // elevation: 2,
                               height: 150,
+                              // width: 300,
+                              width: '100%',
                               borderRadius: 15,
                             }}>
                             <Image
-                              source={{uri: item.item.image}}
+                              source={{uri: makeImage(item.item.image)}}
+                              resizeMode="cover"
                               style={{
-                                marginBottom: 20,
+                                // marginBottom: 20,
                                 aspectRatio: 1,
 
                                 height: 150,
@@ -388,35 +336,50 @@ const NormalConversationScreen = ({navigation}: NavigProps<null>) => {
                           </View>
                         )}
 
-                        {item.item.text && (
-                          <Text
-                            style={{
-                              fontSize: 14,
-                              color: colors.textColor.secondaryColor,
-                              fontFamily: font.Poppins,
-                              maxWidth: width * 0.65,
-                              textAlign:
-                                item.item.user._id === currentUser?._id
-                                  ? 'right'
-                                  : 'left',
-                            }}>
-                            {item.item.text}
-                          </Text>
-                        )}
+                        <TouchableOpacity
+                          onPress={async () => {
+                            if (item.item.path) {
+                              Linking.openURL(item.item.path);
+                            } else if (item.item.audio) {
+                              if (isPlaying) {
+                                await onStopAudio();
+                              } else {
+                                await onPlayAudio(makeImage(item.item.audio));
+                              }
+                            }
+                          }}>
+                          <Text>Audio</Text>
+                          {item.item.text && (
+                            <Text
+                              style={{
+                                fontSize: 14,
+                                color: colors.textColor.secondaryColor,
+                                fontFamily: font.Poppins,
+                                maxWidth: width * 0.65,
+                                textAlign:
+                                  item.item?.sender._id === userInfo?.data?._id
+                                    ? 'right'
+                                    : 'left',
+                              }}>
+                              {item.item.text}
+                            </Text>
+                          )}
+                        </TouchableOpacity>
 
-                        {item.item.bookImage && (
+                        {item.item.path && (
                           <View
                             style={{
                               backgroundColor: colors.bg,
                               elevation: 2,
                               // height: 192,
+
                               borderColor: colors.bg,
 
                               borderRadius: 15,
                             }}>
                             <Image
                               resizeMode="stretch"
-                              source={item.item.bookImage}
+                              source={{uri: item.item.path}}
                               style={{
                                 // marginBottom: 20,
                                 // aspectRatio: 1,
@@ -451,35 +414,34 @@ const NormalConversationScreen = ({navigation}: NavigProps<null>) => {
           type
           record
           books
+          chatIt={route?.params?.data?.id}
           // ImageLink={newImage}
-          setMessages={setMessages}
-          messages={messages}
-          setImageAssets={setNewImage}
+          // setMessages={setMessages}
+          // messages={messages}
+          // setImageAssets={setNewImage}
           onSendImageMessage={() => {}}
-          setTextMessage={setNewMessages}
-          onSendTextMessage={() => {
-            setMessages([
-              ...messages,
-              {
-                id: messages.length + 1,
+          // setTextMessage={setNewMessages}
+          // onSendTextMessage={() => {
+          //   setMessages([
+          //     ...messages,
+          //     {
+          //       id: messages.length + 1,
 
-                text: newMessages,
-                createdAt: new Date(),
+          //       text: newMessages,
+          //       createdAt: new Date(),
 
-                user: {
-                  _id: 1,
-                  name: 'Amina',
-                  avatar: require('../../assets/tempAssets/3a906b3de8eaa53e14582edf5c918b5d.jpg'),
-                },
-              },
-            ]);
-          }}
+          //       user: {
+          //         _id: 1,
+          //         name: 'Amina',
+          //         avatar: require('../../assets/tempAssets/3a906b3de8eaa53e14582edf5c918b5d.jpg'),
+          //       },
+          //     },
+          //   ]);
+          // }}
         />
       </View>
 
       <ModalOfBottom
-        height={'18%'}
-        onlyTopRadius={15}
         modalVisible={modalVisible}
         containerColor={colors.bg}
         setModalVisible={setModalVisible}>

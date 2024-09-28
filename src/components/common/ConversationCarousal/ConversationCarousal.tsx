@@ -1,32 +1,37 @@
-import React, { Dispatch, SetStateAction, useEffect } from 'react';
-import {
-  Image,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-  useWindowDimensions
-} from 'react-native';
-import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import Animated, {
   interpolate,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
+import {
+  Easing,
+  Image,
+  PermissionsAndroid,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+  useWindowDimensions,
+} from 'react-native';
+import React, {Dispatch, SetStateAction, useEffect} from 'react';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 
-import { AnimatedCircularProgress } from 'react-native-circular-progress';
+import {AnimatedCircularProgress} from 'react-native-circular-progress';
+import AudioRecorderPlayer from 'react-native-audio-recorder-player';
 import Carousel from 'react-native-reanimated-carousel';
-import { SvgXml } from 'react-native-svg';
-import { GridList } from 'react-native-ui-lib';
-import { useStyles } from '../../../context/ContextApi';
-import { NavigProps } from '../../../interfaces/NaviProps';
-import { messagePros } from '../../../screens/message/NormalConversationScreen';
-import { TemBooks } from '../../../utils/GetRandomColor';
-import { isSmall } from '../../../utils/utils';
 import CustomModal from '../customModal/CustomModal';
+import {GridList} from 'react-native-ui-lib';
 import ModalOfBottom from '../customModal/ModalOfButtom';
+import {NavigProps} from '../../../interfaces/NaviProps';
+import {SvgXml} from 'react-native-svg';
+import {TemBooks} from '../../../utils/GetRandomColor';
+import Voice from '@react-native-voice/voice';
+import {isSmall} from '../../../utils/utils';
+import {messagePros} from '../../../screens/message/NormalConversationScreen';
+import {useCreateMessageMutation} from '../../../redux/apiSlices/chatSlices';
+import {useStyles} from '../../../context/ContextApi';
 
 const data = [
   {
@@ -90,9 +95,7 @@ const options = [
     content: 'Worldview',
   },
 ];
-
-
-
+const audioRecorderPlayer = new AudioRecorderPlayer();
 interface ConversationCarousalProps extends NavigProps<null> {
   // Add props here if needed.
   type?: boolean;
@@ -111,12 +114,14 @@ interface ConversationCarousalProps extends NavigProps<null> {
   setImageAssets?: Dispatch<SetStateAction<string>>;
   ImageMessage?: string;
   TextMessage?: string;
+  chatIt?: string;
 }
 
 const ConversationCarousal = ({
   navigation,
   books,
   faceDown,
+  chatIt,
   live,
   photo,
   record,
@@ -173,6 +178,8 @@ const ConversationCarousal = ({
   const [booksModal, setBooksModal] = React.useState(false);
   const [selectItem, setSelectIItem] = React.useState<number>(1);
   const letsBorderAnimationValue = useSharedValue(23);
+  const [recognizedText, setRecognizedText] = React.useState('');
+  const [isListening, setIsListening] = React.useState(false);
 
   const itemSize = 100;
   const centerOffset = width / 2 - itemSize / 2;
@@ -195,24 +202,18 @@ const ConversationCarousal = ({
         });
 
         if (!result.didCancel) {
-          setImageAssets && setImageAssets(result?.assets![0].uri);
+          handleCreateNewChat({
+            image: {
+              uri: result?.assets![0].uri,
+              type: result?.assets![0].type,
+              name: result?.assets![0].fileName,
+              size: result?.assets![0].fileSize,
+              lastModified: new Date().getTime(), // Assuming current time as last modified
+              lastModifiedDate: new Date(),
+              webkitRelativePath: '',
+            },
+          });
           // console.log(result);
-          setTextInputModal(!textInputModal);
-          // setMessages &&
-          //   setMessages([
-          //     ...messages,
-          //     {
-          //       id: messages.length + 1,
-          //       text: '',
-          //       createdAt: new Date(),
-          //       image: result.assets![0].uri,
-          //       user: {
-          //         _id: 1,
-          //         name: 'Amina',
-          //         avatar: require('../../../assets/tempAssets/3a906b3de8eaa53e14582edf5c918b5d.jpg'),
-          //       },
-          //     },
-          //   ]);
         }
       }
       if (option === 'library') {
@@ -225,16 +226,25 @@ const ConversationCarousal = ({
         });
 
         if (!result.didCancel) {
-          setImageAssets && setImageAssets(result?.assets![0].uri);
+          // add image add a file image
+          handleCreateNewChat({
+            image: {
+              uri: result?.assets![0].uri,
+              type: result?.assets![0].type,
+              name: result?.assets![0].fileName,
+              size: result?.assets![0].fileSize,
+              lastModified: new Date().getTime(), // Assuming current time as last modified
+              lastModifiedDate: new Date(),
+              webkitRelativePath: '',
+            },
+          });
           // console.log(result);
-          setTextInputModal(!textInputModal);
         }
       }
     } catch (error) {
       console.log(error);
     }
   };
-
 
   const animationStyle = React.useCallback(
     (value: number) => {
@@ -291,13 +301,112 @@ const ConversationCarousal = ({
     },
     [centerOffset],
   );
+  const recodingOn = async () => {
+    if (!recordOn) {
+      await PermissionsAndroid.requestMultiple([
+        PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+      ]);
+
+      startListening(); // Start listening for speech recognition
+      setRecordOn(true);
+      setRecordOnDone(false);
+      // await audioRecorderPlayer.startRecorder();
+      letsBorderAnimationValue.value =
+        letsBorderAnimationValue.value === 8
+          ? withTiming(25, {
+              duration: 200,
+              easing: Easing.ease,
+            })
+          : withTiming(8, {
+              duration: 200,
+            });
+    } else {
+      stopListening(); // Stop listening
+      setRecordOn(false);
+      setRecordOnDone(true);
+      letsBorderAnimationValue.value = 20;
+      const audioPath = await audioRecorderPlayer.stopRecorder();
+      console.log(audioPath);
+      const audio = {
+        uri: audioPath,
+        type: 'audio/wav', // Adjust this if needed
+        name: 'voice.wav',
+      };
+      handleCreateNewChat({audio});
+    }
+  };
+
+  console.log(recognizedText);
+
+  const onSpeechStart = () => {
+    console.log('Listening started...');
+    setIsListening(true);
+  };
+
+  const onSpeechResults = (event: any) => {
+    console.log('Speech results: ', event.value);
+    if (event.value && event.value.length > 0) {
+      setRecognizedText(event.value[0]); // Capture first recognized text
+    }
+  };
+
+  const onSpeechError = (event: any) => {
+    console.error('Speech error: ', event.error);
+    setIsListening(false);
+  };
+
+  const startListening = async () => {
+    try {
+      // Start listening in a specific language
+      await Voice.start('bn-BD'); // Change 'en-US' to 'bn-BD' for Bengali
+      setIsListening(true);
+    } catch (error) {
+      console.log('Error starting speech recognition: ', error);
+    }
+  };
+
+  const stopListening = async () => {
+    try {
+      // Stop listening
+      await Voice.stop();
+      setIsListening(false);
+    } catch (error) {
+      console.log('Error stopping speech recognition: ', error);
+    }
+  };
+
+  const [createMessage, createMessageResult] = useCreateMessageMutation({});
+  const handleCreateNewChat = React.useCallback(data => {
+    const formData = new FormData();
+    formData.append('chatId', chatIt);
+
+    if (data?.image) {
+      formData.append('image', data?.image);
+    }
+    if (data?.audio) {
+      formData.append('audio', data.audio);
+    }
+    if (data?.text) {
+      formData.append('text', data?.text);
+    }
+    if (data?.path) {
+      formData.append('path', data?.path);
+    }
+    createMessage(formData).then(ms => {
+      // Handle success or error here
+    });
+  }, []);
 
   useEffect(() => {
-    setTimeout(() => {
-      textInputRef.current?.focus();
-    }, 100);
-  }, [textInputModal]);
+    Voice.onSpeechStart = onSpeechStart;
+    Voice.onSpeechResults = onSpeechResults;
+    Voice.onSpeechError = onSpeechError;
 
+    return () => {
+      // Remove voice event listeners when the component unmounts
+      Voice.destroy().then(Voice.removeAllListeners);
+    };
+  }, []);
   return (
     <>
       <Carousel
@@ -339,16 +448,7 @@ const ConversationCarousal = ({
               }
               if (item.name === 'Let’s talk') {
                 // handleImagePick('camera');
-                setRecordOn(!recordOn);
-                letsBorderAnimationValue.value =
-                  letsBorderAnimationValue.value === 8
-                    ? withTiming(25, {
-                        duration: 200,
-                      })
-                    : withTiming(8, {
-                        duration: 200,
-                      });
-                recordOnDone && setRecordOnDone(!recordOnDone);
+                recodingOn();
               }
               if (item.name === 'Type a message') {
                 setTextInputModal(!textInputModal);
@@ -364,11 +464,11 @@ const ConversationCarousal = ({
               height: 95,
               justifyContent: 'center',
               alignItems: 'center',
-              transform : [
+              transform: [
                 {
-                  scale : isSmall() ? .8 : 1
-                }
-              ]
+                  scale: isSmall() ? 0.8 : 1,
+                },
+              ],
             }}>
             {/* <View
               style={{
@@ -557,8 +657,6 @@ const ConversationCarousal = ({
       <ModalOfBottom
         modalVisible={imageModal}
         setModalVisible={setImageModal}
-       
-       
         containerColor={colors.bg}>
         <View
           style={{
@@ -603,8 +701,6 @@ const ConversationCarousal = ({
       <ModalOfBottom
         modalVisible={textInputModal}
         setModalVisible={setTextInputModal}
-       
-       
         containerColor={colors.bg}>
         <View
           style={{
@@ -617,7 +713,7 @@ const ConversationCarousal = ({
               flexDirection: 'row',
               gap: 10,
             }}>
-            {imageAssets && (
+            {/* {imageAssets && (
               <Image
                 source={{uri: imageAssets}}
                 style={{
@@ -627,7 +723,7 @@ const ConversationCarousal = ({
                   // elevation: 2,
                 }}
               />
-            )}
+            )} */}
 
             <TextInput
               ref={textInputRef}
@@ -644,21 +740,7 @@ const ConversationCarousal = ({
             <TouchableOpacity
               onPress={() => {
                 setTextInputModal(false);
-                setMessages &&
-                  setMessages([
-                    ...messages,
-                    {
-                      id: messages && messages?.length + 1,
-                      text: textMessage ? textMessage : '',
-                      createdAt: new Date(),
-                      image: imageAssets ? imageAssets : '',
-                      user: {
-                        _id: 1,
-                        name: 'Amina',
-                        avatar: require('../../../assets/tempAssets/3a906b3de8eaa53e14582edf5c918b5d.jpg'),
-                      },
-                    },
-                  ]);
+                handleCreateNewChat({text: textMessage});
                 setImageAssets && setImageAssets('');
                 setTextMessage && setTextMessage('');
               }}
@@ -680,8 +762,8 @@ const ConversationCarousal = ({
           </View>
         </View>
       </ModalOfBottom>
-    {/* book selection modal  */}
-    <CustomModal
+      {/* book selection modal  */}
+      <CustomModal
         modalVisible={booksModal}
         setModalVisible={setBooksModal}
         height={'85%'}
@@ -785,73 +867,77 @@ const ConversationCarousal = ({
             }}
             renderItem={item => (
               <TouchableOpacity
-              onPress={() => {
-                setMessages &&
-                setMessages([
-                  ...messages,
-                  {
-                    id: messages.length + 1,
-                    createdAt: new Date(),
-                    bookImage: item.item.image,
-                    user: {
-                      _id: 1,
-                      name: 'Amina',
-                      avatar: require('../../../assets/tempAssets/3a906b3de8eaa53e14582edf5c918b5d.jpg'),
-                    },
-                  },
-                ]);
+                onPress={() => {
+                  setMessages &&
+                    setMessages([
+                      ...messages,
+                      {
+                        id: messages.length + 1,
+                        createdAt: new Date(),
+                        bookImage: item.item.image,
+                        user: {
+                          _id: 1,
+                          name: 'Amina',
+                          avatar: require('../../../assets/tempAssets/3a906b3de8eaa53e14582edf5c918b5d.jpg'),
+                        },
+                      },
+                    ]);
 
-              setBooksModal(false);
-                // setSelectBook(item?.item.image)
-                // navigation?.navigate('BookShare', {data: item.item});
-              }}
-              style={{
-                // elevation: 2,
-                // backgroundColor: colors.bg,
-                // padding: 2,
-                borderRadius: 24,
-                // height: height * 0.243,
-                // alignItems : "center",
-                // justifyContent : "center",
-              }}>
-           <View style={{
-            elevation : 1,
-            padding : 3,
-         
-         
-           }}>
-           <Image
-              resizeMode='stretch'
-                style={{
-                  height: height * 0.24,
-                  width: width * 0.41,
-                  borderRadius: 24,
-                  borderWidth : 2,
-                  borderColor : colors.bg
+                  setBooksModal(false);
+                  // setSelectBook(item?.item.image)
+                  // navigation?.navigate('BookShare', {data: item.item});
                 }}
-                source={item.item.image}
-              />
-           </View>
-              <View style={{
-                marginTop : 10,
-                alignItems : "center",
-                gap : 5,
-                maxWidth : width * 0.41,
-              }}>
-              <Text style={{
-                color: colors.textColor.light,
-                fontSize: 14,
-                fontFamily: font.PoppinsMedium,
-                
-              }}>{item.item.title}</Text>
-              <Text style={{
-                color: colors.textColor.neutralColor,
-                fontSize: 12,
-                fontFamily: font.Poppins,
-                
-              }}>{item.item.publisher}</Text>
-              </View>
-            </TouchableOpacity>
+                style={{
+                  // elevation: 2,
+                  // backgroundColor: colors.bg,
+                  // padding: 2,
+                  borderRadius: 24,
+                  // height: height * 0.243,
+                  // alignItems : "center",
+                  // justifyContent : "center",
+                }}>
+                <View
+                  style={{
+                    elevation: 1,
+                    padding: 3,
+                  }}>
+                  <Image
+                    resizeMode="stretch"
+                    style={{
+                      height: height * 0.24,
+                      width: width * 0.41,
+                      borderRadius: 24,
+                      borderWidth: 2,
+                      borderColor: colors.bg,
+                    }}
+                    source={item.item.image}
+                  />
+                </View>
+                <View
+                  style={{
+                    marginTop: 10,
+                    alignItems: 'center',
+                    gap: 5,
+                    maxWidth: width * 0.41,
+                  }}>
+                  <Text
+                    style={{
+                      color: colors.textColor.light,
+                      fontSize: 14,
+                      fontFamily: font.PoppinsMedium,
+                    }}>
+                    {item.item.title}
+                  </Text>
+                  <Text
+                    style={{
+                      color: colors.textColor.neutralColor,
+                      fontSize: 12,
+                      fontFamily: font.Poppins,
+                    }}>
+                    {item.item.publisher}
+                  </Text>
+                </View>
+              </TouchableOpacity>
             )}
           />
         </>

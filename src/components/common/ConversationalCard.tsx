@@ -7,14 +7,14 @@ import {
   View,
 } from 'react-native';
 
+import {IParticipants} from '../../redux/interface/participants';
+import {NavigProps} from '../../interfaces/NaviProps';
 import React from 'react';
-import { SvgXml } from 'react-native-svg';
-import { useStyles } from '../../context/ContextApi';
-import { NavigProps } from '../../interfaces/NaviProps';
-import { IParticipants } from '../../redux/interface/participants';
-import { makeImage } from '../../utils/utils';
+import {SvgXml} from 'react-native-svg';
+import {makeImage} from '../../utils/utils';
+import {useStyles} from '../../context/ContextApi';
 
-interface ConversationalCardProps extends NavigProps<null> , IParticipants {
+interface ConversationalCardProps extends NavigProps<null>, IParticipants {
   conversationTitle?: string;
   conversationSubtitle?: string;
   lastMessage?: string;
@@ -56,7 +56,7 @@ const ConversationalCard = ({
   paddingHorizontal,
   havNotUser,
   manyPeople,
-  participants
+  participants,
 }: ConversationalCardProps) => {
   const {colors, font} = useStyles();
   return (
@@ -94,7 +94,7 @@ const ConversationalCard = ({
                   <Text
                     numberOfLines={1}
                     style={{
-                      maxWidth : "90%",
+                      maxWidth: '90%',
                       fontFamily: font.PoppinsSemiBold,
                       fontSize: 17,
                       color: colors.textColor.secondaryColor,
@@ -110,7 +110,7 @@ const ConversationalCard = ({
                       fontSize: 12,
                       color: colors.textColor.secondaryColor,
                       opacity: 0.5,
-                      maxWidth : "80%"
+                      maxWidth: '80%',
                     }}>
                     {conversationSubtitle}
                   </Text>
@@ -273,7 +273,6 @@ const ConversationalCard = ({
                   )}
                   {lastMessage && (
                     <Text
-                    
                       style={{
                         fontFamily: isReply
                           ? font.PoppinsSemiBold
@@ -453,24 +452,26 @@ const ConversationalCard = ({
                   <View
                     style={{
                       // height: 76,
-                      backgroundColor : colors.white,
+                      backgroundColor: colors.white,
                       borderRadius: 35,
                       elevation: 1,
                       justifyContent: 'center',
                       alignItems: 'center',
                       padding: 1,
                     }}>
-                    <Image
-                      resizeMode="cover"
-                      style={{
-                        height: 80,
-                        width: 80,
-                        borderRadius: 35,
-                        borderColor: 'white',
-                        borderWidth: 2,
-                      }}
-                      source={{uri : makeImage(participants![0]?.avatar)}}
-                    />
+                    {participants && (
+                      <Image
+                        resizeMode="cover"
+                        style={{
+                          height: 80,
+                          width: 80,
+                          borderRadius: 35,
+                          borderColor: 'white',
+                          borderWidth: 2,
+                        }}
+                        source={{uri: makeImage(participants![0]?.avatar)}}
+                      />
+                    )}
                   </View>
                 </>
               )}
@@ -479,7 +480,7 @@ const ConversationalCard = ({
                   <View
                     style={{
                       // height: 76,
-                      backgroundColor : colors.white,
+                      backgroundColor: colors.white,
                       borderRadius: 28,
                       elevation: 2,
                       justifyContent: 'center',
@@ -499,22 +500,24 @@ const ConversationalCard = ({
                         },
                       ],
                     }}>
-                    <Image
-                      resizeMode="cover"
-                      style={{
-                        height: 70,
-                        width: 70,
-                        borderRadius: 28,
-                        borderColor: 'white',
-                        borderWidth: 2,
-                      }}
-                      source={{uri : makeImage(participants![0]?.avatar)}}
-                    />
+                    {participants && (
+                      <Image
+                        resizeMode="cover"
+                        style={{
+                          height: 80,
+                          width: 80,
+                          borderRadius: 35,
+                          borderColor: 'white',
+                          borderWidth: 2,
+                        }}
+                        source={{uri: makeImage(participants![0]?.avatar)}}
+                      />
+                    )}
                   </View>
                   <View
                     style={{
                       // height: 76,
-                      backgroundColor : colors.white,
+                      backgroundColor: colors.white,
                       borderRadius: 28,
                       elevation: havNotUser ? 0 : 2,
                       // bottom: havNotUser ? 10 : 25,
@@ -562,17 +565,21 @@ const ConversationalCard = ({
                         />
                       </ImageBackground>
                     ) : (
-                      <Image
-                        resizeMode="cover"
-                        style={{
-                          height: 70,
-                          width: 70,
-                          borderRadius: 28,
-                          borderColor: 'white',
-                          borderWidth: 2,
-                        }}
-                        source={{uri : makeImage(participants![1]?.avatar)}}
-                      />
+                      <>
+                        {participants && (
+                          <Image
+                            resizeMode="cover"
+                            style={{
+                              height: 80,
+                              width: 80,
+                              borderRadius: 35,
+                              borderColor: 'white',
+                              borderWidth: 2,
+                            }}
+                            source={{uri: makeImage(participants![0]?.avatar)}}
+                          />
+                        )}
+                      </>
                     )}
                   </View>
                 </>
@@ -583,7 +590,7 @@ const ConversationalCard = ({
                   <View
                     style={{
                       // height: 76,
-                      backgroundColor : colors.white,
+                      backgroundColor: colors.white,
                       borderRadius: 24,
                       elevation: 2,
                       bottom: -25,
@@ -599,22 +606,24 @@ const ConversationalCard = ({
                         },
                       ],
                     }}>
-                    <Image
-                      resizeMode="cover"
-                      style={{
-                        height: 60,
-                        width: 60,
-                        borderRadius: 24,
-                        borderColor: 'white',
-                        borderWidth: 2,
-                      }}
-                      source={{uri : makeImage(participants![0]?.avatar)}}
-                    />
+                    {participants && (
+                      <Image
+                        resizeMode="cover"
+                        style={{
+                          height: 80,
+                          width: 80,
+                          borderRadius: 35,
+                          borderColor: 'white',
+                          borderWidth: 2,
+                        }}
+                        source={{uri: makeImage(participants![0]?.avatar)}}
+                      />
+                    )}
                   </View>
                   <View
                     style={{
                       // height: 76,
-                      backgroundColor : colors.white,
+                      backgroundColor: colors.white,
                       borderRadius: 24,
                       elevation: 2,
                       bottom: -25,
@@ -630,17 +639,19 @@ const ConversationalCard = ({
                         },
                       ],
                     }}>
-                    <Image
-                      resizeMode="cover"
-                      style={{
-                        height: 60,
-                        width: 60,
-                        borderRadius: 24,
-                        borderColor: 'white',
-                        borderWidth: 2,
-                      }}
-                      source={{uri : makeImage(participants![1]?.avatar)}}
-                    />
+                    {participants && (
+                      <Image
+                        resizeMode="cover"
+                        style={{
+                          height: 80,
+                          width: 80,
+                          borderRadius: 35,
+                          borderColor: 'white',
+                          borderWidth: 2,
+                        }}
+                        source={{uri: makeImage(participants![0]?.avatar)}}
+                      />
+                    )}
                   </View>
 
                   <View
@@ -702,33 +713,38 @@ const ConversationalCard = ({
                         />
                       </ImageBackground>
                     ) : (
-                      <Image
-                        resizeMode="cover"
-                        style={{
-                          height: 59,
-                          width: 59,
-                          borderRadius: 24,
-                          borderColor: 'white',
-                          borderWidth: 2,
-                        }}
-                        source={{uri : makeImage(participants![2]?.avatar)}}
-                      />
+                      <>
+                        {participants && (
+                          <Image
+                            resizeMode="cover"
+                            style={{
+                              height: 80,
+                              width: 80,
+                              borderRadius: 35,
+                              borderColor: 'white',
+                              borderWidth: 2,
+                            }}
+                            source={{uri: makeImage(participants![0]?.avatar)}}
+                          />
+                        )}
+                      </>
                     )}
                   </View>
                 </View>
               )}
               {cardStyle === 'four' && (
-                <View style={{
-                  transform : [
-                    {
-                      scale : 0.8
-                    }
-                  ]
-                }}> 
+                <View
+                  style={{
+                    transform: [
+                      {
+                        scale: 0.8,
+                      },
+                    ],
+                  }}>
                   <View
                     style={{
                       // height: 76,
-                      backgroundColor : colors.white,
+                      backgroundColor: colors.white,
                       borderRadius: 24,
                       elevation: 2,
                       bottom: 6,
@@ -747,22 +763,24 @@ const ConversationalCard = ({
                         },
                       ],
                     }}>
-                    <Image
-                      resizeMode="cover"
-                      style={{
-                        height: 50,
-                        width: 50,
-                        borderRadius: 24,
-                        borderColor: 'white',
-                        borderWidth: 2,
-                      }}
-                      source={{uri : makeImage(participants![0]?.avatar)}}
-                    />
+                    {participants && (
+                      <Image
+                        resizeMode="cover"
+                        style={{
+                          height: 80,
+                          width: 80,
+                          borderRadius: 35,
+                          borderColor: 'white',
+                          borderWidth: 2,
+                        }}
+                        source={{uri: makeImage(participants![0]?.avatar)}}
+                      />
+                    )}
                   </View>
                   <View
                     style={{
                       // height: 76,
-                      backgroundColor : colors.white,
+                      backgroundColor: colors.white,
                       borderRadius: 24,
                       elevation: 2,
                       bottom: 0,
@@ -781,22 +799,24 @@ const ConversationalCard = ({
                         },
                       ],
                     }}>
-                    <Image
-                      resizeMode="cover"
-                      style={{
-                        height: 50,
-                        width: 50,
-                        borderRadius: 24,
-                        borderColor: 'white',
-                        borderWidth: 2,
-                      }}
-                      source={{uri : makeImage(participants![1]?.avatar)}}
-                    />
+                    {participants && (
+                      <Image
+                        resizeMode="cover"
+                        style={{
+                          height: 80,
+                          width: 80,
+                          borderRadius: 35,
+                          borderColor: 'white',
+                          borderWidth: 2,
+                        }}
+                        source={{uri: makeImage(participants![0]?.avatar)}}
+                      />
+                    )}
                   </View>
                   <View
                     style={{
                       // height: 76,
-                         backgroundColor : colors.white,
+                      backgroundColor: colors.white,
                       borderRadius: 24,
                       elevation: 2,
                       bottom: 6,
@@ -815,22 +835,24 @@ const ConversationalCard = ({
                         },
                       ],
                     }}>
-                    <Image
-                      resizeMode="cover"
-                      style={{
-                        height: 50,
-                        width: 50,
-                        borderRadius: 24,
-                        borderColor: 'white',
-                        borderWidth: 2,
-                      }}
-                      source={{uri : makeImage(participants![2]?.avatar)}}
-                    />
+                    {participants && (
+                      <Image
+                        resizeMode="cover"
+                        style={{
+                          height: 80,
+                          width: 80,
+                          borderRadius: 35,
+                          borderColor: 'white',
+                          borderWidth: 2,
+                        }}
+                        source={{uri: makeImage(participants![0]?.avatar)}}
+                      />
+                    )}
                   </View>
                   <View
                     style={{
                       // height: 76,
-                      backgroundColor : colors.white,
+                      backgroundColor: colors.white,
                       borderRadius: 24,
                       elevation: 2,
                       bottom: 0,
@@ -849,17 +871,19 @@ const ConversationalCard = ({
                         },
                       ],
                     }}>
-                    <Image
-                      resizeMode="cover"
-                      style={{
-                        height: 50,
-                        width: 50,
-                        borderRadius: 24,
-                        borderColor: 'white',
-                        borderWidth: 2,
-                      }}
-                      source={{uri : makeImage(participants![3]?.avatar)}}
-                    />
+                    {participants && (
+                      <Image
+                        resizeMode="cover"
+                        style={{
+                          height: 80,
+                          width: 80,
+                          borderRadius: 35,
+                          borderColor: 'white',
+                          borderWidth: 2,
+                        }}
+                        source={{uri: makeImage(participants![0]?.avatar)}}
+                      />
+                    )}
                   </View>
                 </View>
               )}
