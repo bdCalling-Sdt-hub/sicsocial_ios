@@ -25,7 +25,7 @@ const MessageCard = ({
   avatar,
   fullName,
 }: IMessageCardProps) => {
-  console.log(avatar);
+  // console.log(avatar);
   const {colors, font} = useStyles();
   return (
     <TouchableOpacity
@@ -221,6 +221,6 @@ const MessageCard = ({
   );
 };
 
-export default MessageCard;
+export default React.memo(MessageCard);
 
 const styles = StyleSheet.create({});

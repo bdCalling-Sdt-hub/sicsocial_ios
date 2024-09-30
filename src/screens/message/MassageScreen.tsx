@@ -297,7 +297,9 @@ const MassageScreen = ({navigation}: NavigProps<null>) => {
                   if (item.group) {
                     navigation?.navigate('GroupConversation');
                   } else {
-                    navigation?.navigate('NormalConversation');
+                    navigation?.navigate('NormalConversation', {
+                      data: {id: item?._id},
+                    });
                   }
                 }}
                 avatar={

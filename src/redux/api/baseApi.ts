@@ -1,8 +1,7 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { getStorageToken, removeStorageToken } from '../../utils/utils';
-import { clearToken } from '../apiSlices/tokenSlice';
+import {createApi, fetchBaseQuery} from '@reduxjs/toolkit/query/react';
+import {getStorageToken, removeStorageToken} from '../../utils/utils';
 
-import { Alert } from 'react-native';
+import {clearToken} from '../apiSlices/tokenSlice';
 
 const baseQuery = fetchBaseQuery({
   baseUrl: 'http://192.168.10.202:5000/api/v1',
@@ -26,9 +25,7 @@ const baseQueryWithRath: typeof baseQuery = async (args, api, extraOptions) => {
 
   let result = await baseQuery(args, api, extraOptions);
   // console.log(result);
-  if (result?.error?.status === 'FETCH_ERROR') {
-    Alert.alert(result.error.error);
-  }
+
   if (result?.error?.status === 401) {
     // Handle token refresh logic here if needed
     // For now, we'll log out the user

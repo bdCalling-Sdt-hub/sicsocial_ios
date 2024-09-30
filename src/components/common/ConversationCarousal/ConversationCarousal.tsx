@@ -1,9 +1,4 @@
-import Animated, {
-  interpolate,
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
-} from 'react-native-reanimated';
+import React, {Dispatch, SetStateAction} from 'react';
 import {
   Easing,
   Image,
@@ -15,22 +10,27 @@ import {
   View,
   useWindowDimensions,
 } from 'react-native';
-import React, {Dispatch, SetStateAction} from 'react';
-import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import Animated, {
+  interpolate,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
 
-import {AnimatedCircularProgress} from 'react-native-circular-progress';
 import AudioRecorderPlayer from 'react-native-audio-recorder-player';
+import {AnimatedCircularProgress} from 'react-native-circular-progress';
 import Carousel from 'react-native-reanimated-carousel';
-import CustomModal from '../customModal/CustomModal';
-import {GridList} from 'react-native-ui-lib';
-import ModalOfBottom from '../customModal/ModalOfButtom';
-import {NavigProps} from '../../../interfaces/NaviProps';
 import {SvgXml} from 'react-native-svg';
-import {TemBooks} from '../../../utils/GetRandomColor';
-import {isSmall} from '../../../utils/utils';
-import {messagePros} from '../../../screens/message/NormalConversationScreen';
-import {useCreateMessageMutation} from '../../../redux/apiSlices/chatSlices';
+import {GridList} from 'react-native-ui-lib';
 import {useStyles} from '../../../context/ContextApi';
+import {NavigProps} from '../../../interfaces/NaviProps';
+import {useCreateMessageMutation} from '../../../redux/apiSlices/chatSlices';
+import {messagePros} from '../../../screens/message/NormalConversationScreen';
+import {TemBooks} from '../../../utils/GetRandomColor';
+import {useImagePicker} from '../../../utils/hooks/useImagePicker';
+import {isSmall} from '../../../utils/utils';
+import CustomModal from '../customModal/CustomModal';
+import ModalOfBottom from '../customModal/ModalOfButtom';
 
 const data = [
   {
@@ -72,28 +72,6 @@ const data = [
   },
 ];
 
-const options = [
-  {
-    id: 1,
-    content: 'All',
-  },
-  {
-    id: 2,
-    content: 'Way of Life',
-  },
-  {
-    id: 3,
-    content: 'Business',
-  },
-  {
-    id: 4,
-    content: 'Human Family',
-  },
-  {
-    id: 5,
-    content: 'Worldview',
-  },
-];
 const audioRecorderPlayer = new AudioRecorderPlayer();
 interface ConversationCarousalProps extends NavigProps<null> {
   // Add props here if needed.
@@ -117,42 +95,11 @@ interface ConversationCarousalProps extends NavigProps<null> {
 }
 
 const ConversationCarousal = ({
-  navigation,
-  books,
-  faceDown,
   chatIt,
-  photo,
-  record,
-  room,
-  type,
-  setMessages,
-  messages,
+
   onPressLive,
 }: ConversationCarousalProps) => {
-  const absoluteData = [];
-
-  if (record) {
-    absoluteData.push(data[0]);
-  }
-  if (books) {
-    absoluteData.push(data[1]);
-  }
-  if (photo) {
-    absoluteData.push(data[2]);
-  }
-  if (type) {
-    absoluteData.push(data[3]);
-  }
-  if (room) {
-    absoluteData.push(data[4]);
-  }
-  if (faceDown) {
-    absoluteData.push(data[5]);
-  }
-  if (!room && !photo && !record && !books && !type && !faceDown) {
-    absoluteData.push(...data);
-  }
-
+  const [createMessage, createMessageResult] = useCreateMessageMutation({});
   const {height, width} = useWindowDimensions();
   const {colors, font} = useStyles();
   const [imageModal, setImageModal] = React.useState(false);
@@ -174,61 +121,53 @@ const ConversationCarousal = ({
     };
   });
 
-  const handleImagePick = async (option: 'camera' | 'library') => {
-    try {
-      if (option === 'camera') {
-        const result = await launchCamera({
-          mediaType: 'photo',
-          maxWidth: 500,
-          maxHeight: 500,
-          quality: 0.5,
-          includeBase64: true,
-        });
-
-        if (!result.didCancel) {
-          handleCreateNewChat({
-            image: {
-              uri: result?.assets![0].uri,
-              type: result?.assets![0].type,
-              name: result?.assets![0].fileName,
-              size: result?.assets![0].fileSize,
-              lastModified: new Date().getTime(), // Assuming current time as last modified
-              lastModifiedDate: new Date(),
-              webkitRelativePath: '',
-            },
-          });
-          // console.log(result);
+  const handleImagePick = React.useCallback(
+    async (option: 'camera' | 'library') => {
+      try {
+        if (option === 'camera') {
+          const image = await useImagePicker({option: 'camera'});
+          if (image?.length !== 0) {
+            console.log(image);
+            const formData = new FormData();
+            formData.append('chatId', chatIt);
+            formData.append('image', {
+              uri: image![0].uri,
+              type: image![0]?.type || 'image/jpeg',
+              name: image![0]?.fileName || 'image.jpg',
+              size: image![0].fileSize,
+            });
+            console.log(formData);
+            createMessage(formData).then(res => console.log(res));
+            // console.log(result);
+          }
         }
-      }
-      if (option === 'library') {
-        const result = await launchImageLibrary({
-          mediaType: 'photo',
-          maxWidth: 500,
-          maxHeight: 500,
-          quality: 0.5,
-          includeBase64: true,
-        });
+        if (option === 'library') {
+          const image = await useImagePicker({option: 'library'});
+          if (image?.length !== 0) {
+            console.log(image);
+            const formData = new FormData();
+            formData.append('chatId', chatIt);
+            formData.append('image', {
+              uri: image![0].uri,
+              type: image![0]?.type || 'image/jpeg',
+              name: image![0]?.fileName || 'image.jpg',
+              size: image![0].fileSize,
+            });
 
-        if (!result.didCancel) {
-          // add image add a file image
-          handleCreateNewChat({
-            image: {
-              uri: result?.assets![0].uri,
-              type: result?.assets![0].type,
-              name: result?.assets![0].fileName,
-              size: result?.assets![0].fileSize,
-              lastModified: new Date().getTime(), // Assuming current time as last modified
-              lastModifiedDate: new Date(),
-              webkitRelativePath: '',
-            },
-          });
-          // console.log(result);
+            console.log(formData);
+
+            createMessage(formData).then(res => console.log(res));
+            // add image add a file image
+
+            // console.log(result);
+          }
         }
+      } catch (error) {
+        console.log(error);
       }
-    } catch (error) {
-      console.log(error);
-    }
-  };
+    },
+    [],
+  );
 
   const animationStyle = React.useCallback(
     (value: number) => {
@@ -311,95 +250,64 @@ const ConversationCarousal = ({
       setRecordOnDone(true);
       letsBorderAnimationValue.value = 20;
       const audioPath = await audioRecorderPlayer.stopRecorder();
-      console.log(audioPath);
+      // console.log(audioPath);
       const audio = {
         uri: audioPath,
         type: 'audio/wav', // Adjust this if needed
         name: 'voice.wav',
       };
-      console.log(audio);
-      handleCreateNewChat({audio});
+      // console.log(audio);
+      const formData = new FormData();
+      formData.append('chatId', chatIt);
+      formData.append('audio', audio);
+      console.log(formData);
+      createMessage(formData).catch(err => console.log(err));
     }
   };
 
-  const [createMessage, createMessageResult] = useCreateMessageMutation({});
-  const handleCreateNewChat = async (data: any) => {
-    const formData = new FormData();
+  const handleCreateNewChat = React.useCallback(async (data: any) => {
     // console.log(chatIt, 'chatIt');
-    // console.log(data, 'data');
+    console.log(data, 'data');
+    const formData = new FormData();
     formData.append('chatId', chatIt);
-
-    if (data?.image) {
-      formData.append('image', data?.image);
-      createMessage(formData).then(ms => {
-        // Handle success or error here
-        console.log(ms);
-      });
-    }
-    if (data?.audio) {
-      formData.append('audio', data.audio);
-      createMessage(formData).then(ms => {
-        // Handle success or error here
-        console.log(ms);
-      });
-    }
-    if (data?.text) {
-      formData.append('text', data?.text);
-      createMessage(formData).then(ms => {
-        // Handle success or error here
-        console.log(ms);
-      });
-    }
-    if (data?.path) {
-      formData.append('path', data?.path);
-      createMessage(formData).then(ms => {
-        // Handle success or error here
-        console.log(ms);
-      });
-    }
-  };
+    data?.text && formData.append('text', data?.text);
+    createMessage(formData).catch(err => console.log(err));
+  }, []);
 
   return (
     <>
       <Carousel
         width={itemSize}
+        // height={itemSize * 0.8}
+        autoFillData
         height={itemSize}
         style={{
           width: width,
           height: height * 0.158,
           alignItems: 'center',
-          // paddingVertical: 10,
         }}
-        loop
+        loop={false}
         snapEnabled
         pagingEnabled
-        data={absoluteData}
-        onSnapToItem={(index: number) => {
-          setActiveIndexBigButton(index);
-          setRecordOn(false);
-          setRecordOnDone(false);
-          letsBorderAnimationValue.value = 25;
-        }}
-        // enabled={false}
-        // mode="horizontal-stack"
-
-        // windowSize={1}
-        // onConfigurePanGesture={g => g.enabled(false)}
-        // maxScrollDistancePerSwipe={100}
-        overscrollEnabled={false}
+        data={data}
+        // onSnapToItem={(index: number) => {
+        //   setActiveIndexBigButton(index);
+        //   setRecordOn(false);
+        //   setRecordOnDone(false);
+        //   letsBorderAnimationValue.value = 25;
+        // }}
+        // overscrollEnabled={false}
         renderItem={({index, item, animationValue}) => (
           <TouchableOpacity
+            key={item.name} // Ensure unique key
             onPress={() => {
               if (item.name === 'Share photo') {
-                // handleImagePick('camera');
                 setImageModal(!imageModal);
               }
               if (item.name === 'Share Books') {
-                // all modal false
-                setBooksModal(!booksModal); //
+                setBooksModal(!booksModal);
               }
               if (item.name === 'Let’s talk') {
-                // handleImagePick('camera');
                 recodingOn();
               }
               if (item.name === 'Type a message') {
@@ -407,8 +315,6 @@ const ConversationCarousal = ({
               }
               if (item.name === 'Join your room') {
                 onPressLive && onPressLive();
-              }
-              if (item.name === 'New Face Dwn') {
               }
             }}
             style={{
@@ -422,68 +328,28 @@ const ConversationCarousal = ({
                 },
               ],
             }}>
-            {/* <View
-              style={{
-                height: 50,
-                justifyContent: 'center',
-                alignItems: 'center',
-                width: 150,
-                // backgroundColor: 'red',
-              }}>
-              <Animated.Text
-                style={[
-                  {
-                    textAlign: 'center',
-                    fontSize: 14,
-                    fontFamily: font.PoppinsMedium,
-                    color: colors.textColor.neutralColor,
-                  },
-                ]}>
-                {activeIndexBigButton === index && item?.name}
-              </Animated.Text>
-            </View> */}
             {activeIndexBigButton === index &&
             item.name === 'Let’s talk' &&
             recordOn ? (
               <>
                 {recordOnDone ? (
                   <Animated.View
-                    // onPress={() => {
-                    //   handleOpen();
-                    // }}
-
-                    style={[
-                      {
-                        paddingHorizontal: '4%',
-                        paddingVertical: 16,
-                        backgroundColor: colors.green['#00C208'],
-                        // borderBottomWidth: 1,
-                        width: 90,
-                        height: 90,
-                        // borderColor: colors.primaryColor,
-                        // borderWidth: 5,
-                        borderRadius: 100,
-                        // shadowOpacity: 0.4,
-
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        // elevation: 2,
-                      },
-                    ]}>
+                    style={{
+                      paddingHorizontal: '4%',
+                      paddingVertical: 16,
+                      backgroundColor: colors.green['#00C208'],
+                      width: 90,
+                      height: 90,
+                      borderRadius: 100,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}>
                     <View
                       style={{
-                        // width: 28,
-                        // height: 28,
-                        // padding: 1,
                         borderRadius: 100,
-                        // elevation: 2,
-                        // borderColor: '#F7CC7F',
-                        // borderWidth: 8,
                         shadowRadius: 10,
                         padding: 8,
-                        // elevation: 2,
                         shadowColor: '#52006A',
-                        // backgroundColor: colors.white,
                       }}>
                       <Image
                         resizeMode="contain"
@@ -498,28 +364,15 @@ const ConversationCarousal = ({
                   </Animated.View>
                 ) : (
                   <Animated.View
-                    // onPress={() => {
-                    //   handleOpen();
-                    // }}
-
-                    style={[
-                      {
-                        paddingHorizontal: '4%',
-                        paddingVertical: 16,
-                        // backgroundColor: colors.white,
-                        // borderBottomWidth: 1,
-                        width: 90,
-                        height: 90,
-                        // borderColor: colors.primaryColor,
-                        // borderWidth: 5,
-                        borderRadius: 100,
-                        // shadowOpacity: 0.4,
-
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        // elevation: 2,
-                      },
-                    ]}>
+                    style={{
+                      paddingHorizontal: '4%',
+                      paddingVertical: 16,
+                      width: 90,
+                      height: 90,
+                      borderRadius: 100,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}>
                     <AnimatedCircularProgress
                       size={95}
                       width={6}
@@ -535,18 +388,12 @@ const ConversationCarousal = ({
                       onAnimationComplete={() => {
                         setRecordOnDone(true);
                       }}
-                      // backgroundColor={'rgba(0,0,0,.4)'}
                     />
                     <Animated.View
                       style={[
                         {
-                          // width: 28,
-                          // height: 28,
-                          // padding: 1,
                           borderRadius: 100,
-                          // elevation: 2,
                           borderColor: '#F7CC7F',
-
                           shadowRadius: 100,
                           padding: 8,
                           elevation: 2,
@@ -570,25 +417,16 @@ const ConversationCarousal = ({
               </>
             ) : (
               <Animated.View
-                // onPress={() => {
-                //   handleOpen();
-                // }}
-
-                style={[
-                  {
-                    paddingHorizontal: '4%',
-                    paddingVertical: 16,
-                    backgroundColor: colors.primaryColor,
-                    // borderBottomWidth: 1,
-                    width: 90,
-                    height: 90,
-                    // borderColor: '#E2E2E2',
-                    borderRadius: 100,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    // elevation: 2,
-                  },
-                ]}>
+                style={{
+                  paddingHorizontal: '4%',
+                  paddingVertical: 16,
+                  backgroundColor: colors.primaryColor,
+                  width: 90,
+                  height: 90,
+                  borderRadius: 100,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
                 <View>
                   <Image
                     resizeMode="contain"
@@ -615,8 +453,8 @@ const ConversationCarousal = ({
             gap: 10,
           }}>
           <TouchableOpacity
-            onPress={() => {
-              handleImagePick('camera');
+            onPress={async () => {
+              await handleImagePick('camera');
               setImageModal(!imageModal);
             }}
             style={{
@@ -632,8 +470,8 @@ const ConversationCarousal = ({
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => {
-              handleImagePick('library');
+            onPress={async () => {
+              await handleImagePick('library');
               setImageModal(!imageModal);
             }}
             style={{
@@ -680,6 +518,10 @@ const ConversationCarousal = ({
             <TextInput
               ref={textInputRef}
               placeholder="Type your message"
+              onEndEditing={e => {
+                handleCreateNewChat({text: e.nativeEvent.text});
+                setTextInputModal(false);
+              }}
               onChangeText={text => setTextMessage(text)}
               style={{
                 backgroundColor: '#F1F1F1',
@@ -693,7 +535,6 @@ const ConversationCarousal = ({
               onPress={() => {
                 setTextInputModal(false);
                 handleCreateNewChat({text: textMessage});
-                setTextMessage && setTextMessage('');
               }}
               style={{
                 height: 40,
@@ -819,24 +660,7 @@ const ConversationCarousal = ({
             renderItem={item => (
               <TouchableOpacity
                 onPress={() => {
-                  setMessages &&
-                    setMessages([
-                      ...messages,
-                      {
-                        id: messages.length + 1,
-                        createdAt: new Date(),
-                        bookImage: item.item.image,
-                        user: {
-                          _id: 1,
-                          name: 'Amina',
-                          avatar: require('../../../assets/tempAssets/3a906b3de8eaa53e14582edf5c918b5d.jpg'),
-                        },
-                      },
-                    ]);
-
                   setBooksModal(false);
-                  // setSelectBook(item?.item.image)
-                  // navigation?.navigate('BookShare', {data: item.item});
                 }}
                 style={{
                   // elevation: 2,
@@ -897,6 +721,6 @@ const ConversationCarousal = ({
   );
 };
 
-export default ConversationCarousal;
+export default React.memo(ConversationCarousal);
 
 const styles = StyleSheet.create({});

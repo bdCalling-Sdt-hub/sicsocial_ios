@@ -1,6 +1,6 @@
+import {api} from '../api/baseApi';
 import {IChats} from '../interface/chat';
 import {IMessages} from '../interface/message';
-import {api} from '../api/baseApi';
 
 export const chatSlices = api.injectEndpoints({
   endpoints: builder => ({
@@ -14,7 +14,7 @@ export const chatSlices = api.injectEndpoints({
       query: ({id, page, limit}) => ({
         url: `/message/chatId/${id}`,
       }),
-      providesTags: ['chat', 'message'],
+      providesTags: ['message'],
     }),
 
     createMessage: builder.mutation({
@@ -22,12 +22,16 @@ export const chatSlices = api.injectEndpoints({
         url: `/message/send-message`,
         headers: {
           'Content-Type': 'multipart/form-data',
+          Connection: 'keep-alive',
+          Accept: '*/*',
+          'Cache-Control': 'no-cache',
         },
         method: 'POST',
         body: data,
       }),
       invalidatesTags: ['message'],
     }),
+
     createChat: builder.mutation({
       query: data => ({
         url: `/chat`,
