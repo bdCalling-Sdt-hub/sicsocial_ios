@@ -1,4 +1,4 @@
-import React, { SetStateAction } from 'react';
+import React, {SetStateAction} from 'react';
 import {
   FlatList,
   Image,
@@ -9,25 +9,25 @@ import {
   View,
   useWindowDimensions,
 } from 'react-native';
-import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 
-import { LinkPreview } from '@flyerhq/react-native-link-preview';
-import { SvgXml } from 'react-native-svg';
+import {LinkPreview} from '@flyerhq/react-native-link-preview';
+import {SvgXml} from 'react-native-svg';
 import DateTimePicker from 'react-native-ui-datepicker';
-import { GridList } from 'react-native-ui-lib';
+import {GridList} from 'react-native-ui-lib';
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
 import CustomModal from '../../components/common/customModal/CustomModal';
 import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
 import NormalButton from '../../components/common/NormalButton';
-import { useStyles } from '../../context/ContextApi';
-import { NavigProps } from '../../interfaces/NaviProps';
-import { useCreateChatMutation } from '../../redux/apiSlices/chatSlices';
-import { useCreateFaceDownMutation } from '../../redux/apiSlices/facedwonSlice';
-import { IParticipant } from '../../redux/interface/participants';
-import { TemBooks } from '../../utils/GetRandomColor';
-import { makeImage } from '../../utils/utils';
+import {useStyles} from '../../context/ContextApi';
+import {NavigProps} from '../../interfaces/NaviProps';
+import {useCreateChatMutation} from '../../redux/apiSlices/chatSlices';
+import {useCreateFaceDownMutation} from '../../redux/apiSlices/facedwonSlice';
+import {IParticipant} from '../../redux/interface/participants';
+import {TemBooks} from '../../utils/GetRandomColor';
+import {makeImage} from '../../utils/utils';
 
-const CreateNewFaceDown = ({navigation,route}: NavigProps<any>) => {
+const CreateNewFaceDown = ({navigation, route}: NavigProps<any>) => {
   const {colors, font, window} = useStyles();
   const {height, width} = useWindowDimensions();
   const [createFaceDown, results] = useCreateFaceDownMutation();
@@ -36,15 +36,15 @@ const CreateNewFaceDown = ({navigation,route}: NavigProps<any>) => {
   const [dateModal, setDateModal] = React.useState(false);
   const [participants, setParticipants] = React.useState<Array<IParticipant>>();
   const [imageAssets, setImageAssets] = React.useState<boolean>(false);
-  const [imageModal, setImageModal] = React.useState<string>('');
+  const [imageModal, setImageModal] = React.useState<boolean>(false);
   const [selectDate, setSelectDate] = React.useState<SetStateAction<Date>>(
     new Date(),
   );
- 
+
   const [booksModal, setBooksModal] = React.useState(false);
   const [selectBook, setSelectBook] = React.useState<number>();
   const [faceDownInfo, setFaceDownInfo] = React.useState<{}>();
-// console.log(route,participants);
+  // console.log(route,participants);
   const handleImagePick = async (option: 'camera' | 'library') => {
     try {
       if (option === 'camera') {
@@ -108,28 +108,49 @@ const CreateNewFaceDown = ({navigation,route}: NavigProps<any>) => {
   // console.log(faceDownInfo);
   const handleCreateFaceDown = React.useCallback(
     async Udata => {
-      console.log(Udata);
-      // navigation?.navigate('FaceDownConversation');
-     createFaceDown(Udata).then((res)=>{
-       console.log(res.data);
-      if(res.data?.data?._id){
-        createChat({
-          participants: participants,
-          type: 'public',
-          facedown: res.data?.data?._id,
-        });
+      // console.log(Udata);
+      if (!Udata?.schedule) {
+        Udata.schedule = 'weekly';
       }
-     })
-     
+      // navigation?.navigate('FaceDownConversation');
+      const formData = new FormData();
+
+      for (const key in Udata) {
+        if (key === 'image') {
+          formData.append(key, Udata[key]);
+        } else {
+          formData.append(key, Udata[key]);
+        }
+      }
+      console.log(formData);
+      createFaceDown(formData).then(res => {
+        console.log(res);
+        if (res.data?.data?._id) {
+          createChat({
+            participants: participants,
+            type: 'public',
+            facedown: res.data?.data?._id,
+          })
+            .then(res => {
+              // console.log(res);
+              navigation?.navigate('FaceDownConversation', {
+                data: {id: res?.data?.data?._id},
+              });
+            })
+            .catch(err => {
+              console.log(err);
+            });
+        }
+      });
     },
     [faceDownInfo],
   );
 
-  React.useEffect(()=>{
-    if(route?.params){
-      setParticipants(route?.params)
+  React.useEffect(() => {
+    if (route?.params) {
+      setParticipants(route?.params);
     }
-  },[route?.params])
+  }, [route?.params]);
 
   return (
     <View
@@ -259,7 +280,6 @@ const CreateNewFaceDown = ({navigation,route}: NavigProps<any>) => {
               height: 56,
               color: colors.textColor.neutralColor,
             }}
-            
             placeholder="name"
             onChangeText={text =>
               setFaceDownInfo({
@@ -288,129 +308,128 @@ const CreateNewFaceDown = ({navigation,route}: NavigProps<any>) => {
           </Text>
 
           {participants?.length !== 0 && (
-        <View
-          style={{
-            borderBottomWidth: 1,
-            borderBottomColor: 'rgba(217, 217, 217, 1)',
-
-            paddingBottom: 10,
-          }}>
-     
-          <FlatList
-            showsHorizontalScrollIndicator={false}
-            keyboardShouldPersistTaps="always"
-            horizontal
-            contentContainerStyle={{
-              gap: 16,
-              paddingHorizontal: 20,
-            }}
-            data={participants}
-            keyExtractor={item => item?._id + Math.random() }
-            renderItem={item => (
-              <View style={{gap: 6}}>
-                <TouchableOpacity
-                  onPress={() => {
-                    if (
-                      participants.find(friend => friend._id === item.item._id)
-                    ) {
-                      setParticipants(
-                        participants.filter(
-                          friend => friend._id !== item.item._id,
-                        ),
-                      );
-                    }
-                  }}
-                  style={{
-                    backgroundColor: colors.secondaryColor,
-                    // paddingVertical: 5,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    elevation: 2,
-                    borderRadius: 50,
-                    padding: 2,
-                    position: 'relative',
-                  }}>
-                  <View
-                    style={{
-                      width: 16,
-                      height: 16,
-                      borderRadius: 50,
-                      backgroundColor: colors.green['#00B047'],
-                      position: 'absolute',
-                      right: 0,
-                      zIndex: +1,
-                      bottom: 5,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                    }}>
-                    <View
-                      style={{
-                        backgroundColor: 'white',
-                        width: 8,
-                        height: 2,
-                      }}
-                    />
-                  </View>
-                  <Image
-                    style={{
-                      width: 65,
-                      height: 65,
-                      borderRadius: 28,
-                      resizeMode: 'contain',
-                    }}
-                    source={{
-                      uri : makeImage(item.item.avatar)
-                    }}
-                  />
-                </TouchableOpacity>
-                <Text
-                  style={{
-                    fontSize: 12,
-                    fontFamily: font.Poppins,
-                    color: colors.textColor.neutralColor,
-                    textAlign: 'center',
-                  }}>
-                  {item.item?.fullName}
-                </Text>
-              </View>
-            )}
-
-            ListFooterComponent={() => (
-              <TouchableOpacity
-            activeOpacity={0.9}
-            onPress={() => {
-              navigation?.navigate('FaceDownAddMember',participants);
-            }}>
-            <Image
-              resizeMode="cover"
+            <View
               style={{
-                borderRadius: 24,
+                borderBottomWidth: 1,
+                borderBottomColor: 'rgba(217, 217, 217, 1)',
 
-                height: 70,
-                width: 70,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}
-              source={require('../../assets/icons/unknown/addMember.png')}
-            />
-          </TouchableOpacity>
-            )}
-          />
-        </View>
-      )}
+                paddingBottom: 10,
+              }}>
+              <FlatList
+                showsHorizontalScrollIndicator={false}
+                keyboardShouldPersistTaps="always"
+                horizontal
+                contentContainerStyle={{
+                  gap: 16,
+                  paddingHorizontal: 20,
+                }}
+                data={participants}
+                keyExtractor={item => item?._id + Math.random()}
+                renderItem={item => (
+                  <View style={{gap: 6}}>
+                    <TouchableOpacity
+                      onPress={() => {
+                        if (
+                          participants.find(
+                            friend => friend._id === item.item._id,
+                          )
+                        ) {
+                          setParticipants(
+                            participants.filter(
+                              friend => friend._id !== item.item._id,
+                            ),
+                          );
+                        }
+                      }}
+                      style={{
+                        backgroundColor: colors.secondaryColor,
+                        // paddingVertical: 5,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        elevation: 2,
+                        borderRadius: 50,
+                        padding: 2,
+                        position: 'relative',
+                      }}>
+                      <View
+                        style={{
+                          width: 16,
+                          height: 16,
+                          borderRadius: 50,
+                          backgroundColor: colors.green['#00B047'],
+                          position: 'absolute',
+                          right: 0,
+                          zIndex: +1,
+                          bottom: 5,
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                        }}>
+                        <View
+                          style={{
+                            backgroundColor: 'white',
+                            width: 8,
+                            height: 2,
+                          }}
+                        />
+                      </View>
+                      <Image
+                        style={{
+                          width: 65,
+                          height: 65,
+                          borderRadius: 28,
+                          resizeMode: 'contain',
+                        }}
+                        source={{
+                          uri: makeImage(item.item.avatar),
+                        }}
+                      />
+                    </TouchableOpacity>
+                    <Text
+                      style={{
+                        fontSize: 12,
+                        fontFamily: font.Poppins,
+                        color: colors.textColor.neutralColor,
+                        textAlign: 'center',
+                      }}>
+                      {item.item?.fullName}
+                    </Text>
+                  </View>
+                )}
+                ListFooterComponent={() => (
+                  <TouchableOpacity
+                    activeOpacity={0.9}
+                    onPress={() => {
+                      navigation?.navigate('FaceDownAddMember', participants);
+                    }}>
+                    <Image
+                      resizeMode="cover"
+                      style={{
+                        borderRadius: 24,
 
-          {
-            participants?.length === 0 && (
-              <TouchableOpacity
+                        height: 70,
+                        width: 70,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      }}
+                      source={require('../../assets/icons/unknown/addMember.png')}
+                    />
+                  </TouchableOpacity>
+                )}
+              />
+            </View>
+          )}
+
+          {participants?.length === 0 && (
+            <TouchableOpacity
               activeOpacity={0.9}
               onPress={() => {
-                navigation?.navigate('FaceDownAddMember',participants);
+                navigation?.navigate('FaceDownAddMember', participants);
               }}>
               <Image
                 resizeMode="cover"
                 style={{
                   borderRadius: 24,
-  
+
                   height: 80,
                   width: 80,
                   justifyContent: 'center',
@@ -419,11 +438,7 @@ const CreateNewFaceDown = ({navigation,route}: NavigProps<any>) => {
                 source={require('../../assets/icons/unknown/addMember.png')}
               />
             </TouchableOpacity>
-            
-            )
-          }
-
-          
+          )}
         </View>
         <View
           style={{
@@ -703,9 +718,7 @@ const CreateNewFaceDown = ({navigation,route}: NavigProps<any>) => {
                 fontSize: 14,
                 color: colors.textColor.neutralColor,
               }}>
-              {faceDownInfo?.schedule
-                ? faceDownInfo?.schedule
-                : selectDate.toString()}
+              {faceDownInfo?.schedule ? faceDownInfo?.schedule : 'weekly'}
             </Text>
             <SvgXml
               xml={`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -748,7 +761,7 @@ const CreateNewFaceDown = ({navigation,route}: NavigProps<any>) => {
               setModalVisible(false);
               setFaceDownInfo({
                 ...faceDownInfo,
-                schedule: 'Daily',
+                schedule: 'weekly',
               });
             }}
             style={{
@@ -761,7 +774,7 @@ const CreateNewFaceDown = ({navigation,route}: NavigProps<any>) => {
                 fontSize: 14,
                 color: colors.textColor.neutralColor,
               }}>
-              daily
+              Weekly
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
@@ -771,53 +784,7 @@ const CreateNewFaceDown = ({navigation,route}: NavigProps<any>) => {
 
               setFaceDownInfo({
                 ...faceDownInfo,
-                schedule: '2 Day',
-              });
-            }}
-            style={{
-              paddingHorizontal: 10,
-              paddingVertical: 8,
-            }}>
-            <Text
-              style={{
-                fontFamily: font.Poppins,
-                fontSize: 14,
-                color: colors.textColor.neutralColor,
-              }}>
-              2 day
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              setModalVisible(false);
-              //   navigation?.navigate('FriendsProfile');
-
-              setFaceDownInfo({
-                ...faceDownInfo,
-                schedule: 'Weekly',
-              });
-            }}
-            style={{
-              paddingHorizontal: 10,
-              paddingVertical: 8,
-            }}>
-            <Text
-              style={{
-                fontFamily: font.Poppins,
-                fontSize: 14,
-                color: colors.textColor.neutralColor,
-              }}>
-              weekly
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              setModalVisible(false);
-              //   navigation?.navigate('FriendsProfile');
-
-              setFaceDownInfo({
-                ...faceDownInfo,
-                schedule: 'Monthly',
+                schedule: 'monthly',
               });
             }}
             style={{
@@ -835,7 +802,52 @@ const CreateNewFaceDown = ({navigation,route}: NavigProps<any>) => {
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
-         
+              setModalVisible(false);
+              //   navigation?.navigate('FriendsProfile');
+
+              setFaceDownInfo({
+                ...faceDownInfo,
+                schedule: 'yearly',
+              });
+            }}
+            style={{
+              paddingHorizontal: 10,
+              paddingVertical: 8,
+            }}>
+            <Text
+              style={{
+                fontFamily: font.Poppins,
+                fontSize: 14,
+                color: colors.textColor.neutralColor,
+              }}>
+              Yearly
+            </Text>
+          </TouchableOpacity>
+          {/* <TouchableOpacity
+            onPress={() => {
+              setModalVisible(false);
+              //   navigation?.navigate('FriendsProfile');
+
+              setFaceDownInfo({
+                ...faceDownInfo,
+                schedule: 'monthly',
+              });
+            }}
+            style={{
+              paddingHorizontal: 10,
+              paddingVertical: 8,
+            }}>
+            <Text
+              style={{
+                fontFamily: font.Poppins,
+                fontSize: 14,
+                color: colors.textColor.neutralColor,
+              }}>
+              Monthly
+            </Text>
+          </TouchableOpacity> */}
+          {/* <TouchableOpacity
+            onPress={() => {
               setModalVisible(false);
               setDateModal(!dateModal);
               //   navigation?.navigate('FriendsProfile');
@@ -873,7 +885,7 @@ const CreateNewFaceDown = ({navigation,route}: NavigProps<any>) => {
 
 `}
             />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
       </ModalOfBottom>
 
@@ -920,7 +932,7 @@ const CreateNewFaceDown = ({navigation,route}: NavigProps<any>) => {
             justifyContent: 'center',
           }}
           mode="single"
-          date={selectDate}
+          date={selectDate || new Date()}
           onChange={(params: any) => {
             setFaceDownInfo({
               ...faceDownInfo,

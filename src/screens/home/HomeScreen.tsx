@@ -1,4 +1,4 @@
-import Animated, {useSharedValue, withTiming} from 'react-native-reanimated';
+import React, {useEffect} from 'react';
 import {
   FlatList,
   Image,
@@ -10,24 +10,24 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useEffect} from 'react';
+import Animated, {useSharedValue, withTiming} from 'react-native-reanimated';
 import {useContextApi, useStyles} from '../../context/ContextApi';
 
 import Clipboard from '@react-native-clipboard/clipboard';
+import {format} from 'date-fns';
+import LinearGradient from 'react-native-linear-gradient';
+import {SvgXml} from 'react-native-svg';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import ConversationalCard from '../../components/common/ConversationalCard';
 import ConversationalModal from '../../components/common/ConversationalModal/ConversationalModal';
-import {IConversationProps} from '../../interfaces/Interface';
-import LinearGradient from 'react-native-linear-gradient';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
+import {IConversationProps} from '../../interfaces/Interface';
 import {NavigProps} from '../../interfaces/NaviProps';
-import {SvgXml} from 'react-native-svg';
-import {format} from 'date-fns';
 import {imageUrl} from '../../redux/api/baseApi';
-import {isTablet} from '../../utils/utils';
 import {useGetDonationQuery} from '../../redux/apiSlices/additionalSlices';
-import {useGetNewsFeetQuery} from '../../redux/apiSlices/homeSlices';
 import {useGetUserProfileQuery} from '../../redux/apiSlices/authSlice';
+import {useGetNewsFeetQuery} from '../../redux/apiSlices/homeSlices';
+import {isTablet} from '../../utils/utils';
 
 const HomeScreen = ({navigation}: NavigProps<null>) => {
   const {isLive, setIsLive, isDark} = useContextApi();
@@ -205,9 +205,17 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
         renderItem={({item}) => (
           <ConversationalCard
             conversationStyle="normal"
-            onPress={() =>
-              navigation?.navigate('NormalConversation', {data: {id: item._id}})
-            }
+            onPress={() => {
+              if (item?.facedown?._id) {
+                navigation?.navigate('FaceDownConversation', {
+                  data: {id: item?._id, facedown: item?.facedown},
+                });
+              } else {
+                navigation?.navigate('NormalConversation', {
+                  data: {id: item._id},
+                });
+              }
+            }}
             participants={item.participants}
             cardStyle={
               item.participants.length > 4
@@ -247,124 +255,6 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
         )}
         // estimatedItemSize={600}
       />
-      {/* <ConversationalCard
-          disabled
-          conversationStyle="donation"
-          conversationTitle={`Hello ${userProfile?.data?.fullName}`}
-          // conversationSubtitle="Contribute and share with others."
-          lastMessage="Contribute and share with others."
-          onDonationShearPress={() => {
-            setModalVisible(true);
-          }}
-          onDonationViewDetailsPress={() => {
-            navigation?.navigate('donation');
-          }}
-        />
-  
-
-        <ConversationalCard
-          conversationStyle="normal"
-          onPress={() => {
-            navigation?.navigate('NormalConversation');
-          }}
-          cardStyle="single"
-          conversationTitle="You"
-          conversationSubtitle="Start a chat"
-          lastMessageTime="9:30 am"
-          lastMessage="All of my friends pleas 
-            Share your story my friends"
-        />
-        <ConversationalCard
-          conversationStyle="normal"
-          onPress={() => {
-            navigation?.navigate('NormalConversation');
-          }}
-          cardStyle="shear_book"
-          conversationTitle="You"
-          conversationSubtitle="Start a chat"
-          lastMessageTime="9:30 am"
-          lastMessage="All of my friends pleas 
-            Share your story my friends"
-        />
-        <ConversationalCard
-          conversationStyle="normal"
-          cardStyle="two"
-          // havNotUser
-          onPress={() => {
-            navigation?.navigate('GroupConversation');
-          }}
-          conversationTitle="Khushi Aktar"
-          isReply
-          conversationSubtitle="replied in chat"
-          lastMessageTime="9:30 am"
-          lastMessage="Hello asad vai, i`m 
-coming from Banasri"
-        />
-        <ConversationalCard
-          conversationStyle="normal"
-          cardStyle="two"
-          onPress={() => {
-            navigation?.navigate('GroupConversation');
-          }}
-          havNotUser
-          conversationTitle="Khushi Aktar"
-          isReply
-          conversationSubtitle="replied in chat"
-          lastMessageTime="9:30 am"
-          lastMessage="Hello asad vai, i`m 
-coming from Banasri"
-        />
-
-        <ConversationalCard
-          conversationStyle="normal"
-          cardStyle="book_promotion"
-          onPress={() => {
-            navigation?.navigate('BookShare');
-          }}
-          conversationTitle="SIC Discussion"
-          conversationSubtitle="recommendations"
-          lastMessageTime="9:30 am"
-          lastMessage="Hello Asadullah some books
-is recognize for SIC "
-        />
-        <ConversationalCard
-          conversationStyle="normal"
-          cardStyle="three"
-          onPress={() => {
-            navigation?.navigate('FaceDownConversation');
-          }}
-          conversationTitle="Reader lovers"
-          conversationSubtitle="join FaceDwn"
-          lastMessageTime="8:10 am"
-          lastMessage="nadin invite you in facedwn"
-        />
-        <ConversationalCard
-          conversationStyle="normal"
-          cardStyle="four"
-          conversationTitle="COFFE HOUSE"
-          onPress={() => {
-            setIsLive(!isLive);
-            navigation?.navigate('LiveConversation');
-          }}
-          conversationSubtitle="join room"
-          lastMessageTime="8:10 am"
-          lastMessage="Hello Asadullah some books
-is recognize for SIC "
-        />
-        <ConversationalCard
-          conversationStyle="normal"
-          cardStyle="three"
-          manyPeople
-          havNotUser
-          onPress={() => {
-            setIsLive(!isLive);
-            navigation?.navigate('LiveConversation');
-          }}
-          conversationTitle="COFFE HOUSE"
-          conversationSubtitle="join room"
-          lastMessageTime="8:10 am"
-          lastMessage="nadin invite you in room"
-        /> */}
 
       <Animated.View
         style={{

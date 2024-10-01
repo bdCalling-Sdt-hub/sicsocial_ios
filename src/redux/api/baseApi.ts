@@ -5,6 +5,7 @@ import {clearToken} from '../apiSlices/tokenSlice';
 
 const baseQuery = fetchBaseQuery({
   baseUrl: 'http://192.168.10.202:5000/api/v1',
+  timeout: 10000,
   prepareHeaders: async (headers, {getState}) => {
     const token = getStorageToken();
     // console.log(token);

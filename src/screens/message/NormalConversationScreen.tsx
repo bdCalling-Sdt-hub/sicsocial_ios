@@ -1,3 +1,4 @@
+import React, {useEffect} from 'react';
 import {
   FlatList,
   Image,
@@ -8,20 +9,19 @@ import {
   View,
   useWindowDimensions,
 } from 'react-native';
-import React, {useEffect} from 'react';
 import {useSharedValue, withTiming} from 'react-native-reanimated';
 
 import AudioRecorderPlayer from 'react-native-audio-recorder-player';
 import ConversationCarousal from '../../components/common/ConversationCarousal/ConversationCarousal';
-import ConversationHeader from '../../components/conversation/ConversationHeader';
 import CustomModal from '../../components/common/customModal/CustomModal';
-import {IMessage} from '../../redux/interface/message';
 import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
-import {NavigProps} from '../../interfaces/NaviProps';
-import {makeImage} from '../../utils/utils';
-import {useGetMessageQuery} from '../../redux/apiSlices/chatSlices';
-import {useGetUserProfileQuery} from '../../redux/apiSlices/authSlice';
+import ConversationHeader from '../../components/conversation/ConversationHeader';
 import {useStyles} from '../../context/ContextApi';
+import {NavigProps} from '../../interfaces/NaviProps';
+import {useGetUserProfileQuery} from '../../redux/apiSlices/authSlice';
+import {useGetMessageQuery} from '../../redux/apiSlices/messageSlies';
+import {IMessage} from '../../redux/interface/message';
+import {makeImage} from '../../utils/utils';
 
 export interface messagePros {
   id: number;
@@ -43,7 +43,10 @@ const NormalConversationScreen = ({
 }: NavigProps<{id: string}>) => {
   const {width, height} = useWindowDimensions();
   const {colors, font} = useStyles();
-  const {data: messages} = useGetMessageQuery({id: route?.params?.data?.id});
+  const {data: messages, refetch: messageRefetch} = useGetMessageQuery(
+    {id: route?.params?.data?.id},
+    {skip: !route?.params?.data?.id},
+  );
   const {data: userInfo} = useGetUserProfileQuery({});
   const [AllMessages, setAllMessages] = React.useState<IMessage[]>([]);
   // console.log(userInfo);
@@ -414,6 +417,7 @@ const NormalConversationScreen = ({
           type
           record
           books
+          messageRefetch={messageRefetch}
           chatIt={route?.params?.data?.id}
           // ImageLink={newImage}
           // setMessages={setMessages}

@@ -1,6 +1,5 @@
 import {api} from '../api/baseApi';
 import {IChats} from '../interface/chat';
-import {IMessages} from '../interface/message';
 
 export const chatSlices = api.injectEndpoints({
   endpoints: builder => ({
@@ -8,30 +7,8 @@ export const chatSlices = api.injectEndpoints({
       query: ({id, page, limit}) => ({
         url: `/chat/chat-list`,
       }),
-      providesTags: ['chat', 'message'],
+      providesTags: ['chat'],
     }),
-    getMessage: builder.query<IMessages, unknown>({
-      query: ({id, page, limit}) => ({
-        url: `/message/chatId/${id}`,
-      }),
-      providesTags: ['message'],
-    }),
-
-    createMessage: builder.mutation({
-      query: data => ({
-        url: `/message/send-message`,
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          Connection: 'keep-alive',
-          Accept: '*/*',
-          'Cache-Control': 'no-cache',
-        },
-        method: 'POST',
-        body: data,
-      }),
-      invalidatesTags: ['message'],
-    }),
-
     createChat: builder.mutation({
       query: data => ({
         url: `/chat`,
@@ -55,7 +32,5 @@ export const chatSlices = api.injectEndpoints({
 export const {
   useGetChatListQuery,
   useCreateChatMutation,
-  useCreateMessageMutation,
-  useGetMessageQuery,
   useAddMemberMutation,
 } = chatSlices;

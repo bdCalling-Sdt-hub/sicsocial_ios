@@ -24,7 +24,7 @@ import {SvgXml} from 'react-native-svg';
 import {GridList} from 'react-native-ui-lib';
 import {useStyles} from '../../../context/ContextApi';
 import {NavigProps} from '../../../interfaces/NaviProps';
-import {useCreateMessageMutation} from '../../../redux/apiSlices/chatSlices';
+import {useCreateMessageMutation} from '../../../redux/apiSlices/messageSlies';
 import {messagePros} from '../../../screens/message/NormalConversationScreen';
 import {TemBooks} from '../../../utils/GetRandomColor';
 import {useImagePicker} from '../../../utils/hooks/useImagePicker';
@@ -72,6 +72,29 @@ const data = [
   },
 ];
 
+const options = [
+  {
+    id: 1,
+    content: 'All',
+  },
+  {
+    id: 2,
+    content: 'Way of Life',
+  },
+  {
+    id: 3,
+    content: 'Business',
+  },
+  {
+    id: 4,
+    content: 'Human Family',
+  },
+  {
+    id: 5,
+    content: 'Worldview',
+  },
+];
+
 const audioRecorderPlayer = new AudioRecorderPlayer();
 interface ConversationCarousalProps extends NavigProps<null> {
   // Add props here if needed.
@@ -96,9 +119,41 @@ interface ConversationCarousalProps extends NavigProps<null> {
 
 const ConversationCarousal = ({
   chatIt,
-
+  books,
+  faceDown,
+  live,
+  photo,
+  record,
+  room,
+  route,
+  type,
   onPressLive,
+  messageRefetch,
 }: ConversationCarousalProps) => {
+  const absoluteData = [];
+
+  if (record) {
+    absoluteData.push(data[0]);
+  }
+  if (books) {
+    absoluteData.push(data[1]);
+  }
+  if (photo) {
+    absoluteData.push(data[2]);
+  }
+  if (type) {
+    absoluteData.push(data[3]);
+  }
+  if (room) {
+    absoluteData.push(data[4]);
+  }
+  if (faceDown) {
+    absoluteData.push(data[5]);
+  }
+  if (!room && !photo && !record && !books && !type && !faceDown) {
+    absoluteData.push(...data);
+  }
+
   const [createMessage, createMessageResult] = useCreateMessageMutation({});
   const {height, width} = useWindowDimensions();
   const {colors, font} = useStyles();
@@ -127,38 +182,34 @@ const ConversationCarousal = ({
         if (option === 'camera') {
           const image = await useImagePicker({option: 'camera'});
           if (image?.length !== 0) {
-            console.log(image);
-            const formData = new FormData();
-            formData.append('chatId', chatIt);
-            formData.append('image', {
-              uri: image![0].uri,
-              type: image![0]?.type || 'image/jpeg',
-              name: image![0]?.fileName || 'image.jpg',
-              size: image![0].fileSize,
+            handleCreateNewChat({
+              image: {
+                uri: image![0].uri,
+                type: image![0].type || 'image/jpeg', // or file type
+                name: image![0].fileName || 'image',
+                size: image![0].fileSize,
+                lastModified: new Date().getTime(), // Assuming current time as last modified
+                lastModifiedDate: new Date(),
+              },
             });
-            console.log(formData);
-            createMessage(formData).then(res => console.log(res));
+            // createMessage(formData).then(res => console.log(res));
             // console.log(result);
           }
         }
         if (option === 'library') {
           const image = await useImagePicker({option: 'library'});
           if (image?.length !== 0) {
-            console.log(image);
-            const formData = new FormData();
-            formData.append('chatId', chatIt);
-            formData.append('image', {
-              uri: image![0].uri,
-              type: image![0]?.type || 'image/jpeg',
-              name: image![0]?.fileName || 'image.jpg',
-              size: image![0].fileSize,
+            handleCreateNewChat({
+              image: {
+                uri: image![0].uri,
+                type: image![0].type || 'image/jpeg', // or file type
+                name: image![0].fileName || 'image',
+                size: image![0].fileSize,
+                lastModified: new Date().getTime(), // Assuming current time as last modified
+                lastModifiedDate: new Date(),
+              },
             });
-
-            console.log(formData);
-
-            createMessage(formData).then(res => console.log(res));
             // add image add a file image
-
             // console.log(result);
           }
         }
@@ -267,11 +318,16 @@ const ConversationCarousal = ({
 
   const handleCreateNewChat = React.useCallback(async (data: any) => {
     // console.log(chatIt, 'chatIt');
+
     console.log(data, 'data');
     const formData = new FormData();
     formData.append('chatId', chatIt);
     data?.text && formData.append('text', data?.text);
-    createMessage(formData).catch(err => console.log(err));
+    data?.image && formData.append('image', data?.image);
+    data?.audio && formData.append('audio', data?.audio);
+    createMessage(formData)
+      .catch(err => console.log)
+      .catch(error => console.log(error));
   }, []);
 
   return (
@@ -289,7 +345,7 @@ const ConversationCarousal = ({
         loop={false}
         snapEnabled
         pagingEnabled
-        data={data}
+        data={absoluteData}
         // onSnapToItem={(index: number) => {
         //   setActiveIndexBigButton(index);
         //   setRecordOn(false);

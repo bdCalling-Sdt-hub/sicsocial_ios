@@ -1,3 +1,4 @@
+import React, {useEffect} from 'react';
 import {
   ActivityIndicator,
   Image,
@@ -9,6 +10,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import Animated, {
   Easing,
   interpolate,
@@ -17,28 +19,24 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import Carousel, {TAnimationStyle} from 'react-native-reanimated-carousel';
-import React, {useEffect} from 'react';
-import {isSmall, isTablet} from '../../../utils/utils';
-import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import {useContextApi, useStyles} from '../../../context/ContextApi';
-import {
-  useCreateChatMutation,
-  useCreateMessageMutation,
-} from '../../../redux/apiSlices/chatSlices';
+import {isSmall, isTablet} from '../../../utils/utils';
 
-import {AnimatedCircularProgress} from 'react-native-circular-progress';
-import AudioRecorderPlayer from 'react-native-audio-recorder-player';
-import CustomModal from '../../../components/common/customModal/CustomModal';
-import {GridList} from 'react-native-ui-lib';
-import {IConversationProps} from '../../../screens/home/HomeScreen';
-import {ICreateMessage} from '../../../redux/interface/interface';
 import {LinkPreview} from '@flyerhq/react-native-link-preview';
-import ModalOfBottom from '../../../components/common/customModal/ModalOfButtom';
-import {NavigProps} from '../../../interfaces/NaviProps';
-import NormalButton from '../../../components/common/NormalButton';
-import {SvgXml} from 'react-native-svg';
-import {TemBooks} from '../../../utils/GetRandomColor';
+import AudioRecorderPlayer from 'react-native-audio-recorder-player';
+import {AnimatedCircularProgress} from 'react-native-circular-progress';
 import {TextInput} from 'react-native-gesture-handler';
+import {SvgXml} from 'react-native-svg';
+import {GridList} from 'react-native-ui-lib';
+import CustomModal from '../../../components/common/customModal/CustomModal';
+import ModalOfBottom from '../../../components/common/customModal/ModalOfButtom';
+import NormalButton from '../../../components/common/NormalButton';
+import {NavigProps} from '../../../interfaces/NaviProps';
+import {useCreateChatMutation} from '../../../redux/apiSlices/chatSlices';
+import {useCreateMessageMutation} from '../../../redux/apiSlices/messageSlies';
+import {ICreateMessage} from '../../../redux/interface/interface';
+import {IConversationProps} from '../../../screens/home/HomeScreen';
+import {TemBooks} from '../../../utils/GetRandomColor';
 
 const data = [
   {
@@ -739,6 +737,7 @@ const ConversationalModal = ({navigation}: ConversationalModalProps) => {
               zIndex: 99999,
             }}>
             <Carousel
+              loop={false}
               style={{
                 width: width,
                 height: height * 0.2,
@@ -838,13 +837,13 @@ const ConversationalModal = ({navigation}: ConversationalModalProps) => {
               customAnimation={animationStyle1}
             />
             <Carousel
+              // loop={false}
               width={itemSize}
               height={itemSize}
               style={{
                 width: width,
                 height: height * 0.2,
               }}
-              loop
               snapEnabled
               defaultIndex={0}
               pagingEnabled
@@ -1208,8 +1207,6 @@ const ConversationalModal = ({navigation}: ConversationalModalProps) => {
         modalVisible={liveModal}
         setModalVisible={setLiveModal}
         // backButton
-
-        height={height * 0.8}
         containerColor={colors.bg}>
         <View
           // showsVerticalScrollIndicator={false}

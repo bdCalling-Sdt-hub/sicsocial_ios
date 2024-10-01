@@ -1,122 +1,58 @@
-import React, { useEffect, useRef } from 'react';
+import React, {useEffect, useRef} from 'react';
 import {
-    FlatList,
-    Image,
-    Pressable,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
-    useWindowDimensions,
+  FlatList,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+  useWindowDimensions,
 } from 'react-native';
 import Animated, {
-    useAnimatedStyle,
-    useSharedValue,
-    withTiming,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
 } from 'react-native-reanimated';
 
+import AudioRecorderPlayer from 'react-native-audio-recorder-player';
 import ConversationCarousal from '../../components/common/ConversationCarousal/ConversationCarousal';
 import CustomModal from '../../components/common/customModal/CustomModal';
 import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
 import NormalButton from '../../components/common/NormalButton';
 import NotifyTopComponent from '../../components/common/notify/NotifyTopComponent';
 import ConversationHeader from '../../components/conversation/ConversationHeader';
-import { useStyles } from '../../context/ContextApi';
-import { NavigProps } from '../../interfaces/NaviProps';
-import { messagePros } from './NormalConversationScreen';
+import {useStyles} from '../../context/ContextApi';
+import {NavigProps} from '../../interfaces/NaviProps';
+import {useGetUserProfileQuery} from '../../redux/apiSlices/authSlice';
+import {useGetMessageQuery} from '../../redux/apiSlices/messageSlies';
+import {IMessage} from '../../redux/interface/message';
+import {makeImage} from '../../utils/utils';
 
-const FaceDownConversation = ({navigation}: NavigProps<null>) => {
+const audioRecorderPlayer = new AudioRecorderPlayer();
+const FaceDownConversation = ({
+  navigation,
+  route,
+}: NavigProps<{
+  facedown: {
+    _id: string;
+    image: string;
+    name: string;
+  };
+  id: string;
+}>) => {
+  const {data: messages, refetch: messageRefetch} = useGetMessageQuery(
+    {id: route?.params?.data?.id},
+    {skip: !route?.params?.data?.id},
+  );
+  const FaceDownData = route?.params?.data?.facedown;
+  console.log(FaceDownData);
+  const {data: userInfo} = useGetUserProfileQuery({});
+  const [AllMessages, setAllMessages] = React.useState<IMessage[]>([]);
   const {width, height} = useWindowDimensions();
   const {colors, font, window} = useStyles();
   const [callingLive, setCallingLive] = React.useState(false);
-  const [messages, setMessages] = React.useState<Array<messagePros>>([
-    {
-      id: 1,
-
-      text: 'Hello, how are you ?',
-      createdAt: new Date(),
-      image: null,
-      user: {
-        _id: 1,
-        name: 'Amina',
-        avatar: require('../../assets/tempAssets/3a906b3de8eaa53e14582edf5c918b5d.jpg'),
-      },
-    },
-    {
-      id: 2,
-
-      text: 'Hello Amina ?',
-      createdAt: new Date(),
-      image: null,
-      user: {
-        _id: 1,
-        name: 'Amina',
-        avatar: require('../../assets/tempAssets/3a906b3de8eaa53e14582edf5c918b5d.jpg'),
-      },
-    },
-    {
-      id: 3,
-
-      createdAt: new Date(),
-      image: null,
-      live: false,
-      user: {
-        _id: 1,
-        name: 'Amina',
-        avatar: require('../../assets/tempAssets/4005b22a3c1c23d7c04f6c9fdbd85468.jpg'),
-      },
-    },
-    // {
-    //   id: 4,
-
-    //   text: 'This view is so basinful asdfsa asdf a',
-    //   createdAt: new Date(),
-    //   image: null,
-    //   user: {
-    //     _id: 2,
-    //     name: 'Amina',
-    //     avatar: require('../../assets/tempAssets/4005b22a3c1c23d7c04f6c9fdbd85468.jpg'),
-    //   },
-    // },
-    // {
-    //   id: 5,
-
-    //   text: 'This view is so basinful',
-    //   createdAt: new Date(),
-    //   image: require('../../assets/tempAssets/17056fa449ccef1fb1a124b63c0048d2.jpg'),
-    //   user: {
-    //     _id: 2,
-    //     name: 'Amina',
-    //     avatar: require('../../assets/tempAssets/3a906b3de8eaa53e14582edf5c918b5d.jpg'),
-    //   },
-    // },
-    // {
-    //   id: 6,
-
-    //   text: 'This view is so basinful',
-    //   createdAt: new Date(),
-    //   image: require('../../assets/tempAssets/17056fa449ccef1fb1a124b63c0048d2.jpg'),
-    //   user: {
-    //     _id: 1,
-    //     name: 'Amina',
-    //     avatar: require('../../assets/tempAssets/3a906b3de8eaa53e14582edf5c918b5d.jpg'),
-    //   },
-    // },
-    // {
-    //   id: 7,
-
-    //   text: 'I am agree is so basinful',
-    //   createdAt: new Date(),
-    //   image: require('../../assets/tempAssets/17056fa449ccef1fb1a124b63c0048d2.jpg'),
-    //   user: {
-    //     _id: 2,
-    //     name: 'Amina',
-    //     avatar: require('../../assets/tempAssets/3a906b3de8eaa53e14582edf5c918b5d.jpg'),
-    //   },
-    // },
-  ]);
 
   const [volume, setVolume] = React.useState<number>(1);
   const [newMessages, setNewMessages] = React.useState<string>('');
@@ -127,6 +63,7 @@ const FaceDownConversation = ({navigation}: NavigProps<null>) => {
   const [confirmationModal, setConfirmationModal] = React.useState(false);
   const [liveModal, setLiveModal] = React.useState(false);
   const [open, setNotify] = React.useState(false);
+  const [isPlaying, setIsPlaying] = React.useState<boolean>(false);
   const scrollRef = useRef();
 
   const FULL_HIGHT = height * 0.42;
@@ -159,8 +96,6 @@ const FaceDownConversation = ({navigation}: NavigProps<null>) => {
   // console.log(messages);
   // console.log(messages.length);
 
-  const currentUser = messages.find(message => message.user._id === 1)?.user;
-
   useEffect(() => {
     if (fullBanner) {
       animateHight.value = withTiming(FULL_HIGHT, {duration: 500});
@@ -175,6 +110,48 @@ const FaceDownConversation = ({navigation}: NavigProps<null>) => {
       });
     }
   }, [fullBanner]);
+
+  const animatePosition = useSharedValue(height * 0.07);
+
+  const onPlayAudio = async (audioUrl: string) => {
+    try {
+      setIsPlaying(true);
+      await audioRecorderPlayer.startPlayer(audioUrl);
+
+      // Optional: Stop the player after playback finishes
+      audioRecorderPlayer.addPlayBackListener(e => {
+        if (e?.current_position === e.duration) {
+          onStopAudio();
+        }
+      });
+    } catch (error) {
+      console.log('Error playing audio:', error);
+    }
+  };
+
+  const onStopAudio = async () => {
+    try {
+      setIsPlaying(false);
+      await audioRecorderPlayer.stopPlayer();
+      audioRecorderPlayer.removePlayBackListener();
+    } catch (error) {
+      console.log('Error stopping audio:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (messages) {
+      // Create a shallow copy of the messages data before sorting
+      const sortedMessages = [...(messages?.data || [])].sort((a, b) => {
+        return (
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+      });
+
+      // Set the sorted messages
+      setAllMessages(sortedMessages);
+    }
+  }, [messages]);
 
   return (
     <View
@@ -211,7 +188,9 @@ const FaceDownConversation = ({navigation}: NavigProps<null>) => {
                 borderColor: colors.white,
                 // marginHorizontal: 1,
               }}
-              source={require('../../assets/tempAssets/charity.jpg')}
+              source={{
+                uri: makeImage(FaceDownData?.image),
+              }}
             />
             <Text
               style={{
@@ -220,7 +199,7 @@ const FaceDownConversation = ({navigation}: NavigProps<null>) => {
                 color: colors.textColor.secondaryColor,
                 marginLeft: 10,
               }}>
-              Asadullah charity house
+              {FaceDownData?.name}
             </Text>
           </View>
         }
@@ -230,7 +209,7 @@ const FaceDownConversation = ({navigation}: NavigProps<null>) => {
         navigation={navigation}
       />
 
-      <Animated.View
+      {/* <Animated.View
         style={[
           {
             paddingHorizontal: 12,
@@ -295,11 +274,78 @@ const FaceDownConversation = ({navigation}: NavigProps<null>) => {
             </Animated.Text>
           </Animated.View>
         </TouchableOpacity>
-      </Animated.View>
+      </Animated.View> */}
 
       <FlatList
         scrollEventThrottle={10}
         keyboardShouldPersistTaps="always"
+        ListFooterComponent={() => {
+          return (
+            <Animated.View
+              style={[
+                {
+                  paddingHorizontal: 12,
+                  backgroundColor: colors.secondaryColor,
+                  width: '90%',
+                  paddingVertical: 8,
+                  alignSelf: 'center',
+                  borderRadius: 10,
+                },
+                animationStyleForUserConversation,
+              ]}>
+              <TouchableOpacity
+                activeOpacity={0.9}
+                onPress={() => {
+                  setFullBanner(!fullBanner);
+                }}
+                style={{}}>
+                <Animated.View
+                  style={[
+                    {
+                      gap: 10,
+                    },
+                    animationDisplayONBanner,
+                  ]}>
+                  <Animated.View style={[animationImageONBanner]}>
+                    <TouchableOpacity
+                      activeOpacity={0.9}
+                      onPress={() => {
+                        navigation?.navigate('BookShare');
+                      }}>
+                      <Image
+                        style={[
+                          {
+                            borderRadius: 20,
+                            height: '100%',
+                            width: '100%',
+                            resizeMode: 'stretch',
+                          },
+                        ]}
+                        source={require('../../assets/tempAssets/book.jpg')}
+                      />
+                    </TouchableOpacity>
+                  </Animated.View>
+
+                  <Animated.Text
+                    numberOfLines={fullBanner ? 0 : 3}
+                    style={{
+                      fontFamily: font.Poppins,
+                      color: colors.textColor.primaryColor,
+                      fontSize: 14,
+                      width: fullBanner ? '100%' : '70%',
+                    }}>
+                    elit. placerat ex non, elit. In ac nibh Ut non non urna
+                    porta dui sapien enim. elit placerat. sed Ut tincidunt amet,
+                    vitae sit enim. facilisis vel volutpat Ut sed Quisque ac
+                    lobortis, Quisque urna ipsum Nam id tempor placerat. Morbi
+                    ipsum sollicitudin. dui. urna nulla, Donec vitae vehicula,
+                    quis libero, commodo ex
+                  </Animated.Text>
+                </Animated.View>
+              </TouchableOpacity>
+            </Animated.View>
+          );
+        }}
         showsVerticalScrollIndicator={false}
         style={{
           height: height * 0.6,
@@ -307,233 +353,131 @@ const FaceDownConversation = ({navigation}: NavigProps<null>) => {
         }}
         contentContainerStyle={{
           paddingTop: 10,
-          paddingBottom: window.height * 0.1,
+          paddingBottom: 60,
         }}
-        // onScroll={e => {
-        //   if (e.nativeEvent.contentOffset.y > 0) {
-        //     animateHight.value = withTiming(height * 0.07, {
-        //       duration: 500,
-        //     });
-        //   }
-        //   if (e.nativeEvent.contentOffset.y === 0) {
-        //     animateHight.value = withTiming(-(height * 0.3), {
-        //       duration: 500,
-        //     });
-        //   }
-        // }}
+        onContentSizeChange={(w: number, h: number) => {
+          if (height * 0.7 < h) {
+            animatePosition.value = withTiming(-(height * 0.3), {
+              duration: 500,
+            });
+          }
+        }}
+        onScroll={e => {
+          if (e.nativeEvent.contentOffset.y > 0) {
+            animatePosition.value = withTiming(height * 0.07, {
+              duration: 500,
+            });
+          }
+          if (e.nativeEvent.contentOffset.y === 0) {
+            animatePosition.value = withTiming(-(height * 0.3), {
+              duration: 500,
+            });
+          }
+        }}
         inverted
-        data={messages.sort((a, b) => b.id - a.id)}
-        // ListFooterComponent={() => {
-        //   return (
-        //     <Animated.View
-        //       style={[
-        //         {
-        //           paddingHorizontal: 12,
-        //           backgroundColor: colors.secondaryColor,
-        //           width: '90%',
-        //           paddingVertical: 8,
-        //           alignSelf: 'center',
-        //           borderRadius: 10,
-        //           gap: 10,
-        //         },
-        //         animationStyleForUserConversation,
-        //       ]}>
-        //       <View>
-        //         <Image
-        //           style={{
-        //             width: window.width * 0.38,
-        //             height: height * 0.22,
-        //             borderRadius: 20,
-        //             resizeMode: 'stretch',
-        //           }}
-        //           source={require('../../assets/tempAssets/book2.jpg')}
-        //         />
-        //       </View>
-        //       <Text
-        //         style={{
-        //           fontFamily: font.Poppins,
-        //           color: colors.textColor.primaryColor,
-        //           fontSize: 14,
-        //         }}>
-        //         elit. placerat ex non, elit. In ac nibh Ut non non urna porta
-        //         dui sapien enim. elit placerat. sed Ut tincidunt amet, vitae sit
-        //         enim. facilisis vel volutpat Ut sed Quisque ac lobortis, Quisque
-        //         urna ipsum Nam id tempor placerat. Morbi ipsum sollicitudin.
-        //         dui. urna nulla, Donec vitae vehicula, quis libero, commodo ex
-        //       </Text>
-        //     </Animated.View>
-        //   );
-        // }}
+        data={AllMessages}
         renderItem={item => {
           return (
-            <Pressable
-              onPressIn={() => {
-                setFullBanner(false);
-              }}
+            <View
               style={{
                 marginBottom: 10,
                 paddingHorizontal: 15,
               }}>
               {/* create card  */}
-              {item.item.live && (
-                <TouchableOpacity
-                  onPress={() => {
-                    navigation?.navigate('LiveConversation');
-                  }}
-                  activeOpacity={0.9}
-                  style={{
-                    alignItems: 'center',
-                    marginTop: 20,
-                  }}>
-                  <View
-                    style={{
-                      borderRadius: 10,
-                      paddingHorizontal: 10,
-                      paddingVertical: 10,
 
-                      backgroundColor: colors.secondaryColor,
-
-                      flexDirection: 'row',
-                    }}>
-                    <View
-                      style={{
-                        borderRadius: 10,
-                        paddingHorizontal: 10,
-                        // paddingVertical: 2,
-                        width: '90%',
-                        // backgroundColor: colors.redisExtraLight,
-                        gap: 15,
-                      }}>
-                      <View
-                        style={{
-                          // height: 192,
-                          justifyContent: 'space-between',
-                          flexDirection: 'row',
-                          alignItems: 'center',
-                        }}>
-                        <View>
-                          <Text
-                            style={{
-                              fontFamily: font.Poppins,
-                              color: colors.textColor.neutralColor,
-                              fontSize: 14,
-                            }}>
-                            Asadullah created a room
-                          </Text>
-                          <Text
-                            style={{
-                              fontFamily: font.PoppinsSemiBold,
-                              color: colors.textColor.secondaryColor,
-                              fontSize: 16,
-                            }}>
-                            Asadullah calling live
-                          </Text>
-                        </View>
-                        <View
-                          style={{
-                            elevation: 2,
-                            borderRadius: 50,
-                          }}>
-                          <Image
-                            style={{
-                              width: 80,
-                              height: 80,
-                              borderRadius: 50,
-                              // resizeMode: 'contain',
-                              // position: 'absolute',
-                              // bottom: -20,
-                              // right: 20,
-                              borderColor: colors.bg,
-                              borderWidth: 2,
-                            }}
-                            source={require('../../assets/tempAssets/7261c2ae940abab762a6e0130b36b3a9.jpg')}
-                          />
-                        </View>
-                      </View>
-                    </View>
-                  </View>
-                </TouchableOpacity>
-              )}
-              {(item?.item.image ||
-                item?.item.bookImage ||
-                item?.item.text) && (
+              <View
+                style={{
+                  alignItems:
+                    item.item?.sender._id === userInfo?.data?._id
+                      ? 'flex-end'
+                      : 'flex-start',
+                  marginTop: 20,
+                }}>
                 <View
                   style={{
-                    alignItems:
-                      item.item.user._id === currentUser?._id
-                        ? 'flex-end'
-                        : 'flex-start',
-                    marginTop: 20,
+                    borderRadius: 10,
+                    paddingHorizontal: 10,
+                    paddingVertical: 10,
+                    maxWidth: '90%',
+                    minWidth: '50%',
+                    backgroundColor:
+                      item.item?.sender._id === userInfo?.data?._id
+                        ? colors.secondaryColor
+                        : colors.redisExtraLight,
+                    flexDirection: 'row',
                   }}>
+                  {item.item?.sender._id !== userInfo?.data?._id && (
+                    <View>
+                      <Image
+                        source={{uri: makeImage(item.item.sender.avatar)}}
+                        style={{
+                          width: 45,
+                          height: 45,
+                          borderRadius: 50,
+                        }}
+                      />
+                    </View>
+                  )}
+
                   <View
                     style={{
                       borderRadius: 10,
                       paddingHorizontal: 10,
-                      paddingVertical: 10,
+                      // paddingVertical: 2,
                       maxWidth: '90%',
                       minWidth: '50%',
-                      backgroundColor:
-                        item.item.user._id === currentUser?._id
-                          ? colors.secondaryColor
-                          : colors.redisExtraLight,
-                      flexDirection: 'row',
+                      // backgroundColor: colors.redisExtraLight,
+                      gap: 15,
                     }}>
-                    {item.item.user._id !== currentUser?._id && (
-                      <View>
-                        <Image
-                          source={item.item.user.avatar}
-                          style={{
-                            width: 45,
-                            height: 45,
-                            borderRadius: 50,
-                          }}
-                        />
-                      </View>
-                    )}
-
                     <View
                       style={{
+                        // backgroundColor: colors.redisExtraLight,
                         borderRadius: 10,
                         paddingHorizontal: 10,
-                        // paddingVertical: 2,
-                        maxWidth: '90%',
-                        minWidth: '50%',
-                        // backgroundColor: colors.redisExtraLight,
-                        gap: 15,
+                        paddingVertical: 5,
+                        alignItems:
+                          item.item?.sender._id === userInfo?.data?._id
+                            ? 'flex-end'
+                            : 'flex-start',
                       }}>
-                      <View
-                        style={{
-                          // backgroundColor: colors.redisExtraLight,
-                          borderRadius: 10,
-                          paddingHorizontal: 10,
-                          paddingVertical: 5,
-                          alignItems:
-                            item.item.user._id === currentUser?._id
-                              ? 'flex-end'
-                              : 'flex-start',
-                        }}>
-                        <View style={{alignItems: 'flex-end', gap: 10}}>
-                          {item.item.image && (
-                            <View
+                      <View style={{alignItems: 'flex-end', gap: 10}}>
+                        {item.item.image && (
+                          <View
+                            style={{
+                              backgroundColor: colors.bg,
+                              // elevation: 2,
+                              height: 150,
+                              // width: 300,
+                              width: '100%',
+                              borderRadius: 15,
+                            }}>
+                            <Image
+                              source={{uri: makeImage(item.item.image)}}
+                              resizeMode="cover"
                               style={{
-                                backgroundColor: colors.bg,
-                                elevation: 2,
+                                // marginBottom: 20,
+                                aspectRatio: 1,
+
                                 height: 150,
                                 borderRadius: 15,
-                              }}>
-                              <Image
-                                source={{uri: item.item.image}}
-                                style={{
-                                  marginBottom: 20,
-                                  aspectRatio: 1,
+                              }}
+                            />
+                          </View>
+                        )}
 
-                                  height: 150,
-                                  borderRadius: 15,
-                                }}
-                              />
-                            </View>
-                          )}
-
+                        <TouchableOpacity
+                          onPress={async () => {
+                            if (item.item.path) {
+                              Linking.openURL(item.item.path);
+                            } else if (item.item.audio) {
+                              if (isPlaying) {
+                                await onStopAudio();
+                              } else {
+                                await onPlayAudio(makeImage(item.item.audio));
+                              }
+                            }
+                          }}>
+                          <Text>Audio</Text>
                           {item.item.text && (
                             <Text
                               style={{
@@ -542,54 +486,50 @@ const FaceDownConversation = ({navigation}: NavigProps<null>) => {
                                 fontFamily: font.Poppins,
                                 maxWidth: width * 0.65,
                                 textAlign:
-                                  item.item.user._id === currentUser?._id
+                                  item.item?.sender._id === userInfo?.data?._id
                                     ? 'right'
                                     : 'left',
                               }}>
                               {item.item.text}
                             </Text>
                           )}
+                        </TouchableOpacity>
 
-                          {item.item.bookImage && (
-                            <TouchableOpacity
-                              onPress={() => {
-                                navigation?.navigate('BookShare');
-                              }}
-                              activeOpacity={0.9}
+                        {item.item.path && (
+                          <View
+                            style={{
+                              backgroundColor: colors.bg,
+                              elevation: 2,
+                              // height: 192,
+
+                              borderColor: colors.bg,
+
+                              borderRadius: 15,
+                            }}>
+                            <Image
+                              resizeMode="stretch"
+                              source={{uri: item.item.path}}
                               style={{
-                                backgroundColor: colors.bg,
-                                elevation: 2,
-                                // height: 192,
-                                borderColor: colors.bg,
+                                // marginBottom: 20,
+                                // aspectRatio: 1,
 
+                                width: 150,
+
+                                height: 190,
                                 borderRadius: 15,
-                              }}>
-                              <Image
-                                resizeMode="stretch"
-                                source={item.item.bookImage}
-                                style={{
-                                  // marginBottom: 20,
-                                  // aspectRatio: 1,
-
-                                  width: 150,
-
-                                  height: 190,
-                                  borderRadius: 15,
-                                }}
-                              />
-                            </TouchableOpacity>
-                          )}
-                        </View>
+                              }}
+                            />
+                          </View>
+                        )}
                       </View>
                     </View>
                   </View>
                 </View>
-              )}
-            </Pressable>
+              </View>
+            </View>
           );
         }}
       />
-
       <View
         style={{
           flex: 1,
@@ -598,36 +538,19 @@ const FaceDownConversation = ({navigation}: NavigProps<null>) => {
           alignItems: 'center',
         }}>
         <ConversationCarousal
+          messageRefetch={messageRefetch}
           photo
           type
           record
           books
           room
+          chatIt={route?.params?.data?.id}
           // ImageLink={newImage}
-          setMessages={setMessages}
-          messages={messages}
           setImageAssets={setNewImage}
           onSendImageMessage={() => {}}
           setTextMessage={setNewMessages}
           onPressLive={() => {
             setLiveModal(!liveModal);
-          }}
-          onSendTextMessage={() => {
-            setMessages([
-              ...messages,
-              {
-                id: messages.length + 1,
-
-                text: newMessages,
-                createdAt: new Date(),
-
-                user: {
-                  _id: 1,
-                  name: 'Amina',
-                  avatar: require('../../assets/tempAssets/3a906b3de8eaa53e14582edf5c918b5d.jpg'),
-                },
-              },
-            ]);
           }}
         />
       </View>
@@ -707,8 +630,6 @@ const FaceDownConversation = ({navigation}: NavigProps<null>) => {
         </View>
       </CustomModal>
       <ModalOfBottom
-       
-        onlyTopRadius={15}
         modalVisible={modalVisible}
         containerColor={colors.bg}
         setModalVisible={setModalVisible}>
@@ -780,14 +701,10 @@ const FaceDownConversation = ({navigation}: NavigProps<null>) => {
       <ModalOfBottom
         modalVisible={liveModal}
         setModalVisible={setLiveModal}
-       
-       
         containerColor={colors.bg}>
-         
-     <ScrollView
-       showsVerticalScrollIndicator={false}
-       showsHorizontalScrollIndicator={false}
-        
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          showsHorizontalScrollIndicator={false}
           contentContainerStyle={{
             gap: 25,
           }}>
@@ -896,21 +813,6 @@ const FaceDownConversation = ({navigation}: NavigProps<null>) => {
           </View>
           <NormalButton
             onPress={() => {
-              setMessages([
-                ...messages,
-                {
-                  id: messages.length + 1,
-
-                  text: newMessages,
-                  createdAt: new Date(),
-                  live: true,
-                  user: {
-                    _id: 1,
-                    name: 'Amina',
-                    avatar: require('../../assets/tempAssets/3a906b3de8eaa53e14582edf5c918b5d.jpg'),
-                  },
-                },
-              ]);
               setLiveModal(false);
               navigation?.navigate('LiveConversation');
             }}
