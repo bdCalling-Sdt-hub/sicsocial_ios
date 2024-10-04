@@ -541,6 +541,7 @@ const ProfileScreen = ({navigation}: NavigProps<null>) => {
             }}
             renderItem={item => (
               <View style={{gap: 6}}>
+                {/* {console.log(makeImage(item.item.image))} */}
                 <TouchableOpacity
                   onPress={() => {
                     navigation?.navigate('FaceDownConversation');
@@ -586,7 +587,6 @@ const ProfileScreen = ({navigation}: NavigProps<null>) => {
         <View
           style={{
             marginTop: 20,
-            gap: 20,
           }}>
           <Text
             style={{
@@ -621,53 +621,48 @@ const ProfileScreen = ({navigation}: NavigProps<null>) => {
         </TouchableOpacity> */}
 
           {newsFeet?.data?.map((item, index) => (
-            <View
+            <ConversationalCard
               key={index}
-              style={{
-                marginHorizontal: '4%',
-              }}>
-              <ConversationalCard
-                conversationStyle="normal"
-                onPress={() => {
-                  navigation?.navigate('NormalConversation');
-                }}
-                participants={item.participants}
-                cardStyle={
-                  item.participants.length > 4
-                    ? 'three'
-                    : item?.participants.length === 4
-                    ? 'four'
-                    : item?.participants.length === 3
-                    ? 'three'
-                    : item?.participants.length === 2
-                    ? 'two'
-                    : 'single'
-                }
-                manyPeople={item.participants.length > 4 ? true : false}
-                conversationTitle={
-                  item.lastMessage.sender._id === userProfile?.data?._id
-                    ? 'You'
-                    : userProfile?.data?.fullName
-                }
-                conversationSubtitle={
-                  item.lastMessage.sender._id === userProfile?.data?._id
-                    ? 'send a message'
-                    : 'Reply to the message'
-                }
-                lastMessageTime={format(new Date(item.updatedAt), 'hh :mm a')}
-                lastMessage={
-                  item.lastMessage.audio
-                    ? 'send a audio message'
-                    : item.lastMessage.image
-                    ? 'send an image message'
-                    : item.lastMessage.text
-                    ? item.lastMessage.text
-                    : item.lastMessage.path
-                    ? 'send a book'
-                    : 'Start a chat'
-                }
-              />
-            </View>
+              conversationStyle="normal"
+              onPress={() => {
+                navigation?.navigate('NormalConversation');
+              }}
+              participants={item.participants}
+              cardStyle={
+                item.participants.length > 4
+                  ? 'three'
+                  : item?.participants.length === 4
+                  ? 'four'
+                  : item?.participants.length === 3
+                  ? 'three'
+                  : item?.participants.length === 2
+                  ? 'two'
+                  : 'single'
+              }
+              manyPeople={item.participants.length > 4 ? true : false}
+              conversationTitle={
+                item.lastMessage.sender._id === userProfile?.data?._id
+                  ? 'You'
+                  : userProfile?.data?.fullName
+              }
+              conversationSubtitle={
+                item.lastMessage.sender._id === userProfile?.data?._id
+                  ? 'send a message'
+                  : 'Reply to the message'
+              }
+              lastMessageTime={format(new Date(item.updatedAt), 'hh :mm a')}
+              lastMessage={
+                item.lastMessage.audio
+                  ? 'send a audio message'
+                  : item.lastMessage.image
+                  ? 'send an image message'
+                  : item.lastMessage.text
+                  ? item.lastMessage.text
+                  : item.lastMessage.path
+                  ? 'send a book'
+                  : 'Start a chat'
+              }
+            />
           ))}
         </View>
       </ScrollView>

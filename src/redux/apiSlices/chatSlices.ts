@@ -15,7 +15,7 @@ export const chatSlices = api.injectEndpoints({
         method: 'POST',
         body: data,
       }),
-      invalidatesTags: ['chat', 'news_feed'],
+      invalidatesTags: ['chat'],
     }),
 
     addMember: builder.mutation({

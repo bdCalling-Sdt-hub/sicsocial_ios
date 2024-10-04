@@ -358,10 +358,6 @@ const ConversationalModal = ({navigation}: ConversationalModalProps) => {
               uri: result?.assets![0].uri,
               type: result?.assets![0].type,
               name: result?.assets![0].fileName,
-              size: result?.assets![0].fileSize,
-              lastModified: new Date().getTime(), // Assuming current time as last modified
-              lastModifiedDate: new Date(),
-              webkitRelativePath: '',
             },
           });
           // console.log(result);
@@ -373,7 +369,6 @@ const ConversationalModal = ({navigation}: ConversationalModalProps) => {
           maxWidth: 500,
           maxHeight: 500,
           quality: 0.5,
-          includeBase64: true,
         });
 
         if (!result.didCancel) {
@@ -383,10 +378,6 @@ const ConversationalModal = ({navigation}: ConversationalModalProps) => {
               uri: result?.assets![0].uri,
               type: result?.assets![0].type,
               name: result?.assets![0].fileName,
-              size: result?.assets![0].fileSize,
-              lastModified: new Date().getTime(), // Assuming current time as last modified
-              lastModifiedDate: new Date(),
-              webkitRelativePath: '',
             },
           });
           // console.log(result);
@@ -511,6 +502,7 @@ const ConversationalModal = ({navigation}: ConversationalModalProps) => {
           }
           // console.log(formData);
           createMessage(formData).then(ms => {
+            handleClose();
             console.log(ms);
             if (createChartInfo?.title === 'Chosen buddies') {
               setConversationalModal(false);

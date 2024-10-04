@@ -1,8 +1,8 @@
 import React, {useEffect} from 'react';
 import {
-  FlatList,
   Image,
   Linking,
+  RefreshControl,
   SafeAreaView,
   StyleSheet,
   Text,
@@ -12,8 +12,10 @@ import {
 } from 'react-native';
 import Animated, {useSharedValue, withTiming} from 'react-native-reanimated';
 import {useContextApi, useStyles} from '../../context/ContextApi';
+import {height, isTablet} from '../../utils/utils';
 
 import Clipboard from '@react-native-clipboard/clipboard';
+import {FlashList} from '@shopify/flash-list';
 import {format} from 'date-fns';
 import LinearGradient from 'react-native-linear-gradient';
 import {SvgXml} from 'react-native-svg';
@@ -27,12 +29,15 @@ import {imageUrl} from '../../redux/api/baseApi';
 import {useGetDonationQuery} from '../../redux/apiSlices/additionalSlices';
 import {useGetUserProfileQuery} from '../../redux/apiSlices/authSlice';
 import {useGetNewsFeetQuery} from '../../redux/apiSlices/homeSlices';
-import {isTablet} from '../../utils/utils';
 
 const HomeScreen = ({navigation}: NavigProps<null>) => {
   const {isLive, setIsLive, isDark} = useContextApi();
 
-  const {data: newsFeet} = useGetNewsFeetQuery({});
+  const {
+    data: newsFeet,
+    isLoading: newFeetLoading,
+    refetch: newFeetReFetching,
+  } = useGetNewsFeetQuery({});
   const {data: userProfile} = useGetUserProfileQuery({});
   const {data: donations} = useGetDonationQuery({});
   // console.log(userProfile);
@@ -192,15 +197,30 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
       {/*====================== donations cards ========================= */}
 
       {/*===================== normal cards ======================= */}
-      <FlatList
+      <FlashList
         showsVerticalScrollIndicator={false}
         showsHorizontalScrollIndicator={false}
+        estimatedItemSize={height * 0.3}
+        refreshControl={
+          <RefreshControl
+            refreshing={newFeetLoading}
+            onRefresh={newFeetReFetching}
+            colors={[colors.primaryColor]}
+          />
+        }
         contentContainerStyle={{
-          gap: 16,
-          paddingVertical: 16,
-          paddingHorizontal: '5%',
+          paddingBottom: 50,
         }}
-        data={newsFeet?.data}
+        data={
+          newsFeet?.data
+            ? [...newsFeet?.data]?.sort((a, b) => {
+                return (
+                  new Date(b.createdAt).getTime() -
+                  new Date(a.createdAt).getTime()
+                );
+              })
+            : []
+        }
         ListHeaderComponent={renderDonations}
         renderItem={({item}) => (
           <ConversationalCard
@@ -231,13 +251,20 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
             manyPeople={item.participants.length > 4}
             conversationTitle={
               item.lastMessage.sender._id === userProfile?.data?._id
-                ? 'You'
-                : userProfile?.data?.fullName
+                ? item?.facedown
+                  ? item.facedown.name +
+                    `${
+                      item.lastMessage.sender._id === userProfile?.data?._id
+                        ? ' You'
+                        : item.lastMessage.sender.fullName
+                    }`
+                  : 'You'
+                : item.lastMessage.sender.fullName
             }
             conversationSubtitle={
               item.lastMessage.sender._id === userProfile?.data?._id
                 ? 'send a message'
-                : 'Reply to the message'
+                : ' replied in chat'
             }
             lastMessageTime={format(new Date(item.updatedAt), 'hh :mm a')}
             lastMessage={

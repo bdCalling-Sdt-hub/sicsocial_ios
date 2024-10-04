@@ -1,35 +1,40 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
-    Image,
-    Pressable,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  Image,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
-import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
-import { useGetUserProfileQuery, useUserUpdateMutation } from '../../redux/apiSlices/authSlice';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import {
+  useGetUserProfileQuery,
+  useUserUpdateMutation,
+} from '../../redux/apiSlices/authSlice';
 
-import { SvgXml } from 'react-native-svg';
+import ImagePicker from 'react-native-image-crop-picker';
+import {SvgXml} from 'react-native-svg';
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
 import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
-import { useStyles } from '../../context/ContextApi';
-import { NavigProps } from '../../interfaces/NaviProps';
-import { makeImage } from '../../utils/utils';
+import {useStyles} from '../../context/ContextApi';
+import {NavigProps} from '../../interfaces/NaviProps';
+import {makeImage} from '../../utils/utils';
 
 const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
-  const {data : userProfile} = useGetUserProfileQuery({});
+  const {data: userProfile} = useGetUserProfileQuery({});
+
+  // console.log(userProfile?.data.);
   const [userUpdate] = useUserUpdateMutation();
   const {colors, font} = useStyles();
   const [imageModal, setImageModal] = React.useState(false);
 
   const [userInfo, setUserInfo] = React.useState(userProfile?.data);
+  const [isPrivate, setIsPrivate] = React.useState(userInfo?.isPrivateProfile);
+  const [imageAssets, setImageAssets] = React.useState<any>();
 
-  const [imageAssets, setImageAssets] = React.useState<any>({});
-
-  const [privateProfile, setPrivateProfile] = useState(false);
   const [edit, setEdit] = useState({
     bio: false,
     details: false,
@@ -46,16 +51,24 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
           maxWidth: 500,
           maxHeight: 500,
           quality: 0.5,
-          includeBase64: true,
         });
 
         if (!result.didCancel) {
-          setImageAssets(
-            result?.assets![0],
-          );
-          setImageModal(false);
-          // console.log(result);
-          handleUserUpdated();
+          ImagePicker.openCropper({
+            cropping: true,
+            width: 500,
+            height: 500,
+            mediaType: 'photo',
+            path: result.assets![0].uri,
+            compressImageQuality: 0.5,
+          }).then(image => {
+            setImageAssets(image);
+            handleUserUpdated({
+              avatar: image,
+            });
+            setImageAssets(image);
+            setImageModal(false);
+          });
         }
       }
       if (option === 'library') {
@@ -64,16 +77,23 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
           maxWidth: 500,
           maxHeight: 500,
           quality: 0.5,
-          includeBase64: true,
         });
 
         if (!result.didCancel) {
-          setImageAssets(
-            result?.assets![0],
-          );
-          setImageModal(false);
-          // console.log(result);
-          handleUserUpdated();
+          ImagePicker.openCropper({
+            cropping: true,
+            width: 500,
+            height: 500,
+            mediaType: 'photo',
+            path: result.assets![0].uri,
+            compressImageQuality: 0.5,
+          }).then(image => {
+            setImageAssets(image);
+            handleUserUpdated({
+              avatar: image,
+            });
+            setImageModal(false);
+          });
         }
       }
     } catch (error) {
@@ -81,24 +101,29 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
     }
   };
 
-  const handleUserUpdated = React.useCallback(async()=>{
-    const formData = new FormData();
+  // console.log(imageAssets);
+  const handleUserUpdated = React.useCallback(
+    async userData => {
+      const formData = new FormData();
+      console.log(userData?.avatar);
+      if (userData?.avatar) {
+        formData.append('avatar', {
+          name: userData?.avatar?.fileName || 'avatar',
+          type: userData?.avatar?.mime,
+          uri: userData?.avatar?.path,
+        });
+      }
+      formData.append('data', JSON.stringify(userInfo));
 
-    if (imageAssets?.uri) {
-      formData.append('avatar', {
-        name: imageAssets.fileName,
-        type: imageAssets.type,
-        uri: imageAssets.uri,
-      });
-    }
-    formData.append('data', JSON.stringify(userInfo));
+      const result = await userUpdate(formData);
+      if (result) {
+        // navigation?.goBack();
+      }
+    },
+    [imageAssets, userInfo],
+  );
 
-    const result = await userUpdate(formData);
-    console.log(result);
-    if (result) {
-      // navigation?.goBack();
-    }
-  },[userInfo, imageAssets]);
+  // console.log(userInfo?.avatar);
 
   return (
     <View
@@ -119,10 +144,10 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
           fontFamily: font.PoppinsSemiBold,
         }}
       />
-       
-    <ScrollView
-       showsVerticalScrollIndicator={false}
-       showsHorizontalScrollIndicator={false}
+
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        showsHorizontalScrollIndicator={false}
         keyboardShouldPersistTaps="always"
         contentContainerStyle={{
           paddingHorizontal: '4%',
@@ -200,13 +225,9 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
                   borderWidth: 1,
                   borderColor: colors.white,
                 }}
-                source={
-                
-                     {
-                        uri:   imageAssets?.uri || makeImage(userInfo?.avatar)
-                      }
-              
-                }
+                source={{
+                  uri: imageAssets?.path || makeImage(userInfo?.avatar),
+                }}
               />
             </View>
           </View>
@@ -360,7 +381,7 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
                 <TouchableOpacity
                   onPress={() => {
                     setEdit({...edit, details: false});
-                    handleUserUpdated();
+                    handleUserUpdated({userInfo});
                   }}
                   style={{
                     borderWidth: 1,
@@ -438,7 +459,7 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
                     onChangeText={text =>
                       setUserInfo({
                         ...userInfo,
-                        fullName : text,
+                        fullName: text,
                       })
                     }
                   />
@@ -472,9 +493,8 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
                     onChangeText={text =>
                       setUserInfo({
                         ...userInfo,
-                      
-                          phoneNumber: text,
-                        
+
+                        phoneNumber: text,
                       })
                     }
                   />
@@ -543,7 +563,7 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
                     onChangeText={text =>
                       setUserInfo({
                         ...userInfo,
-                        occupations: text
+                        occupations: text,
                       })
                     }
                   />
@@ -611,7 +631,7 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
                     onChangeText={text =>
                       setUserInfo({
                         ...userInfo,
-                        studiedAt: text
+                        studiedAt: text,
                       })
                     }
                   />
@@ -645,7 +665,7 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
                     onChangeText={text =>
                       setUserInfo({
                         ...userInfo,
-                        relationshipStatus: text
+                        relationshipStatus: text,
                       })
                     }
                   />
@@ -853,20 +873,34 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
                     Private profile
                   </Text>
                   <Pressable
-                    onPress={() =>
-                  {
-                    console.log(userInfo?.isPrivateProfile)
-                    setUserInfo({
-                      ...userInfo,
-                      isPrivateProfile: userInfo?.isPrivateProfile ? false : true
-                    })
-                  }
-                    }
+                    onPress={async () => {
+                      // console.log(userInfo?.isPrivateProfile);
+                      // console.log(!isPrivate);
+
+                      setUserInfo({
+                        ...userInfo,
+                        isPrivateProfile: !userInfo?.isPrivateProfile
+                          ? true
+                          : false,
+                      });
+
+                      const formData = new FormData();
+                      formData.append(
+                        'data',
+                        JSON.stringify({
+                          isPrivateProfile: !userInfo?.isPrivateProfile
+                            ? true
+                            : false,
+                        }),
+                      );
+                      console.log(formData);
+                      await userUpdate(formData);
+                    }}
                     style={{
                       width: 50,
                       height: 20,
                       borderRadius: 10,
-                      backgroundColor: userInfo?.isPrivateProfile
+                      backgroundColor: !userInfo?.isPrivateProfile
                         ? colors.secondaryColor
                         : 'rgba(217, 217, 217, 1)',
                       justifyContent: 'center',
@@ -927,7 +961,7 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
                 <TouchableOpacity
                   onPress={() => {
                     setEdit({...edit, link: false});
-                    handleUserUpdated();
+                    handleUserUpdated(userInfo);
                   }}
                   style={{
                     borderWidth: 1,
@@ -1065,34 +1099,29 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
               gap: 12,
               minHeight: 100,
             }}>
-          {
-            userProfile?.data?.interests?.map((ins,index)=>
+            {userProfile?.data?.interests?.map((ins, index) => (
               <Text
-              key={index}
-              style={{
-                fontSize: 12,
-                color: colors.textColor.neutralColor,
-                fontFamily: font.PoppinsMedium,
-                backgroundColor: colors.secondaryColor,
-                paddingHorizontal: 10,
-                paddingVertical: 5,
-                borderRadius: 100,
-                elevation: 1,
-              }}>
-             {ins}
-            </Text>
-          
-            )
-          }
+                key={index}
+                style={{
+                  fontSize: 12,
+                  color: colors.textColor.neutralColor,
+                  fontFamily: font.PoppinsMedium,
+                  backgroundColor: colors.secondaryColor,
+                  paddingHorizontal: 10,
+                  paddingVertical: 5,
+                  borderRadius: 100,
+                  elevation: 1,
+                }}>
+                {ins}
+              </Text>
+            ))}
           </View>
         </View>
       </ScrollView>
 
-     <ModalOfBottom
+      <ModalOfBottom
         modalVisible={imageModal}
         setModalVisible={setImageModal}
-       
- 
         containerColor={colors.bg}>
         <View
           style={{

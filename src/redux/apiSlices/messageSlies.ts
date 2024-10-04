@@ -14,7 +14,6 @@ export const chatSlices = api.injectEndpoints({
       query: data => ({
         url: `/message/send-message`,
         headers: {
-          'Content-Type': 'multipart/form-data',
           Connection: 'keep-alive',
           Accept: '*/*',
           'Cache-Control': 'no-cache',

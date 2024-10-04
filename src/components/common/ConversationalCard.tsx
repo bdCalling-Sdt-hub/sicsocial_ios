@@ -7,12 +7,12 @@ import {
   View,
 } from 'react-native';
 
-import {IParticipants} from '../../redux/interface/participants';
-import {NavigProps} from '../../interfaces/NaviProps';
 import React from 'react';
 import {SvgXml} from 'react-native-svg';
-import {makeImage} from '../../utils/utils';
 import {useStyles} from '../../context/ContextApi';
+import {NavigProps} from '../../interfaces/NaviProps';
+import {IParticipants} from '../../redux/interface/participants';
+import {makeImage} from '../../utils/utils';
 
 interface ConversationalCardProps extends NavigProps<null>, IParticipants {
   conversationTitle?: string;
@@ -68,7 +68,8 @@ const ConversationalCard = ({
         disabled={disabled}
         onPress={onPress}
         style={{
-          paddingHorizontal: paddingHorizontal ? paddingHorizontal : '0%',
+          paddingHorizontal: '4%',
+          marginTop: 16,
         }}>
         <View
           style={{
@@ -897,6 +898,6 @@ const ConversationalCard = ({
   );
 };
 
-export default React.memo(ConversationalCard);
+export default ConversationalCard;
 
 const styles = StyleSheet.create({});

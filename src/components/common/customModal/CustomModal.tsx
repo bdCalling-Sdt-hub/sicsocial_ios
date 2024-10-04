@@ -1,7 +1,7 @@
-import {View, Modal, Pressable, TouchableOpacity} from 'react-native';
+import {Modal, Pressable, TouchableOpacity, View} from 'react-native';
+
 import React from 'react';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import {GStyles} from '../../../styles/GStyles';
 import {useStyles} from '../../../context/ContextApi';
 
 type CustomModalProps = {

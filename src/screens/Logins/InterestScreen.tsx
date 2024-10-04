@@ -1,27 +1,15 @@
+import {FlatList, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {
-  FlatList,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+  useGetUserProfileQuery,
+  useUserUpdateMutation,
+} from '../../redux/apiSlices/authSlice';
+
 import React from 'react';
-import {useStyles} from '../../context/ContextApi';
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
-import LinearGradient from 'react-native-linear-gradient';
-import {SvgXml} from 'react-native-svg';
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-  withTiming,
-} from 'react-native-reanimated';
-import InterestCard from '../../components/interest/InterestCard';
 import NormalButton from '../../components/common/NormalButton';
+import InterestCard from '../../components/interest/InterestCard';
+import {useStyles} from '../../context/ContextApi';
 import {NavigProps} from '../../interfaces/NaviProps';
-import {ExpandableSection} from 'react-native-ui-lib';
 
 const data = [
   {
@@ -293,9 +281,29 @@ const data = [
 const InterestScreen = ({navigation}: NavigProps<null>) => {
   const {colors, font} = useStyles();
   // Your code here...
+  const {data: userProfile} = useGetUserProfileQuery({});
+  // console.log(userProfile?.data.interests);
+  const [userUpdate, results] = useUserUpdateMutation();
+  const [selectSubsItems, setSelectSubsItems] = React.useState<Array<string>>(
+    userProfile?.data.interests || [],
+  );
+  const handleUserUpdated = React.useCallback(async () => {
+    const formData = new FormData();
+    formData.append(
+      'data',
+      JSON.stringify({
+        interests: selectSubsItems,
+      }),
+    );
 
-  const [selectItem, setSelectItem] = React.useState(0);
+    const result = await userUpdate(formData);
+    console.log(result);
+    if (result) {
+      navigation?.goBack();
+    }
+  }, [selectSubsItems]);
 
+  console.log(selectSubsItems);
   return (
     <View
       style={{
@@ -338,7 +346,13 @@ const InterestScreen = ({navigation}: NavigProps<null>) => {
         }}
         style={{}}
         renderItem={item => {
-          return <InterestCard item={item.item} />;
+          return (
+            <InterestCard
+              selectSubsItems={selectSubsItems}
+              setSelectSubsItems={setSelectSubsItems}
+              item={item.item}
+            />
+          );
         }}
       />
 
@@ -350,8 +364,9 @@ const InterestScreen = ({navigation}: NavigProps<null>) => {
         <NormalButton
           title="Continue"
           onPress={() => {
-            navigation?.navigate('HomeRoutes');
+            handleUserUpdated();
           }}
+          isLoading={results.isLoading}
         />
         <TouchableOpacity
           onPress={() => {

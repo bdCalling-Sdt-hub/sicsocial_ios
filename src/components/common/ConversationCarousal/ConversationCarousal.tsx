@@ -144,7 +144,7 @@ const ConversationCarousal = ({
   if (type) {
     absoluteData.push(data[3]);
   }
-  if (room) {
+  if (live) {
     absoluteData.push(data[4]);
   }
   if (faceDown) {
@@ -187,9 +187,6 @@ const ConversationCarousal = ({
                 uri: image![0].uri,
                 type: image![0].type || 'image/jpeg', // or file type
                 name: image![0].fileName || 'image',
-                size: image![0].fileSize,
-                lastModified: new Date().getTime(), // Assuming current time as last modified
-                lastModifiedDate: new Date(),
               },
             });
             // createMessage(formData).then(res => console.log(res));
@@ -204,9 +201,6 @@ const ConversationCarousal = ({
                 uri: image![0].uri,
                 type: image![0].type || 'image/jpeg', // or file type
                 name: image![0].fileName || 'image',
-                size: image![0].fileSize,
-                lastModified: new Date().getTime(), // Assuming current time as last modified
-                lastModifiedDate: new Date(),
               },
             });
             // add image add a file image
@@ -319,15 +313,18 @@ const ConversationCarousal = ({
   const handleCreateNewChat = React.useCallback(async (data: any) => {
     // console.log(chatIt, 'chatIt');
 
-    console.log(data, 'data');
-    const formData = new FormData();
-    formData.append('chatId', chatIt);
-    data?.text && formData.append('text', data?.text);
-    data?.image && formData.append('image', data?.image);
-    data?.audio && formData.append('audio', data?.audio);
-    createMessage(formData)
-      .catch(err => console.log)
-      .catch(error => console.log(error));
+    try {
+      // console.log(data, 'data');
+      const formData = new FormData();
+      formData.append('chatId', chatIt);
+      data?.text && formData.append('text', data?.text);
+      data?.image && formData.append('image', data?.image);
+      data?.audio && formData.append('audio', data?.audio);
+      const res = await createMessage(formData);
+      console.log(res, 'res');
+    } catch (error) {
+      console.log(error);
+    }
   }, []);
 
   return (
@@ -339,7 +336,7 @@ const ConversationCarousal = ({
         height={itemSize}
         style={{
           width: width,
-          height: height * 0.158,
+          height: height * 0.15,
           alignItems: 'center',
         }}
         loop={false}

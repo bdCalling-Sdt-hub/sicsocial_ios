@@ -6,68 +6,64 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import PopUpModal, { PopUpModalRef } from '../../components/common/modals/PopUpModal';
+import PopUpModal, {
+  PopUpModalRef,
+} from '../../components/common/modals/PopUpModal';
 
-import { Formik } from 'formik';
+import {Formik} from 'formik';
 import React from 'react';
-import { Checkbox } from 'react-native-ui-lib';
+import {Checkbox} from 'react-native-ui-lib';
 import Feather from 'react-native-vector-icons/Feather';
-import { useDispatch } from 'react-redux';
+import {useDispatch} from 'react-redux';
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
-import { useStyles } from '../../context/ContextApi';
-import { NavigProps } from '../../interfaces/NaviProps';
-import { useLoginUserMutation } from '../../redux/apiSlices/authSlice';
-import { setToken } from '../../redux/apiSlices/tokenSlice';
-import { lStorage } from '../../utils/utils';
+import {useStyles} from '../../context/ContextApi';
+import {NavigProps} from '../../interfaces/NaviProps';
+import {useLoginUserMutation} from '../../redux/apiSlices/authSlice';
+import {setToken} from '../../redux/apiSlices/tokenSlice';
+import {lStorage} from '../../utils/utils';
 
 const LoginScreen = ({navigation}: NavigProps<null>) => {
-  const modalRef = React.useRef<PopUpModalRef>()
+  const modalRef = React.useRef<PopUpModalRef>();
   const {colors, font} = useStyles();
   const [rememberItems, setRememberItems] = React.useState({
     check: lStorage.getBool('check') || false,
     email: lStorage.getString('email') || '',
     password: lStorage.getString('password') || '',
-  })
+  });
   const [isShow, setIsShow] = React.useState(false);
-  const [check, setCheck] = React.useState( lStorage.getBool('check') ||false);
-  const dispatch = useDispatch()
-  const [loginUser] = useLoginUserMutation()
+  const [check, setCheck] = React.useState(lStorage.getBool('check') || false);
+  const dispatch = useDispatch();
+  const [loginUser] = useLoginUserMutation();
 
-  const OnSubmit = (values) => {
-    
-    if(!values?.email){
-
+  const OnSubmit = values => {
+    if (!values?.email) {
       modalRef.current?.open({
         // title : "Error",
-        content : "Please enter your email",
-      })
-    }
-    else if(!values?.password){
-
+        content: 'Please enter your email',
+      });
+    } else if (!values?.password) {
       modalRef.current?.open({
         // title : "Error",
-        content : "Please enter your password",
-      })
+        content: 'Please enter your password',
+      });
     } else {
       loginUser(values).then(res => {
         if (res.error) {
+          console.log(res.error);
           modalRef.current?.open({
             // title : "Error",
-            content : res?.error?.data?.message,
-          })
-          
+            content: res?.error?.data?.message,
+          });
         }
         if (res?.data) {
           console.log(res.data?.data?.accessToken);
-          dispatch(setToken(res.data?.data?.accessToken))
-         lStorage.setString("token", res.data?.data?.accessToken);
+          dispatch(setToken(res.data?.data?.accessToken));
+          lStorage.setString('token', res.data?.data?.accessToken);
           navigation?.navigate('Loading');
         }
-      })
+      });
     }
-
-    
-  }
+  };
 
   return (
     <View
@@ -90,11 +86,11 @@ const LoginScreen = ({navigation}: NavigProps<null>) => {
           fontFamily: font.PoppinsSemiBold,
         }}
       />
-       
-     <ScrollView
-       showsVerticalScrollIndicator={false}
-       keyboardShouldPersistTaps="always"
-       showsHorizontalScrollIndicator={false}>
+
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="always"
+        showsHorizontalScrollIndicator={false}>
         <View>
           <Text
             style={{
@@ -107,11 +103,11 @@ const LoginScreen = ({navigation}: NavigProps<null>) => {
         </View>
         <Formik
           initialValues={{
-            email:rememberItems.email,
+            email: rememberItems.email,
             password: rememberItems.password,
           }}
           onSubmit={values => OnSubmit(values)}>
-          {({handleChange, handleBlur, handleSubmit, values,resetForm}) => (
+          {({handleChange, handleBlur, handleSubmit, values, resetForm}) => (
             <View
               style={{
                 marginTop: 105,
@@ -140,7 +136,7 @@ const LoginScreen = ({navigation}: NavigProps<null>) => {
                     height: 56,
                     color: colors.textColor.neutralColor,
                   }}
-                  placeholderTextColor={colors.textColor.gray}      
+                  placeholderTextColor={colors.textColor.gray}
                   placeholder="example@email.com"
                   onChangeText={handleChange('email')}
                   onBlur={handleBlur('email')}
@@ -161,7 +157,6 @@ const LoginScreen = ({navigation}: NavigProps<null>) => {
                 </Text>
                 <TextInput
                   value={values.password}
-          
                   style={{
                     fontFamily: font.Poppins,
                     backgroundColor: colors.secondaryColor,
@@ -173,10 +168,9 @@ const LoginScreen = ({navigation}: NavigProps<null>) => {
                   }}
                   // placeholder="Password"
                   secureTextEntry={!isShow}
-                  // placeholderTextColor={colors.textColor.gray}  
+                  // placeholderTextColor={colors.textColor.gray}
                   onChangeText={handleChange('password')}
                   onBlur={handleBlur('password')}
-          
                 />
                 <TouchableOpacity
                   onPress={() => setIsShow(!isShow)}
@@ -201,28 +195,27 @@ const LoginScreen = ({navigation}: NavigProps<null>) => {
                   alignItems: 'center',
                 }}>
                 <TouchableOpacity
-                  onPress={() =>{
-                      if(!rememberItems.check){
-                        setRememberItems({
-                          check : true,
-                          email :values.email,
-                          password :values.password
-                        });
-                          lStorage.setBool('check',true);
-                          lStorage.setString('email', values.email);
-                          lStorage.setString('password', values.password);
-                      }
+                  onPress={() => {
+                    if (!rememberItems.check) {
+                      setRememberItems({
+                        check: true,
+                        email: values.email,
+                        password: values.password,
+                      });
+                      lStorage.setBool('check', true);
+                      lStorage.setString('email', values.email);
+                      lStorage.setString('password', values.password);
+                    }
 
-                      if(rememberItems.check){
-                        lStorage.removeItem('email');
-                        lStorage.removeItem('password');
-                        lStorage.removeItem('check');
-                     setRememberItems({
-                      check : false,
-                      email : "",
-                      password : ""
-                     })
-               
+                    if (rememberItems.check) {
+                      lStorage.removeItem('email');
+                      lStorage.removeItem('password');
+                      lStorage.removeItem('check');
+                      setRememberItems({
+                        check: false,
+                        email: '',
+                        password: '',
+                      });
                     }
                   }}
                   style={{
@@ -232,30 +225,29 @@ const LoginScreen = ({navigation}: NavigProps<null>) => {
                   }}>
                   <Checkbox
                     value={rememberItems.check}
-                    onValueChange={() =>{
-                      if(!rememberItems.check){
+                    onValueChange={() => {
+                      if (!rememberItems.check) {
                         setRememberItems({
-                          check : true,
-                          email :values.email,
-                          password :values.password
+                          check: true,
+                          email: values.email,
+                          password: values.password,
                         });
-                          lStorage.setBool('check',true);
-                          lStorage.setString('email', values.email);
-                          lStorage.setString('password', values.password);
+                        lStorage.setBool('check', true);
+                        lStorage.setString('email', values.email);
+                        lStorage.setString('password', values.password);
                       }
 
-                      if(rememberItems.check){
+                      if (rememberItems.check) {
                         lStorage.removeItem('email');
                         lStorage.removeItem('password');
                         lStorage.removeItem('check');
-                     setRememberItems({
-                      check : false,
-                      email : "",
-                      password : ""
-                     })
-               
-                    }
-                  }}
+                        setRememberItems({
+                          check: false,
+                          email: '',
+                          password: '',
+                        });
+                      }
+                    }}
                     containerStyle={{
                       borderWidth: 1,
                       borderColor: colors.textColor.neutralColor,

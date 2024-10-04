@@ -1,7 +1,7 @@
-import React, {useEffect, useRef} from 'react';
+import React, {useEffect} from 'react';
 import {
-  FlatList,
   Image,
+  Linking,
   ScrollView,
   StyleSheet,
   Text,
@@ -10,13 +10,16 @@ import {
   View,
   useWindowDimensions,
 } from 'react-native';
-import Animated, {
+import {
   useAnimatedStyle,
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
 
+import {FlashList} from '@shopify/flash-list';
 import AudioRecorderPlayer from 'react-native-audio-recorder-player';
+import ImageViewer from 'react-native-image-zoom-viewer';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import ConversationCarousal from '../../components/common/ConversationCarousal/ConversationCarousal';
 import CustomModal from '../../components/common/customModal/CustomModal';
 import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
@@ -47,16 +50,16 @@ const FaceDownConversation = ({
     {skip: !route?.params?.data?.id},
   );
   const FaceDownData = route?.params?.data?.facedown;
-  console.log(FaceDownData);
+  // console.log(FaceDownData);
   const {data: userInfo} = useGetUserProfileQuery({});
   const [AllMessages, setAllMessages] = React.useState<IMessage[]>([]);
+  // console.log(userInfo);
+  const [showImage, setShowImage] = React.useState<boolean>(false);
+  const [imageIndex, setImageIndex] = React.useState<number>(0);
+  const [showImages, setShowImages] = React.useState<Array<{url: string}>>([]);
   const {width, height} = useWindowDimensions();
   const {colors, font, window} = useStyles();
-  const [callingLive, setCallingLive] = React.useState(false);
 
-  const [volume, setVolume] = React.useState<number>(1);
-  const [newMessages, setNewMessages] = React.useState<string>('');
-  const [newImage, setNewImage] = React.useState<string>('');
   const [modalVisible, setModalVisible] = React.useState(false);
 
   const [fullBanner, setFullBanner] = React.useState(false);
@@ -64,7 +67,6 @@ const FaceDownConversation = ({
   const [liveModal, setLiveModal] = React.useState(false);
   const [open, setNotify] = React.useState(false);
   const [isPlaying, setIsPlaying] = React.useState<boolean>(false);
-  const scrollRef = useRef();
 
   const FULL_HIGHT = height * 0.42;
   const REGULAR_REGULAR = height * 0.1;
@@ -141,17 +143,28 @@ const FaceDownConversation = ({
 
   useEffect(() => {
     if (messages) {
-      // Create a shallow copy of the messages data before sorting
-      const sortedMessages = [...(messages?.data || [])].sort((a, b) => {
-        return (
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        );
+      let imageFile: Array<{url: string}> = [];
+      setAllMessages([...messages?.data] || []);
+      messages.data?.forEach((item: any) => {
+        if (item?.image) {
+          imageFile.push({
+            url: makeImage(item?.image),
+          });
+        }
       });
-
-      // Set the sorted messages
-      setAllMessages(sortedMessages);
+      setShowImages(imageFile || []);
     }
   }, [messages]);
+
+  const handleSelectIndex = (image: string) => {
+    // setImageIndex(index);
+    setImageIndex(
+      showImages.findIndex(
+        (item: {url: string}) => item.url === makeImage(image),
+      ),
+    );
+    setShowImage(true);
+  };
 
   return (
     <View
@@ -276,81 +289,17 @@ const FaceDownConversation = ({
         </TouchableOpacity>
       </Animated.View> */}
 
-      <FlatList
+      <FlashList
         scrollEventThrottle={10}
+        estimatedItemSize={height * 0.6}
         keyboardShouldPersistTaps="always"
-        ListFooterComponent={() => {
-          return (
-            <Animated.View
-              style={[
-                {
-                  paddingHorizontal: 12,
-                  backgroundColor: colors.secondaryColor,
-                  width: '90%',
-                  paddingVertical: 8,
-                  alignSelf: 'center',
-                  borderRadius: 10,
-                },
-                animationStyleForUserConversation,
-              ]}>
-              <TouchableOpacity
-                activeOpacity={0.9}
-                onPress={() => {
-                  setFullBanner(!fullBanner);
-                }}
-                style={{}}>
-                <Animated.View
-                  style={[
-                    {
-                      gap: 10,
-                    },
-                    animationDisplayONBanner,
-                  ]}>
-                  <Animated.View style={[animationImageONBanner]}>
-                    <TouchableOpacity
-                      activeOpacity={0.9}
-                      onPress={() => {
-                        navigation?.navigate('BookShare');
-                      }}>
-                      <Image
-                        style={[
-                          {
-                            borderRadius: 20,
-                            height: '100%',
-                            width: '100%',
-                            resizeMode: 'stretch',
-                          },
-                        ]}
-                        source={require('../../assets/tempAssets/book.jpg')}
-                      />
-                    </TouchableOpacity>
-                  </Animated.View>
-
-                  <Animated.Text
-                    numberOfLines={fullBanner ? 0 : 3}
-                    style={{
-                      fontFamily: font.Poppins,
-                      color: colors.textColor.primaryColor,
-                      fontSize: 14,
-                      width: fullBanner ? '100%' : '70%',
-                    }}>
-                    elit. placerat ex non, elit. In ac nibh Ut non non urna
-                    porta dui sapien enim. elit placerat. sed Ut tincidunt amet,
-                    vitae sit enim. facilisis vel volutpat Ut sed Quisque ac
-                    lobortis, Quisque urna ipsum Nam id tempor placerat. Morbi
-                    ipsum sollicitudin. dui. urna nulla, Donec vitae vehicula,
-                    quis libero, commodo ex
-                  </Animated.Text>
-                </Animated.View>
-              </TouchableOpacity>
-            </Animated.View>
-          );
-        }}
+        keyExtractor={(item, index) => index.toString()}
         showsVerticalScrollIndicator={false}
-        style={{
-          height: height * 0.6,
-          // backgroundColor: 'red',
-        }}
+        // style={{
+        //   height: height * 0.6,
+        //   // backgroundColor: 'red',
+        // }}
+
         contentContainerStyle={{
           paddingTop: 10,
           paddingBottom: 60,
@@ -375,7 +324,11 @@ const FaceDownConversation = ({
           }
         }}
         inverted
-        data={AllMessages}
+        data={AllMessages?.sort((a, b) => {
+          return (
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          );
+        })}
         renderItem={item => {
           return (
             <View
@@ -442,7 +395,10 @@ const FaceDownConversation = ({
                       }}>
                       <View style={{alignItems: 'flex-end', gap: 10}}>
                         {item.item.image && (
-                          <View
+                          <TouchableOpacity
+                            onPress={() => {
+                              handleSelectIndex(item.item.image);
+                            }}
                             style={{
                               backgroundColor: colors.bg,
                               // elevation: 2,
@@ -462,7 +418,7 @@ const FaceDownConversation = ({
                                 borderRadius: 15,
                               }}
                             />
-                          </View>
+                          </TouchableOpacity>
                         )}
 
                         <TouchableOpacity
@@ -530,28 +486,22 @@ const FaceDownConversation = ({
           );
         }}
       />
+
       <View
         style={{
-          flex: 1,
+          // flex: 1,
+          height: 130,
           justifyContent: 'center',
-
           alignItems: 'center',
         }}>
         <ConversationCarousal
-          messageRefetch={messageRefetch}
           photo
           type
+          live
           record
           books
-          room
           chatIt={route?.params?.data?.id}
-          // ImageLink={newImage}
-          setImageAssets={setNewImage}
           onSendImageMessage={() => {}}
-          setTextMessage={setNewMessages}
-          onPressLive={() => {
-            setLiveModal(!liveModal);
-          }}
         />
       </View>
 
@@ -820,6 +770,63 @@ const FaceDownConversation = ({
           />
         </ScrollView>
       </ModalOfBottom>
+      <CustomModal
+        width={'100%'}
+        height={'100%'}
+        modalVisible={showImage}
+        containerColor="rgba(0, 0, 0, 0.8)"
+        setModalVisible={setShowImage}>
+        <ImageViewer
+          imageUrls={showImages}
+          show={showImage}
+          backgroundColor="rgba(0, 0, 0, 0.8)"
+          index={imageIndex}
+          onSwipeDown={() => {
+            setShowImage(false);
+          }}
+          useNativeDriver
+          style={{
+            width: '100%',
+            height: '100%',
+            borderWidth: 0,
+            // backgroundColor: 'rgba(0, 0, 0, 0.8)',
+            margin: 0,
+            padding: 0,
+            borderColor: 'red',
+          }}
+          enableSwipeDown
+          enableImageZoom
+          doubleClickInterval={200}
+          renderImage={({style, source}) => {
+            // console.log(source);
+            return (
+              <Image
+                source={{uri: source.uri}}
+                style={{
+                  ...style,
+                }}
+              />
+            );
+          }}
+          renderHeader={() => {
+            return (
+              <TouchableOpacity
+                onPress={() => {
+                  setShowImage(false);
+                }}
+                style={{
+                  padding: 10,
+                  alignItems: 'flex-end',
+                }}>
+                <AntDesign name="close" size={24} color={'white'} />
+              </TouchableOpacity>
+            );
+          }}
+          onShowModal={() => {
+            setShowImage(false);
+          }}
+        />
+      </CustomModal>
     </View>
   );
 };

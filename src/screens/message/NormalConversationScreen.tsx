@@ -1,6 +1,5 @@
 import React, {useEffect} from 'react';
 import {
-  FlatList,
   Image,
   Linking,
   StyleSheet,
@@ -11,7 +10,10 @@ import {
 } from 'react-native';
 import {useSharedValue, withTiming} from 'react-native-reanimated';
 
+import {FlashList} from '@shopify/flash-list';
 import AudioRecorderPlayer from 'react-native-audio-recorder-player';
+import ImageViewer from 'react-native-image-zoom-viewer';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import ConversationCarousal from '../../components/common/ConversationCarousal/ConversationCarousal';
 import CustomModal from '../../components/common/customModal/CustomModal';
 import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
@@ -51,6 +53,9 @@ const NormalConversationScreen = ({
   const [AllMessages, setAllMessages] = React.useState<IMessage[]>([]);
   // console.log(userInfo);
   const [isPlaying, setIsPlaying] = React.useState<boolean>(false);
+  const [showImage, setShowImage] = React.useState<boolean>(false);
+  const [imageIndex, setImageIndex] = React.useState<number>(0);
+  const [showImages, setShowImages] = React.useState<Array<{url: string}>>([]);
 
   const onPlayAudio = async (audioUrl: string) => {
     try {
@@ -87,17 +92,28 @@ const NormalConversationScreen = ({
 
   useEffect(() => {
     if (messages) {
-      // Create a shallow copy of the messages data before sorting
-      const sortedMessages = [...(messages?.data || [])].sort((a, b) => {
-        return (
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        );
+      let imageFile: Array<{url: string}> = [];
+      setAllMessages([...messages?.data] || []);
+      messages.data?.forEach((item: any) => {
+        if (item?.image) {
+          imageFile.push({
+            url: makeImage(item?.image),
+          });
+        }
       });
-
-      // Set the sorted messages
-      setAllMessages(sortedMessages);
+      setShowImages(imageFile || []);
     }
   }, [messages]);
+
+  const handleSelectIndex = (image: string) => {
+    // setImageIndex(index);
+    setImageIndex(
+      showImages.findIndex(
+        (item: {url: string}) => item.url === makeImage(image),
+      ),
+    );
+    setShowImage(true);
+  };
 
   return (
     <View
@@ -217,14 +233,17 @@ const NormalConversationScreen = ({
         </Text>
       </Animated.View> */}
 
-      <FlatList
+      <FlashList
         scrollEventThrottle={10}
+        estimatedItemSize={height * 0.6}
         keyboardShouldPersistTaps="always"
+        keyExtractor={(item, index) => index.toString()}
         showsVerticalScrollIndicator={false}
-        style={{
-          height: height * 0.6,
-          // backgroundColor: 'red',
-        }}
+        // style={{
+        //   height: height * 0.6,
+        //   // backgroundColor: 'red',
+        // }}
+
         contentContainerStyle={{
           paddingTop: 10,
           paddingBottom: 60,
@@ -249,7 +268,11 @@ const NormalConversationScreen = ({
           }
         }}
         inverted
-        data={AllMessages}
+        data={AllMessages?.sort((a, b) => {
+          return (
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          );
+        })}
         renderItem={item => {
           return (
             <View
@@ -316,7 +339,10 @@ const NormalConversationScreen = ({
                       }}>
                       <View style={{alignItems: 'flex-end', gap: 10}}>
                         {item.item.image && (
-                          <View
+                          <TouchableOpacity
+                            onPress={() => {
+                              handleSelectIndex(item.item.image);
+                            }}
                             style={{
                               backgroundColor: colors.bg,
                               // elevation: 2,
@@ -336,7 +362,7 @@ const NormalConversationScreen = ({
                                 borderRadius: 15,
                               }}
                             />
-                          </View>
+                          </TouchableOpacity>
                         )}
 
                         <TouchableOpacity
@@ -407,9 +433,9 @@ const NormalConversationScreen = ({
 
       <View
         style={{
-          flex: 1,
+          // flex: 1,
+          height: 130,
           justifyContent: 'center',
-
           alignItems: 'center',
         }}>
         <ConversationCarousal
@@ -417,31 +443,8 @@ const NormalConversationScreen = ({
           type
           record
           books
-          messageRefetch={messageRefetch}
           chatIt={route?.params?.data?.id}
-          // ImageLink={newImage}
-          // setMessages={setMessages}
-          // messages={messages}
-          // setImageAssets={setNewImage}
           onSendImageMessage={() => {}}
-          // setTextMessage={setNewMessages}
-          // onSendTextMessage={() => {
-          //   setMessages([
-          //     ...messages,
-          //     {
-          //       id: messages.length + 1,
-
-          //       text: newMessages,
-          //       createdAt: new Date(),
-
-          //       user: {
-          //         _id: 1,
-          //         name: 'Amina',
-          //         avatar: require('../../assets/tempAssets/3a906b3de8eaa53e14582edf5c918b5d.jpg'),
-          //       },
-          //     },
-          //   ]);
-          // }}
         />
       </View>
 
@@ -570,6 +573,64 @@ const NormalConversationScreen = ({
             </TouchableOpacity>
           </View>
         </View>
+      </CustomModal>
+
+      <CustomModal
+        width={'100%'}
+        height={'100%'}
+        modalVisible={showImage}
+        containerColor="rgba(0, 0, 0, 0.8)"
+        setModalVisible={setShowImage}>
+        <ImageViewer
+          imageUrls={showImages}
+          show={showImage}
+          backgroundColor="rgba(0, 0, 0, 0.8)"
+          index={imageIndex}
+          onSwipeDown={() => {
+            setShowImage(false);
+          }}
+          useNativeDriver
+          style={{
+            width: '100%',
+            height: '100%',
+            borderWidth: 0,
+            // backgroundColor: 'rgba(0, 0, 0, 0.8)',
+            margin: 0,
+            padding: 0,
+            borderColor: 'red',
+          }}
+          enableSwipeDown
+          enableImageZoom
+          doubleClickInterval={200}
+          renderImage={({style, source}) => {
+            // console.log(source);
+            return (
+              <Image
+                source={{uri: source.uri}}
+                style={{
+                  ...style,
+                }}
+              />
+            );
+          }}
+          renderHeader={() => {
+            return (
+              <TouchableOpacity
+                onPress={() => {
+                  setShowImage(false);
+                }}
+                style={{
+                  padding: 10,
+                  alignItems: 'flex-end',
+                }}>
+                <AntDesign name="close" size={24} color={'white'} />
+              </TouchableOpacity>
+            );
+          }}
+          onShowModal={() => {
+            setShowImage(false);
+          }}
+        />
       </CustomModal>
     </View>
   );
