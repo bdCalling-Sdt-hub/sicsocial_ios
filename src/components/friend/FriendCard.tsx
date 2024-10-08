@@ -42,7 +42,7 @@ const FriendCard = ({
   const [acceptBtnPress, setAcceptBtnPress] = React.useState(false);
 
   const [rejectBtnPress, setRejectBtnPress] = React.useState(false);
-  console.log(item);
+  // console.log(item);
   return (
     <>
       {/*============== card start ============ */}
@@ -385,6 +385,6 @@ const FriendCard = ({
   );
 };
 
-export default FriendCard;
+export default React.memo(FriendCard);
 
 const styles = StyleSheet.create({});

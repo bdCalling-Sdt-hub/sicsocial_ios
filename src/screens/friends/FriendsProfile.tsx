@@ -7,25 +7,49 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import {
+  useAcceptFriendRequestMutation,
+  useCancelFriendRequestMutation,
+  useRemoveFriendRequestMutation,
+  useSendFriendRequestMutation,
+} from '../../redux/apiSlices/friendsSlices';
 
 import React from 'react';
-import { SvgXml } from 'react-native-svg';
+import {SvgXml} from 'react-native-svg';
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
 import ConversationalCard from '../../components/common/ConversationalCard';
 import CustomModal from '../../components/common/customModal/CustomModal';
 import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
-import { useStyles } from '../../context/ContextApi';
-import { NavigProps } from '../../interfaces/NaviProps';
+import {useStyles} from '../../context/ContextApi';
+import {NavigProps} from '../../interfaces/NaviProps';
 
-const FriendsProfile = ({navigation}: NavigProps<null>) => {
+const FriendsProfile = ({
+  navigation,
+  route,
+}: NavigProps<{
+  isFriend: boolean;
+  isFriendRequest: boolean;
+  isFriendRequestSent: boolean;
+}>) => {
   const {colors, font} = useStyles();
 
-  const [isFriend, setIsFriend] = React.useState(false);
-  const [isFriendRequest, setIsFriendRequest] = React.useState(true);
-  const [isFriendRequestSent, setIsFriendRequestSent] = React.useState(false);
+  const [isFriend, setIsFriend] = React.useState(
+    route?.params?.data?.isFriend || false,
+  );
+  const [isFriendRequest, setIsFriendRequest] = React.useState(
+    route?.params?.data?.isFriendRequest || false,
+  );
+  const [isFriendRequestSent, setIsFriendRequestSent] = React.useState(
+    route?.params?.data?.isFriendRequestSent || false,
+  );
   const [modalVisible, setModalVisible] = React.useState(false);
   const [confirmationModal, setConfirmationModal] = React.useState(false);
   const [reportModal, setReportModal] = React.useState(false);
+
+  const [acceptRequest] = useAcceptFriendRequestMutation();
+  const [cancelRequest] = useCancelFriendRequestMutation();
+  const [sendFriendRequest] = useSendFriendRequestMutation();
+  const [removeFriendRequest] = useRemoveFriendRequestMutation();
 
   return (
     <View
@@ -41,11 +65,10 @@ const FriendsProfile = ({navigation}: NavigProps<null>) => {
           setModalVisible(!modalVisible);
         }}
       />
-       
-     <ScrollView
-       showsVerticalScrollIndicator={false}
-       showsHorizontalScrollIndicator={false}
-   
+
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        showsHorizontalScrollIndicator={false}
         contentContainerStyle={{
           paddingBottom: 30,
         }}>
@@ -251,43 +274,45 @@ const FriendsProfile = ({navigation}: NavigProps<null>) => {
                 : 'Add friends'}
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity
-            style={{
-              backgroundColor: colors.primaryColor,
-              height: 35,
-              flexDirection: 'row',
-              gap: 8,
-              justifyContent: 'center',
-              alignItems: 'center',
-              paddingHorizontal: 15,
-              borderRadius: 50,
-              elevation: 2,
-            }}>
-            <Image
-              resizeMode="contain"
+          {isFriend && (
+            <TouchableOpacity
               style={{
-                width: 16,
-                height: 16,
-              }}
-              source={require('../../assets/icons/message/message.png')}
-            />
-            <Text
-              style={{
-                fontFamily: font.Poppins,
-                fontSize: 14,
-                color: colors.textColor.white,
+                backgroundColor: colors.primaryColor,
+                height: 35,
+                flexDirection: 'row',
+                gap: 8,
+                justifyContent: 'center',
+                alignItems: 'center',
+                paddingHorizontal: 15,
+                borderRadius: 50,
+                elevation: 2,
               }}>
-              message
-            </Text>
-          </TouchableOpacity>
+              <Image
+                resizeMode="contain"
+                style={{
+                  width: 16,
+                  height: 16,
+                }}
+                source={require('../../assets/icons/message/message.png')}
+              />
+              <Text
+                style={{
+                  fontFamily: font.Poppins,
+                  fontSize: 14,
+                  color: colors.textColor.white,
+                }}>
+                message
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
         <View
           style={{
-            marginHorizontal: '5%',
             marginTop: 20,
           }}>
           <Text
             style={{
+              marginHorizontal: '5%',
               fontFamily: font.PoppinsMedium,
               fontSize: 17,
               color: colors.textColor.primaryColor,
@@ -307,73 +332,6 @@ const FriendsProfile = ({navigation}: NavigProps<null>) => {
               lastMessageTime="9:30 am"
               lastMessage="All of my friends pleas 
             Share your story my friends"
-            />
-            <ConversationalCard
-              conversationStyle="normal"
-              cardStyle="two"
-              // havNotUser
-              conversationTitle="Khushi Aktar"
-              isReply
-              conversationSubtitle="replied in chat"
-              lastMessageTime="9:30 am"
-              lastMessage="Hello asad vai, i`m 
-coming from Banasri"
-            />
-            <ConversationalCard
-              conversationStyle="normal"
-              cardStyle="two"
-              havNotUser
-              conversationTitle="Khushi Aktar"
-              isReply
-              conversationSubtitle="replied in chat"
-              lastMessageTime="9:30 am"
-              lastMessage="Hello asad vai, i`m 
-coming from Banasri"
-            />
-            <ConversationalCard
-              conversationStyle="normal"
-              cardStyle="book"
-              conversationTitle="SIC Discussion"
-              conversationSubtitle="recommendations"
-              lastMessageTime="9:30 am"
-              lastMessage="Hello Asadullah some books
-is recognize for SIC "
-            />
-            <ConversationalCard
-              conversationStyle="normal"
-              cardStyle="three"
-              conversationTitle="COFFE HOUSE"
-              conversationSubtitle="join room"
-              lastMessageTime="8:10 am"
-              lastMessage="nadin invite you in room"
-            />
-            <ConversationalCard
-              conversationStyle="normal"
-              cardStyle="four"
-              conversationTitle="COFFE HOUSE"
-              conversationSubtitle="join room"
-              lastMessageTime="8:10 am"
-              lastMessage="Hello Asadullah some books
-is recognize for SIC "
-            />
-            <ConversationalCard
-              conversationStyle="normal"
-              cardStyle="three"
-              manyPeople
-              havNotUser
-              conversationTitle="COFFE HOUSE"
-              conversationSubtitle="join room"
-              lastMessageTime="8:10 am"
-              lastMessage="nadin invite you in room"
-            />
-            <ConversationalCard
-              conversationStyle="normal"
-              cardStyle="three"
-              havNotUser
-              conversationTitle="COFFE HOUSE"
-              conversationSubtitle="join room"
-              lastMessageTime="8:10 am"
-              lastMessage="nadin invite you in room"
             />
           </View>
           {/* <TouchableOpacity
