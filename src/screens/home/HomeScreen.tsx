@@ -10,7 +10,11 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import Animated, {useSharedValue, withTiming} from 'react-native-reanimated';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
 import {useContextApi, useStyles} from '../../context/ContextApi';
 import {height, isTablet} from '../../utils/utils';
 
@@ -50,6 +54,12 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
   // lines of modal animation
 
   const scrollViewGapHight = useSharedValue('0%');
+
+  const bottomPaddingAStyle = useAnimatedStyle(() => {
+    return {
+      paddingBottom: scrollViewGapHight.value,
+    };
+  });
 
   useEffect(() => {
     if (isLive) {
@@ -283,11 +293,7 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
         // estimatedItemSize={600}
       />
 
-      <Animated.View
-        style={{
-          paddingBottom: scrollViewGapHight,
-        }}
-      />
+      <Animated.View style={bottomPaddingAStyle} />
 
       {/*==================== Body part Start ===================  */}
 

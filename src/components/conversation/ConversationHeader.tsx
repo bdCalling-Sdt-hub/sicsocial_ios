@@ -1,11 +1,11 @@
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import React from 'react';
-import {NavigProps} from '../../interfaces/NaviProps';
 
-import Feather from 'react-native-vector-icons/Feather';
-import {SvgXml} from 'react-native-svg';
-import {useStyles} from '../../context/ContextApi';
+import React from 'react';
 import LinearGradient from 'react-native-linear-gradient';
+import {SvgXml} from 'react-native-svg';
+import Feather from 'react-native-vector-icons/Feather';
+import {useStyles} from '../../context/ContextApi';
+import {NavigProps} from '../../interfaces/NaviProps';
 
 interface IConversationHeaderProps extends NavigProps<null> {
   optionOnPress?: () => void;
@@ -50,7 +50,15 @@ const ConversationHeader = ({
         }}>
         <TouchableOpacity
           style={{}}
-          onPress={() => navigation && navigation.goBack()}>
+          onPress={() => {
+            if (navigation && navigation.canGoBack()) {
+              // If there is navigation history, go back
+              navigation.goBack();
+            } else {
+              // If there's no navigation history (likely a deep link entry), navigate to Home
+              navigation && navigation.navigate('HomeRoutes');
+            }
+          }}>
           <Feather
             name="arrow-left"
             color={colors.textColor.neutralColor}

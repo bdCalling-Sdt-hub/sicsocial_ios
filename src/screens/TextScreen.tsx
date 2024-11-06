@@ -4,7 +4,7 @@ import React from 'react';
 
 const TextScreen = () => {
   return (
-    <View>
+    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
       <Text>TextScreen</Text>
     </View>
   );

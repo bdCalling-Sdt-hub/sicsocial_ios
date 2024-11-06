@@ -2,6 +2,7 @@ import {
   Easing,
   Image,
   PermissionsAndroid,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -10,24 +11,28 @@ import {
   View,
   useWindowDimensions,
 } from 'react-native';
-import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
 
 import React from 'react';
 import AudioRecorderPlayer from 'react-native-audio-recorder-player';
-import { AnimatedCircularProgress } from 'react-native-circular-progress';
+import {AnimatedCircularProgress} from 'react-native-circular-progress';
 import BackButtonWithTitle from '../../../components/common/BackButtonWithTitle';
 import NormalButton from '../../../components/common/NormalButton';
-import { useStyles } from '../../../context/ContextApi';
-import { NavigProps } from '../../../interfaces/NaviProps';
-import { useSendFeedBackMutation } from '../../../redux/apiSlices/additionalSlices';
-import { isSmall } from '../../../utils/utils';
+import {useStyles} from '../../../context/ContextApi';
+import {NavigProps} from '../../../interfaces/NaviProps';
+import {useSendFeedBackMutation} from '../../../redux/apiSlices/additionalSlices';
+import {isSmall} from '../../../utils/utils';
 
 const audioRecorderPlayer = new AudioRecorderPlayer();
 const FeedBackScreen = ({navigation}: NavigProps<null>) => {
   const {colors, font} = useStyles();
   const {height} = useWindowDimensions();
   const [feedbackTest, setFeedbackTest] = React.useState('');
-  const [sendFeedBack] = useSendFeedBackMutation()
+  const [sendFeedBack] = useSendFeedBackMutation();
   const [recordOn, setRecordOn] = React.useState(false);
   const [recordOnDone, setRecordOnDone] = React.useState(false);
   const letsBorderAnimationValue = useSharedValue(23);
@@ -38,16 +43,17 @@ const FeedBackScreen = ({navigation}: NavigProps<null>) => {
     };
   });
 
-  
-  const recodingOn =  async() => {
-    if(!recordOn){
-      await PermissionsAndroid.requestMultiple([
-        PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
-      ]);
-      
+  const recodingOn = async () => {
+    if (!recordOn) {
+      if (Platform.OS === 'android') {
+        await PermissionsAndroid.requestMultiple([
+          PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+        ]);
+      }
+
       setRecordOn(true);
       setRecordOnDone(false);
-     await audioRecorderPlayer.startRecorder();
+      await audioRecorderPlayer.startRecorder();
       letsBorderAnimationValue.value =
         letsBorderAnimationValue.value === 8
           ? withTiming(25, {
@@ -57,30 +63,27 @@ const FeedBackScreen = ({navigation}: NavigProps<null>) => {
           : withTiming(8, {
               duration: 200,
             });
+    } else {
+      setRecordOn(false);
+      setRecordOnDone(true);
+      letsBorderAnimationValue.value = 20;
+      const audioPath = await audioRecorderPlayer.stopRecorder();
+      // console.log(audioPath);
+      const audio = {
+        uri: audioPath,
+        type: 'audio/wav', // Try changing this if 'audio/x-wav' doesn't work
+        name: 'voice.wav',
+      };
+      sendFeedBackHandler(audio);
     }
-   else{
-    setRecordOn(false);
-    setRecordOnDone(true);
-    letsBorderAnimationValue.value = 20
-    const audioPath =  await audioRecorderPlayer.stopRecorder();
-    // console.log(audioPath);
-    const audio = {
-      uri: audioPath,   
-      type: 'audio/wav', // Try changing this if 'audio/x-wav' doesn't work
-      name: 'voice.wav',
-    };
-    sendFeedBackHandler(audio)
-   }
-   
   };
 
-  const sendFeedBackHandler = async (audio) => {
+  const sendFeedBackHandler = async audio => {
     let text = feedbackTest;
-    
+
     try {
-      await sendFeedBack({message:text})
-    } catch (error) {
-    }
+      await sendFeedBack({message: text});
+    } catch (error) {}
   };
 
   return (
@@ -102,10 +105,10 @@ const FeedBackScreen = ({navigation}: NavigProps<null>) => {
           fontFamily: font.PoppinsSemiBold,
         }}
       />
-       
-    <ScrollView
-       showsVerticalScrollIndicator={false}
-       showsHorizontalScrollIndicator={false}
+
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        showsHorizontalScrollIndicator={false}
         keyboardShouldPersistTaps="always"
         style={{
           paddingHorizontal: '4%',
@@ -124,7 +127,7 @@ const FeedBackScreen = ({navigation}: NavigProps<null>) => {
             padding: 16,
             backgroundColor: colors.secondaryColor,
             borderRadius: 20,
-            minHeight : "90%"
+            minHeight: '90%',
           }}>
           <TextInput
             textAlignVertical="top"
@@ -137,7 +140,6 @@ const FeedBackScreen = ({navigation}: NavigProps<null>) => {
               color: colors.textColor.light,
               lineHeight: 24,
               marginBottom: 16,
-             
             }}
           />
         </View>
@@ -148,11 +150,12 @@ const FeedBackScreen = ({navigation}: NavigProps<null>) => {
           paddingBottom: 20,
           height: height * 0.25,
         }}>
-       <View style={{
-         alignItems: 'center',
-         paddingVertical : 10
-       }}>
-       <TouchableOpacity
+        <View
+          style={{
+            alignItems: 'center',
+            paddingVertical: 10,
+          }}>
+          <TouchableOpacity
             onPress={() => {
               recodingOn();
             }}
@@ -161,11 +164,11 @@ const FeedBackScreen = ({navigation}: NavigProps<null>) => {
               height: 95,
               justifyContent: 'center',
               alignItems: 'center',
-              transform : [
+              transform: [
                 {
-                  scale : isSmall() ? .8 : 1
-                }
-              ]
+                  scale: isSmall() ? 0.8 : 1,
+                },
+              ],
             }}>
             {/* <View
               style={{
@@ -187,9 +190,7 @@ const FeedBackScreen = ({navigation}: NavigProps<null>) => {
                 {activeIndexBigButton === index && item?.name}
               </Animated.Text>
             </View> */}
-            {
-       
-            recordOn ? (
+            {recordOn ? (
               <>
                 {recordOnDone ? (
                   <Animated.View
@@ -347,7 +348,7 @@ const FeedBackScreen = ({navigation}: NavigProps<null>) => {
               </Animated.View>
             )}
           </TouchableOpacity>
-       </View>
+        </View>
 
         <View
           style={{

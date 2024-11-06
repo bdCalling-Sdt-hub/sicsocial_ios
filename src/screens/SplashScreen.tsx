@@ -1,9 +1,15 @@
-import React, { SetStateAction } from 'react';
-import { ImageBackground, StatusBar, StyleSheet, View } from 'react-native';
+import React, {SetStateAction} from 'react';
+import {
+  ImageBackground,
+  Platform,
+  StatusBar,
+  StyleSheet,
+  View,
+} from 'react-native';
 
 import LottieView from 'lottie-react-native';
-import { useStyles } from '../context/ContextApi';
-import { NavigProps } from '../interfaces/NaviProps';
+import {useStyles} from '../context/ContextApi';
+import {NavigProps} from '../interfaces/NaviProps';
 
 interface SplashProps extends NavigProps<null> {
   setIsSplash: React.Dispatch<SetStateAction<boolean>>;
@@ -45,7 +51,7 @@ const SplashScreen = ({navigation, setIsSplash}: SplashProps) => {
           }}
         />
       </ImageBackground>
-      <StatusBar hidden />
+      {Platform.OS !== 'ios' && <StatusBar hidden />}
     </View>
   );
 };

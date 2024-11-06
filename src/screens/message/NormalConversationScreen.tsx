@@ -1,5 +1,6 @@
 import React, {useEffect} from 'react';
 import {
+  FlatList,
   Image,
   Linking,
   StyleSheet,
@@ -10,7 +11,6 @@ import {
 } from 'react-native';
 import {useSharedValue, withTiming} from 'react-native-reanimated';
 
-import {FlashList} from '@shopify/flash-list';
 import AudioRecorderPlayer from 'react-native-audio-recorder-player';
 import ImageViewer from 'react-native-image-zoom-viewer';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -19,6 +19,7 @@ import CustomModal from '../../components/common/customModal/CustomModal';
 import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
 import ConversationHeader from '../../components/conversation/ConversationHeader';
 import {useStyles} from '../../context/ContextApi';
+import {useAudioPlayer} from '../../hook/playMusic';
 import {NavigProps} from '../../interfaces/NaviProps';
 import {useGetUserProfileQuery} from '../../redux/apiSlices/authSlice';
 import {useGetMessageQuery} from '../../redux/apiSlices/messageSlies';
@@ -43,45 +44,22 @@ const NormalConversationScreen = ({
   navigation,
   route,
 }: NavigProps<{id: string}>) => {
+  console.log(route?.params);
   const {width, height} = useWindowDimensions();
   const {colors, font} = useStyles();
   const {data: messages, refetch: messageRefetch} = useGetMessageQuery(
-    {id: route?.params?.data?.id},
-    {skip: !route?.params?.data?.id},
+    {id: route?.params?.data?.id || route?.params?.id},
+    {skip: !route?.params},
   );
   const {data: userInfo} = useGetUserProfileQuery({});
+  const {toggleAudioPlayback} = useAudioPlayer();
   const [AllMessages, setAllMessages] = React.useState<IMessage[]>([]);
   // console.log(userInfo);
-  const [isPlaying, setIsPlaying] = React.useState<boolean>(false);
+  const [playItem, setPlayItem] = React.useState('');
+
   const [showImage, setShowImage] = React.useState<boolean>(false);
   const [imageIndex, setImageIndex] = React.useState<number>(0);
   const [showImages, setShowImages] = React.useState<Array<{url: string}>>([]);
-
-  const onPlayAudio = async (audioUrl: string) => {
-    try {
-      setIsPlaying(true);
-      await audioRecorderPlayer.startPlayer(audioUrl);
-
-      // Optional: Stop the player after playback finishes
-      audioRecorderPlayer.addPlayBackListener(e => {
-        if (e?.current_position === e.duration) {
-          onStopAudio();
-        }
-      });
-    } catch (error) {
-      console.log('Error playing audio:', error);
-    }
-  };
-
-  const onStopAudio = async () => {
-    try {
-      setIsPlaying(false);
-      await audioRecorderPlayer.stopPlayer();
-      audioRecorderPlayer.removePlayBackListener();
-    } catch (error) {
-      console.log('Error stopping audio:', error);
-    }
-  };
 
   const [volume, setVolume] = React.useState<number>(1);
   const [modalVisible, setModalVisible] = React.useState(false);
@@ -233,9 +211,9 @@ const NormalConversationScreen = ({
         </Text>
       </Animated.View> */}
 
-      <FlashList
+      <FlatList
         scrollEventThrottle={10}
-        estimatedItemSize={height * 0.6}
+        // estimatedItemSize={height * 0.6}
         keyboardShouldPersistTaps="always"
         keyExtractor={(item, index) => index.toString()}
         showsVerticalScrollIndicator={false}
@@ -295,11 +273,17 @@ const NormalConversationScreen = ({
                     borderRadius: 10,
                     paddingHorizontal: 10,
                     paddingVertical: 10,
+
                     maxWidth: '90%',
                     minWidth: '50%',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    minHeight: item.item?.audio === playItem ? 60 : 40,
                     backgroundColor:
                       item.item?.sender._id === userInfo?.data?._id
-                        ? colors.secondaryColor
+                        ? item.item?.audio === playItem
+                          ? colors?.secondaryDeeper1
+                          : colors.secondaryColor
                         : colors.redisExtraLight,
                     flexDirection: 'row',
                   }}>
@@ -323,6 +307,7 @@ const NormalConversationScreen = ({
                       // paddingVertical: 2,
                       maxWidth: '90%',
                       minWidth: '50%',
+
                       // backgroundColor: colors.redisExtraLight,
                       gap: 15,
                     }}>
@@ -332,6 +317,7 @@ const NormalConversationScreen = ({
                         borderRadius: 10,
                         paddingHorizontal: 10,
                         paddingVertical: 5,
+
                         alignItems:
                           item.item?.sender._id === userInfo?.data?._id
                             ? 'flex-end'
@@ -366,18 +352,29 @@ const NormalConversationScreen = ({
                         )}
 
                         <TouchableOpacity
+                          style={{}}
                           onPress={async () => {
                             if (item.item.path) {
                               Linking.openURL(item.item.path);
                             } else if (item.item.audio) {
-                              if (isPlaying) {
-                                await onStopAudio();
-                              } else {
-                                await onPlayAudio(makeImage(item.item.audio));
-                              }
+                              setPlayItem(item.item.audio);
+                              toggleAudioPlayback(makeImage(item.item.audio));
                             }
                           }}>
-                          <Text>Audio</Text>
+                          <Text
+                            style={{
+                              fontSize: 14,
+                              color: colors.textColor.secondaryColor,
+                              fontFamily: font.Poppins,
+                              maxWidth: width * 0.65,
+                              textAlign:
+                                item.item?.sender._id === userInfo?.data?._id
+                                  ? 'right'
+                                  : 'left',
+                            }}>
+                            Audio
+                          </Text>
+
                           {item.item.text && (
                             <Text
                               style={{

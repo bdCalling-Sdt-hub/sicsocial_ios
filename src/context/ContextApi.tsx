@@ -1,9 +1,9 @@
-import React, { createContext, useContext, useState } from 'react';
-import { Appearance, Dimensions } from 'react-native';
+import React, {createContext, useContext, useState} from 'react';
+import {Appearance, Dimensions} from 'react-native';
 
-import { useDispatch } from 'react-redux';
-import { setToken } from '../redux/apiSlices/tokenSlice';
-import { getStorageToken } from '../utils/utils';
+import {useDispatch} from 'react-redux';
+import {setToken} from '../redux/apiSlices/tokenSlice';
+import {getStorageToken} from '../utils/utils';
 
 interface ProviderProps {
   isDark?: boolean;
@@ -100,6 +100,7 @@ export const useStyles = () => {
       primaryColor: isDark ? '#D29E3B' : '#D29E3B',
 
       secondaryColor: isDark ? '#333333' : '#FBF5EB',
+      secondaryDeeper1: isDark ? '#333333' : '#F6EDE3',
       neutralColor: isDark ? '#444444' : '#DBB162',
       btn: {
         variantOne: isDark ? '#5C5C5C' : '#FBF5EB',
@@ -149,10 +150,10 @@ const ContextApi = ({children}: ContextApiProps) => {
   const [isLive, setIsLive] = useState(false);
   const shearValue = {isDark, setDark, isLive, setIsLive};
 
-  const storageToken = getStorageToken()
-  const dispatch = useDispatch()
-  if(storageToken){
-      dispatch(setToken(storageToken))
+  const storageToken = getStorageToken();
+  const dispatch = useDispatch();
+  if (storageToken) {
+    dispatch(setToken(storageToken));
   }
 
   return (

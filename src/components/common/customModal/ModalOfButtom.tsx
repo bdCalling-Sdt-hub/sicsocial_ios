@@ -1,14 +1,15 @@
 import {
   KeyboardAvoidingView,
+  Platform,
   ScrollView,
   TouchableOpacity,
-  View
+  View,
 } from 'react-native';
 
 import React from 'react';
-import { Dialog } from 'react-native-ui-lib';
+import {Dialog} from 'react-native-ui-lib';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import { useStyles } from '../../../context/ContextApi';
+import {useStyles} from '../../../context/ContextApi';
 
 type CustomModalProps = {
   modalVisible: boolean;
@@ -17,7 +18,6 @@ type CustomModalProps = {
   backButton?: boolean;
   containerColor?: string;
   backButtonColor?: string;
-
 };
 
 const ModalOfBottom = ({
@@ -31,7 +31,6 @@ const ModalOfBottom = ({
   const {colors, window, font} = useStyles();
 
   return (
- 
     <>
       <KeyboardAvoidingView>
         <Dialog
@@ -57,7 +56,6 @@ const ModalOfBottom = ({
             }}>
             {backButton && (
               <TouchableOpacity
-              
                 onPressOut={() => {
                   setTimeout(() => {
                     setModalVisible(false);
@@ -91,12 +89,14 @@ const ModalOfBottom = ({
                 </View>
               </TouchableOpacity>
             )}
-             
-     <ScrollView
-       showsVerticalScrollIndicator={false}
-       showsHorizontalScrollIndicator={false}
+
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              showsHorizontalScrollIndicator={false}
               keyboardShouldPersistTaps="always"
-             >
+              contentContainerStyle={{
+                paddingVertical: Platform.OS === 'ios' ? 10 : 0,
+              }}>
               {children}
             </ScrollView>
           </View>

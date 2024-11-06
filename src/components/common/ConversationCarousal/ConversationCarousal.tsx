@@ -1,8 +1,9 @@
-import React, {Dispatch, SetStateAction} from 'react';
+import React, {Dispatch, SetStateAction, useEffect} from 'react';
 import {
   Easing,
   Image,
   PermissionsAndroid,
+  Platform,
   StyleSheet,
   Text,
   TextInput,
@@ -17,6 +18,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
+import {DeviceEventEmitter} from 'react-native';
 import AudioRecorderPlayer from 'react-native-audio-recorder-player';
 import {AnimatedCircularProgress} from 'react-native-circular-progress';
 import Carousel from 'react-native-reanimated-carousel';
@@ -69,29 +71,6 @@ const data = [
     name: 'New Face Dwn',
     activeImage: require('../../../assets/icons/modalIcons/oneBook.png'),
     unActive: require('../../../assets/icons/modalIcons/oneBook.png'),
-  },
-];
-
-const options = [
-  {
-    id: 1,
-    content: 'All',
-  },
-  {
-    id: 2,
-    content: 'Way of Life',
-  },
-  {
-    id: 3,
-    content: 'Business',
-  },
-  {
-    id: 4,
-    content: 'Human Family',
-  },
-  {
-    id: 5,
-    content: 'Worldview',
   },
 ];
 
@@ -273,9 +252,11 @@ const ConversationCarousal = ({
     if (!recordOn) {
       // startListening(); // Start listening for speech recognition
       // setRecognizedText('');
-      await PermissionsAndroid.requestMultiple([
-        PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
-      ]);
+      if (Platform.OS === 'android') {
+        await PermissionsAndroid.requestMultiple([
+          PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+        ]);
+      }
 
       setRecordOn(true);
       setRecordOnDone(false);
@@ -297,22 +278,28 @@ const ConversationCarousal = ({
       const audioPath = await audioRecorderPlayer.stopRecorder();
       // console.log(audioPath);
       const audio = {
-        uri: audioPath,
-        type: 'audio/wav', // Adjust this if needed
-        name: 'voice.wav',
+        uri: audioPath, // The path of the recorded audio file
+        type: 'audio/mp4', // Initial format is MP4
+        name: 'voice.mp4', // Use .mp4 extension
       };
-      // console.log(audio);
+      console.log(audio);
+      // try {
+      //   speechToText(audio);
+      // } catch (error) {
+      //   console.log(error);
+      // }
       const formData = new FormData();
       formData.append('chatId', chatIt);
       formData.append('audio', audio);
       console.log(formData);
-      createMessage(formData).catch(err => console.log(err));
+      createMessage(formData)
+        .then(res => console.log(res))
+        .catch(err => console.log(err));
     }
   };
 
   const handleCreateNewChat = React.useCallback(async (data: any) => {
     // console.log(chatIt, 'chatIt');
-
     try {
       // console.log(data, 'data');
       const formData = new FormData();
@@ -325,6 +312,18 @@ const ConversationCarousal = ({
     } catch (error) {
       console.log(error);
     }
+  }, []);
+
+  useEffect(() => {
+    const listener = DeviceEventEmitter.addListener('rn-recordback', event => {
+      // Handle the event here
+      console.log('Received rn-recordback event:', event);
+    });
+
+    return () => {
+      // Clean up the listener on component unmount
+      listener.remove();
+    };
   }, []);
 
   return (

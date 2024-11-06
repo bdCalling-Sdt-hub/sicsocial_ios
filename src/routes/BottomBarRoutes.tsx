@@ -6,12 +6,13 @@ import {
 } from '@react-navigation/bottom-tabs';
 import {
   Image,
+  Platform,
   StatusBar,
   StyleSheet,
   TouchableOpacity,
   View,
 } from 'react-native';
-import { useContextApi, useStyles } from '../context/ContextApi';
+import {useContextApi, useStyles} from '../context/ContextApi';
 
 import React from 'react';
 import LinearGradient from 'react-native-linear-gradient';
@@ -132,13 +133,15 @@ const MyTabBar: React.FC<BottomTabBarProps> = ({
           </TouchableOpacity>
         );
       })}
-      <StatusBar
-        hidden={false}
-        backgroundColor={'transparent'}
-        barStyle={'dark-content'}
-        animated
-        translucent={false}
-      />
+      {Platform.OS !== 'ios' && (
+        <StatusBar
+          hidden={false}
+          backgroundColor={'transparent'}
+          barStyle={'dark-content'}
+          animated
+          translucent={false}
+        />
+      )}
     </LinearGradient>
   );
 };

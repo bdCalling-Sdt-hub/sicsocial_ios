@@ -408,7 +408,6 @@ const FriendsProfile = ({
       <ModalOfBottom
         setModalVisible={setReportModal}
         modalVisible={reportModal}
-        onlyTopRadius={10}
         backButton>
         <View
           style={{

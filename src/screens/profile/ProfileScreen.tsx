@@ -26,24 +26,6 @@ import {useGetFaceDownQuery} from '../../redux/apiSlices/facedwonSlice';
 import {useGetFriendQuery} from '../../redux/apiSlices/friendsSlices';
 import {useGetNewsFeetQuery} from '../../redux/apiSlices/homeSlices';
 
-const FaceDown = [
-  {
-    id: 1,
-    name: 'Asad Face',
-    img: require('../../assets/tempAssets/face1.jpg'),
-  },
-  {
-    id: 2,
-    name: 'Cricket club',
-    img: require('../../assets/tempAssets/face2.png'),
-  },
-  {
-    id: 3,
-    name: 'T20 2024',
-    img: require('../../assets/tempAssets/face3.png'),
-  },
-];
-
 const ProfileScreen = ({navigation}: NavigProps<null>) => {
   const {data: newsFeet} = useGetNewsFeetQuery({});
   const {data: friends} = useGetFriendQuery({});
@@ -686,8 +668,9 @@ const ProfileScreen = ({navigation}: NavigProps<null>) => {
           <TouchableOpacity
             style={{}}
             onPress={() => {
-              Linking.openURL(`https://www.sic.com/@Asadullah
-              utm_medium=ch_profile&utm_campaign=DCDJyA3rtp`);
+              Linking.openURL(
+                `https://192.168.12.202:5000/profile/672886329f6598ff131b1960`,
+              );
             }}>
             <Text
               style={{
@@ -696,8 +679,7 @@ const ProfileScreen = ({navigation}: NavigProps<null>) => {
                 color: colors.blue,
                 marginTop: '10%',
               }}>
-              https://www.sic.com/@Asadullah
-              utm_medium=ch_profile&utm_campaign=DCDJyA3rtp
+              9dc7-103-174-189-193.ngrok-free.app
             </Text>
           </TouchableOpacity>
           <View
@@ -709,10 +691,10 @@ const ProfileScreen = ({navigation}: NavigProps<null>) => {
             <TouchableOpacity
               onPress={() => {
                 Clipboard.setString(
-                  `https://www.sic.com/@Asadullahutm_medium=ch_profile&utm_campaign=DCDJyA3rtp`,
+                  `http://192.168.12.202:5000/profile/672886329f6598ff131b1960`,
                 );
                 ToastAndroid.showWithGravity(
-                  `link copy to https://www.sic.com/@Asadullahutm_medium=ch_profile&utm_campaign=DCDJyA3rtp`,
+                  `link copy to http://192.168.12.202:5000/profile/672886329f6598ff131b1960`,
                   ToastAndroid.SHORT,
                   ToastAndroid.CENTER,
                 );

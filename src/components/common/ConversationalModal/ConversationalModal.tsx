@@ -4,6 +4,7 @@ import {
   Image,
   Modal,
   PermissionsAndroid,
+  Platform,
   Pressable,
   StyleSheet,
   Text,
@@ -23,6 +24,7 @@ import {useContextApi, useStyles} from '../../../context/ContextApi';
 import {isSmall, isTablet} from '../../../utils/utils';
 
 import {LinkPreview} from '@flyerhq/react-native-link-preview';
+import {DeviceEventEmitter} from 'react-native';
 import AudioRecorderPlayer from 'react-native-audio-recorder-player';
 import {AnimatedCircularProgress} from 'react-native-circular-progress';
 import {TextInput} from 'react-native-gesture-handler';
@@ -226,11 +228,6 @@ const ConversationalModal = ({navigation}: ConversationalModalProps) => {
       backgroundColor: backgroundColor.value,
       bottom: Bottom.value,
       maxWidth: 500,
-      // maxHeight : 500
-      // borderTopRightRadius: topBorderRadius.value,
-      // borderTopLeftRadius: topBorderRadius.value,
-      // borderTopEndRadius: topBorderRadius.value,
-      // borderTopStartRadius: topBorderRadius.value,
     };
   });
 
@@ -361,6 +358,7 @@ const ConversationalModal = ({navigation}: ConversationalModalProps) => {
             },
           });
           // console.log(result);
+          setImageModal(false);
         }
       }
       if (option === 'library') {
@@ -380,6 +378,7 @@ const ConversationalModal = ({navigation}: ConversationalModalProps) => {
               name: result?.assets![0].fileName,
             },
           });
+          setImageModal(false);
           // console.log(result);
         }
       }
@@ -390,9 +389,11 @@ const ConversationalModal = ({navigation}: ConversationalModalProps) => {
 
   const recodingOn = async () => {
     if (!recordOn) {
-      await PermissionsAndroid.requestMultiple([
-        PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
-      ]);
+      if (Platform.OS === 'android') {
+        await PermissionsAndroid.requestMultiple([
+          PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+        ]);
+      }
 
       setRecordOn(true);
       setRecordOnDone(false);
@@ -417,6 +418,7 @@ const ConversationalModal = ({navigation}: ConversationalModalProps) => {
         type: 'audio/wav', // Try changing this if 'audio/x-wav' doesn't work
         name: 'voice.wav',
       };
+
       handleCreateNewChat({audio});
     }
   };
@@ -454,7 +456,15 @@ const ConversationalModal = ({navigation}: ConversationalModalProps) => {
         },
       );
     }
+
+    const listener = DeviceEventEmitter.addListener('rn-recordback', event => {
+      // Handle the event here
+      console.log('Received rn-recordback event:', event);
+    });
     return () => {
+      // Clean up the listener on component unmount
+      listener.remove();
+
       liveCardAnimationPositionY.value = withTiming('-9%', {
         duration: 1000,
       });
@@ -482,7 +492,7 @@ const ConversationalModal = ({navigation}: ConversationalModalProps) => {
 
   // console.log(createChartInfo);
   const handleCreateNewChat = React.useCallback(
-    data => {
+    (data: any) => {
       const formData = new FormData();
       createChat({type: createChartInfo?.type || 'public'}).then(res => {
         // console.log(res);
@@ -1120,7 +1130,9 @@ const ConversationalModal = ({navigation}: ConversationalModalProps) => {
           <TouchableOpacity
             onPress={() => {
               handleImagePick('library');
-              setImageModal(false);
+              // setModalVisible(false);
+              // setImageModal(false);
+              // setImageModal(false);
             }}
             style={{
               paddingVertical: 5,
@@ -1141,7 +1153,6 @@ const ConversationalModal = ({navigation}: ConversationalModalProps) => {
       <ModalOfBottom
         modalVisible={textInputModal}
         setModalVisible={setTextInputModal}
-        height={height * 0.1}
         containerColor={colors.bg}>
         <View
           style={{
