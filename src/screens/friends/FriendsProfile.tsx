@@ -1,8 +1,8 @@
 import {
   Image,
   Linking,
+  RefreshControl,
   ScrollView,
-  StyleSheet,
   Text,
   TouchableOpacity,
   View,
@@ -10,74 +10,126 @@ import {
 import {
   useAcceptFriendRequestMutation,
   useCancelFriendRequestMutation,
+  useGetFriendProfileQuery,
   useRemoveFriendRequestMutation,
   useSendFriendRequestMutation,
 } from '../../redux/apiSlices/friendsSlices';
 
+import {format} from 'date-fns';
 import React from 'react';
-import {SvgXml} from 'react-native-svg';
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
 import ConversationalCard from '../../components/common/ConversationalCard';
 import CustomModal from '../../components/common/customModal/CustomModal';
 import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
 import {useStyles} from '../../context/ContextApi';
-import {NavigProps} from '../../interfaces/NaviProps';
+import {useGetUserProfileQuery} from '../../redux/apiSlices/authSlice';
+import {makeImage} from '../../utils/utils';
 
-const FriendsProfile = ({
-  navigation,
-  route,
-}: NavigProps<{
-  isFriend: boolean;
-  isFriendRequest: boolean;
-  isFriendRequestSent: boolean;
-}>) => {
+const FriendsProfile = ({navigation, route}) => {
   const {colors, font} = useStyles();
 
-  const [isFriend, setIsFriend] = React.useState(
-    route?.params?.data?.isFriend || false,
-  );
-  const [isFriendRequest, setIsFriendRequest] = React.useState(
-    route?.params?.data?.isFriendRequest || false,
-  );
-  const [isFriendRequestSent, setIsFriendRequestSent] = React.useState(
-    route?.params?.data?.isFriendRequestSent || false,
-  );
+  const {
+    data: userProfile,
+    refetch: refetchUserProfile,
+    isLoading: isLoadingUserProfile,
+  } = useGetUserProfileQuery({});
+
+  const [isFriend, setIsFriend] = React.useState(false);
+  const [isFriendRequest, setIsFriendRequest] = React.useState(false);
+  const [isFriendRequestSent, setIsFriendRequestSent] = React.useState(false);
   const [modalVisible, setModalVisible] = React.useState(false);
   const [confirmationModal, setConfirmationModal] = React.useState(false);
-  const [reportModal, setReportModal] = React.useState(false);
+
+  const {
+    data: friendProfile,
+    refetch: refetchFriendProfile,
+    isLoading: isLoadingFriendProfile,
+  } = useGetFriendProfileQuery({
+    id: route?.params?.data?.id,
+  });
+
+  // console.log(friendProfile);
+
+  React.useEffect(() => {
+    if (friendProfile?.data?.isFriend) {
+      const status = friendProfile.data.isFriend.status;
+      if (status === 'accepted') {
+        setIsFriend(true);
+        setIsFriendRequest(false);
+        setIsFriendRequestSent(false);
+      } else if (
+        friendProfile?.data?.isFriend?.senderId === userProfile?.data?._id
+      ) {
+        setIsFriend(false);
+        setIsFriendRequest(false);
+        setIsFriendRequestSent(true);
+      } else if (status === 'pending') {
+        setIsFriend(false);
+        setIsFriendRequest(true);
+        setIsFriendRequestSent(false);
+      } else {
+        setIsFriend(false);
+        setIsFriendRequest(false);
+        setIsFriendRequestSent(true);
+      }
+    } else {
+      setIsFriend(false);
+      setIsFriendRequest(false);
+      setIsFriendRequestSent(false);
+    }
+  }, [friendProfile]);
 
   const [acceptRequest] = useAcceptFriendRequestMutation();
   const [cancelRequest] = useCancelFriendRequestMutation();
   const [sendFriendRequest] = useSendFriendRequestMutation();
   const [removeFriendRequest] = useRemoveFriendRequestMutation();
 
+  const handleFriendButtonPress = () => {
+    if (isFriendRequest) {
+      setIsFriend(true);
+      setIsFriendRequest(false);
+      acceptRequest({
+        senderId: friendProfile?.data?._id,
+      }).then(res => {
+        console.log(res);
+      });
+    } else if (isFriend) {
+      setModalVisible(!modalVisible);
+    } else {
+      sendFriendRequest({
+        recipientId: friendProfile?.data?._id,
+      }).then(res => {
+        console.log(res);
+      });
+      setIsFriendRequestSent(!isFriendRequestSent);
+    }
+  };
+
   return (
-    <View
-      style={{
-        height: '100%',
-        backgroundColor: colors.bg,
-      }}>
+    <View style={{height: '100%', backgroundColor: colors.bg}}>
       <BackButtonWithTitle
         onOptions={isFriend}
         offTitle
         navigation={navigation}
-        onOptionPress={() => {
-          setModalVisible(!modalVisible);
-        }}
+        onOptionPress={() => setModalVisible(!modalVisible)}
       />
 
       <ScrollView
+        refreshControl={
+          <RefreshControl
+            refreshing={isLoadingFriendProfile}
+            onRefresh={refetchFriendProfile}
+            colors={[colors.primaryColor]}
+          />
+        }
         showsVerticalScrollIndicator={false}
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{
-          paddingBottom: 30,
-        }}>
+        contentContainerStyle={{paddingBottom: 30}}>
+        {/* User Profile */}
         <View
           style={{
-            paddingHorizontal: '5%',
             flexDirection: 'row',
+            paddingHorizontal: '5%',
             alignItems: 'center',
-            // justifyContent: 'center',
             gap: 16,
           }}>
           <View
@@ -91,105 +143,42 @@ const FriendsProfile = ({
               alignItems: 'center',
             }}>
             <Image
-              style={{
-                width: 100,
-                height: 100,
-                borderRadius: 46,
-                alignSelf: 'center',
+              style={{width: 100, height: 100, borderRadius: 46}}
+              source={{
+                uri: makeImage(friendProfile?.data?.avatar),
               }}
-              source={require('../../assets/tempAssets/51ad46951bbdc28be4cf7e384964f309.jpg')}
             />
           </View>
-          <View
-            style={{
-              gap: 4,
-            }}>
-            <View
+          <View style={{gap: 4}}>
+            <Text
               style={{
-                gap: -4,
+                fontFamily: font.PoppinsSemiBold,
+                fontSize: 17,
+                color: colors.textColor.primaryColor,
               }}>
-              <Text
-                style={{
-                  fontFamily: font.PoppinsSemiBold,
-                  fontSize: 17,
-                  color: colors.textColor.primaryColor,
-                }}>
-                Mithila
-              </Text>
-              <Text
-                style={{
-                  fontFamily: font.Poppins,
-                  fontSize: 13,
-                  color: colors.textColor.neutralColor,
-                }}>
-                amina111@gmail.com
-              </Text>
-            </View>
-            <View
-              style={{
-                gap: -4,
-              }}>
-              <Text
-                style={{
-                  fontFamily: font.PoppinsSemiBold,
-                  fontSize: 17,
-                  color: colors.primaryColor,
-                }}>
-                420
-              </Text>
-              <Text
-                style={{
-                  fontFamily: font.Poppins,
-                  fontSize: 13,
-                  color: colors.primaryColor,
-                }}>
-                friend
-              </Text>
-            </View>
-          </View>
-        </View>
-        <View
-          style={{
-            paddingHorizontal: '5%',
-          }}>
-          <TouchableOpacity
-            onPress={() => {
-              Linking.openURL('https://asadullah@insta.com');
-            }}
-            style={{
-              marginTop: 16,
-              flexDirection: 'row',
-
-              alignItems: 'center',
-              gap: 8,
-            }}>
-            <Image
-              style={{
-                width: 16,
-                height: 16,
-              }}
-              source={require('../../assets/icons/instagram/instagram.png')}
-            />
+              {friendProfile?.data?.fullName || 'Name'}
+            </Text>
             <Text
               style={{
                 fontFamily: font.Poppins,
-                fontSize: 14,
-                color: colors.textColor.rare,
+                fontSize: 13,
+                color: colors.textColor.neutralColor,
               }}>
-              asadullah@insta.com
+              {friendProfile?.data?.email || 'email@example.com'}
             </Text>
-          </TouchableOpacity>
-          <Text
-            style={{
-              marginTop: 10,
-              fontFamily: font.Poppins,
-              fontSize: 14,
-              color: colors.textColor.neutralColor,
-            }}>
-            scelerisque Praesent Donec amet, eget lorem. consectetur id varius
-            at, nec nec dolor quam amet, tincidunt quis vitae In Ut laoreet
-          </Text>
+            <Text
+              style={{
+                fontFamily: font.Poppins,
+                fontSize: 13,
+                color: colors.primaryColor,
+              }}>
+              {friendProfile?.data?.totalFriend || 0} friend
+              {friendProfile?.data?.totalFriend === 1 ? '' : 's'}
+            </Text>
+          </View>
         </View>
+
+        {/* Friend Button */}
         <View
           style={{
             flexDirection: 'row',
@@ -198,17 +187,7 @@ const FriendsProfile = ({
             gap: 24,
           }}>
           <TouchableOpacity
-            onPress={() => {
-              if (isFriendRequest) {
-                setIsFriend(true);
-                setIsFriendRequest(false);
-              }
-              if (isFriend) {
-                setModalVisible(!modalVisible);
-              } else {
-                setIsFriendRequestSent(!isFriendRequestSent);
-              }
-            }}
+            onPress={handleFriendButtonPress}
             style={{
               backgroundColor: isFriend ? colors.redisLight : colors.redis,
               height: 35,
@@ -220,43 +199,6 @@ const FriendsProfile = ({
               borderRadius: 50,
               elevation: 2,
             }}>
-            {isFriend && (
-              <SvgXml
-                xml={`<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M7.75978 6.97436C8.4921 6.97436 9.20797 6.76984 9.81687 6.38666C10.4258 6.00349 10.9004 5.45887 11.1806 4.82167C11.4608 4.18447 11.5342 3.48331 11.3913 2.80687C11.2484 2.13042 10.8958 1.50906 10.378 1.02137C9.86014 0.533682 9.20038 0.20156 8.48213 0.0670067C7.76389 -0.0675468 7.0194 0.00151094 6.34282 0.265447C5.66625 0.529384 5.08797 0.976344 4.68112 1.54981C4.27426 2.12327 4.0571 2.79748 4.0571 3.48718C4.05826 4.41171 4.44873 5.29805 5.14286 5.95179C5.837 6.60553 6.77812 6.97327 7.75978 6.97436ZM7.75978 1.23077C8.23363 1.23077 8.69685 1.36311 9.09084 1.61104C9.48484 1.85898 9.79192 2.21139 9.97325 2.62369C10.1546 3.036 10.202 3.48968 10.1096 3.92738C10.0171 4.36509 9.78896 4.76714 9.4539 5.0827C9.11883 5.39827 8.69193 5.61317 8.22718 5.70023C7.76244 5.7873 7.28071 5.74261 6.84293 5.57183C6.40514 5.40105 6.03096 5.11184 5.7677 4.74078C5.50444 4.36971 5.36393 3.93346 5.36393 3.48718C5.36462 2.88894 5.61726 2.3154 6.06642 1.89238C6.51558 1.46936 7.12457 1.23142 7.75978 1.23077ZM2.30683 12.9395C2.30683 14.222 2.89316 14.7692 4.26707 14.7692H10.3656C10.5389 14.7692 10.7051 14.8341 10.8276 14.9495C10.9502 15.0649 11.019 15.2214 11.019 15.3846C11.019 15.5478 10.9502 15.7044 10.8276 15.8198C10.7051 15.9352 10.5389 16 10.3656 16H4.26707C2.16046 16 1 14.9128 1 12.9395C1 10.7553 2.31205 8.20513 6.0095 8.20513H9.49437C10.662 8.16083 11.8099 8.49859 12.7431 9.16103C12.8124 9.21082 12.8703 9.27314 12.9136 9.34433C12.9569 9.41552 12.9846 9.49415 12.9952 9.57558C13.0057 9.65701 12.9989 9.73961 12.9751 9.81852C12.9512 9.89742 12.9109 9.97104 12.8564 10.035C12.8019 10.0991 12.7344 10.1522 12.6578 10.1912C12.5812 10.2303 12.4971 10.2546 12.4104 10.2626C12.3237 10.2706 12.2362 10.2622 12.153 10.2379C12.0698 10.2136 11.9926 10.1738 11.9259 10.121C11.2228 9.63678 10.3643 9.39489 9.49437 9.4359H6.0095C5.51198 9.39979 5.01206 9.46578 4.54425 9.62932C4.07644 9.79286 3.65188 10.05 3.29986 10.3831C2.94785 10.7162 2.67676 11.1173 2.50532 11.5586C2.33388 12 2.26615 12.4711 2.30683 12.9395Z" fill="#767676"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M15.5345 10.1258C15.712 10.2923 15.7105 10.5609 15.5313 10.7257L11.3806 14.5439C11.2941 14.6235 11.177 14.6676 11.0553 14.6667C10.9336 14.6656 10.8174 14.6195 10.7324 14.5386L9.12968 13.0113C8.95363 12.8436 8.95729 12.5749 9.13785 12.4114C9.31842 12.2478 9.60751 12.2512 9.78356 12.419L11.0651 13.6402L14.8888 10.1228C15.068 9.95792 15.3571 9.95926 15.5345 10.1258Z" fill="#767676"/>
-</svg>
-`}
-              />
-            )}
-
-            {!isFriendRequestSent && !isFriend && (
-              <Image
-                resizeMode="contain"
-                style={{
-                  width: 16,
-                  height: 16,
-                }}
-                source={require('../../assets/icons/user/add_user.png')}
-              />
-            )}
-            {isFriendRequestSent && !isFriend && (
-              <SvgXml
-                xml={`<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M7.75978 6.97436C8.4921 6.97436 9.20797 6.76984 9.81687 6.38666C10.4258 6.00349 10.9004 5.45887 11.1806 4.82167C11.4608 4.18447 11.5342 3.48331 11.3913 2.80687C11.2484 2.13042 10.8958 1.50906 10.378 1.02137C9.86014 0.533682 9.20038 0.20156 8.48213 0.0670067C7.76388 -0.0675468 7.0194 0.00151095 6.34282 0.265447C5.66625 0.529384 5.08797 0.976344 4.68112 1.54981C4.27426 2.12327 4.0571 2.79748 4.0571 3.48718C4.05826 4.41171 4.44873 5.29805 5.14286 5.95179C5.837 6.60553 6.77812 6.97327 7.75978 6.97436ZM7.75978 1.23077C8.23363 1.23077 8.69685 1.36311 9.09084 1.61104C9.48484 1.85898 9.79192 2.21139 9.97325 2.62369C10.1546 3.036 10.202 3.48968 10.1096 3.92738C10.0171 4.36509 9.78897 4.76714 9.4539 5.0827C9.11883 5.39827 8.69193 5.61317 8.22718 5.70023C7.76244 5.7873 7.28071 5.74261 6.84293 5.57183C6.40514 5.40105 6.03096 5.11184 5.7677 4.74078C5.50444 4.36971 5.36393 3.93346 5.36393 3.48718C5.36462 2.88894 5.61726 2.3154 6.06642 1.89238C6.51558 1.46936 7.12457 1.23142 7.75978 1.23077ZM2.30683 12.9395C2.30683 14.222 2.89316 14.7692 4.26707 14.7692H10.3656C10.5389 14.7692 10.7051 14.8341 10.8276 14.9495C10.9502 15.0649 11.019 15.2214 11.019 15.3846C11.019 15.5478 10.9502 15.7044 10.8276 15.8198C10.7051 15.9352 10.5389 16 10.3656 16H4.26707C2.16046 16 1 14.9128 1 12.9395C1 10.7553 2.31205 8.20513 6.0095 8.20513H9.49437C10.662 8.16083 11.8099 8.49859 12.7431 9.16103C12.8124 9.21082 12.8703 9.27314 12.9136 9.34433C12.9569 9.41552 12.9846 9.49415 12.9952 9.57558C13.0057 9.65701 12.9989 9.73961 12.9751 9.81852C12.9512 9.89742 12.9109 9.97104 12.8564 10.035C12.8019 10.0991 12.7344 10.1522 12.6578 10.1912C12.5812 10.2303 12.4971 10.2546 12.4104 10.2626C12.3237 10.2706 12.2362 10.2622 12.153 10.2379C12.0698 10.2136 11.9926 10.1738 11.9259 10.121C11.2228 9.63678 10.3643 9.39489 9.49437 9.4359H6.0095C5.51198 9.39979 5.01206 9.46578 4.54425 9.62932C4.07644 9.79286 3.65188 10.05 3.29986 10.3831C2.94785 10.7162 2.67676 11.1173 2.50532 11.5586C2.33388 12 2.26615 12.4711 2.30683 12.9395Z" fill="#FFFDFB"/>
-<g clip-path="url(#clip0_517_4657)">
-<path d="M11.6 13.7999C11.5477 13.7976 11.4979 13.7545 11.4613 13.6798C11.4248 13.605 11.4043 13.5046 11.4043 13.4C11.4043 13.2954 11.4248 13.195 11.4613 13.1202C11.4979 13.0455 11.5477 13.0023 11.6 13H15.1992C15.2515 13.0023 15.3012 13.0455 15.3378 13.1202C15.3744 13.195 15.3949 13.2954 15.3949 13.4C15.3949 13.5046 15.3744 13.605 15.3378 13.6798C15.3012 13.7545 15.2515 13.7976 15.1992 13.7999H11.6Z" fill="#FFFDFB"/>
-</g>
-<defs>
-<clipPath id="clip0_517_4657">
-<rect width="4.8" height="4.8" fill="white" transform="translate(11 11)"/>
-</clipPath>
-</defs>
-</svg>
-
-`}
-              />
-            )}
             <Text
               style={{
                 fontFamily: font.Poppins,
@@ -266,14 +208,15 @@ const FriendsProfile = ({
                   : colors.textColor.white,
               }}>
               {isFriend
-                ? 'friends'
+                ? 'Friends'
                 : isFriendRequest
-                ? 'accept request'
+                ? 'Accept Request'
                 : isFriendRequestSent
                 ? 'Cancel Request'
-                : 'Add friends'}
+                : 'Add Friend'}
             </Text>
           </TouchableOpacity>
+
           {isFriend && (
             <TouchableOpacity
               style={{
@@ -287,257 +230,156 @@ const FriendsProfile = ({
                 borderRadius: 50,
                 elevation: 2,
               }}>
-              <Image
-                resizeMode="contain"
-                style={{
-                  width: 16,
-                  height: 16,
-                }}
-                source={require('../../assets/icons/message/message.png')}
-              />
               <Text
                 style={{
                   fontFamily: font.Poppins,
                   fontSize: 14,
                   color: colors.textColor.white,
                 }}>
-                message
+                Message
               </Text>
             </TouchableOpacity>
           )}
         </View>
-        <View
-          style={{
-            marginTop: 20,
-          }}>
-          <Text
+
+        {/* Bio and Social Link */}
+        <View style={{paddingHorizontal: '5%'}}>
+          <TouchableOpacity
+            onPress={() => {
+              Linking.openURL('https://asadullah@insta.com');
+            }}
             style={{
-              marginHorizontal: '5%',
-              fontFamily: font.PoppinsMedium,
-              fontSize: 17,
-              color: colors.textColor.primaryColor,
+              marginTop: 16,
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: 8,
             }}>
-            Chat
-          </Text>
-          <View
-            style={{
-              gap: 15,
-              marginTop: 10,
-            }}>
-            <ConversationalCard
-              conversationStyle="normal"
-              cardStyle="single"
-              conversationTitle="You"
-              conversationSubtitle="Start a chat"
-              lastMessageTime="9:30 am"
-              lastMessage="All of my friends pleas 
-            Share your story my friends"
+            <Image
+              style={{width: 16, height: 16}}
+              source={require('../../assets/icons/instagram/instagram.png')}
             />
-          </View>
-          {/* <TouchableOpacity
-          style={{
-            marginTop: 40,
-            padding: 16,
-            backgroundColor: colors.normal,
-            borderRadius: 50,
-            borderWidth: 0.3,
-            borderColor: colors.textColor.neutralColor,
-            alignSelf: 'center',
-            width: '85%',
-            elevation: 1,
-          }}>
+            <Text
+              style={{
+                fontFamily: font.Poppins,
+                fontSize: 14,
+                color: colors.textColor.rare,
+              }}>
+              {friendProfile?.data?.instagramUrl}
+            </Text>
+          </TouchableOpacity>
           <Text
             style={{
-              textAlign: 'center',
-              fontFamily: font.PoppinsSemiBold,
+              marginTop: 10,
+              fontFamily: font.Poppins,
               fontSize: 14,
               color: colors.textColor.neutralColor,
             }}>
-            No chat record here
+            {friendProfile?.data?.bio}
           </Text>
-        </TouchableOpacity> */}
         </View>
+
+        {/* Posts */}
+
+        {friendProfile?.data?.chats?.map((item, index) => (
+          <ConversationalCard
+            key={index}
+            conversationStyle="normal"
+            onPress={() => {
+              if (item?.facedown?._id) {
+                navigation?.navigate('FaceDownConversation', {
+                  data: {id: item?._id, facedown: item?.facedown},
+                });
+              } else {
+                navigation?.navigate('NormalConversation', {
+                  data: {id: item._id},
+                });
+              }
+            }}
+            participants={item.participants}
+            cardStyle={
+              item.participants.length > 4
+                ? 'three'
+                : item?.participants.length === 4
+                ? 'four'
+                : item?.participants.length === 3
+                ? 'three'
+                : item?.participants.length === 2
+                ? 'two'
+                : 'single'
+            }
+            manyPeople={item.participants.length > 4}
+            conversationTitle={
+              item?.lastMessage?.sender?._id === friendProfile?.data?._id
+                ? item?.facedown
+                  ? item?.facedown?.name +
+                    `${
+                      item?.lastMessage?.sender?._id ===
+                      friendProfile?.data?._id
+                        ? ' You'
+                        : item?.lastMessage?.sender?.fullName
+                    }`
+                  : 'You'
+                : item?.lastMessage?.sender?.fullName
+            }
+            conversationSubtitle={
+              item.lastMessage?.sender?._id === friendProfile?.data?._id
+                ? 'Send a message'
+                : 'Replied in chat'
+            }
+            lastMessageTime={format(new Date(item.updatedAt), 'hh :mm a')}
+            lastMessage={
+              item.lastMessage.audio
+                ? 'send an audio message'
+                : item.lastMessage.image
+                ? 'send an image message'
+                : item.lastMessage.text
+                ? item.lastMessage.text
+                : item.lastMessage.path
+                ? 'send a book'
+                : 'Start a chat'
+            }
+          />
+        ))}
       </ScrollView>
+
+      {/* Friend Action Modal */}
       <ModalOfBottom
         onlyTopRadius={15}
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}>
-        <View>
-          <TouchableOpacity
-            onPress={() => {
-              // setIsFriend(false);
-              setConfirmationModal(!confirmationModal);
-              setIsFriendRequest(false);
-              setIsFriendRequestSent(false);
-              setModalVisible(false);
-            }}
-            style={{
-              padding: 10,
-            }}>
-            <Text
-              style={{
-                fontFamily: font.Poppins,
-                fontSize: 14,
-                color: colors.textColor.neutralColor,
-              }}>
-              Unfriend
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            onPress={() => {
-              setReportModal(!reportModal);
-              setModalVisible(false);
-            }}
-            style={{
-              padding: 10,
-            }}>
-            <Text
-              style={{
-                fontFamily: font.Poppins,
-                fontSize: 14,
-                color: colors.textColor.neutralColor,
-              }}>
-              Report
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </ModalOfBottom>
-
-      {/* report  */}
-      <ModalOfBottom
-        setModalVisible={setReportModal}
-        modalVisible={reportModal}
-        backButton>
-        <View
+        <TouchableOpacity
           style={{
-            gap: 10,
+            gap: 5,
+          }}
+          onPress={() => {
+            setModalVisible(false);
+            setConfirmationModal(true);
           }}>
-          <View>
-            <Text
-              style={{
-                fontSize: 16,
-                fontWeight: 'bold',
-                // paddingTop: 10,
-                paddingBottom: 10,
-                // paddingHorizontal: 20,
-                color: colors.textColor.light,
-                fontFamily: font.Poppins,
-              }}>
-              Report reasons
-            </Text>
-          </View>
-          <TouchableOpacity
-            onPress={() => {
-              // setIsFriend(false);
-              // setConfirmationModal(!confirmationModal);
-              // setIsFriendRequest(false);
-              // setIsFriendRequestSent(false);
-              // setModalVisible(false);
-            }}
+          <Text
             style={{
-              padding: 10,
+              fontFamily: font.Poppins,
+              fontSize: 15,
+              color: colors.textColor.neutralColor,
+
+              paddingVertical: 6,
             }}>
-            <Text
-              style={{
-                fontFamily: font.Poppins,
-                fontSize: 14,
-                color: colors.textColor.neutralColor,
-              }}>
-              reasons 1
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              // setIsFriend(false);
-              // setConfirmationModal(!confirmationModal);
-              // setIsFriendRequest(false);
-              // setIsFriendRequestSent(false);
-              // setModalVisible(false);
-            }}
+            Unfriend
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => setModalVisible(false)}>
+          <Text
             style={{
-              padding: 10,
+              fontFamily: font.Poppins,
+              fontSize: 15,
+              color: colors.textColor.neutralColor,
+              paddingVertical: 6,
             }}>
-            <Text
-              style={{
-                fontFamily: font.Poppins,
-                fontSize: 14,
-                color: colors.textColor.neutralColor,
-              }}>
-              reasons 1
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              // setIsFriend(false);
-              // setConfirmationModal(!confirmationModal);
-              // setIsFriendRequest(false);
-              // setIsFriendRequestSent(false);
-              // setModalVisible(false);
-            }}
-            style={{
-              padding: 10,
-            }}>
-            <Text
-              style={{
-                fontFamily: font.Poppins,
-                fontSize: 14,
-                color: colors.textColor.neutralColor,
-              }}>
-              reasons 1
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              // setIsFriend(false);
-              // setConfirmationModal(!confirmationModal);
-              // setIsFriendRequest(false);
-              // setIsFriendRequestSent(false);
-              // setModalVisible(false);
-            }}
-            style={{
-              padding: 10,
-            }}>
-            <Text
-              style={{
-                fontFamily: font.Poppins,
-                fontSize: 14,
-                color: colors.textColor.neutralColor,
-              }}>
-              reasons 1
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              // setIsFriend(false);
-              // setConfirmationModal(!confirmationModal);
-              // setIsFriendRequest(false);
-              // setIsFriendRequestSent(false);
-              // setModalVisible(false);
-            }}
-            style={{
-              padding: 10,
-              backgroundColor: 'rgba(241, 99, 101, 1)',
-              borderRadius: 100,
-              width: '60%',
-              justifyContent: 'center',
-              alignItems: 'center',
-              alignSelf: 'center',
-              marginBottom: 10,
-              marginTop: 10,
-            }}>
-            <Text
-              style={{
-                fontFamily: font.PoppinsMedium,
-                fontSize: 14,
-                color: colors.textColor.white,
-              }}>
-              Confirm report
-            </Text>
-          </TouchableOpacity>
-        </View>
+            Report
+          </Text>
+        </TouchableOpacity>
       </ModalOfBottom>
 
+      {/* Confirmation Modal */}
       <CustomModal
         modalVisible={confirmationModal}
         setModalVisible={setConfirmationModal}
@@ -545,11 +387,7 @@ const FriendsProfile = ({
         containerColor={colors.bg}
         Radius={20}>
         <View
-          style={{
-            padding: 20,
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
+          style={{padding: 20, justifyContent: 'center', alignItems: 'center'}}>
           <Text
             style={{
               fontFamily: font.Poppins,
@@ -566,9 +404,7 @@ const FriendsProfile = ({
               width: '100%',
             }}>
             <TouchableOpacity
-              onPress={() => {
-                setConfirmationModal(false);
-              }}
+              onPress={() => setConfirmationModal(false)}
               style={{
                 borderRadius: 100,
                 borderColor: colors.green['#00B047'],
@@ -592,11 +428,15 @@ const FriendsProfile = ({
                 setIsFriend(false);
                 setModalVisible(false);
                 setConfirmationModal(false);
+                removeFriendRequest({
+                  senderId: friendProfile?.data?._id,
+                }).then(res => {
+                  console.log(res);
+                });
               }}
               style={{
                 borderRadius: 100,
                 backgroundColor: 'rgba(241, 99, 101, 1)',
-
                 paddingHorizontal: 10,
                 height: 24,
                 justifyContent: 'center',
@@ -619,5 +459,3 @@ const FriendsProfile = ({
 };
 
 export default FriendsProfile;
-
-const styles = StyleSheet.create({});

@@ -27,6 +27,7 @@ import {GridList} from 'react-native-ui-lib';
 import {useStyles} from '../../../context/ContextApi';
 import {NavigProps} from '../../../interfaces/NaviProps';
 import {useCreateMessageMutation} from '../../../redux/apiSlices/messageSlies';
+import {getSocket} from '../../../redux/services/socket';
 import {messagePros} from '../../../screens/message/NormalConversationScreen';
 import {TemBooks} from '../../../utils/GetRandomColor';
 import {useImagePicker} from '../../../utils/hooks/useImagePicker';
@@ -132,6 +133,8 @@ const ConversationCarousal = ({
   if (!room && !photo && !record && !books && !type && !faceDown) {
     absoluteData.push(...data);
   }
+
+  const socket = getSocket();
 
   const [createMessage, createMessageResult] = useCreateMessageMutation({});
   const {height, width} = useWindowDimensions();
@@ -288,13 +291,14 @@ const ConversationCarousal = ({
       // } catch (error) {
       //   console.log(error);
       // }
-      const formData = new FormData();
-      formData.append('chatId', chatIt);
-      formData.append('audio', audio);
-      console.log(formData);
-      createMessage(formData)
-        .then(res => console.log(res))
-        .catch(err => console.log(err));
+      handleCreateNewChat({
+        audio: {
+          uri: audioPath, // The path of the recorded audio file
+          type: 'audio/wav', // Initial format is MP4
+          name: 'voice.wav', // Use .mp4 extension
+        },
+      });
+      // createMessage(formData).then(res => console.log(res));
     }
   };
 
@@ -308,6 +312,9 @@ const ConversationCarousal = ({
       data?.image && formData.append('image', data?.image);
       data?.audio && formData.append('audio', data?.audio);
       const res = await createMessage(formData);
+      if (res.data?.id) {
+        socket?.emit(`message::${chatIt}`, res.data);
+      }
       console.log(res, 'res');
     } catch (error) {
       console.log(error);

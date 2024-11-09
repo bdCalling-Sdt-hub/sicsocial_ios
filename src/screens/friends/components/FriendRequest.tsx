@@ -3,14 +3,11 @@ import {
   FlatList,
   NativeScrollEvent,
   NativeSyntheticEvent,
+  RefreshControl,
   TouchableOpacity,
   View,
   useWindowDimensions,
 } from 'react-native';
-import {
-  useGetFriendReceivedRequestsQuery,
-  useGetSuggestionsQuery,
-} from '../../../redux/apiSlices/friendsSlices';
 import {isSmall, isTablet} from '../../../utils/utils';
 
 import {useSharedValue} from 'react-native-reanimated';
@@ -18,10 +15,14 @@ import {SvgXml} from 'react-native-svg';
 import FriendCard from '../../../components/friend/FriendCard';
 import {useStyles} from '../../../context/ContextApi';
 import {NavigProps} from '../../../interfaces/NaviProps';
+import {useGetFriendReceivedRequestsQuery} from '../../../redux/apiSlices/friendsSlices';
 
 const FriendRequest = ({navigation}: NavigProps<null>) => {
-  const {data: suggestedFriends} = useGetSuggestionsQuery({});
-  const {data: receivedRequestFriend} = useGetFriendReceivedRequestsQuery({});
+  const {
+    data: receivedRequestFriend,
+    refetch: receivedRequestRefetch,
+    isLoading: receivedRequestIsLoading,
+  } = useGetFriendReceivedRequestsQuery({});
   // console.log(suggestedFriends);
   const {colors, font} = useStyles();
   const [isRequest, setIsRequest] = React.useState<boolean>(false);
@@ -108,6 +109,13 @@ const FriendRequest = ({navigation}: NavigProps<null>) => {
       <FlatList
         ref={listRef} // Assign the ref to FlatList
         // keyExtractor={item => item.id}
+        refreshControl={
+          <RefreshControl
+            refreshing={receivedRequestIsLoading}
+            onRefresh={receivedRequestRefetch}
+            colors={[colors.primaryColor]}
+          />
+        }
         horizontal // Assuming the list is horizontal
         showsHorizontalScrollIndicator={false}
         snapToInterval={itemWidth} // Ensure it snaps to the item width
@@ -123,11 +131,11 @@ const FriendRequest = ({navigation}: NavigProps<null>) => {
         renderItem={({item}) => {
           return (
             <FriendCard
-              isFriendRequest={isRequest}
+              isFriendRequest={true}
               item={item}
               onPress={() => {
                 navigation?.navigate('FriendsProfile', {
-                  data: {isFriendRequest: true},
+                  data: {id: item?._id},
                 });
               }}
             />

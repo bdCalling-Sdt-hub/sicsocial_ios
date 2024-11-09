@@ -33,6 +33,7 @@ import {imageUrl} from '../../redux/api/baseApi';
 import {useGetDonationQuery} from '../../redux/apiSlices/additionalSlices';
 import {useGetUserProfileQuery} from '../../redux/apiSlices/authSlice';
 import {useGetNewsFeetQuery} from '../../redux/apiSlices/homeSlices';
+import {getSocket} from '../../redux/services/socket';
 
 const HomeScreen = ({navigation}: NavigProps<null>) => {
   const {isLive, setIsLive, isDark} = useContextApi();
@@ -60,6 +61,20 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
       paddingBottom: scrollViewGapHight.value,
     };
   });
+
+  const socket = getSocket();
+
+  useEffect(() => {
+    if (userProfile?.data?._id) {
+      socket?.emit('active', JSON.stringify({userId: userProfile.data._id}));
+    }
+
+    // Optional: Add a cleanup to handle when the component unmounts, if needed
+    return () => {
+      // For example, you could emit a "inactive" event here if needed
+      // socket?.emit('inactive', JSON.stringify({ userId: userProfile.data._id }));
+    };
+  }, [socket, userProfile?.data?._id]);
 
   useEffect(() => {
     if (isLive) {

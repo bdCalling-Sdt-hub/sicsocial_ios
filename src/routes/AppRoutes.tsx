@@ -5,6 +5,7 @@ import * as React from 'react';
 import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
 import {Provider, useSelector} from 'react-redux';
 import ContextApi, {useContextApi, useStyles} from '../context/ContextApi';
+import {getSocket, initiateSocket} from '../redux/services/socket';
 
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
@@ -52,6 +53,7 @@ import SearchScreen from '../screens/search/SearchScreen';
 import BookShareScreen from '../screens/sharebooks/BookShareScreen';
 import BookShareWithCategory from '../screens/sharebooks/BookShareWithCategory';
 import BooksScreen from '../screens/sharebooks/BooksScreen';
+import PDFViewer from '../screens/sharebooks/PDFViewer';
 import BottomBarRoutes from './BottomBarRoutes';
 
 const Stack = createNativeStackNavigator();
@@ -62,6 +64,15 @@ const Routes = () => {
 
   const {token} = useSelector((state: any) => state?.token);
 
+  const socket = getSocket();
+
+  React.useEffect(() => {
+    if (socket) {
+      console.warn('Socket is already initialized');
+      return;
+    }
+    initiateSocket();
+  }, []);
   return (
     <Stack.Navigator
       initialRouteName={token ? 'HomeRoutes' : 'Login'}
@@ -324,6 +335,13 @@ const Routes = () => {
           <Stack.Screen
             name="ViewAllFaceDown"
             component={ViewAllFaceDown}
+            options={{
+              animation: 'slide_from_right',
+            }}
+          />
+          <Stack.Screen
+            name="PdfViewer"
+            component={PDFViewer}
             options={{
               animation: 'slide_from_right',
             }}

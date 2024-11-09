@@ -9,6 +9,7 @@ import {
   View,
 } from 'react-native';
 import {useContextApi, useStyles} from '../../context/ContextApi';
+import {height, makeImage} from '../../utils/utils';
 
 import {format} from 'date-fns';
 import React from 'react';
@@ -18,94 +19,38 @@ import MessageCard from '../../components/conversation/MessageCard';
 import {NavigProps} from '../../interfaces/NaviProps';
 import {useGetUserProfileQuery} from '../../redux/apiSlices/authSlice';
 import {useGetChatListQuery} from '../../redux/apiSlices/chatSlices';
-import {height} from '../../utils/utils';
-
-const friends = [
-  {
-    id: 1,
-    name: 'Amina',
-    img: require('../../assets/tempAssets/3a906b3de8eaa53e14582edf5c918b5d.jpg'),
-    lastMessage: 'Assalamuallikum, how are...',
-  },
-  {
-    id: 2,
-    name: 'Arif',
-    img: require('../../assets/tempAssets/4005b22a3c1c23d7c04f6c9fdbd85468.jpg'),
-    lastMessage: 'Sir you are great.',
-  },
-  {
-    id: 3,
-    name: 'Rahman',
-    img: require('../../assets/tempAssets/51ad46951bbdc28be4cf7e384964f309.jpg'),
-    lastMessage: 'Brother eid mubarak',
-  },
-  {
-    id: 4,
-    name: 'Mithila',
-    img: require('../../assets/tempAssets/691af02d3a7ca8be2811716f82d9212b.jpg'),
-    lastMessage: 'you: I’m feeling good',
-  },
-  {
-    id: 5,
-    name: 'Samina',
-    img: require('../../assets/tempAssets/7261c2ae940abab762a6e0130b36b3a9.jpg'),
-    lastMessage: 'you: I’m feeling good',
-    group: false,
-  },
-];
-const Conversations = [
-  {
-    id: 1,
-    name: 'Amina',
-    img: require('../../assets/tempAssets/3a906b3de8eaa53e14582edf5c918b5d.jpg'),
-    lastMessage: 'Assalamuallikum, how are...',
-    group: false,
-  },
-  {
-    id: 2,
-    name: 'Arif',
-    img: require('../../assets/tempAssets/4005b22a3c1c23d7c04f6c9fdbd85468.jpg'),
-    lastMessage: 'Sir you are great.',
-    group: false,
-  },
-  {
-    id: 40,
-    name: 'Nadir Mithila Khusi Asad',
-    img: require('../../assets/tempAssets/4005b22a3c1c23d7c04f6c9fdbd85468.jpg'),
-    lastMessage: 'Replied to Khusi aktar',
-    group: true,
-  },
-  {
-    id: 3,
-    name: 'Rahman',
-    img: require('../../assets/tempAssets/51ad46951bbdc28be4cf7e384964f309.jpg'),
-    lastMessage: 'Brother eid mubarak',
-    group: false,
-  },
-  {
-    id: 4,
-    name: 'Mithila',
-    img: require('../../assets/tempAssets/691af02d3a7ca8be2811716f82d9212b.jpg'),
-    lastMessage: 'you: I’m feeling good',
-    group: false,
-  },
-  {
-    id: 5,
-    name: 'Samina',
-    img: require('../../assets/tempAssets/7261c2ae940abab762a6e0130b36b3a9.jpg'),
-    lastMessage: 'you: I’m feeling good',
-    group: false,
-  },
-];
+import {getSocket} from '../../redux/services/socket';
 
 const MassageScreen = ({navigation}: NavigProps<null>) => {
-  const {data: chatList} = useGetChatListQuery({});
+  const {data: chatList, refetch: refetchChat} = useGetChatListQuery({});
   const {data: userInfo} = useGetUserProfileQuery({});
   // console.log(userInfo);
   // console.log(cat);
   const {colors, font} = useStyles();
   const {isDark} = useContextApi();
   const [modalVisible, setModalVisible] = React.useState(false);
+  const [friends, setFriends] = React.useState([]);
+
+  const socket = getSocket();
+
+  const handleActiveUsers = (data: any) => {
+    setFriends(data);
+  };
+  React.useEffect(() => {
+    if (userInfo?.data?._id) {
+      socket?.emit('activeUsers', JSON.stringify({userId: userInfo.data._id}));
+    }
+
+    socket?.on('activeFriends', handleActiveUsers);
+
+    return () => {
+      // Remove the listener on cleanup to prevent memory leaks
+      socket?.off('activeUsers', handleActiveUsers);
+    };
+  }, [socket, userInfo?.data?._id]);
+
+  // console.log(friends);
+
   return (
     <View
       style={{
@@ -205,82 +150,89 @@ const MassageScreen = ({navigation}: NavigProps<null>) => {
         scrollEnabled={true}
         nestedScrollEnabled={true}
         keyboardShouldPersistTaps="always">
-        <View
-          style={{
-            borderBottomWidth: 1,
-            borderTopWidth: 1,
-            borderTopColor: isDark
-              ? 'rgba(217, 217, 217, 0.1)'
-              : 'rgba(217, 217, 217, 1)',
-            borderBlockColor: isDark
-              ? 'rgba(217, 217, 217, 0.1)'
-              : 'rgba(217, 217, 217, 1)',
-            paddingVertical: 10,
-            marginTop: 10,
-          }}>
-          <FlatList
-            showsHorizontalScrollIndicator={false}
-            keyboardShouldPersistTaps="always"
-            horizontal
-            contentContainerStyle={{
-              gap: 16,
-              paddingHorizontal: 20,
-            }}
-            data={friends}
-            renderItem={item => (
-              <View style={{gap: 6}}>
-                <TouchableOpacity
-                  onPress={() => {
-                    setModalVisible(!modalVisible);
-                  }}
-                  style={{
-                    backgroundColor: colors.secondaryColor,
-                    // paddingVertical: 5,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    elevation: 2,
-                    borderRadius: 50,
-                    padding: 2,
-                    position: 'relative',
-                  }}>
-                  <View
-                    style={{
-                      width: 12,
-                      height: 12,
-                      borderRadius: 50,
-                      backgroundColor: colors.green['#00B047'],
-                      position: 'absolute',
-                      right: 0,
-                      zIndex: +1,
-                      bottom: 5,
-                      elevation: 2,
+        {chatList?.data?.length > 0 && (
+          <View
+            style={{
+              borderBottomWidth: 1,
+              borderTopWidth: 1,
+              borderTopColor: isDark
+                ? 'rgba(217, 217, 217, 0.1)'
+                : 'rgba(217, 217, 217, 1)',
+              borderBlockColor: isDark
+                ? 'rgba(217, 217, 217, 0.1)'
+                : 'rgba(217, 217, 217, 1)',
+              paddingVertical: 10,
+              marginTop: 10,
+            }}>
+            <FlatList
+              showsHorizontalScrollIndicator={false}
+              keyboardShouldPersistTaps="always"
+              horizontal
+              contentContainerStyle={{
+                gap: 16,
+                paddingHorizontal: 20,
+              }}
+              data={friends}
+              renderItem={item => (
+                <View style={{gap: 6}}>
+                  <TouchableOpacity
+                    activeOpacity={0.8}
+                    onPress={() => {
+                      setModalVisible(!modalVisible);
                     }}
-                  />
-                  <Image
                     style={{
+                      backgroundColor: colors.white,
+                      // paddingVertical: 5,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      elevation: 2,
+                      borderRadius: 50,
+                      padding: 2,
+                      position: 'relative',
                       width: 65,
                       height: 65,
-                      borderRadius: 28,
-                      resizeMode: 'contain',
-                      borderColor: 'rgba(255,255,255,1)',
-                      borderWidth: 2,
-                    }}
-                    source={item.item.img}
-                  />
-                </TouchableOpacity>
-                <Text
-                  style={{
-                    fontSize: 12,
-                    fontFamily: font.Poppins,
-                    color: colors.textColor.neutralColor,
-                    textAlign: 'center',
-                  }}>
-                  Amina
-                </Text>
-              </View>
-            )}
-          />
-        </View>
+                    }}>
+                    <View
+                      style={{
+                        width: 12,
+                        height: 12,
+                        borderRadius: 50,
+                        backgroundColor: colors.green['#00B047'],
+                        position: 'absolute',
+                        right: 0,
+                        zIndex: +1,
+                        bottom: 5,
+                        elevation: 2,
+                      }}
+                    />
+                    <Image
+                      style={{
+                        width: 65,
+                        height: 65,
+                        borderRadius: 28,
+                        resizeMode: 'contain',
+                        borderColor: 'rgba(255,255,255,1)',
+                        borderWidth: 2,
+                      }}
+                      source={{
+                        uri: makeImage(item.item.avatar),
+                      }}
+                    />
+                  </TouchableOpacity>
+                  <Text
+                    style={{
+                      fontSize: 12,
+                      fontFamily: font.Poppins,
+                      color: colors.textColor.neutralColor,
+                      textAlign: 'center',
+                    }}>
+                    {item?.item?.fullName}
+                  </Text>
+                </View>
+              )}
+            />
+          </View>
+        )}
 
         <View
           style={{
@@ -290,9 +242,19 @@ const MassageScreen = ({navigation}: NavigProps<null>) => {
             paddingTop: 15,
           }}>
           {chatList?.data?.map((item, index) => {
+            // console.log(item);
             return (
               <MessageCard
                 key={index}
+                active={
+                  friends?.find(
+                    friend =>
+                      friend?._id === item?.participants[0]?._id ||
+                      friend?._id === item?.participants[1]?._id,
+                  )?._id
+                    ? true
+                    : false
+                }
                 onPress={() => {
                   if (item.group) {
                     navigation?.navigate('GroupConversation');
@@ -321,8 +283,8 @@ const MassageScreen = ({navigation}: NavigProps<null>) => {
                 lastTime={format(new Date(item.updatedAt), 'hh :mm a')}
                 name={
                   item?.participants[0]?._id === userInfo?.data?._id
-                    ? item?.participants![1]?.fullName
-                    : item?.participants![0]?.fullName
+                    ? item?.participants![1]?.fullName || 'No Name'
+                    : item?.participants![0]?.fullName || 'No Name'
                 }
                 people={'one'}
               />

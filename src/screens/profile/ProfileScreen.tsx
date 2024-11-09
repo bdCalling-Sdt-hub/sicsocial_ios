@@ -3,6 +3,7 @@ import {
   FlatList,
   Image,
   Linking,
+  RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
@@ -27,9 +28,21 @@ import {useGetFriendQuery} from '../../redux/apiSlices/friendsSlices';
 import {useGetNewsFeetQuery} from '../../redux/apiSlices/homeSlices';
 
 const ProfileScreen = ({navigation}: NavigProps<null>) => {
-  const {data: newsFeet} = useGetNewsFeetQuery({});
-  const {data: friends} = useGetFriendQuery({});
-  const {data: facedowns} = useGetFaceDownQuery({});
+  const {
+    data: newsFeet,
+    refetch: newsFeetRefetch,
+    isLoading: newsFeetLoading,
+  } = useGetNewsFeetQuery({});
+  const {
+    data: friends,
+    refetch: friendsRefetch,
+    isLoading: friendsLoading,
+  } = useGetFriendQuery({});
+  const {
+    data: facedowns,
+    refetch: facedownsRefetch,
+    isLoading: facedownsLoading,
+  } = useGetFaceDownQuery({});
 
   const {data: userProfile} = useGetUserProfileQuery({});
   const [modalVisible, setModalVisible] = React.useState(false);
@@ -42,6 +55,17 @@ const ProfileScreen = ({navigation}: NavigProps<null>) => {
         backgroundColor: colors.bg,
       }}>
       <ScrollView
+        refreshControl={
+          <RefreshControl
+            refreshing={newsFeetLoading || friendsLoading || facedownsLoading}
+            colors={[colors.primaryColor]}
+            onRefresh={async () => {
+              await newsFeetRefetch();
+              await friendsRefetch();
+              await facedownsRefetch();
+            }}
+          />
+        }
         showsVerticalScrollIndicator={false}
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={{
@@ -384,7 +408,9 @@ const ProfileScreen = ({navigation}: NavigProps<null>) => {
               <View style={{gap: 6}}>
                 <TouchableOpacity
                   onPress={() => {
-                    navigation?.navigate('FriendsProfile');
+                    navigation?.navigate('FriendsProfile', {
+                      data: {id: item.item._id},
+                    });
                   }}
                   style={{
                     backgroundColor: colors.secondaryColor,
@@ -395,6 +421,8 @@ const ProfileScreen = ({navigation}: NavigProps<null>) => {
                     borderRadius: 50,
                     padding: 2,
                     position: 'relative',
+                    width: 65,
+                    height: 65,
                   }}>
                   {/* <View
                     style={{

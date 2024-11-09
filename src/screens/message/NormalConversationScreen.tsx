@@ -22,8 +22,9 @@ import {useStyles} from '../../context/ContextApi';
 import {useAudioPlayer} from '../../hook/playMusic';
 import {NavigProps} from '../../interfaces/NaviProps';
 import {useGetUserProfileQuery} from '../../redux/apiSlices/authSlice';
-import {useGetMessageQuery} from '../../redux/apiSlices/messageSlies';
+import {useLazyGetMessageQuery} from '../../redux/apiSlices/messageSlies';
 import {IMessage} from '../../redux/interface/message';
+import {getSocket} from '../../redux/services/socket';
 import {makeImage} from '../../utils/utils';
 
 export interface messagePros {
@@ -44,13 +45,12 @@ const NormalConversationScreen = ({
   navigation,
   route,
 }: NavigProps<{id: string}>) => {
-  console.log(route?.params);
+  // console.log(route?.params);
   const {width, height} = useWindowDimensions();
   const {colors, font} = useStyles();
-  const {data: messages, refetch: messageRefetch} = useGetMessageQuery(
-    {id: route?.params?.data?.id || route?.params?.id},
-    {skip: !route?.params},
-  );
+
+  const [getAllMessage, messageResult] = useLazyGetMessageQuery();
+
   const {data: userInfo} = useGetUserProfileQuery({});
   const {toggleAudioPlayback} = useAudioPlayer();
   const [AllMessages, setAllMessages] = React.useState<IMessage[]>([]);
@@ -68,21 +68,6 @@ const NormalConversationScreen = ({
   const animatePosition = useSharedValue(height * 0.07);
   const animateOpacity = useSharedValue(1);
 
-  useEffect(() => {
-    if (messages) {
-      let imageFile: Array<{url: string}> = [];
-      setAllMessages([...messages?.data] || []);
-      messages.data?.forEach((item: any) => {
-        if (item?.image) {
-          imageFile.push({
-            url: makeImage(item?.image),
-          });
-        }
-      });
-      setShowImages(imageFile || []);
-    }
-  }, [messages]);
-
   const handleSelectIndex = (image: string) => {
     // setImageIndex(index);
     setImageIndex(
@@ -92,6 +77,27 @@ const NormalConversationScreen = ({
     );
     setShowImage(true);
   };
+
+  const handleLoadData = async () => {
+    const res = await getAllMessage({
+      id: route?.params?.data?.id || route?.params?.id,
+    });
+    // console.log(res?.data?.data);
+    setAllMessages(res?.data?.data);
+  };
+
+  const socket = getSocket();
+  useEffect(() => {
+    if (AllMessages.length === 0) {
+      handleLoadData();
+    }
+    socket?.on(
+      `message::${route?.params?.data?.id || route?.params?.id}`,
+      (data: IMessage) => {
+        handleLoadData();
+      },
+    );
+  }, [socket]);
 
   return (
     <View
@@ -246,11 +252,7 @@ const NormalConversationScreen = ({
           }
         }}
         inverted
-        data={AllMessages?.sort((a, b) => {
-          return (
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-          );
-        })}
+        data={AllMessages}
         renderItem={item => {
           return (
             <View

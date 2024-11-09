@@ -33,4 +33,5 @@ export const {
   useGetChatListQuery,
   useCreateChatMutation,
   useAddMemberMutation,
+  usePrefetch: useChatPrefetch,
 } = chatSlices;

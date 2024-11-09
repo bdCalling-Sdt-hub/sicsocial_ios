@@ -1030,10 +1030,13 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
 
             <TextInput
               editable={edit.link}
-              placeholder="https://www.instagram.com/example"
+              placeholder={userInfo?.instagramUrl}
               value={userInfo?.instagramUrl}
+              onChangeText={text => {
+                setUserInfo({...userInfo, instagramUrl: text});
+              }}
               style={{
-                color: colors.textColor.light,
+                color: colors.neutralColor,
               }}
               placeholderTextColor={colors.neutralColor}
             />

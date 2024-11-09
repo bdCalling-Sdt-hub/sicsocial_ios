@@ -6,6 +6,12 @@ import {
   View,
   useWindowDimensions,
 } from 'react-native';
+import {
+  useAcceptFriendRequestMutation,
+  useCancelFriendRequestMutation,
+  useRemoveFriendRequestMutation,
+  useSendFriendRequestMutation,
+} from '../../redux/apiSlices/friendsSlices';
 import {height, isSmall, isTablet, makeImage} from '../../utils/utils';
 
 import React from 'react';
@@ -29,20 +35,22 @@ const FriendCard = ({
   item,
   onLongPress,
   onPress,
-  isFriend,
+
   isFriendRequest,
-  isFriendRequestSent,
-  onAcceptFriendRequestPress,
-  onDeclineFriendRequestPress,
-  onFriendRequestCancelPress,
 }: FriendCardProps) => {
   const {colors, font} = useStyles();
   const {width} = useWindowDimensions();
+
+  const [acceptRequest] = useAcceptFriendRequestMutation();
+  const [cancelRequest] = useCancelFriendRequestMutation();
+  const [sendFriendRequest] = useSendFriendRequestMutation();
+  const [removeFriendRequest] = useRemoveFriendRequestMutation();
 
   const [acceptBtnPress, setAcceptBtnPress] = React.useState(false);
 
   const [rejectBtnPress, setRejectBtnPress] = React.useState(false);
   // console.log(item);
+
   return (
     <>
       {/*============== card start ============ */}
@@ -250,7 +258,13 @@ const FriendCard = ({
               }}>
               <TouchableOpacity
                 activeOpacity={0.9}
-                onPress={onDeclineFriendRequestPress}
+                onPress={() => {
+                  cancelRequest({
+                    recipientId: item._id,
+                  }).then(res => {
+                    console.log(res);
+                  });
+                }}
                 onPressIn={() => setRejectBtnPress(true)}
                 onPressOut={() => setRejectBtnPress(false)}
                 style={{
@@ -279,7 +293,13 @@ const FriendCard = ({
               </TouchableOpacity>
               <TouchableOpacity
                 activeOpacity={0.9}
-                onPress={onAcceptFriendRequestPress}
+                onPress={() => {
+                  acceptRequest({
+                    senderId: item._id,
+                  }).then(res => {
+                    console.log(res);
+                  });
+                }}
                 onPressIn={() => setAcceptBtnPress(true)}
                 onPressOut={() => setAcceptBtnPress(false)}
                 style={{
@@ -320,7 +340,13 @@ const FriendCard = ({
               }}>
               <TouchableOpacity
                 activeOpacity={0.9}
-                onPress={onDeclineFriendRequestPress}
+                onPress={() => {
+                  removeFriendRequest({
+                    senderId: item._id,
+                  }).then(res => {
+                    console.log(res);
+                  });
+                }}
                 onPressIn={() => setRejectBtnPress(true)}
                 onPressOut={() => setRejectBtnPress(false)}
                 style={{
@@ -349,7 +375,17 @@ const FriendCard = ({
               </TouchableOpacity>
               <TouchableOpacity
                 activeOpacity={0.9}
-                onPress={onAcceptFriendRequestPress}
+                onPress={() => {
+                  console.log(item);
+                  sendFriendRequest({
+                    recipientId: item?._id,
+                  }).then(res => {
+                    console.log(res);
+                    if (res.error?.data) {
+                      alert(res.error?.data?.message);
+                    }
+                  });
+                }}
                 onPressIn={() => setAcceptBtnPress(true)}
                 onPressOut={() => setAcceptBtnPress(false)}
                 style={{

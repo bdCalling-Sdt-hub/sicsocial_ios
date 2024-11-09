@@ -20,6 +20,7 @@ import FriendsScreen from '../screens/friends/FriendsScreen';
 import HomeScreen from '../screens/home/HomeScreen';
 import MassageScreen from '../screens/message/MassageScreen';
 import ProfileScreen from '../screens/profile/ProfileScreen';
+import BooksScreen from '../screens/sharebooks/BooksScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -38,6 +39,11 @@ const routeAssets = [
     name: 'Chats',
     icon_fill: require('../assets/icons/bottomBar/chat_fill.png'),
     icon_outline: require('../assets/icons/bottomBar/chat_outline.png'),
+  },
+  {
+    name: 'Library',
+    icon_fill: require('../assets/icons/bottomBar/library_fill.png'),
+    icon_outline: require('../assets/icons/bottomBar/library_outline.png'),
   },
   {
     name: 'UserProfile',
@@ -115,6 +121,8 @@ const MyTabBar: React.FC<BottomTabBarProps> = ({
               // alignItems : "center"
             }}>
             <Image
+              resizeMethod="resize"
+              resizeMode="contain"
               source={
                 isFocused
                   ? routeAssets.find(item => item.name === route.name)
@@ -157,6 +165,7 @@ const BottomBarRoutes = () => {
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Friends" component={FriendsScreen} />
       <Tab.Screen name="Chats" component={MassageScreen} />
+      <Tab.Screen name="Library" component={BooksScreen} />
       <Tab.Screen name="UserProfile" component={ProfileScreen} />
 
       {/* Add more Tab.Screen components as needed */}

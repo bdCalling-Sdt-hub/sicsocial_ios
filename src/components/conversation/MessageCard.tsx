@@ -45,18 +45,20 @@ const MessageCard = ({
         gap: 12,
       }}>
       <View>
-        <View
-          style={{
-            width: 12,
-            height: 12,
-            borderRadius: 50,
-            backgroundColor: colors.green['#00B047'],
-            position: 'absolute',
-            right: 2,
-            zIndex: +1,
-            bottom: 7,
-          }}
-        />
+        {active && (
+          <View
+            style={{
+              width: 12,
+              height: 12,
+              borderRadius: 50,
+              backgroundColor: colors.green['#00B047'],
+              position: 'absolute',
+              right: 2,
+              zIndex: +1,
+              bottom: 7,
+            }}
+          />
+        )}
         <View
           style={{
             // elevation: 2,
@@ -78,24 +80,55 @@ const MessageCard = ({
                 style={{
                   // padding: 2,
 
-                  backgroundColor: colors.white,
+                  // backgroundColor: colors.white,
                   elevation: 2,
                   width: 65,
+                  height: 65,
                   borderRadius: 28,
                 }}>
-                <Image
-                  style={{
-                    width: 65,
-                    height: 65,
-                    borderRadius: 28,
-                    resizeMode: 'cover',
-                    borderColor: 'rgba(255,255,255,1)',
-                    borderWidth: 2,
-                  }}
-                  source={{
-                    uri: makeImage(avatar || ''),
-                  }}
-                />
+                {avatar ? (
+                  <Image
+                    style={{
+                      width: 65,
+                      height: 65,
+                      borderRadius: 28,
+                      resizeMode: 'cover',
+                      borderColor: 'rgba(255,255,255,1)',
+                      borderWidth: 2,
+                    }}
+                    source={{
+                      uri: makeImage(avatar || ''),
+                    }}
+                  />
+                ) : (
+                  <View
+                    style={{
+                      width: 65,
+                      height: 65,
+                      borderRadius: 28,
+                    }}>
+                    <View
+                      style={{
+                        borderWidth: 2,
+                        borderColor: 'rgba(255,255,255,1)',
+                        width: 65,
+                        height: 65,
+                        borderRadius: 28,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        backgroundColor: colors.primaryColor,
+                      }}>
+                      <Text
+                        style={{
+                          fontSize: 25,
+                          fontFamily: font.PoppinsBold,
+                          color: colors.textColor.white,
+                        }}>
+                        {name?.slice(0, 1)}
+                      </Text>
+                    </View>
+                  </View>
+                )}
               </View>
             </View>
           ) : (
@@ -117,12 +150,13 @@ const MessageCard = ({
                 <View
                   style={{
                     elevation: 2,
+                    maxWidth: 47,
                     width: 47,
                     borderRadius: 28,
-                    backgroundColor: colors.white,
                   }}>
                   <Image
                     style={{
+                      maxWidth: 47,
                       width: 47,
                       height: 49,
                       borderRadius: 28,
@@ -154,12 +188,14 @@ const MessageCard = ({
                 <View
                   style={{
                     elevation: 2,
+                    maxWidth: 47,
                     width: 47,
                     borderRadius: 28,
                     backgroundColor: colors.white,
                   }}>
                   <Image
                     style={{
+                      maxWidth: 47,
                       width: 47,
                       height: 49,
                       borderRadius: 28,

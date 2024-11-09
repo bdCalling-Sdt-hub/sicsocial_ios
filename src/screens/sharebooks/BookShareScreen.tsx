@@ -1,56 +1,84 @@
 import {
-    Image,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
-    useWindowDimensions
+  ActivityIndicator,
+  Dimensions,
+  FlatList,
+  Image,
+  Linking,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+  useWindowDimensions,
 } from 'react-native';
-import { useContextApi, useStyles } from '../../context/ContextApi';
-import { useCreateChatMutation, useCreateMessageMutation } from '../../redux/apiSlices/chatSlices';
+import {useContextApi, useStyles} from '../../context/ContextApi';
 
 import React from 'react';
-import { SvgXml } from 'react-native-svg';
+import RNFetchBlob from 'react-native-blob-util';
+import Pdf from 'react-native-pdf';
+import {SvgXml} from 'react-native-svg';
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
 import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
 import NormalButton from '../../components/common/NormalButton';
-import { NavigProps } from '../../interfaces/NaviProps';
-import { Books } from './ShareBooksScreen';
+import {NavigProps} from '../../interfaces/NaviProps';
+import {useCreateChatMutation} from '../../redux/apiSlices/chatSlices';
+import {useCreateMessageMutation} from '../../redux/apiSlices/messageSlies';
+import {makeImage} from '../../utils/utils';
 
-const BookShareScreen = ({navigation, route}: NavigProps<Books>) => {
+const BookShareScreen = ({navigation, route}: NavigProps<{data: any}>) => {
+  const [pdfPath, setPdfPath] = React.useState(null);
+  const [isLoading, setIsLoading] = React.useState(true);
   const [createChat, createChartResults] = useCreateChatMutation({});
   const [createMessage, createMessageResult] = useCreateMessageMutation({});
   const {colors, font} = useStyles();
+
+  const Book = route.params?.data;
+
   const {height, width} = useWindowDimensions();
   const [modalVisible, setModalVisible] = React.useState(false);
   const {isDark, isLive, setIsLive} = useContextApi();
 
   const [liveModal, setLiveModal] = React.useState(false);
 
-  
   // console.log(createChartInfo);
-  const handleCreateNewChat = React.useCallback(
-    data => {
-      const formData = new FormData();
+  const handleCreateNewChat = React.useCallback(data => {
+    const formData = new FormData();
 
-      createChat({type:'public'}).then(res => {
-        // console.log(res);
-        if (res?.data?.data?._id) {
-          formData.append('chatId', res.data?.data?._id);
-          if (data?.path) {
-            formData.append('path', data?.path);
-          }
-          createMessage(formData).then(ms => {
-            // console.log(res);
-          });
+    createChat({type: 'public'}).then(res => {
+      // console.log(res);
+      if (res?.data?.data?._id) {
+        formData.append('chatId', res.data?.data?._id);
+        if (data?.path) {
+          formData.append('path', data?.path);
         }
-      });
-    },
-    [],
-  );
+        createMessage(formData).then(ms => {
+          // console.log(res);
+        });
+      }
+    });
+  }, []);
 
+  React.useEffect(() => {
+    // PDF ফাইলটি লোকালি ডাউনলোড করুন
+    const downloadPdf = async () => {
+      const pdfUrl = makeImage(route?.params?.data?.pdf);
+
+      try {
+        const res = await RNFetchBlob.config({
+          fileCache: true,
+        }).fetch('GET', pdfUrl);
+
+        // ডাউনলোড হওয়া ফাইলের লোকাল পাথ
+        setPdfPath(res.path());
+        setIsLoading(false); // লোডিং সম্পূর্ণ হলে লোডার বন্ধ করুন
+      } catch (error) {
+        console.log('Error downloading PDF:', error);
+        setIsLoading(false); // ত্রুটি হলেও লোডার বন্ধ করুন
+      }
+    };
+
+    downloadPdf();
+  }, [route?.params?.data?.pdf]);
 
   return (
     <View
@@ -91,102 +119,152 @@ const BookShareScreen = ({navigation, route}: NavigProps<Books>) => {
           </TouchableOpacity>
         }
       />
-       
-     <ScrollView
-       showsVerticalScrollIndicator={false}
-       showsHorizontalScrollIndicator={false} >
-        <View
-          style={{
-            justifyContent: 'center',
-            alignItems: 'center',
-            paddingHorizontal: '4%',
-            paddingVertical: '5%',
-            gap: 10,
-          }}>
-          <Image
-            style={{
-              width: width * 0.5,
-              height: height * 0.31,
-              resizeMode: 'stretch',
-              borderRadius: 20,
-            }}
-            source={
-              route?.params?.data?.image
-                ? route?.params?.data?.image
-                : require('../../assets/tempAssets/book.jpg')
-            }
-          />
-          <View
-            style={{
-              alignItems: 'center',
-            }}>
-            <Text
-              style={{
-                fontSize: 16,
-                color: colors.textColor.secondaryColor,
-                fontFamily: font.Poppins,
-              }}>
-              Educated a memoir
-            </Text>
-            <Text
-              style={{
-                fontSize: 12,
-                color: colors.textColor.neutralColor,
-                fontFamily: font.Poppins,
-              }}>
-              Tara wetoyer
-            </Text>
-          </View>
-        </View>
-        <View
-          style={{
-            paddingHorizontal: '4%',
-          }}>
-          <Text
-            style={{
-              fontSize: 14,
-              color: colors.textColor.neutralColor,
-              fontFamily: font.Poppins,
-              marginBottom: 10,
-              textAlign: 'justify',
-              letterSpacing: 0.6,
-              lineHeight: 24,
-            }}>
-            efficitur. ac gravida sit turpis id elit. tincidunt sodales. laoreet
-            facilisis vehicula, convallis. varius amet, faucibus non. placerat
-            turpis eget sapien ipsum tempor felis, vitae ex Quisque ipsum
-            convallis. tortor. at, quis lorem. non. eu placerat sed Nam non
-            {'\n'}
-            {'\n'}
-            nulla, venenatis dui. eu ipsum odio leo. elit. viverra Sed Praesent
-            ipsum id faucibus efficitur. tincidunt hendrerit placerat. viverra
-            elementum nulla, risus elit id commodo lacus, nibh odio viverra
-            {'\n'}
-            {'\n'}
-            consectetur sit malesuada Nunc porta amet, non adipiscing eget Donec
-            facilisis malesuada varius ex Nam ipsum tincidunt scelerisque ipsum
-            facilisis tortor. tincidunt scelerisque non. Donec nisi volutpat
-            convallis. efficitur. tincidunt quis eu enim. sit Ut efficitur. ac
-            gravida sit turpis id elit. tincidunt sodales. laoreet facilisis
-            {'\n'}
-            {'\n'}
-            {'\n'}
-            vehicula, convallis. varius amet, faucibus non. placerat turpis eget
-            sapien ipsum tempor felis, vitae ex Quisque ipsum convallis. tortor.
-            at, quis lorem. non. eu placerat sed Nam non nulla, venenatis dui.
-            eu ipsum odio leo. elit. viverra Sed Praesent ipsum id faucibus
-            efficitur. tincidunt hendrerit placerat. viverra elementum nulla,
-            {'\n'}
-            {'\n'}
-            {'\n'}
-            risus elit id commodo lacus, nibh odio viverra consectetur sit
-            malesuada Nunc porta amet, non adipiscing eget Donec facilisis
-            malesuada varius ex Nam ipsum tincidunt scelerisque ipsum facilisis
-            tortor. tincidunt scelerisque non. Donec nisi volutpat convallis.
-            efficitur. tincidunt quis eu enim. sit Ut
-          </Text>
-        </View>
-      </ScrollView>
+
+      <FlatList
+        showsVerticalScrollIndicator={false}
+        data={[1]}
+        contentContainerStyle={{
+          paddingBottom: 20,
+        }}
+        renderItem={({item, index}) => {
+          return (
+            <>
+              {isLoading ? (
+                <View style={styles.loaderContainer}>
+                  <ActivityIndicator size="large" color="#000" />
+                </View>
+              ) : (
+                <View
+                  style={{
+                    // paddingHorizontal: '4%',
+                    // paddingVertical: 10,
+                    gap: 10,
+                    borderRadius: 20,
+
+                    height: 500,
+                  }}>
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      color: colors.textColor.light,
+                      fontFamily: font.PoppinsSemiBold,
+                    }}>
+                    Demo :
+                  </Text>
+                  <Pdf source={{uri: pdfPath}} style={styles.pdf} />
+                </View>
+              )}
+            </>
+          );
+        }}
+        ListHeaderComponent={() => {
+          return (
+            <>
+              <View
+                style={{
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  paddingHorizontal: '4%',
+                  paddingTop: '5%',
+                  gap: 10,
+                }}>
+                <Image
+                  style={{
+                    width: width * 0.5,
+                    height: height * 0.31,
+                    resizeMode: 'stretch',
+                    borderRadius: 20,
+                  }}
+                  source={{
+                    uri: makeImage(Book?.bookImage),
+                  }}
+                />
+                <View
+                  style={{
+                    alignItems: 'center',
+                  }}>
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      color: colors.textColor.secondaryColor,
+                      fontFamily: font.Poppins,
+                    }}>
+                    {Book?.name}
+                  </Text>
+                  <Text
+                    style={{
+                      fontSize: 12,
+                      color: colors.textColor.neutralColor,
+                      fontFamily: font.Poppins,
+                    }}>
+                    {Book?.publisher}
+                  </Text>
+                  <Text
+                    style={{
+                      fontSize: 12,
+                      color: colors.blueColor,
+                      fontFamily: font.Poppins,
+                    }}>
+                    {Book?.bookUrl}
+                  </Text>
+                </View>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    gap: 10,
+                  }}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      navigation?.navigate('PdfViewer', {
+                        data: route?.params?.data,
+                      });
+                    }}
+                    style={{
+                      paddingVertical: 10,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      backgroundColor: colors.bg,
+                    }}>
+                    <View
+                      style={{
+                        borderRadius: 10,
+                        backgroundColor: colors.primaryColor,
+                        paddingHorizontal: 10,
+                        paddingVertical: 5,
+                      }}>
+                      <Text style={{color: colors.textColor.white}}>
+                        Reading This Book
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => {
+                      Linking.openURL(Book?.bookUrl);
+                    }}
+                    style={{
+                      paddingVertical: '3%',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      backgroundColor: colors.bg,
+                    }}>
+                    <View
+                      style={{
+                        borderRadius: 10,
+                        backgroundColor: colors.blue,
+                        paddingHorizontal: 10,
+                        paddingVertical: 5,
+                      }}>
+                      <Text style={{color: colors.textColor.white}}>
+                        Listening This Book
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </>
+          );
+        }}
+      />
       <ModalOfBottom
         onlyTopRadius={15}
         modalVisible={modalVisible}
@@ -200,8 +278,8 @@ const BookShareScreen = ({navigation, route}: NavigProps<Books>) => {
               // setIsFriendRequest(false);
               // setIsFriendRequestSent(false);
               handleCreateNewChat({
-                path : 'CreateNewChat'
-              })
+                path: 'CreateNewChat',
+              });
               setModalVisible(false);
             }}
             style={{
@@ -266,7 +344,6 @@ const BookShareScreen = ({navigation, route}: NavigProps<Books>) => {
       <ModalOfBottom
         modalVisible={liveModal}
         setModalVisible={setLiveModal}
-       
         // backButton
 
         height={height * 0.8}
@@ -389,26 +466,26 @@ const BookShareScreen = ({navigation, route}: NavigProps<Books>) => {
             </TouchableOpacity>
 
             {/* <View
+            style={{
+              flexDirection: 'row',
+              gap: 10,
+            }}>
+            <TextInput
+              placeholder="shear url/link"
+              onChangeText={text => setLinkUrl(text)}
               style={{
-                flexDirection: 'row',
-                gap: 10,
-              }}>
-              <TextInput
-                placeholder="shear url/link"
-                onChangeText={text => setLinkUrl(text)}
-                style={{
-                  fontFamily: font.Poppins,
-                  backgroundColor: colors.secondaryColor,
-                  borderRadius: 100,
-                  fontSize: 14,
-                  paddingHorizontal: 20,
-                  height: 56,
-                  flex: 1,
-                  color: colors.textColor.neutralColor,
-                }}
-                // defaultValue="write image /book/url link"
-              />
-            </View> */}
+                fontFamily: font.Poppins,
+                backgroundColor: colors.secondaryColor,
+                borderRadius: 100,
+                fontSize: 14,
+                paddingHorizontal: 20,
+                height: 56,
+                flex: 1,
+                color: colors.textColor.neutralColor,
+              }}
+              // defaultValue="write image /book/url link"
+            />
+          </View> */}
           </View>
           <NormalButton
             onPress={() => {
@@ -425,5 +502,15 @@ const BookShareScreen = ({navigation, route}: NavigProps<Books>) => {
 };
 
 export default BookShareScreen;
-
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  pdf: {
+    flex: 1,
+    width: Dimensions.get('window').width,
+    height: Dimensions.get('window').height,
+  },
+  loaderContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});

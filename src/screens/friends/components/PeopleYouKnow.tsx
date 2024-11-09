@@ -3,14 +3,11 @@ import {
   FlatList,
   NativeScrollEvent,
   NativeSyntheticEvent,
+  RefreshControl,
   TouchableOpacity,
   View,
   useWindowDimensions,
 } from 'react-native';
-import {
-  useGetFriendReceivedRequestsQuery,
-  useGetSuggestionsQuery,
-} from '../../../redux/apiSlices/friendsSlices';
 import {isSmall, isTablet} from '../../../utils/utils';
 
 import {useSharedValue} from 'react-native-reanimated';
@@ -18,11 +15,17 @@ import {SvgXml} from 'react-native-svg';
 import FriendCard from '../../../components/friend/FriendCard';
 import {useStyles} from '../../../context/ContextApi';
 import {NavigProps} from '../../../interfaces/NaviProps';
+import {useGetSuggestionsQuery} from '../../../redux/apiSlices/friendsSlices';
 
 const PeopleYouKnow = ({navigation}: NavigProps<null>) => {
-  const {data: suggestedFriends} = useGetSuggestionsQuery({});
-  const {data: receivedRequestFriend} = useGetFriendReceivedRequestsQuery({});
+  const {
+    data: suggestedFriends,
+    refetch: suggestedRefetch,
+    isLoading: suggestedIsLoading,
+  } = useGetSuggestionsQuery({});
+
   // console.log(suggestedFriends);
+
   const {colors, font} = useStyles();
   const [isRequest, setIsRequest] = React.useState<boolean>(false);
   const {height, width} = useWindowDimensions();
@@ -31,7 +34,7 @@ const PeopleYouKnow = ({navigation}: NavigProps<null>) => {
   const listRef = React.useRef<FlatList>(null);
   const [currentIndex, setCurrentIndex] = React.useState(0);
   const onSwipeRight = () => {
-    const Length = receivedRequestFriend?.data?.length || 0;
+    const Length = suggestedFriends?.data?.length || 0;
     const nextIndex = currentIndex + 1;
     if (nextIndex < Length) {
       setCurrentIndex(nextIndex); // Update the current index
@@ -108,6 +111,13 @@ const PeopleYouKnow = ({navigation}: NavigProps<null>) => {
         <FlatList
           ref={listRef} // Assign the ref to FlatList
           // keyExtractor={item => item.id}
+          refreshControl={
+            <RefreshControl
+              onRefresh={suggestedRefetch}
+              refreshing={suggestedIsLoading}
+              colors={[colors.primaryColor]}
+            />
+          }
           horizontal // Assuming the list is horizontal
           showsHorizontalScrollIndicator={false}
           snapToInterval={itemWidth} // Ensure it snaps to the item width
@@ -123,10 +133,12 @@ const PeopleYouKnow = ({navigation}: NavigProps<null>) => {
           renderItem={({item}) => {
             return (
               <FriendCard
-                isFriendRequest={isRequest}
+                isFriendRequest={false}
                 item={item}
                 onPress={() => {
-                  navigation?.navigate('FriendsProfile');
+                  navigation?.navigate('FriendsProfile', {
+                    data: {id: item?._id},
+                  });
                 }}
               />
             );

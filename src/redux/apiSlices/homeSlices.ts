@@ -21,4 +21,5 @@ export const homeSlices = api.injectEndpoints({
   }),
 });
 
-export const {useGetNewsFeetQuery} = homeSlices;
+export const {useGetNewsFeetQuery, usePrefetch: useNewsFeetPrefetch} =
+  homeSlices;

@@ -26,4 +26,8 @@ export const chatSlices = api.injectEndpoints({
   }),
 });
 
-export const {useCreateMessageMutation, useGetMessageQuery} = chatSlices;
+export const {
+  useCreateMessageMutation,
+  useGetMessageQuery,
+  useLazyGetMessageQuery,
+} = chatSlices;

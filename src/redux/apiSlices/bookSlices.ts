@@ -1,34 +1,38 @@
-import { api } from "../api/baseApi";
+import {api} from '../api/baseApi';
 
 export const bookSlices = api.injectEndpoints({
-    endpoints: (builder) => ({
-        getCategories: builder.query<null , unknown>({
-            query: ({id,page,limit}) => ({
-                url: `/categories`,
-              
-            }),
-            providesTags : ["book"]
-        }),
-        getBooks: builder.query<null , unknown>({
-            query: ({id,page,limit}) => ({
-                url: `/books`,
-              
-            }),
-            providesTags : ["book"]
-        }),
-        // getBooks: builder.mutation({
-        //     query: (data) => ({
-        //         url: `/books`,
-        //       method: 'POST',
-        //       body: data,
-        //     }),
-        //     invalidatesTags : ["book"]
-        //   }),
+  endpoints: builder => ({
+    getCategories: builder.query<null, unknown>({
+      query: ({id, page, limit}) => ({
+        url: `/categories`,
+      }),
+      providesTags: ['book'],
     }),
-})
-
+    getBooks: builder.query<null, unknown>({
+      query: ({id, page, limit}) => ({
+        url: `/books`,
+      }),
+      providesTags: ['book'],
+    }),
+    getCategoryBooks: builder.query<null, unknown>({
+      query: ({category, page, limit}) => ({
+        url: `/books/category/${category}`,
+      }),
+      providesTags: ['book'],
+    }),
+    // getBooks: builder.mutation({
+    //     query: (data) => ({
+    //         url: `/books`,
+    //       method: 'POST',
+    //       body: data,
+    //     }),
+    //     invalidatesTags : ["book"]
+    //   }),
+  }),
+});
 
 export const {
-    useGetCategoriesQuery,
-  useGetBooksQuery
- } = bookSlices;
+  useGetCategoriesQuery,
+  useGetBooksQuery,
+  useGetCategoryBooksQuery,
+} = bookSlices;
