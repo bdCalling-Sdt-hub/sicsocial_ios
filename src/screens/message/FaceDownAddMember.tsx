@@ -9,24 +9,24 @@ import {
 } from 'react-native';
 
 import React from 'react';
-import { SvgXml } from 'react-native-svg';
+import {SvgXml} from 'react-native-svg';
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
 import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
 import GroupUserCard from '../../components/conversation/GroupUserCard';
-import { useStyles } from '../../context/ContextApi';
-import { NavigProps } from '../../interfaces/NaviProps';
-import { useGetFriendQuery } from '../../redux/apiSlices/friendsSlices';
-import { IParticipant } from '../../redux/interface/participants';
-import { makeImage } from '../../utils/utils';
+import {useStyles} from '../../context/ContextApi';
+import {NavigProps} from '../../interfaces/NaviProps';
+import {useGetFriendQuery} from '../../redux/apiSlices/friendsSlices';
+import {IParticipant} from '../../redux/interface/participants';
+import {makeImage} from '../../utils/utils';
 
-const FaceDownAddMember = ({navigation ,route }: NavigProps<any>) => {
+const FaceDownAddMember = ({navigation, route}: NavigProps<any>) => {
   const {colors, font} = useStyles();
-  const {data : friends} = useGetFriendQuery({})  
+  const {data: friends} = useGetFriendQuery({});
   const [modalVisible, setModalVisible] = React.useState(false);
-  const [selectedUser, setSelectUser] = React.useState<
-    Array<IParticipant>
-  >(route?.params || []);
-    // console.log(selectedUser);
+  const [selectedUser, setSelectUser] = React.useState<Array<IParticipant>>(
+    route?.params || [],
+  );
+  // console.log(selectedUser);
   return (
     <View
       style={{
@@ -49,7 +49,9 @@ const FaceDownAddMember = ({navigation ,route }: NavigProps<any>) => {
               flex: 1,
             }}>
             <TouchableOpacity
-              onPress={() => navigation?.navigate("CreateFaceDown",selectedUser)}
+              onPress={() =>
+                navigation?.navigate('CreateFaceDown', selectedUser)
+              }
               style={{
                 alignItems: 'flex-end',
                 backgroundColor: colors.green['#00B047'],
@@ -76,7 +78,7 @@ const FaceDownAddMember = ({navigation ,route }: NavigProps<any>) => {
           fontFamily: font.PoppinsSemiBold,
         }}
       />
-    
+
       <View
         style={{
           paddingHorizontal: '4%',
@@ -226,6 +228,8 @@ const FaceDownAddMember = ({navigation ,route }: NavigProps<any>) => {
                     borderRadius: 50,
                     padding: 2,
                     position: 'relative',
+                    width: 65,
+                    height: 65,
                   }}>
                   <View
                     style={{
@@ -250,13 +254,13 @@ const FaceDownAddMember = ({navigation ,route }: NavigProps<any>) => {
                   </View>
                   <Image
                     style={{
-                      width: 65,
-                      height: 65,
+                      width: 60,
+                      height: 60,
                       borderRadius: 28,
                       resizeMode: 'contain',
                     }}
                     source={{
-                      uri : makeImage(item.item.avatar)
+                      uri: makeImage(item.item.avatar),
                     }}
                   />
                 </TouchableOpacity>
@@ -275,7 +279,7 @@ const FaceDownAddMember = ({navigation ,route }: NavigProps<any>) => {
         </View>
       )}
 
-        <FlatList
+      <FlatList
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="always"
         contentContainerStyle={{
@@ -286,7 +290,7 @@ const FaceDownAddMember = ({navigation ,route }: NavigProps<any>) => {
         renderItem={item => (
           <>
             <GroupUserCard
-            option={"group"}
+              option={'group'}
               isSelect={selectedUser?.find(
                 friend => friend._id === item.item._id,
               )}
@@ -299,7 +303,7 @@ const FaceDownAddMember = ({navigation ,route }: NavigProps<any>) => {
                   setSelectUser([...selectedUser, item.item]);
                 }
               }}
-              img={item.item.avatar}
+              img={makeImage(item.item.avatar)}
               // lastMessage={item.item?.lastMessage}
               // lastTime="9:51 am"
               name={item.item.fullName}
@@ -309,7 +313,6 @@ const FaceDownAddMember = ({navigation ,route }: NavigProps<any>) => {
       />
 
       <ModalOfBottom
-     
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}>
         <View style={{gap: 3}}>

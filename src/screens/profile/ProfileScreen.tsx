@@ -554,7 +554,12 @@ const ProfileScreen = ({navigation}: NavigProps<null>) => {
                 {/* {console.log(makeImage(item.item.image))} */}
                 <TouchableOpacity
                   onPress={() => {
-                    navigation?.navigate('FaceDownConversation');
+                    navigation?.navigate('FaceDownConversation', {
+                      data: {
+                        id: item.item.chatId,
+                        facedown: item.item,
+                      },
+                    });
                   }}
                   style={{
                     backgroundColor: colors.secondaryColor,

@@ -1,6 +1,5 @@
 import {
   Easing,
-  Image,
   PermissionsAndroid,
   Platform,
   ScrollView,
@@ -11,7 +10,7 @@ import {
   View,
   useWindowDimensions,
 } from 'react-native';
-import Animated, {
+import {
   useAnimatedStyle,
   useSharedValue,
   withTiming,
@@ -19,7 +18,6 @@ import Animated, {
 
 import React from 'react';
 import AudioRecorderPlayer from 'react-native-audio-recorder-player';
-import {AnimatedCircularProgress} from 'react-native-circular-progress';
 import BackButtonWithTitle from '../../../components/common/BackButtonWithTitle';
 import NormalButton from '../../../components/common/NormalButton';
 import {useStyles} from '../../../context/ContextApi';
@@ -32,7 +30,7 @@ const FeedBackScreen = ({navigation}: NavigProps<null>) => {
   const {colors, font} = useStyles();
   const {height} = useWindowDimensions();
   const [feedbackTest, setFeedbackTest] = React.useState('');
-  const [sendFeedBack] = useSendFeedBackMutation();
+  const [sendFeedBack, feedBackResults] = useSendFeedBackMutation();
   const [recordOn, setRecordOn] = React.useState(false);
   const [recordOnDone, setRecordOnDone] = React.useState(false);
   const letsBorderAnimationValue = useSharedValue(23);
@@ -74,15 +72,17 @@ const FeedBackScreen = ({navigation}: NavigProps<null>) => {
         type: 'audio/wav', // Try changing this if 'audio/x-wav' doesn't work
         name: 'voice.wav',
       };
-      sendFeedBackHandler(audio);
+      // sendFeedBackHandler(audio);
     }
   };
 
-  const sendFeedBackHandler = async audio => {
+  const sendFeedBackHandler = async () => {
     let text = feedbackTest;
 
     try {
-      await sendFeedBack({message: text});
+      await sendFeedBack({feedback: text}).then(res => {
+        navigation?.goBack();
+      });
     } catch (error) {}
   };
 
@@ -128,17 +128,21 @@ const FeedBackScreen = ({navigation}: NavigProps<null>) => {
             backgroundColor: colors.secondaryColor,
             borderRadius: 20,
             minHeight: '90%',
+            flexDirection: 'row',
+            flex: 1,
           }}>
           <TextInput
             textAlignVertical="top"
             placeholder="Write your feedback here"
             multiline
             placeholderTextColor={colors.textColor.neutralColor}
+            onChangeText={text => setFeedbackTest(text)}
             style={{
               fontFamily: font.Poppins,
               fontSize: 14,
               color: colors.textColor.light,
               lineHeight: 24,
+              flex: 1,
               marginBottom: 16,
             }}
           />
@@ -190,7 +194,7 @@ const FeedBackScreen = ({navigation}: NavigProps<null>) => {
                 {activeIndexBigButton === index && item?.name}
               </Animated.Text>
             </View> */}
-            {recordOn ? (
+            {/* {recordOn ? (
               <>
                 {recordOnDone ? (
                   <Animated.View
@@ -346,7 +350,7 @@ const FeedBackScreen = ({navigation}: NavigProps<null>) => {
                   />
                 </View>
               </Animated.View>
-            )}
+            )} */}
           </TouchableOpacity>
         </View>
 
@@ -354,7 +358,13 @@ const FeedBackScreen = ({navigation}: NavigProps<null>) => {
           style={{
             paddingHorizontal: '5%',
           }}>
-          <NormalButton title="Send Feedback" />
+          <NormalButton
+            isLoading={feedBackResults?.isLoading}
+            onPress={() => {
+              sendFeedBackHandler();
+            }}
+            title="Send Feedback"
+          />
         </View>
       </View>
     </View>

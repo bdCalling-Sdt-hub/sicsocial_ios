@@ -8,9 +8,9 @@ import {makeImage} from '../../utils/utils';
 const PDFViewer = ({route}) => {
   const [pdfPath, setPdfPath] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  console.log(route?.params?.data?.pdf);
+  // console.log(route?.params?.data?.pdf);
   useEffect(() => {
-    // PDF ফাইলটি লোকালি ডাউনলোড করুন
+    // PDF
     const downloadPdf = async () => {
       const pdfUrl = makeImage(route?.params?.data?.pdf);
 

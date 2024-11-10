@@ -21,15 +21,17 @@ import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
 import NormalButton from '../../components/common/NormalButton';
 import {useStyles} from '../../context/ContextApi';
 import {NavigProps} from '../../interfaces/NaviProps';
+import {useGetAllBooksQuery} from '../../redux/apiSlices/bookSlices';
 import {useCreateChatMutation} from '../../redux/apiSlices/chatSlices';
 import {useCreateFaceDownMutation} from '../../redux/apiSlices/facedwonSlice';
+import {IBook} from '../../redux/interface/book';
 import {IParticipant} from '../../redux/interface/participants';
-import {TemBooks} from '../../utils/GetRandomColor';
 import {makeImage} from '../../utils/utils';
 
 const CreateNewFaceDown = ({navigation, route}: NavigProps<any>) => {
   const {colors, font, window} = useStyles();
   const {height, width} = useWindowDimensions();
+  const {data: BooksData} = useGetAllBooksQuery({});
   const [createFaceDown, results] = useCreateFaceDownMutation();
   const [createChat] = useCreateChatMutation();
   const [modalVisible, setModalVisible] = React.useState(false);
@@ -43,7 +45,10 @@ const CreateNewFaceDown = ({navigation, route}: NavigProps<any>) => {
 
   const [booksModal, setBooksModal] = React.useState(false);
   const [selectBook, setSelectBook] = React.useState<number>();
-  const [faceDownInfo, setFaceDownInfo] = React.useState<{}>();
+  const [faceDownInfo, setFaceDownInfo] = React.useState<{
+    url: string;
+    book: IBook;
+  }>();
   // console.log(route,participants);
   const handleImagePick = async (option: 'camera' | 'library') => {
     try {
@@ -58,18 +63,6 @@ const CreateNewFaceDown = ({navigation, route}: NavigProps<any>) => {
         if (!result.didCancel) {
           setImageAssets(result?.assets![0].uri);
           // console.log(result);
-          setFaceDownInfo({
-            ...faceDownInfo,
-            image: {
-              uri: result?.assets![0].uri,
-              type: result?.assets![0].type,
-              name: result?.assets![0].fileName,
-              size: result?.assets![0].fileSize,
-              lastModified: new Date().getTime(), // Assuming current time as last modified
-              lastModifiedDate: new Date(),
-              webkitRelativePath: '',
-            },
-          });
         }
       }
       if (option === 'library') {
@@ -83,18 +76,6 @@ const CreateNewFaceDown = ({navigation, route}: NavigProps<any>) => {
         if (!result.didCancel) {
           setImageAssets(result?.assets![0].uri);
           // console.log(result);
-          setFaceDownInfo({
-            ...faceDownInfo,
-            image: {
-              uri: result?.assets![0].uri,
-              type: result?.assets![0].type,
-              name: result?.assets![0].fileName,
-              size: result?.assets![0].fileSize,
-              lastModified: new Date().getTime(), // Assuming current time as last modified
-              lastModifiedDate: new Date(),
-              webkitRelativePath: '',
-            },
-          });
         }
       }
     } catch (error) {
@@ -108,33 +89,42 @@ const CreateNewFaceDown = ({navigation, route}: NavigProps<any>) => {
   // console.log(faceDownInfo);
   const handleCreateFaceDown = React.useCallback(
     async Udata => {
-      // console.log(Udata);
+      console.log(Udata);
       if (!Udata?.schedule) {
         Udata.schedule = 'weekly';
       }
       // navigation?.navigate('FaceDownConversation');
       const formData = new FormData();
-
       for (const key in Udata) {
-        if (key === 'image') {
-          formData.append(key, Udata[key]);
+        if (key === 'book') {
+          formData.append(key, Udata?.book?._id);
         } else {
           formData.append(key, Udata[key]);
         }
       }
+      if (imageAssets) {
+        formData.append('image', {
+          uri: imageAssets,
+          type: 'image/jpeg',
+          name: 'image.jpg',
+        });
+      }
       console.log(formData);
-      createFaceDown(formData).then(res => {
-        console.log(res);
-        if (res.data?.data?._id) {
+      createFaceDown(formData).then(faceDown => {
+        console.log(faceDown);
+        if (faceDown.data?.data?._id) {
           createChat({
             participants: participants,
             type: 'public',
-            facedown: res.data?.data?._id,
+            facedown: faceDown.data?.data?._id,
           })
             .then(res => {
               // console.log(res);
               navigation?.navigate('FaceDownConversation', {
-                data: {id: res?.data?.data?._id},
+                data: {
+                  id: res?.data?.data?._id,
+                  facedown: faceDown.data?.data,
+                },
               });
             })
             .catch(err => {
@@ -199,19 +189,46 @@ const CreateNewFaceDown = ({navigation, route}: NavigProps<any>) => {
               justifyContent: 'center',
               alignItems: 'center',
             }}>
-            <Image
-              style={{
-                width: 100,
-                height: 100,
-                borderRadius: 46,
-                alignSelf: 'center',
-              }}
-              source={
-                imageAssets
-                  ? {uri: imageAssets}
-                  : require('../../assets/tempAssets/7261c2ae940abab762a6e0130b36b3a9.jpg')
-              }
-            />
+            {imageAssets ? (
+              <Image
+                style={{
+                  width: 100,
+                  height: 100,
+                  borderRadius: 46,
+                  alignSelf: 'center',
+                }}
+                source={{
+                  uri: imageAssets,
+                }}
+              />
+            ) : (
+              <TouchableOpacity
+                activeOpacity={0.9}
+                onPress={() => {
+                  // handleImagePick('camera');
+                  setImageModal(true);
+                }}
+                style={{
+                  width: 100,
+                  height: 100,
+                  borderRadius: 46,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <SvgXml
+                  width={40}
+                  height={40}
+                  xml={`<svg width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M5.9974 7.66667C4.98406 7.66667 4.16406 6.84667 4.16406 5.83333C4.16406 4.82 4.98406 4 5.9974 4C7.01073 4 7.83073 4.82 7.83073 5.83333C7.83073 6.84667 7.01073 7.66667 5.9974 7.66667ZM5.9974 5C5.5374 5 5.16406 5.37333 5.16406 5.83333C5.16406 6.29333 5.5374 6.66667 5.9974 6.66667C6.4574 6.66667 6.83073 6.29333 6.83073 5.83333C6.83073 5.37333 6.4574 5 5.9974 5Z" fill="#767676"/>
+<path d="M9.9987 15.6667H5.9987C2.3787 15.6667 0.832031 14.12 0.832031 10.5V6.49999C0.832031 2.87999 2.3787 1.33333 5.9987 1.33333H8.66536C8.9387 1.33333 9.16536 1.55999 9.16536 1.83333C9.16536 2.10666 8.9387 2.33333 8.66536 2.33333H5.9987C2.92536 2.33333 1.83203 3.42666 1.83203 6.49999V10.5C1.83203 13.5733 2.92536 14.6667 5.9987 14.6667H9.9987C13.072 14.6667 14.1654 13.5733 14.1654 10.5V7.16666C14.1654 6.89333 14.392 6.66666 14.6654 6.66666C14.9387 6.66666 15.1654 6.89333 15.1654 7.16666V10.5C15.1654 14.12 13.6187 15.6667 9.9987 15.6667Z" fill="#767676"/>
+<path d="M12 6.33329C11.7267 6.33329 11.5 6.10662 11.5 5.83329V1.83329C11.5 1.63329 11.62 1.44662 11.8067 1.37329C11.9933 1.29995 12.2067 1.33995 12.3533 1.47995L13.6867 2.81329C13.88 3.00662 13.88 3.32662 13.6867 3.51995C13.4933 3.71329 13.1733 3.71329 12.98 3.51995L12.5 3.03995V5.83329C12.5 6.10662 12.2733 6.33329 12 6.33329Z" fill="#767676"/>
+<path d="M10.6663 3.66663C10.5396 3.66663 10.413 3.61996 10.313 3.51996C10.1196 3.32663 10.1196 3.00663 10.313 2.81329L11.6463 1.47996C11.8396 1.28663 12.1596 1.28663 12.353 1.47996C12.5463 1.67329 12.5463 1.99329 12.353 2.18663L11.0196 3.51996C10.9196 3.61996 10.793 3.66663 10.6663 3.66663Z" fill="#767676"/>
+<path d="M1.77954 13.6334C1.61954 13.6334 1.45954 13.5534 1.36621 13.4134C1.21288 13.1867 1.27288 12.8734 1.49954 12.7201L4.78621 10.5134C5.50621 10.0334 6.49954 10.0867 7.15288 10.6401L7.37288 10.8334C7.70621 11.1201 8.27288 11.1201 8.59954 10.8334L11.3729 8.4534C12.0795 7.84673 13.1929 7.84673 13.9062 8.4534L14.9929 9.38673C15.1995 9.56673 15.2262 9.88006 15.0462 10.0934C14.8662 10.3001 14.5462 10.3267 14.3395 10.1467L13.2529 9.2134C12.9195 8.92673 12.3595 8.92673 12.0262 9.2134L9.25288 11.5934C8.54621 12.2001 7.43288 12.2001 6.71954 11.5934L6.49954 11.4001C6.19288 11.1401 5.68622 11.1134 5.34622 11.3467L2.06621 13.5534C1.97288 13.6067 1.87288 13.6334 1.77954 13.6334Z" fill="#767676"/>
+</svg>
+`}
+                />
+              </TouchableOpacity>
+            )}
           </View>
           <View
             style={{
@@ -350,6 +367,8 @@ const CreateNewFaceDown = ({navigation, route}: NavigProps<any>) => {
                         borderRadius: 50,
                         padding: 2,
                         position: 'relative',
+                        width: 70,
+                        height: 70,
                       }}>
                       <View
                         style={{
@@ -455,9 +474,9 @@ const CreateNewFaceDown = ({navigation, route}: NavigProps<any>) => {
             }}>
             Share content
           </Text>
-          {faceDownInfo?.bookUrl ? (
+          {faceDownInfo?.url && (
             <LinkPreview
-              text={faceDownInfo?.bookUrl}
+              text={faceDownInfo?.url}
               enableAnimation
               renderLinkPreview={({
                 aspectRatio,
@@ -525,7 +544,8 @@ const CreateNewFaceDown = ({navigation, route}: NavigProps<any>) => {
                 );
               }}
             />
-          ) : (
+          )}
+          {faceDownInfo?.book && (
             <TouchableOpacity activeOpacity={0.8}>
               <Image
                 resizeMode="stretch"
@@ -537,11 +557,9 @@ const CreateNewFaceDown = ({navigation, route}: NavigProps<any>) => {
                   justifyContent: 'center',
                   alignItems: 'center',
                 }}
-                source={
-                  selectBook
-                    ? selectBook
-                    : require('../../assets/tempAssets/book.jpg')
-                }
+                source={{
+                  uri: makeImage(faceDownInfo?.book?.bookImage),
+                }}
               />
             </TouchableOpacity>
           )}
@@ -555,7 +573,7 @@ const CreateNewFaceDown = ({navigation, route}: NavigProps<any>) => {
               onChangeText={text =>
                 setFaceDownInfo({
                   ...faceDownInfo,
-                  bookUrl: text,
+                  url: text,
                 })
               }
               style={{
@@ -942,6 +960,7 @@ const CreateNewFaceDown = ({navigation, route}: NavigProps<any>) => {
           }}
         />
       </CustomModal>
+      {/* book selection modal  */}
       <CustomModal
         modalVisible={booksModal}
         setModalVisible={setBooksModal}
@@ -979,63 +998,12 @@ const CreateNewFaceDown = ({navigation, route}: NavigProps<any>) => {
               />
             </View>
           </View>
-          {/* <View
-            style={{
-              borderBottomWidth: 1,
-              borderBlockColor: 'rgba(217, 217, 217, 1)',
-            }}>
-            <FlatList
-              showsHorizontalScrollIndicator={false}
-              keyboardShouldPersistTaps="always"
-              horizontal
-              contentContainerStyle={{
-                gap: 16,
-                paddingHorizontal: 20,
-                paddingTop: 20,
-                paddingBottom: 15,
-              }}
-              data={TemBooks}
-              renderItem={item => (
-                <>
-                  <TouchableOpacity
-                    onPress={() => {
-                      setSelectOptionItem(item.index);
-                    }}
-                    style={{
-                      backgroundColor:
-                        selectOptionItem === item.index
-                          ? colors.primaryColor
-                          : colors.secondaryColor,
-                      height: 35,
-                      paddingHorizontal: 20,
-                      // paddingVertical: 5,
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      borderRadius: 50,
-                    }}>
-                    <Text
-                      style={{
-                        color:
-                          selectOptionItem === item.index
-                            ? colors.textColor.white
-                            : colors.textColor.light,
-                        fontSize: 12,
-                        fontFamily: font.PoppinsMedium,
-                        textAlign: 'center',
-                      }}>
-                      {item.item.content}
-                    </Text>
-                  </TouchableOpacity>
-                </>
-              )}
-            />
-          </View> */}
 
           <GridList
             showsVerticalScrollIndicator={false}
             containerWidth={width * 0.82}
             numColumns={2}
-            data={TemBooks}
+            data={BooksData?.data}
             columnWrapperStyle={{
               gap: 20,
               alignSelf: 'center',
@@ -1047,9 +1015,12 @@ const CreateNewFaceDown = ({navigation, route}: NavigProps<any>) => {
             renderItem={item => (
               <TouchableOpacity
                 onPress={() => {
+                  // handleCreateNewChat({book: item.item._id});
+                  setFaceDownInfo({
+                    ...faceDownInfo,
+                    book: item.item,
+                  });
                   setBooksModal(false);
-                  setSelectBook(item?.item.image);
-                  // navigation?.navigate('BookShare', {data: item.item});
                 }}
                 style={{
                   // elevation: 2,
@@ -1074,7 +1045,9 @@ const CreateNewFaceDown = ({navigation, route}: NavigProps<any>) => {
                       borderWidth: 2,
                       borderColor: colors.bg,
                     }}
-                    source={item.item.image}
+                    source={{
+                      uri: makeImage(item.item.bookImage),
+                    }}
                   />
                 </View>
                 <View
@@ -1090,7 +1063,7 @@ const CreateNewFaceDown = ({navigation, route}: NavigProps<any>) => {
                       fontSize: 14,
                       fontFamily: font.PoppinsMedium,
                     }}>
-                    {item.item.title}
+                    {item.item.name}
                   </Text>
                   <Text
                     style={{

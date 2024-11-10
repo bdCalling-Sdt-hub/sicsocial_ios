@@ -7,61 +7,60 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { useAddMemberMutation, useCreateChatMutation } from '../../redux/apiSlices/chatSlices';
+import {
+  useAddMemberMutation,
+  useCreateChatMutation,
+} from '../../redux/apiSlices/chatSlices';
 
 import React from 'react';
-import { SvgXml } from 'react-native-svg';
+import {SvgXml} from 'react-native-svg';
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
 import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
 import GroupUserCard from '../../components/conversation/GroupUserCard';
-import { useStyles } from '../../context/ContextApi';
-import { NavigProps } from '../../interfaces/NaviProps';
-import { useGetFriendQuery } from '../../redux/apiSlices/friendsSlices';
-import { IFriend } from '../../redux/interface/friends';
+import {useStyles} from '../../context/ContextApi';
+import {NavigProps} from '../../interfaces/NaviProps';
+import {useGetFriendQuery} from '../../redux/apiSlices/friendsSlices';
+import {IFriend} from '../../redux/interface/friends';
+import {makeImage} from '../../utils/utils';
 
-const MakeGroupScreen = ({navigation,route}: NavigProps<any>) => {
+const MakeGroupScreen = ({navigation, route}: NavigProps<any>) => {
   const [createChat, createChartResults] = useCreateChatMutation({});
-   const {data : friends} = useGetFriendQuery({})  
-   const [addMember,results] = useAddMemberMutation()
+  const {data: friends} = useGetFriendQuery({});
+  const [addMember, results] = useAddMemberMutation();
   // console.log(friends);
   const {colors, font} = useStyles();
   const [modalVisible, setModalVisible] = React.useState(false);
-  const [selectedUser, setSelectUser] = React.useState<
-    Array<IFriend>
-  >([]);
+  const [selectedUser, setSelectUser] = React.useState<Array<IFriend>>([]);
 
   // console.log(route?.params?.data);
 
-  const handleAddSingleParticipant = (id) => {
+  const handleAddSingleParticipant = id => {
     // console.log({id : route?.params?.data?.id, participants : id});
-    addMember({id : route?.params?.data?.id, participants : id}).then((res)=>{
+    addMember({id: route?.params?.data?.id, participants: id}).then(res => {
       // console.log(res);
-      navigation?.navigate("Chats")
-    })
+      navigation?.navigate('Chats');
+    });
   };
 
-  const handleAddMultipleParticipant = async (selectUser) => {
+  const handleAddMultipleParticipant = async selectUser => {
     // console.log({id : route?.params?.data?.id, participants : id});
-    let all = selectUser.map((item)=>item?._id)
-  
+    let all = selectUser.map(item => item?._id);
 
-     if(!route?.params?.data?.id){
-      createChat('private').then((res)=>{
-        addMember({id : res?.data?.data?._id, participants : all}).then((res)=>{
+    if (!route?.params?.data?.id) {
+      createChat('private').then(res => {
+        addMember({id: res?.data?.data?._id, participants: all}).then(res => {
           // console.log(res);
           navigation?.navigate('GroupConversation');
-        })
-      })
-     }
-     if(route?.params?.data?.id) {
-       addMember({id : route?.params?.data?.id, participants : all}).then((res)=>{
-         // console.log(res);
-         navigation?.navigate('GroupConversation');
-       })
-     }
-
+        });
+      });
+    }
+    if (route?.params?.data?.id) {
+      addMember({id: route?.params?.data?.id, participants: all}).then(res => {
+        // console.log(res);
+        navigation?.navigate('GroupConversation');
+      });
+    }
   };
-
 
   return (
     <View
@@ -82,7 +81,7 @@ const MakeGroupScreen = ({navigation,route}: NavigProps<any>) => {
           fontFamily: font.PoppinsSemiBold,
         }}
       />
-      
+
       <View
         style={{
           paddingHorizontal: '4%',
@@ -166,7 +165,7 @@ const MakeGroupScreen = ({navigation,route}: NavigProps<any>) => {
                       borderRadius: 28,
                       resizeMode: 'contain',
                     }}
-                    source={{uri :item.item.avatar}}
+                    source={{uri: makeImage(item.item.avatar)}}
                   />
                 </TouchableOpacity>
                 <Text
@@ -176,7 +175,7 @@ const MakeGroupScreen = ({navigation,route}: NavigProps<any>) => {
                     color: colors.textColor.neutralColor,
                     textAlign: 'center',
                   }}>
-                 {item.item?.fullName}
+                  {item.item?.fullName}
                 </Text>
               </View>
             )}
@@ -195,26 +194,30 @@ const MakeGroupScreen = ({navigation,route}: NavigProps<any>) => {
         renderItem={item => (
           <>
             <GroupUserCard
-            option={route?.params?.data?.option}
+              option={route?.params?.data?.option}
               isSelect={selectedUser?.find(
                 friend => friend._id === item.item._id,
               )}
               onPress={() => {
-                if(route?.params?.data?.option === "group"){
-                  if (selectedUser.find(friend => friend._id === item.item._id)) {
+                if (route?.params?.data?.option === 'group') {
+                  if (
+                    selectedUser.find(friend => friend._id === item.item._id)
+                  ) {
                     setSelectUser(
-                      selectedUser.filter(friend => friend._id !== item.item._id),
+                      selectedUser.filter(
+                        friend => friend._id !== item.item._id,
+                      ),
                     );
                   } else {
                     setSelectUser([...selectedUser, item.item]);
                   }
                 }
-                if(route?.params?.data?.option === "friend"){
+                if (route?.params?.data?.option === 'friend') {
                   handleAddSingleParticipant(item.item._id);
                   // navigation?.replace("HomeRoutes")
                 }
               }}
-              img={item.item.avatar}
+              source={{uri: makeImage(item.item.avatar)}}
               // lastMessage={item.item?.lastMessage}
               // lastTime="9:51 am"
               name={item.item.fullName}
@@ -227,7 +230,6 @@ const MakeGroupScreen = ({navigation,route}: NavigProps<any>) => {
           activeOpacity={0.9}
           onPress={() => {
             handleAddMultipleParticipant(selectedUser);
-          
           }}
           style={{
             position: 'absolute',
@@ -249,8 +251,6 @@ const MakeGroupScreen = ({navigation,route}: NavigProps<any>) => {
       )}
 
       <ModalOfBottom
-      
-        
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}>
         <View style={{gap: 3}}>

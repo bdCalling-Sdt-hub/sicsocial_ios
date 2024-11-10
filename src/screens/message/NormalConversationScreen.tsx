@@ -1,5 +1,6 @@
 import React, {useEffect} from 'react';
 import {
+  ActivityIndicator,
   FlatList,
   Image,
   Linking,
@@ -84,6 +85,18 @@ const NormalConversationScreen = ({
     });
     // console.log(res?.data?.data);
     setAllMessages(res?.data?.data);
+    res?.data?.data.map(item => {
+      if (item?.image) {
+        setShowImages(prev => {
+          return [
+            ...prev,
+            {
+              url: makeImage(item?.image),
+            },
+          ];
+        });
+      }
+    });
   };
 
   const socket = getSocket();
@@ -253,6 +266,15 @@ const NormalConversationScreen = ({
         }}
         inverted
         data={AllMessages}
+        ListHeaderComponent={() => {
+          return (
+            <>
+              {messageResult?.isFetching && (
+                <ActivityIndicator size={'small'} color={colors.primaryColor} />
+              )}
+            </>
+          );
+        }}
         renderItem={item => {
           return (
             <View
@@ -356,33 +378,22 @@ const NormalConversationScreen = ({
                         <TouchableOpacity
                           style={{}}
                           onPress={async () => {
-                            if (item.item.path) {
-                              Linking.openURL(item.item.path);
+                            if (item.item.book?.bookUrl) {
+                              Linking.openURL(item.item.book.bookUrl);
                             } else if (item.item.audio) {
                               setPlayItem(item.item.audio);
                               toggleAudioPlayback(makeImage(item.item.audio));
                             }
                           }}>
-                          <Text
-                            style={{
-                              fontSize: 14,
-                              color: colors.textColor.secondaryColor,
-                              fontFamily: font.Poppins,
-                              maxWidth: width * 0.65,
-                              textAlign:
-                                item.item?.sender._id === userInfo?.data?._id
-                                  ? 'right'
-                                  : 'left',
-                            }}>
-                            Audio
-                          </Text>
-
                           {item.item.text && (
                             <Text
                               style={{
                                 fontSize: 14,
                                 color: colors.textColor.secondaryColor,
-                                fontFamily: font.Poppins,
+                                fontFamily:
+                                  playItem === item.item.audio
+                                    ? font?.PoppinsSemiBold
+                                    : font?.Poppins,
                                 maxWidth: width * 0.65,
                                 textAlign:
                                   item.item?.sender._id === userInfo?.data?._id
@@ -394,31 +405,66 @@ const NormalConversationScreen = ({
                           )}
                         </TouchableOpacity>
 
-                        {item.item.path && (
-                          <View
+                        {item.item.book && (
+                          <TouchableOpacity
+                            onPress={() => {
+                              navigation?.navigate('BookShare', {
+                                data: item.item.book,
+                              });
+                            }}
                             style={{
-                              backgroundColor: colors.bg,
-                              elevation: 2,
-                              // height: 192,
-
-                              borderColor: colors.bg,
-
-                              borderRadius: 15,
+                              // elevation: 2,
+                              // backgroundColor: colors.bg,
+                              // padding: 2,
+                              borderRadius: 24,
+                              // height: height * 0.243,
+                              // alignItems : "center",
+                              // justifyContent : "center",
                             }}>
-                            <Image
-                              resizeMode="stretch"
-                              source={{uri: item.item.path}}
+                            <View
                               style={{
-                                // marginBottom: 20,
-                                // aspectRatio: 1,
-
-                                width: 150,
-
-                                height: 190,
-                                borderRadius: 15,
-                              }}
-                            />
-                          </View>
+                                elevation: 1,
+                                padding: 3,
+                              }}>
+                              <Image
+                                resizeMode="stretch"
+                                style={{
+                                  height: height * 0.24,
+                                  width: width * 0.41,
+                                  borderRadius: 24,
+                                  borderWidth: 2,
+                                  borderColor: colors.bg,
+                                }}
+                                source={{
+                                  uri: makeImage(item.item?.book?.bookImage),
+                                }}
+                              />
+                            </View>
+                            <View
+                              style={{
+                                marginTop: 10,
+                                alignItems: 'center',
+                                gap: 5,
+                                maxWidth: width * 0.41,
+                              }}>
+                              <Text
+                                style={{
+                                  color: colors.textColor.light,
+                                  fontSize: 14,
+                                  fontFamily: font.PoppinsMedium,
+                                }}>
+                                {item.item?.book?.name}
+                              </Text>
+                              <Text
+                                style={{
+                                  color: colors.textColor.neutralColor,
+                                  fontSize: 12,
+                                  fontFamily: font.Poppins,
+                                }}>
+                                {item.item?.book?.publisher}
+                              </Text>
+                            </View>
+                          </TouchableOpacity>
                         )}
                       </View>
                     </View>

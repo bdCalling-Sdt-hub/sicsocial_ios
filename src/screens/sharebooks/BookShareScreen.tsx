@@ -21,6 +21,7 @@ import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
 import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
 import NormalButton from '../../components/common/NormalButton';
 import {NavigProps} from '../../interfaces/NaviProps';
+import {useGetBookByIdQuery} from '../../redux/apiSlices/bookSlices';
 import {useCreateChatMutation} from '../../redux/apiSlices/chatSlices';
 import {useCreateMessageMutation} from '../../redux/apiSlices/messageSlies';
 import {makeImage} from '../../utils/utils';
@@ -32,7 +33,7 @@ const BookShareScreen = ({navigation, route}: NavigProps<{data: any}>) => {
   const [createMessage, createMessageResult] = useCreateMessageMutation({});
   const {colors, font} = useStyles();
 
-  const Book = route.params?.data;
+  const {data: BookData} = useGetBookByIdQuery({id: route?.params?.data?._id});
 
   const {height, width} = useWindowDimensions();
   const [modalVisible, setModalVisible] = React.useState(false);
@@ -41,18 +42,18 @@ const BookShareScreen = ({navigation, route}: NavigProps<{data: any}>) => {
   const [liveModal, setLiveModal] = React.useState(false);
 
   // console.log(createChartInfo);
-  const handleCreateNewChat = React.useCallback(data => {
+  const handleCreateNewChat = React.useCallback(() => {
     const formData = new FormData();
 
     createChat({type: 'public'}).then(res => {
-      // console.log(res);
+      console.log(res);
       if (res?.data?.data?._id) {
         formData.append('chatId', res.data?.data?._id);
-        if (data?.path) {
-          formData.append('path', data?.path);
-        }
+
+        formData.append('book', BookData?.data?._id);
+
         createMessage(formData).then(ms => {
-          // console.log(res);
+          console.log(ms);
         });
       }
     });
@@ -61,7 +62,7 @@ const BookShareScreen = ({navigation, route}: NavigProps<{data: any}>) => {
   React.useEffect(() => {
     // PDF ফাইলটি লোকালি ডাউনলোড করুন
     const downloadPdf = async () => {
-      const pdfUrl = makeImage(route?.params?.data?.pdf);
+      const pdfUrl = makeImage(BookData?.data?.pdf);
 
       try {
         const res = await RNFetchBlob.config({
@@ -78,7 +79,7 @@ const BookShareScreen = ({navigation, route}: NavigProps<{data: any}>) => {
     };
 
     downloadPdf();
-  }, [route?.params?.data?.pdf]);
+  }, [BookData?.data?._id]);
 
   return (
     <View
@@ -123,9 +124,7 @@ const BookShareScreen = ({navigation, route}: NavigProps<{data: any}>) => {
       <FlatList
         showsVerticalScrollIndicator={false}
         data={[1]}
-        contentContainerStyle={{
-          paddingBottom: 20,
-        }}
+        contentContainerStyle={{}}
         renderItem={({item, index}) => {
           return (
             <>
@@ -139,19 +138,24 @@ const BookShareScreen = ({navigation, route}: NavigProps<{data: any}>) => {
                     // paddingHorizontal: '4%',
                     // paddingVertical: 10,
                     gap: 10,
-                    borderRadius: 20,
-
-                    height: 500,
+                    borderRadius: 5,
+                    paddingVertical: 10,
+                    borderColor: colors.primaryColor,
+                    // backgroundColor: colors.secondaryColor,
+                    borderWidth: 0.5,
+                    marginHorizontal: '5%',
+                    marginTop: 10,
                   }}>
                   <Text
                     style={{
                       fontSize: 14,
                       color: colors.textColor.light,
                       fontFamily: font.PoppinsSemiBold,
+                      marginHorizontal: '5%',
                     }}>
-                    Demo :
+                    Preview :
                   </Text>
-                  <Pdf source={{uri: pdfPath}} style={styles.pdf} />
+                  <Pdf singlePage source={{uri: pdfPath}} style={styles.pdf} />
                 </View>
               )}
             </>
@@ -167,16 +171,23 @@ const BookShareScreen = ({navigation, route}: NavigProps<{data: any}>) => {
                   paddingHorizontal: '4%',
                   paddingTop: '5%',
                   gap: 10,
+                  borderColor: colors.primaryColor,
+                  // backgroundColor: colors.secondaryColor,
+                  borderWidth: 0.5,
+                  marginHorizontal: '5%',
+                  paddingBottom: 10,
+                  borderRadius: 5,
                 }}>
                 <Image
                   style={{
                     width: width * 0.5,
+
                     height: height * 0.31,
                     resizeMode: 'stretch',
                     borderRadius: 20,
                   }}
                   source={{
-                    uri: makeImage(Book?.bookImage),
+                    uri: makeImage(BookData?.data?.bookImage),
                   }}
                 />
                 <View
@@ -189,7 +200,7 @@ const BookShareScreen = ({navigation, route}: NavigProps<{data: any}>) => {
                       color: colors.textColor.secondaryColor,
                       fontFamily: font.Poppins,
                     }}>
-                    {Book?.name}
+                    {BookData?.data?.name}
                   </Text>
                   <Text
                     style={{
@@ -197,7 +208,7 @@ const BookShareScreen = ({navigation, route}: NavigProps<{data: any}>) => {
                       color: colors.textColor.neutralColor,
                       fontFamily: font.Poppins,
                     }}>
-                    {Book?.publisher}
+                    {BookData?.data?.publisher}
                   </Text>
                   <Text
                     style={{
@@ -205,7 +216,7 @@ const BookShareScreen = ({navigation, route}: NavigProps<{data: any}>) => {
                       color: colors.blueColor,
                       fontFamily: font.Poppins,
                     }}>
-                    {Book?.bookUrl}
+                    {BookData?.data?.bookUrl}
                   </Text>
                 </View>
                 <View
@@ -216,19 +227,18 @@ const BookShareScreen = ({navigation, route}: NavigProps<{data: any}>) => {
                   <TouchableOpacity
                     onPress={() => {
                       navigation?.navigate('PdfViewer', {
-                        data: route?.params?.data,
+                        data: BookData?.data,
                       });
                     }}
                     style={{
-                      paddingVertical: 10,
                       alignItems: 'center',
                       justifyContent: 'center',
                       backgroundColor: colors.bg,
                     }}>
                     <View
                       style={{
-                        borderRadius: 10,
-                        backgroundColor: colors.primaryColor,
+                        borderRadius: 5,
+                        backgroundColor: colors.blue,
                         paddingHorizontal: 10,
                         paddingVertical: 5,
                       }}>
@@ -239,22 +249,23 @@ const BookShareScreen = ({navigation, route}: NavigProps<{data: any}>) => {
                   </TouchableOpacity>
                   <TouchableOpacity
                     onPress={() => {
-                      Linking.openURL(Book?.bookUrl);
+                      Linking.openURL(BookData?.data?.bookUrl);
                     }}
                     style={{
-                      paddingVertical: '3%',
                       alignItems: 'center',
                       justifyContent: 'center',
                       backgroundColor: colors.bg,
                     }}>
                     <View
                       style={{
-                        borderRadius: 10,
-                        backgroundColor: colors.blue,
+                        borderRadius: 5,
+                        // backgroundColor: colors.blue,
                         paddingHorizontal: 10,
                         paddingVertical: 5,
+                        borderColor: colors.blue,
+                        borderWidth: 1,
                       }}>
-                      <Text style={{color: colors.textColor.white}}>
+                      <Text style={{color: colors.blue}}>
                         Listening This Book
                       </Text>
                     </View>
@@ -277,9 +288,7 @@ const BookShareScreen = ({navigation, route}: NavigProps<{data: any}>) => {
               // setConfirmationModal(!confirmationModal);
               // setIsFriendRequest(false);
               // setIsFriendRequestSent(false);
-              handleCreateNewChat({
-                path: 'CreateNewChat',
-              });
+              handleCreateNewChat();
               setModalVisible(false);
             }}
             style={{
@@ -504,9 +513,10 @@ const BookShareScreen = ({navigation, route}: NavigProps<{data: any}>) => {
 export default BookShareScreen;
 const styles = StyleSheet.create({
   pdf: {
-    flex: 1,
-    width: Dimensions.get('window').width,
-    height: Dimensions.get('window').height,
+    aspectRatio: 1,
+    height: Dimensions.get('window').height * 0.3,
+    alignSelf: 'center',
+    borderRadius: 10,
   },
   loaderContainer: {
     flex: 1,

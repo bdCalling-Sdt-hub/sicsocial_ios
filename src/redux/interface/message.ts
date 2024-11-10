@@ -1,3 +1,4 @@
+import {IBook} from './book';
 import {IFetchStatus} from './main';
 
 export interface ILastMessage {
@@ -7,7 +8,7 @@ export interface ILastMessage {
       _id: string;
       fullName: string;
     };
-    path: string;
+    book: IBook;
     image: string;
     text: string;
     audio: string;
@@ -33,7 +34,7 @@ export interface IMessage {
   text: string;
   audio: string;
   image: string;
-  path: string;
+  book: IBook;
   messageType: string;
   friendsType: string;
   _id: string;

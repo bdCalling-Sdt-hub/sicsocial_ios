@@ -247,64 +247,66 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
             : []
         }
         ListHeaderComponent={renderDonations}
-        renderItem={({item}) => (
-          <ConversationalCard
-            conversationStyle="normal"
-            onPress={() => {
-              if (item?.facedown?._id) {
-                navigation?.navigate('FaceDownConversation', {
-                  data: {id: item?._id, facedown: item?.facedown},
-                });
-              } else {
-                navigation?.navigate('NormalConversation', {
-                  data: {id: item._id},
-                });
+        renderItem={({item}) => {
+          // console.log(item);
+          return (
+            <ConversationalCard
+              conversationStyle="normal"
+              onPress={() => {
+                if (item?.facedown?._id) {
+                  navigation?.navigate('FaceDownConversation', {
+                    data: {id: item?._id, facedown: item?.facedown},
+                  });
+                } else {
+                  navigation?.navigate('NormalConversation', {
+                    data: {id: item._id},
+                  });
+                }
+              }}
+              participants={item.participants}
+              cardStyle={
+                item?.lastMessage?.book
+                  ? 'shear_book'
+                  : item?.lastMessage?.image
+                  ? 'image'
+                  : item?.lastMessage?.audio
+                  ? 'book_promotion'
+                  : 'normal'
               }
-            }}
-            participants={item.participants}
-            cardStyle={
-              item.participants.length > 4
-                ? 'three'
-                : item?.participants.length === 4
-                ? 'four'
-                : item?.participants.length === 3
-                ? 'three'
-                : item?.participants.length === 2
-                ? 'two'
-                : 'single'
-            }
-            manyPeople={item.participants.length > 4}
-            conversationTitle={
-              item.lastMessage.sender._id === userProfile?.data?._id
-                ? item?.facedown
-                  ? item.facedown.name +
-                    `${
-                      item.lastMessage.sender._id === userProfile?.data?._id
-                        ? ' You'
-                        : item.lastMessage.sender.fullName
-                    }`
-                  : 'You'
-                : item.lastMessage.sender.fullName
-            }
-            conversationSubtitle={
-              item.lastMessage.sender._id === userProfile?.data?._id
-                ? 'send a message'
-                : ' replied in chat'
-            }
-            lastMessageTime={format(new Date(item.updatedAt), 'hh :mm a')}
-            lastMessage={
-              item.lastMessage.audio
-                ? 'send an audio message'
-                : item.lastMessage.image
-                ? 'send an image message'
-                : item.lastMessage.text
-                ? item.lastMessage.text
-                : item.lastMessage.path
-                ? 'send a book'
-                : 'Start a chat'
-            }
-          />
-        )}
+              manyPeople={item.participants.length > 4}
+              conversationTitle={
+                item.lastMessage.sender._id === userProfile?.data?._id
+                  ? item?.facedown
+                    ? item.facedown.name +
+                      `${
+                        item.lastMessage.sender._id === userProfile?.data?._id
+                          ? ' You'
+                          : item.lastMessage.sender.fullName
+                      }`
+                    : 'You'
+                  : item.lastMessage.sender.fullName
+              }
+              conversationSubtitle={
+                item.lastMessage.sender._id === userProfile?.data?._id
+                  ? 'send a message'
+                  : ' replied in chat'
+              }
+              item={item}
+              lastMessageTime={format(new Date(item.updatedAt), 'hh :mm a')}
+              lastMessage={
+                item.lastMessage.audio
+                  ? 'send an audio message'
+                  : item.lastMessage.image
+                  ? 'send an image message'
+                  : item.lastMessage.text
+                  ? item.lastMessage.text
+                  : item.lastMessage.book
+                  ? 'Shear a book'
+                  : 'Start a chat'
+              }
+            />
+          );
+        }}
         // estimatedItemSize={600}
       />
 

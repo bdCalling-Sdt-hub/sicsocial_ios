@@ -17,6 +17,7 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
+import {isSmall, makeImage} from '../../../utils/utils';
 
 import {DeviceEventEmitter} from 'react-native';
 import AudioRecorderPlayer from 'react-native-audio-recorder-player';
@@ -26,12 +27,11 @@ import {SvgXml} from 'react-native-svg';
 import {GridList} from 'react-native-ui-lib';
 import {useStyles} from '../../../context/ContextApi';
 import {NavigProps} from '../../../interfaces/NaviProps';
+import {useGetAllBooksQuery} from '../../../redux/apiSlices/bookSlices';
 import {useCreateMessageMutation} from '../../../redux/apiSlices/messageSlies';
 import {getSocket} from '../../../redux/services/socket';
 import {messagePros} from '../../../screens/message/NormalConversationScreen';
-import {TemBooks} from '../../../utils/GetRandomColor';
 import {useImagePicker} from '../../../utils/hooks/useImagePicker';
-import {isSmall} from '../../../utils/utils';
 import CustomModal from '../customModal/CustomModal';
 import ModalOfBottom from '../customModal/ModalOfButtom';
 
@@ -135,6 +135,8 @@ const ConversationCarousal = ({
   }
 
   const socket = getSocket();
+
+  const {data: BooksData} = useGetAllBooksQuery({});
 
   const [createMessage, createMessageResult] = useCreateMessageMutation({});
   const {height, width} = useWindowDimensions();
@@ -311,11 +313,12 @@ const ConversationCarousal = ({
       data?.text && formData.append('text', data?.text);
       data?.image && formData.append('image', data?.image);
       data?.audio && formData.append('audio', data?.audio);
+      data?.book && formData.append('book', data?.book);
       const res = await createMessage(formData);
       if (res.data?.id) {
         socket?.emit(`message::${chatIt}`, res.data);
       }
-      console.log(res, 'res');
+      // console.log(res, 'res');
     } catch (error) {
       console.log(error);
     }
@@ -651,63 +654,12 @@ const ConversationCarousal = ({
               />
             </View>
           </View>
-          {/* <View
-            style={{
-              borderBottomWidth: 1,
-              borderBlockColor: 'rgba(217, 217, 217, 1)',
-            }}>
-            <FlatList
-              showsHorizontalScrollIndicator={false}
-              keyboardShouldPersistTaps="always"
-              horizontal
-              contentContainerStyle={{
-                gap: 16,
-                paddingHorizontal: 20,
-                paddingTop: 20,
-                paddingBottom: 15,
-              }}
-              data={TemBooks}
-              renderItem={item => (
-                <>
-                  <TouchableOpacity
-                    onPress={() => {
-                      setSelectOptionItem(item.index);
-                    }}
-                    style={{
-                      backgroundColor:
-                        selectOptionItem === item.index
-                          ? colors.primaryColor
-                          : colors.secondaryColor,
-                      height: 35,
-                      paddingHorizontal: 20,
-                      // paddingVertical: 5,
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      borderRadius: 50,
-                    }}>
-                    <Text
-                      style={{
-                        color:
-                          selectOptionItem === item.index
-                            ? colors.textColor.white
-                            : colors.textColor.light,
-                        fontSize: 12,
-                        fontFamily: font.PoppinsMedium,
-                        textAlign: 'center',
-                      }}>
-                      {item.item.content}
-                    </Text>
-                  </TouchableOpacity>
-                </>
-              )}
-            />
-          </View> */}
 
           <GridList
             showsVerticalScrollIndicator={false}
             containerWidth={width * 0.82}
             numColumns={2}
-            data={TemBooks}
+            data={BooksData?.data}
             columnWrapperStyle={{
               gap: 20,
               alignSelf: 'center',
@@ -719,6 +671,7 @@ const ConversationCarousal = ({
             renderItem={item => (
               <TouchableOpacity
                 onPress={() => {
+                  handleCreateNewChat({book: item.item._id});
                   setBooksModal(false);
                 }}
                 style={{
@@ -744,7 +697,9 @@ const ConversationCarousal = ({
                       borderWidth: 2,
                       borderColor: colors.bg,
                     }}
-                    source={item.item.image}
+                    source={{
+                      uri: makeImage(item.item.bookImage),
+                    }}
                   />
                 </View>
                 <View
@@ -760,7 +715,7 @@ const ConversationCarousal = ({
                       fontSize: 14,
                       fontFamily: font.PoppinsMedium,
                     }}>
-                    {item.item.title}
+                    {item.item.name}
                   </Text>
                   <Text
                     style={{

@@ -1,3 +1,5 @@
+import {IBooks, ISingleBook} from '../interface/book';
+
 import {api} from '../api/baseApi';
 
 export const bookSlices = api.injectEndpoints({
@@ -11,6 +13,18 @@ export const bookSlices = api.injectEndpoints({
     getBooks: builder.query<null, unknown>({
       query: ({id, page, limit}) => ({
         url: `/books`,
+      }),
+      providesTags: ['book'],
+    }),
+    getAllBooks: builder.query<IBooks, unknown>({
+      query: ({id, page, limit}) => ({
+        url: `/books/all`,
+      }),
+      providesTags: ['book'],
+    }),
+    getBookById: builder.query<ISingleBook, unknown>({
+      query: ({id, page, limit}) => ({
+        url: `/books/${id}`,
       }),
       providesTags: ['book'],
     }),
@@ -35,4 +49,6 @@ export const {
   useGetCategoriesQuery,
   useGetBooksQuery,
   useGetCategoryBooksQuery,
+  useGetBookByIdQuery,
+  useGetAllBooksQuery,
 } = bookSlices;

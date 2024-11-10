@@ -11,6 +11,7 @@ import React from 'react';
 import {SvgXml} from 'react-native-svg';
 import {useStyles} from '../../context/ContextApi';
 import {NavigProps} from '../../interfaces/NaviProps';
+import {INewFeed} from '../../redux/interface/new_feed';
 import {IParticipants} from '../../redux/interface/participants';
 import {makeImage} from '../../utils/utils';
 
@@ -23,14 +24,8 @@ interface ConversationalCardProps extends NavigProps<null>, IParticipants {
   onDonationShearPress?: () => void;
   onDonationViewDetailsPress?: () => void;
   conversationStyle?: 'donation' | 'normal';
-  cardStyle?:
-    | 'book_promotion'
-    | 'shear_book'
-    | 'image'
-    | 'two'
-    | 'single'
-    | 'three'
-    | 'four';
+  cardStyle?: 'book_promotion' | 'shear_book' | 'image' | 'normal';
+  item?: INewFeed;
   havNotUser?: boolean;
   onPress?: () => void;
   disabled?: boolean;
@@ -57,8 +52,10 @@ const ConversationalCard = ({
   havNotUser,
   manyPeople,
   participants,
+  item,
 }: ConversationalCardProps) => {
   const {colors, font} = useStyles();
+  // console.log('item', item);
   return (
     <>
       {/*========================== conversation card start ======================= */}
@@ -341,7 +338,9 @@ const ConversationalCard = ({
                         borderColor: 'white',
                         borderWidth: 2,
                       }}
-                      source={require('../../assets/tempAssets/book2.jpg')}
+                      source={{
+                        uri: makeImage(item?.lastMessage?.book?.bookImage),
+                      }}
                     />
                   </View>
                   <View
@@ -376,7 +375,9 @@ const ConversationalCard = ({
                         borderColor: 'white',
                         borderWidth: 2,
                       }}
-                      source={require('../../assets/tempAssets/51ad46951bbdc28be4cf7e384964f309.jpg')}
+                      source={{
+                        uri: makeImage(participants![0]?.avatar),
+                      }}
                     />
                   </View>
                 </>
@@ -407,7 +408,9 @@ const ConversationalCard = ({
                         borderColor: 'white',
                         borderWidth: 2,
                       }}
-                      source={require('../../assets/tempAssets/charity.jpg')}
+                      source={{
+                        uri: makeImage(item?.lastMessage?.image),
+                      }}
                     />
                   </View>
                   <View
@@ -442,451 +445,482 @@ const ConversationalCard = ({
                         borderColor: 'white',
                         borderWidth: 2,
                       }}
-                      source={require('../../assets/tempAssets/51ad46951bbdc28be4cf7e384964f309.jpg')}
+                      source={{
+                        uri: makeImage(participants![0]?.avatar),
+                      }}
                     />
                   </View>
                 </>
               )}
-
-              {cardStyle === 'single' && (
+              {cardStyle === 'normal' && (
                 <>
-                  <View
-                    style={{
-                      // height: 76,
-                      backgroundColor: colors.white,
-                      borderRadius: 35,
-                      elevation: 1,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      padding: 1,
-                    }}>
-                    {participants && (
-                      <Image
-                        resizeMode="cover"
-                        style={{
-                          height: 80,
-                          width: 80,
-                          borderRadius: 35,
-                          borderColor: 'white',
-                          borderWidth: 2,
-                        }}
-                        source={{uri: makeImage(participants![0]?.avatar)}}
-                      />
-                    )}
-                  </View>
-                </>
-              )}
-              {cardStyle === 'two' && (
-                <>
-                  <View
-                    style={{
-                      // height: 76,
-                      backgroundColor: colors.white,
-                      borderRadius: 28,
-                      elevation: 2,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      position: 'absolute',
-                      right: 40,
-                      zIndex: 2,
-                      transform: [
-                        {
-                          rotate: '15deg',
-                        },
-                        {
-                          translateX: 25,
-                        },
-                        {
-                          translateY: -6,
-                        },
-                      ],
-                    }}>
-                    {participants && (
-                      <Image
-                        resizeMode="cover"
-                        style={{
-                          height: 80,
-                          width: 80,
-                          borderRadius: 35,
-                          borderColor: 'white',
-                          borderWidth: 2,
-                        }}
-                        source={{uri: makeImage(participants![0]?.avatar)}}
-                      />
-                    )}
-                  </View>
-                  <View
-                    style={{
-                      // height: 76,
-                      backgroundColor: colors.white,
-                      borderRadius: 28,
-                      elevation: havNotUser ? 0 : 2,
-                      // bottom: havNotUser ? 10 : 25,
-                      position: 'absolute',
-                      right: havNotUser ? 40 : 40,
-                      // zIndex: 2,
-                      transform: [
-                        {
-                          rotate: havNotUser ? '10deg' : '-15deg',
-                        },
-                        {
-                          translateX: havNotUser ? -25 : -25,
-                        },
-                        {
-                          translateY: -6,
-                        },
-                      ],
-                    }}>
-                    {havNotUser ? (
-                      <ImageBackground
-                        resizeMode="cover"
-                        style={{
-                          borderRadius: 24,
-
-                          height: 80,
-                          width: 80,
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                        }}
-                        source={require('../../assets/icons/unknown/rectangle.png')}>
-                        {/* <Text
+                  {participants?.map((item, index) => (
+                    <>
+                      {participants?.length === 1 && (
+                        <View
                           style={{
-                            fontFamily: font.Poppins,
-                            fontSize: 14,
-                            color: colors.textColor.light,
-                            textAlign: 'center',
+                            // height: 76,
+                            backgroundColor: colors.white,
+                            borderRadius: 35,
+                            elevation: 1,
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            padding: 1,
                           }}>
-                          8+
-                        </Text> */}
-                        <SvgXml
-                          xml={`<svg width="23" height="24" viewBox="0 0 23 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <path d="M20.9955 11.3524L13.9713 13.2345L15.9 20.4326L12.214 21.4202L10.2853 14.2221L3.26108 16.1043L2.3666 12.766L9.39081 10.8839L7.46209 3.68582L11.1481 2.69816L13.0768 9.89624L20.101 8.01411L20.9955 11.3524Z" fill="#767676"/>
-  </svg>
-  `}
-                        />
-                      </ImageBackground>
-                    ) : (
-                      <>
-                        {participants && (
-                          <Image
-                            resizeMode="cover"
+                          {participants && (
+                            <Image
+                              resizeMode="cover"
+                              style={{
+                                height: 80,
+                                width: 80,
+                                borderRadius: 35,
+                                borderColor: 'white',
+                                borderWidth: 2,
+                              }}
+                              source={{uri: makeImage(item.avatar)}}
+                            />
+                          )}
+                        </View>
+                      )}
+                      {participants?.length === 2 && (
+                        <>
+                          <View
                             style={{
-                              height: 80,
-                              width: 80,
-                              borderRadius: 35,
-                              borderColor: 'white',
-                              borderWidth: 2,
-                            }}
-                            source={{uri: makeImage(participants![0]?.avatar)}}
-                          />
-                        )}
-                      </>
-                    )}
-                  </View>
-                </>
-              )}
+                              // height: 76,
+                              backgroundColor: colors.white,
+                              borderRadius: 28,
+                              elevation: 2,
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                              position: 'absolute',
+                              right: 40,
+                              zIndex: 2,
+                              transform: [
+                                {
+                                  rotate: '15deg',
+                                },
+                                {
+                                  translateX: 25,
+                                },
+                                {
+                                  translateY: -6,
+                                },
+                              ],
+                            }}>
+                            {participants && (
+                              <Image
+                                resizeMode="cover"
+                                style={{
+                                  height: 80,
+                                  width: 80,
+                                  borderRadius: 35,
+                                  borderColor: 'white',
+                                  borderWidth: 2,
+                                }}
+                                source={{
+                                  uri: makeImage(participants![index]?.avatar),
+                                }}
+                              />
+                            )}
+                          </View>
+                          <View
+                            style={{
+                              // height: 76,
+                              backgroundColor: colors.white,
+                              borderRadius: 28,
+                              elevation: havNotUser ? 0 : 2,
+                              // bottom: havNotUser ? 10 : 25,
+                              position: 'absolute',
+                              right: havNotUser ? 40 : 40,
+                              // zIndex: 2,
+                              transform: [
+                                {
+                                  rotate: havNotUser ? '10deg' : '-15deg',
+                                },
+                                {
+                                  translateX: havNotUser ? -25 : -25,
+                                },
+                                {
+                                  translateY: -6,
+                                },
+                              ],
+                            }}>
+                            {havNotUser ? (
+                              <ImageBackground
+                                resizeMode="cover"
+                                style={{
+                                  borderRadius: 24,
 
-              {cardStyle === 'three' && (
-                <View>
-                  <View
-                    style={{
-                      // height: 76,
-                      backgroundColor: colors.white,
-                      borderRadius: 24,
-                      elevation: 2,
-                      bottom: -25,
-                      position: 'absolute',
-                      right: 40,
-                      zIndex: 3,
-                      transform: [
-                        {
-                          rotate: '15deg',
-                        },
-                        {
-                          translateX: 40,
-                        },
-                      ],
-                    }}>
-                    {participants && (
-                      <Image
-                        resizeMode="cover"
-                        style={{
-                          height: 80,
-                          width: 80,
-                          borderRadius: 35,
-                          borderColor: 'white',
-                          borderWidth: 2,
-                        }}
-                        source={{uri: makeImage(participants![0]?.avatar)}}
-                      />
-                    )}
-                  </View>
-                  <View
-                    style={{
-                      // height: 76,
-                      backgroundColor: colors.white,
-                      borderRadius: 24,
-                      elevation: 2,
-                      bottom: -25,
-                      position: 'absolute',
-                      right: 35,
-                      zIndex: 2,
-                      transform: [
-                        {
-                          rotate: '-8deg',
-                        },
-                        {
-                          translateX: -5,
-                        },
-                      ],
-                    }}>
-                    {participants && (
-                      <Image
-                        resizeMode="cover"
-                        style={{
-                          height: 80,
-                          width: 80,
-                          borderRadius: 35,
-                          borderColor: 'white',
-                          borderWidth: 2,
-                        }}
-                        source={{uri: makeImage(participants![0]?.avatar)}}
-                      />
-                    )}
-                  </View>
+                                  height: 80,
+                                  width: 80,
+                                  justifyContent: 'center',
+                                  alignItems: 'center',
+                                }}
+                                source={require('../../assets/icons/unknown/rectangle.png')}>
+                                {/* <Text
+                                 style={{
+                                   fontFamily: font.Poppins,
+                                   fontSize: 14,
+                                   color: colors.textColor.light,
+                                   textAlign: 'center',
+                                 }}>
+                                 8+
+                               </Text> */}
+                                <SvgXml
+                                  xml={`<svg width="23" height="24" viewBox="0 0 23 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+         <path d="M20.9955 11.3524L13.9713 13.2345L15.9 20.4326L12.214 21.4202L10.2853 14.2221L3.26108 16.1043L2.3666 12.766L9.39081 10.8839L7.46209 3.68582L11.1481 2.69816L13.0768 9.89624L20.101 8.01411L20.9955 11.3524Z" fill="#767676"/>
+         </svg>
+         `}
+                                />
+                              </ImageBackground>
+                            ) : (
+                              <>
+                                {participants && (
+                                  <Image
+                                    resizeMode="cover"
+                                    style={{
+                                      height: 80,
+                                      width: 80,
+                                      borderRadius: 35,
+                                      borderColor: 'white',
+                                      borderWidth: 2,
+                                    }}
+                                    source={{
+                                      uri: makeImage(
+                                        participants![index]?.avatar,
+                                      ),
+                                    }}
+                                  />
+                                )}
+                              </>
+                            )}
+                          </View>
+                        </>
+                      )}
+                      {participants?.length === 3 && (
+                        <View>
+                          <View
+                            style={{
+                              // height: 76,
+                              backgroundColor: colors.white,
+                              borderRadius: 24,
+                              elevation: 2,
+                              bottom: -25,
+                              position: 'absolute',
+                              right: 40,
+                              zIndex: 3,
+                              transform: [
+                                {
+                                  rotate: '15deg',
+                                },
+                                {
+                                  translateX: 40,
+                                },
+                              ],
+                            }}>
+                            {participants && (
+                              <Image
+                                resizeMode="cover"
+                                style={{
+                                  height: 80,
+                                  width: 80,
+                                  borderRadius: 35,
+                                  borderColor: 'white',
+                                  borderWidth: 2,
+                                }}
+                                source={{
+                                  uri: makeImage(participants![index]?.avatar),
+                                }}
+                              />
+                            )}
+                          </View>
+                          <View
+                            style={{
+                              // height: 76,
+                              backgroundColor: colors.white,
+                              borderRadius: 24,
+                              elevation: 2,
+                              bottom: -25,
+                              position: 'absolute',
+                              right: 35,
+                              zIndex: 2,
+                              transform: [
+                                {
+                                  rotate: '-8deg',
+                                },
+                                {
+                                  translateX: -5,
+                                },
+                              ],
+                            }}>
+                            {participants && (
+                              <Image
+                                resizeMode="cover"
+                                style={{
+                                  height: 80,
+                                  width: 80,
+                                  borderRadius: 35,
+                                  borderColor: 'white',
+                                  borderWidth: 2,
+                                }}
+                                source={{
+                                  uri: makeImage(participants![index]?.avatar),
+                                }}
+                              />
+                            )}
+                          </View>
 
-                  <View
-                    style={{
-                      borderRadius: 24,
-                      bottom: havNotUser || manyPeople ? -30 : -20,
-                      position: 'absolute',
-                      right: havNotUser || manyPeople ? 40 : 50,
+                          <View
+                            style={{
+                              borderRadius: 24,
+                              bottom: havNotUser || manyPeople ? -30 : -20,
+                              position: 'absolute',
+                              right: havNotUser || manyPeople ? 40 : 50,
 
-                      transform: [
-                        {
-                          rotate:
-                            havNotUser || manyPeople ? '-15deg' : '-28deg',
-                        },
-                        {
-                          translateX: havNotUser || manyPeople ? -32 : -32,
-                        },
-                      ],
-                    }}>
-                    {manyPeople ? (
-                      <ImageBackground
-                        resizeMode="cover"
-                        style={{
-                          borderRadius: 24,
+                              transform: [
+                                {
+                                  rotate:
+                                    havNotUser || manyPeople
+                                      ? '-15deg'
+                                      : '-28deg',
+                                },
+                                {
+                                  translateX:
+                                    havNotUser || manyPeople ? -32 : -32,
+                                },
+                              ],
+                            }}>
+                            {manyPeople ? (
+                              <ImageBackground
+                                resizeMode="cover"
+                                style={{
+                                  borderRadius: 24,
 
-                          height: 70,
-                          width: 70,
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                        }}
-                        source={require('../../assets/icons/unknown/rectangle.png')}>
-                        <Text
+                                  height: 70,
+                                  width: 70,
+                                  justifyContent: 'center',
+                                  alignItems: 'center',
+                                }}
+                                source={require('../../assets/icons/unknown/rectangle.png')}>
+                                <Text
+                                  style={{
+                                    fontFamily: font.Poppins,
+                                    fontSize: 14,
+                                    color: colors.textColor.light,
+                                    textAlign: 'center',
+                                  }}>
+                                  8+
+                                </Text>
+                              </ImageBackground>
+                            ) : havNotUser ? (
+                              <ImageBackground
+                                resizeMode="cover"
+                                style={{
+                                  borderRadius: 24,
+
+                                  height: 70,
+                                  width: 70,
+                                  justifyContent: 'center',
+                                  alignItems: 'center',
+                                }}
+                                source={require('../../assets/icons/unknown/rectangle.png')}>
+                                <SvgXml
+                                  xml={`<svg width="23" height="24" viewBox="0 0 23 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M20.9955 11.3524L13.9713 13.2345L15.9 20.4326L12.214 21.4202L10.2853 14.2221L3.26108 16.1043L2.3666 12.766L9.39081 10.8839L7.46209 3.68582L11.1481 2.69816L13.0768 9.89624L20.101 8.01411L20.9955 11.3524Z" fill="#767676"/>
+      </svg>
+      `}
+                                />
+                              </ImageBackground>
+                            ) : (
+                              <>
+                                {participants && (
+                                  <Image
+                                    resizeMode="cover"
+                                    style={{
+                                      height: 80,
+                                      width: 80,
+                                      borderRadius: 35,
+                                      borderColor: 'white',
+                                      borderWidth: 2,
+                                    }}
+                                    source={{
+                                      uri: makeImage(
+                                        participants![index]?.avatar,
+                                      ),
+                                    }}
+                                  />
+                                )}
+                              </>
+                            )}
+                          </View>
+                        </View>
+                      )}
+                      {participants?.length >= 4 && (
+                        <View
                           style={{
-                            fontFamily: font.Poppins,
-                            fontSize: 14,
-                            color: colors.textColor.light,
-                            textAlign: 'center',
+                            transform: [
+                              {
+                                scale: 0.8,
+                              },
+                            ],
                           }}>
-                          8+
-                        </Text>
-                      </ImageBackground>
-                    ) : havNotUser ? (
-                      <ImageBackground
-                        resizeMode="cover"
-                        style={{
-                          borderRadius: 24,
-
-                          height: 70,
-                          width: 70,
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                        }}
-                        source={require('../../assets/icons/unknown/rectangle.png')}>
-                        <SvgXml
-                          xml={`<svg width="23" height="24" viewBox="0 0 23 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <path d="M20.9955 11.3524L13.9713 13.2345L15.9 20.4326L12.214 21.4202L10.2853 14.2221L3.26108 16.1043L2.3666 12.766L9.39081 10.8839L7.46209 3.68582L11.1481 2.69816L13.0768 9.89624L20.101 8.01411L20.9955 11.3524Z" fill="#767676"/>
-  </svg>
-  `}
-                        />
-                      </ImageBackground>
-                    ) : (
-                      <>
-                        {participants && (
-                          <Image
-                            resizeMode="cover"
+                          <View
                             style={{
-                              height: 80,
-                              width: 80,
-                              borderRadius: 35,
-                              borderColor: 'white',
-                              borderWidth: 2,
-                            }}
-                            source={{uri: makeImage(participants![0]?.avatar)}}
-                          />
-                        )}
-                      </>
-                    )}
-                  </View>
-                </View>
-              )}
-              {cardStyle === 'four' && (
-                <View
-                  style={{
-                    transform: [
-                      {
-                        scale: 0.8,
-                      },
-                    ],
-                  }}>
-                  <View
-                    style={{
-                      // height: 76,
-                      backgroundColor: colors.white,
-                      borderRadius: 24,
-                      elevation: 2,
-                      bottom: 6,
-                      position: 'absolute',
-                      right: 40,
-                      zIndex: 3,
-                      transform: [
-                        {
-                          rotate: '20deg',
-                        },
-                        {
-                          translateX: 40,
-                        },
-                        {
-                          translateY: -4,
-                        },
-                      ],
-                    }}>
-                    {participants && (
-                      <Image
-                        resizeMode="cover"
-                        style={{
-                          height: 80,
-                          width: 80,
-                          borderRadius: 35,
-                          borderColor: 'white',
-                          borderWidth: 2,
-                        }}
-                        source={{uri: makeImage(participants![0]?.avatar)}}
-                      />
-                    )}
-                  </View>
-                  <View
-                    style={{
-                      // height: 76,
-                      backgroundColor: colors.white,
-                      borderRadius: 24,
-                      elevation: 2,
-                      bottom: 0,
-                      position: 'absolute',
-                      right: 40,
-                      zIndex: 2,
-                      transform: [
-                        {
-                          rotate: '-20deg',
-                        },
-                        {
-                          translateX: -11,
-                        },
-                        {
-                          translateY: 0,
-                        },
-                      ],
-                    }}>
-                    {participants && (
-                      <Image
-                        resizeMode="cover"
-                        style={{
-                          height: 80,
-                          width: 80,
-                          borderRadius: 35,
-                          borderColor: 'white',
-                          borderWidth: 2,
-                        }}
-                        source={{uri: makeImage(participants![0]?.avatar)}}
-                      />
-                    )}
-                  </View>
-                  <View
-                    style={{
-                      // height: 76,
-                      backgroundColor: colors.white,
-                      borderRadius: 24,
-                      elevation: 2,
-                      bottom: 6,
-                      position: 'absolute',
-                      right: 40,
-                      zIndex: 3,
-                      transform: [
-                        {
-                          rotate: '20deg',
-                        },
-                        {
-                          translateX: 50,
-                        },
-                        {
-                          translateY: 37,
-                        },
-                      ],
-                    }}>
-                    {participants && (
-                      <Image
-                        resizeMode="cover"
-                        style={{
-                          height: 80,
-                          width: 80,
-                          borderRadius: 35,
-                          borderColor: 'white',
-                          borderWidth: 2,
-                        }}
-                        source={{uri: makeImage(participants![0]?.avatar)}}
-                      />
-                    )}
-                  </View>
-                  <View
-                    style={{
-                      // height: 76,
-                      backgroundColor: colors.white,
-                      borderRadius: 24,
-                      elevation: 2,
-                      bottom: 0,
-                      position: 'absolute',
-                      right: 40,
-                      zIndex: 2,
-                      transform: [
-                        {
-                          rotate: '-20deg',
-                        },
-                        {
-                          translateX: -20,
-                        },
-                        {
-                          translateY: 40,
-                        },
-                      ],
-                    }}>
-                    {participants && (
-                      <Image
-                        resizeMode="cover"
-                        style={{
-                          height: 80,
-                          width: 80,
-                          borderRadius: 35,
-                          borderColor: 'white',
-                          borderWidth: 2,
-                        }}
-                        source={{uri: makeImage(participants![0]?.avatar)}}
-                      />
-                    )}
-                  </View>
-                </View>
+                              // height: 76,
+                              backgroundColor: colors.white,
+                              borderRadius: 24,
+                              elevation: 2,
+                              bottom: 6,
+                              position: 'absolute',
+                              right: 40,
+                              zIndex: 3,
+                              transform: [
+                                {
+                                  rotate: '20deg',
+                                },
+                                {
+                                  translateX: 40,
+                                },
+                                {
+                                  translateY: -4,
+                                },
+                              ],
+                            }}>
+                            {participants && (
+                              <Image
+                                resizeMode="cover"
+                                style={{
+                                  height: 80,
+                                  width: 80,
+                                  borderRadius: 35,
+                                  borderColor: 'white',
+                                  borderWidth: 2,
+                                }}
+                                source={{
+                                  uri: makeImage(participants![index]?.avatar),
+                                }}
+                              />
+                            )}
+                          </View>
+                          <View
+                            style={{
+                              // height: 76,
+                              backgroundColor: colors.white,
+                              borderRadius: 24,
+                              elevation: 2,
+                              bottom: 0,
+                              position: 'absolute',
+                              right: 40,
+                              zIndex: 2,
+                              transform: [
+                                {
+                                  rotate: '-20deg',
+                                },
+                                {
+                                  translateX: -11,
+                                },
+                                {
+                                  translateY: 0,
+                                },
+                              ],
+                            }}>
+                            {participants && (
+                              <Image
+                                resizeMode="cover"
+                                style={{
+                                  height: 80,
+                                  width: 80,
+                                  borderRadius: 35,
+                                  borderColor: 'white',
+                                  borderWidth: 2,
+                                }}
+                                source={{
+                                  uri: makeImage(participants![index]?.avatar),
+                                }}
+                              />
+                            )}
+                          </View>
+                          <View
+                            style={{
+                              // height: 76,
+                              backgroundColor: colors.white,
+                              borderRadius: 24,
+                              elevation: 2,
+                              bottom: 6,
+                              position: 'absolute',
+                              right: 40,
+                              zIndex: 3,
+                              transform: [
+                                {
+                                  rotate: '20deg',
+                                },
+                                {
+                                  translateX: 50,
+                                },
+                                {
+                                  translateY: 37,
+                                },
+                              ],
+                            }}>
+                            {participants && (
+                              <Image
+                                resizeMode="cover"
+                                style={{
+                                  height: 80,
+                                  width: 80,
+                                  borderRadius: 35,
+                                  borderColor: 'white',
+                                  borderWidth: 2,
+                                }}
+                                source={{
+                                  uri: makeImage(participants![index]?.avatar),
+                                }}
+                              />
+                            )}
+                          </View>
+                          <View
+                            style={{
+                              // height: 76,
+                              backgroundColor: colors.white,
+                              borderRadius: 24,
+                              elevation: 2,
+                              bottom: 0,
+                              position: 'absolute',
+                              right: 40,
+                              zIndex: 2,
+                              transform: [
+                                {
+                                  rotate: '-20deg',
+                                },
+                                {
+                                  translateX: -20,
+                                },
+                                {
+                                  translateY: 40,
+                                },
+                              ],
+                            }}>
+                            {participants && (
+                              <Image
+                                resizeMode="cover"
+                                style={{
+                                  height: 80,
+                                  width: 80,
+                                  borderRadius: 35,
+                                  borderColor: 'white',
+                                  borderWidth: 2,
+                                }}
+                                source={{
+                                  uri: makeImage(participants![index]?.avatar),
+                                }}
+                              />
+                            )}
+                          </View>
+                        </View>
+                      )}
+                    </>
+                  ))}
+                </>
               )}
             </>
           )}

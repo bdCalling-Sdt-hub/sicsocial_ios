@@ -1,5 +1,7 @@
 import React, {useEffect} from 'react';
 import {
+  ActivityIndicator,
+  FlatList,
   Image,
   Linking,
   ScrollView,
@@ -10,13 +12,17 @@ import {
   View,
   useWindowDimensions,
 } from 'react-native';
-import {
+import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
+import {
+  useDeleteFacedownMutation,
+  useGetFaceDownByIdQuery,
+} from '../../redux/apiSlices/facedwonSlice';
+import {useLazyGetMessageQuery} from '../../redux/apiSlices/messageSlies';
 
-import {FlashList} from '@shopify/flash-list';
 import AudioRecorderPlayer from 'react-native-audio-recorder-player';
 import ImageViewer from 'react-native-image-zoom-viewer';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -27,10 +33,11 @@ import NormalButton from '../../components/common/NormalButton';
 import NotifyTopComponent from '../../components/common/notify/NotifyTopComponent';
 import ConversationHeader from '../../components/conversation/ConversationHeader';
 import {useStyles} from '../../context/ContextApi';
+import {useAudioPlayer} from '../../hook/playMusic';
 import {NavigProps} from '../../interfaces/NaviProps';
 import {useGetUserProfileQuery} from '../../redux/apiSlices/authSlice';
-import {useGetMessageQuery} from '../../redux/apiSlices/messageSlies';
 import {IMessage} from '../../redux/interface/message';
+import {getSocket} from '../../redux/services/socket';
 import {makeImage} from '../../utils/utils';
 
 const audioRecorderPlayer = new AudioRecorderPlayer();
@@ -45,14 +52,19 @@ const FaceDownConversation = ({
   };
   id: string;
 }>) => {
-  const {data: messages, refetch: messageRefetch} = useGetMessageQuery(
-    {id: route?.params?.data?.id},
-    {skip: !route?.params?.data?.id},
-  );
-  const FaceDownData = route?.params?.data?.facedown;
+  const {data: FaceDwn} = useGetFaceDownByIdQuery({
+    id: route?.params?.data?.facedown?._id,
+  });
+
+  const [deletedFaceDown] = useDeleteFacedownMutation();
+
+  // console.log(FaceDwn);
+
+  const FaceDownData = FaceDwn?.data;
   // console.log(FaceDownData);
   const {data: userInfo} = useGetUserProfileQuery({});
   const [AllMessages, setAllMessages] = React.useState<IMessage[]>([]);
+  const [showPinBook, setShowPinBook] = React.useState<boolean>(true);
   // console.log(userInfo);
   const [showImage, setShowImage] = React.useState<boolean>(false);
   const [imageIndex, setImageIndex] = React.useState<number>(0);
@@ -68,7 +80,7 @@ const FaceDownConversation = ({
   const [open, setNotify] = React.useState(false);
   const [isPlaying, setIsPlaying] = React.useState<boolean>(false);
 
-  const FULL_HIGHT = height * 0.42;
+  const FULL_HIGHT = height * 0.24;
   const REGULAR_REGULAR = height * 0.1;
 
   const animateHight = useSharedValue(0);
@@ -91,7 +103,7 @@ const FaceDownConversation = ({
   });
   const animationDisplayONBanner = useAnimatedStyle(() => {
     return {
-      flexDirection: fullBanner ? 'column' : 'row',
+      flexDirection: 'row',
     };
   });
 
@@ -115,46 +127,14 @@ const FaceDownConversation = ({
 
   const animatePosition = useSharedValue(height * 0.07);
 
-  const onPlayAudio = async (audioUrl: string) => {
-    try {
-      setIsPlaying(true);
-      await audioRecorderPlayer.startPlayer(audioUrl);
+  const [getAllMessage, messageResult] = useLazyGetMessageQuery();
 
-      // Optional: Stop the player after playback finishes
-      audioRecorderPlayer.addPlayBackListener(e => {
-        if (e?.current_position === e.duration) {
-          onStopAudio();
-        }
-      });
-    } catch (error) {
-      console.log('Error playing audio:', error);
-    }
-  };
+  const {toggleAudioPlayback} = useAudioPlayer();
 
-  const onStopAudio = async () => {
-    try {
-      setIsPlaying(false);
-      await audioRecorderPlayer.stopPlayer();
-      audioRecorderPlayer.removePlayBackListener();
-    } catch (error) {
-      console.log('Error stopping audio:', error);
-    }
-  };
+  // console.log(userInfo);
+  const [playItem, setPlayItem] = React.useState('');
 
-  useEffect(() => {
-    if (messages) {
-      let imageFile: Array<{url: string}> = [];
-      setAllMessages([...messages?.data] || []);
-      messages.data?.forEach((item: any) => {
-        if (item?.image) {
-          imageFile.push({
-            url: makeImage(item?.image),
-          });
-        }
-      });
-      setShowImages(imageFile || []);
-    }
-  }, [messages]);
+  const [volume, setVolume] = React.useState<number>(1);
 
   const handleSelectIndex = (image: string) => {
     // setImageIndex(index);
@@ -165,6 +145,39 @@ const FaceDownConversation = ({
     );
     setShowImage(true);
   };
+
+  const handleLoadData = async () => {
+    const res = await getAllMessage({
+      id: route?.params?.data?.id || route?.params?.id,
+    });
+    // console.log(res?.data?.data);
+    setAllMessages(res?.data?.data);
+    res?.data?.data.map(item => {
+      if (item?.image) {
+        setShowImages(prev => {
+          return [
+            ...prev,
+            {
+              url: makeImage(item?.image),
+            },
+          ];
+        });
+      }
+    });
+  };
+
+  const socket = getSocket();
+  useEffect(() => {
+    if (AllMessages.length === 0) {
+      handleLoadData();
+    }
+    socket?.on(
+      `message::${route?.params?.data?.id || route?.params?.id}`,
+      (data: IMessage) => {
+        handleLoadData();
+      },
+    );
+  }, [socket]);
 
   return (
     <View
@@ -222,76 +235,173 @@ const FaceDownConversation = ({
         navigation={navigation}
       />
 
-      {/* <Animated.View
-        style={[
-          {
-            paddingHorizontal: 12,
-            backgroundColor: colors.secondaryColor,
-            width: '90%',
-            paddingVertical: 8,
-            alignSelf: 'center',
-            borderRadius: 10,
-            overflow: 'hidden',
-            position: 'absolute',
-            zIndex: +9999,
-            top: '8%',
-          },
-          animationStyleForUserConversation,
-        ]}>
-        <TouchableOpacity
-          activeOpacity={0.9}
-          onPress={() => {
-            setFullBanner(!fullBanner);
-          }}
-          style={{}}>
-          <Animated.View
-            style={[
-              {
-                gap: 10,
-              },
-              animationDisplayONBanner,
-            ]}>
-            <Animated.View style={[animationImageONBanner]}>
-              <TouchableOpacity
-                activeOpacity={0.9}
-                onPress={() => {
-                  navigation?.navigate('BookShare');
-                }}>
-                <Image
-                  style={[
-                    {
-                      borderRadius: 20,
-                      height: '100%',
-                      width: '100%',
-                      resizeMode: 'stretch',
-                    },
-                  ]}
-                  source={require('../../assets/tempAssets/book.jpg')}
-                />
-              </TouchableOpacity>
-            </Animated.View>
-
-            <Animated.Text
-              numberOfLines={fullBanner ? 0 : 3}
+      {showPinBook && (
+        <Animated.View
+          style={[
+            {
+              paddingHorizontal: 12,
+              backgroundColor: colors.secondaryColor,
+              width: '90%',
+              paddingVertical: 8,
+              alignSelf: 'center',
+              borderRadius: 10,
+              overflow: 'hidden',
+              position: 'absolute',
+              zIndex: +9999,
+              top: '8%',
+            },
+            animationStyleForUserConversation,
+          ]}>
+          <TouchableOpacity
+            onPress={() => {
+              setShowPinBook(false);
+            }}
+            style={{
+              position: 'absolute',
+              right: 12,
+              top: 8,
+              zIndex: +99999,
+              backgroundColor: colors.bg,
+              paddingHorizontal: 6,
+            }}>
+            <Text
               style={{
-                fontFamily: font.Poppins,
-                color: colors.textColor.primaryColor,
-                fontSize: 14,
-                width: fullBanner ? '100%' : '70%',
+                fontFamily: font.PoppinsSemiBold,
+                fontSize: 16,
+                color: colors.textColor.secondaryColor,
               }}>
-              elit. placerat ex non, elit. In ac nibh Ut non non urna porta dui
-              sapien enim. elit placerat. sed Ut tincidunt amet, vitae sit enim.
-              facilisis vel volutpat Ut sed Quisque ac lobortis, Quisque urna
-              ipsum Nam id tempor placerat. Morbi ipsum sollicitudin. dui. urna
-              nulla, Donec vitae vehicula, quis libero, commodo ex
-            </Animated.Text>
-          </Animated.View>
-        </TouchableOpacity>
-      </Animated.View> */}
+              X
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            activeOpacity={0.9}
+            onPress={() => {
+              setFullBanner(!fullBanner);
+            }}
+            style={{}}>
+            <Animated.View
+              style={[
+                {
+                  gap: 10,
+                },
+                animationDisplayONBanner,
+              ]}>
+              <Animated.View style={[animationImageONBanner]}>
+                <TouchableOpacity
+                  activeOpacity={0.9}
+                  onPress={() => {
+                    navigation?.navigate('BookShare');
+                  }}>
+                  <Image
+                    style={[
+                      {
+                        borderRadius: 20,
+                        height: '100%',
+                        width: '100%',
+                        resizeMode: 'stretch',
+                      },
+                    ]}
+                    source={{
+                      uri: makeImage(FaceDownData?.book?.bookImage),
+                    }}
+                  />
+                </TouchableOpacity>
+              </Animated.View>
 
-      <FlashList
+              <View
+                style={{
+                  justifyContent: 'space-between',
+                  // alignItems: 'center',
+                }}>
+                <View>
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      color: colors.textColor.secondaryColor,
+                      fontFamily: font.Poppins,
+                    }}>
+                    {FaceDownData?.book?.name}
+                  </Text>
+                  <Text
+                    style={{
+                      fontSize: 12,
+                      color: colors.textColor.neutralColor,
+                      fontFamily: font.Poppins,
+                    }}>
+                    {FaceDownData?.book?.publisher}
+                  </Text>
+                  <Text
+                    style={{
+                      fontSize: 12,
+                      color: colors.blueColor,
+                      fontFamily: font.Poppins,
+                    }}>
+                    {FaceDownData?.book?.bookUrl}
+                  </Text>
+                </View>
+
+                {fullBanner && (
+                  <View
+                    style={{
+                      gap: 10,
+                    }}>
+                    <TouchableOpacity
+                      onPress={() => {
+                        navigation?.navigate('PdfViewer', {
+                          data: FaceDownData?.book,
+                        });
+                      }}
+                      style={{
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        backgroundColor: colors.bg,
+                      }}>
+                      <View
+                        style={{
+                          borderRadius: 5,
+                          backgroundColor: colors.primaryColor,
+                          paddingHorizontal: 10,
+                          paddingVertical: 5,
+                        }}>
+                        <Text style={{color: colors.textColor.white}}>
+                          Reading This Book
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={() => {
+                        Linking.openURL(FaceDownData?.book?.bookUrl);
+                      }}
+                      style={{
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        backgroundColor: colors.bg,
+                      }}>
+                      <View
+                        style={{
+                          borderRadius: 5,
+                          // backgroundColor: colors.blue,
+                          paddingHorizontal: 10,
+                          paddingVertical: 5,
+                          borderColor: colors.primaryColor,
+                          borderWidth: 1,
+                        }}>
+                        <Text style={{color: colors.primaryColor}}>
+                          Listening This Book
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                  </View>
+                )}
+              </View>
+            </Animated.View>
+          </TouchableOpacity>
+        </Animated.View>
+      )}
+
+      <FlatList
         scrollEventThrottle={10}
-        estimatedItemSize={height * 0.6}
+        // estimatedItemSize={height * 0.6}
         keyboardShouldPersistTaps="always"
         keyExtractor={(item, index) => index.toString()}
         showsVerticalScrollIndicator={false}
@@ -324,11 +434,16 @@ const FaceDownConversation = ({
           }
         }}
         inverted
-        data={AllMessages?.sort((a, b) => {
+        data={AllMessages}
+        ListHeaderComponent={() => {
           return (
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+            <>
+              {messageResult?.isFetching && (
+                <ActivityIndicator size={'small'} color={colors.primaryColor} />
+              )}
+            </>
           );
-        })}
+        }}
         renderItem={item => {
           return (
             <View
@@ -351,11 +466,17 @@ const FaceDownConversation = ({
                     borderRadius: 10,
                     paddingHorizontal: 10,
                     paddingVertical: 10,
+
                     maxWidth: '90%',
                     minWidth: '50%',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    minHeight: item.item?.audio === playItem ? 60 : 40,
                     backgroundColor:
                       item.item?.sender._id === userInfo?.data?._id
-                        ? colors.secondaryColor
+                        ? item.item?.audio === playItem
+                          ? colors?.secondaryDeeper1
+                          : colors.secondaryColor
                         : colors.redisExtraLight,
                     flexDirection: 'row',
                   }}>
@@ -379,6 +500,7 @@ const FaceDownConversation = ({
                       // paddingVertical: 2,
                       maxWidth: '90%',
                       minWidth: '50%',
+
                       // backgroundColor: colors.redisExtraLight,
                       gap: 15,
                     }}>
@@ -388,6 +510,7 @@ const FaceDownConversation = ({
                         borderRadius: 10,
                         paddingHorizontal: 10,
                         paddingVertical: 5,
+
                         alignItems:
                           item.item?.sender._id === userInfo?.data?._id
                             ? 'flex-end'
@@ -422,24 +545,24 @@ const FaceDownConversation = ({
                         )}
 
                         <TouchableOpacity
+                          style={{}}
                           onPress={async () => {
-                            if (item.item.path) {
-                              Linking.openURL(item.item.path);
+                            if (item.item.book?.bookUrl) {
+                              Linking.openURL(item.item.book.bookUrl);
                             } else if (item.item.audio) {
-                              if (isPlaying) {
-                                await onStopAudio();
-                              } else {
-                                await onPlayAudio(makeImage(item.item.audio));
-                              }
+                              setPlayItem(item.item.audio);
+                              toggleAudioPlayback(makeImage(item.item.audio));
                             }
                           }}>
-                          <Text>Audio</Text>
                           {item.item.text && (
                             <Text
                               style={{
                                 fontSize: 14,
                                 color: colors.textColor.secondaryColor,
-                                fontFamily: font.Poppins,
+                                fontFamily:
+                                  playItem === item.item.audio
+                                    ? font?.PoppinsSemiBold
+                                    : font?.Poppins,
                                 maxWidth: width * 0.65,
                                 textAlign:
                                   item.item?.sender._id === userInfo?.data?._id
@@ -451,31 +574,66 @@ const FaceDownConversation = ({
                           )}
                         </TouchableOpacity>
 
-                        {item.item.path && (
-                          <View
+                        {item.item.book && (
+                          <TouchableOpacity
+                            onPress={() => {
+                              navigation?.navigate('BookShare', {
+                                data: item.item.book,
+                              });
+                            }}
                             style={{
-                              backgroundColor: colors.bg,
-                              elevation: 2,
-                              // height: 192,
-
-                              borderColor: colors.bg,
-
-                              borderRadius: 15,
+                              // elevation: 2,
+                              // backgroundColor: colors.bg,
+                              // padding: 2,
+                              borderRadius: 24,
+                              // height: height * 0.243,
+                              // alignItems : "center",
+                              // justifyContent : "center",
                             }}>
-                            <Image
-                              resizeMode="stretch"
-                              source={{uri: item.item.path}}
+                            <View
                               style={{
-                                // marginBottom: 20,
-                                // aspectRatio: 1,
-
-                                width: 150,
-
-                                height: 190,
-                                borderRadius: 15,
-                              }}
-                            />
-                          </View>
+                                elevation: 1,
+                                padding: 3,
+                              }}>
+                              <Image
+                                resizeMode="stretch"
+                                style={{
+                                  height: height * 0.24,
+                                  width: width * 0.41,
+                                  borderRadius: 24,
+                                  borderWidth: 2,
+                                  borderColor: colors.bg,
+                                }}
+                                source={{
+                                  uri: makeImage(item.item?.book?.bookImage),
+                                }}
+                              />
+                            </View>
+                            <View
+                              style={{
+                                marginTop: 10,
+                                alignItems: 'center',
+                                gap: 5,
+                                maxWidth: width * 0.41,
+                              }}>
+                              <Text
+                                style={{
+                                  color: colors.textColor.light,
+                                  fontSize: 14,
+                                  fontFamily: font.PoppinsMedium,
+                                }}>
+                                {item.item?.book?.name}
+                              </Text>
+                              <Text
+                                style={{
+                                  color: colors.textColor.neutralColor,
+                                  fontSize: 12,
+                                  fontFamily: font.Poppins,
+                                }}>
+                                {item.item?.book?.publisher}
+                              </Text>
+                            </View>
+                          </TouchableOpacity>
                         )}
                       </View>
                     </View>
@@ -556,7 +714,11 @@ const FaceDownConversation = ({
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => {
-                setConfirmationModal(false);
+                console.log(FaceDownData?._id);
+                deletedFaceDown(FaceDownData?._id).then(res => {
+                  console.log(res);
+                  // setConfirmationModal(false);
+                });
               }}
               style={{
                 borderRadius: 100,
@@ -584,6 +746,27 @@ const FaceDownConversation = ({
         containerColor={colors.bg}
         setModalVisible={setModalVisible}>
         <View>
+          <TouchableOpacity
+            onPress={() => {
+              // setIsFriend(false);
+              // setConfirmationModal(!confirmationModal);
+              // setIsFriendRequest(false);
+              // setIsFriendRequestSent(false);
+              setShowPinBook(true);
+              setModalVisible(false);
+            }}
+            style={{
+              padding: 10,
+            }}>
+            <Text
+              style={{
+                fontFamily: font.Poppins,
+                fontSize: 14,
+                color: colors.textColor.neutralColor,
+              }}>
+              Show pin
+            </Text>
+          </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
               // setIsFriend(false);
@@ -630,6 +813,7 @@ const FaceDownConversation = ({
           <TouchableOpacity
             onPress={() => {
               // setIsFriend(false);
+
               setConfirmationModal(!confirmationModal);
               // setIsFriendRequest(false);
               // setIsFriendRequestSent(false);

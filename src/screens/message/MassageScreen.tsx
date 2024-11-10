@@ -1,6 +1,7 @@
 import {
   FlatList,
   Image,
+  RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
@@ -22,7 +23,11 @@ import {useGetChatListQuery} from '../../redux/apiSlices/chatSlices';
 import {getSocket} from '../../redux/services/socket';
 
 const MassageScreen = ({navigation}: NavigProps<null>) => {
-  const {data: chatList, refetch: refetchChat} = useGetChatListQuery({});
+  const {
+    data: chatList,
+    refetch: refetchChat,
+    isLoading: chatLoading,
+  } = useGetChatListQuery({});
   const {data: userInfo} = useGetUserProfileQuery({});
   // console.log(userInfo);
   // console.log(cat);
@@ -149,8 +154,17 @@ const MassageScreen = ({navigation}: NavigProps<null>) => {
         showsHorizontalScrollIndicator={false}
         scrollEnabled={true}
         nestedScrollEnabled={true}
+        refreshControl={
+          <RefreshControl
+            refreshing={chatLoading}
+            colors={[colors.primaryColor, colors.primaryColor]}
+            onRefresh={() => {
+              refetchChat();
+            }}
+          />
+        }
         keyboardShouldPersistTaps="always">
-        {chatList?.data?.length > 0 && (
+        {friends?.data?.length > 0 && (
           <View
             style={{
               borderBottomWidth: 1,
