@@ -38,7 +38,7 @@ const MakeGroupScreen = ({navigation, route}: NavigProps<any>) => {
     // console.log({id : route?.params?.data?.id, participants : id});
     addMember({id: route?.params?.data?.id, participants: id}).then(res => {
       // console.log(res);
-      navigation?.navigate('Chats');
+      navigation?.goBack();
     });
   };
 
@@ -47,17 +47,21 @@ const MakeGroupScreen = ({navigation, route}: NavigProps<any>) => {
     let all = selectUser.map(item => item?._id);
 
     if (!route?.params?.data?.id) {
-      createChat('private').then(res => {
-        addMember({id: res?.data?.data?._id, participants: all}).then(res => {
-          // console.log(res);
-          navigation?.navigate('GroupConversation');
-        });
+      createChat('private').then(chatRes => {
+        addMember({id: chatRes?.data?.data?._id, participants: all}).then(
+          res => {
+            // console.log(chatRes);
+            navigation?.navigate('NormalConversation', {
+              data: {id: chatRes?.data?.data?._id},
+            });
+          },
+        );
       });
     }
     if (route?.params?.data?.id) {
       addMember({id: route?.params?.data?.id, participants: all}).then(res => {
         // console.log(res);
-        navigation?.navigate('GroupConversation');
+        navigation?.goBack();
       });
     }
   };
@@ -134,11 +138,12 @@ const MakeGroupScreen = ({navigation, route}: NavigProps<any>) => {
               <View style={{gap: 6}}>
                 <TouchableOpacity
                   onPress={() => {
-                    setModalVisible(!modalVisible);
+                    // setModalVisible(!modalVisible);
                   }}
                   style={{
                     backgroundColor: colors.secondaryColor,
                     // paddingVertical: 5,
+                    width: 68,
                     alignItems: 'center',
                     justifyContent: 'center',
                     elevation: 2,
@@ -217,7 +222,7 @@ const MakeGroupScreen = ({navigation, route}: NavigProps<any>) => {
                   // navigation?.replace("HomeRoutes")
                 }
               }}
-              source={{uri: makeImage(item.item.avatar)}}
+              img={makeImage(item.item.avatar)}
               // lastMessage={item.item?.lastMessage}
               // lastTime="9:51 am"
               name={item.item.fullName}

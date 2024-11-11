@@ -33,7 +33,11 @@ const BookShareScreen = ({navigation, route}: NavigProps<{data: any}>) => {
   const [createMessage, createMessageResult] = useCreateMessageMutation({});
   const {colors, font} = useStyles();
 
-  const {data: BookData} = useGetBookByIdQuery({id: route?.params?.data?._id});
+  const {
+    data: BookData,
+    isLoading: isBookLoading,
+    refetch: refetchBook,
+  } = useGetBookByIdQuery({id: route?.params?.data?._id});
 
   const {height, width} = useWindowDimensions();
   const [modalVisible, setModalVisible] = React.useState(false);
@@ -47,17 +51,18 @@ const BookShareScreen = ({navigation, route}: NavigProps<{data: any}>) => {
 
     createChat({type: 'public'}).then(res => {
       console.log(res);
+      console.log(BookData?.data?._id);
       if (res?.data?.data?._id) {
         formData.append('chatId', res.data?.data?._id);
 
-        formData.append('book', BookData?.data?._id);
+        BookData?.data?._id && formData.append('book', BookData?.data?._id);
 
         createMessage(formData).then(ms => {
           console.log(ms);
         });
       }
     });
-  }, []);
+  }, [BookData?.data?._id]);
 
   React.useEffect(() => {
     // PDF ফাইলটি লোকালি ডাউনলোড করুন
@@ -124,7 +129,10 @@ const BookShareScreen = ({navigation, route}: NavigProps<{data: any}>) => {
       <FlatList
         showsVerticalScrollIndicator={false}
         data={[1]}
-        contentContainerStyle={{}}
+        contentContainerStyle={{
+          paddingVertical: 10,
+          gap: 10,
+        }}
         renderItem={({item, index}) => {
           return (
             <>
@@ -140,9 +148,9 @@ const BookShareScreen = ({navigation, route}: NavigProps<{data: any}>) => {
                     gap: 10,
                     borderRadius: 5,
                     paddingVertical: 10,
-                    borderColor: colors.primaryColor,
+                    borderColor: colors.textColor.neutralColor,
                     // backgroundColor: colors.secondaryColor,
-                    borderWidth: 0.5,
+                    borderWidth: 0.1,
                     marginHorizontal: '5%',
                     marginTop: 10,
                   }}>
@@ -171,9 +179,10 @@ const BookShareScreen = ({navigation, route}: NavigProps<{data: any}>) => {
                   paddingHorizontal: '4%',
                   paddingTop: '5%',
                   gap: 10,
-                  borderColor: colors.primaryColor,
+                  borderColor: colors.textColor.neutralColor,
                   // backgroundColor: colors.secondaryColor,
-                  borderWidth: 0.5,
+                  borderWidth: 0.1,
+                  // elevation: 0.1,
                   marginHorizontal: '5%',
                   paddingBottom: 10,
                   borderRadius: 5,
@@ -238,7 +247,7 @@ const BookShareScreen = ({navigation, route}: NavigProps<{data: any}>) => {
                     <View
                       style={{
                         borderRadius: 5,
-                        backgroundColor: colors.blue,
+                        backgroundColor: colors.primaryColor,
                         paddingHorizontal: 10,
                         paddingVertical: 5,
                       }}>
@@ -262,10 +271,10 @@ const BookShareScreen = ({navigation, route}: NavigProps<{data: any}>) => {
                         // backgroundColor: colors.blue,
                         paddingHorizontal: 10,
                         paddingVertical: 5,
-                        borderColor: colors.blue,
+                        borderColor: colors.primaryColor,
                         borderWidth: 1,
                       }}>
-                      <Text style={{color: colors.blue}}>
+                      <Text style={{color: colors.primaryColor}}>
                         Listening This Book
                       </Text>
                     </View>
@@ -277,7 +286,6 @@ const BookShareScreen = ({navigation, route}: NavigProps<{data: any}>) => {
         }}
       />
       <ModalOfBottom
-        onlyTopRadius={15}
         modalVisible={modalVisible}
         containerColor={colors.bg}
         setModalVisible={setModalVisible}>

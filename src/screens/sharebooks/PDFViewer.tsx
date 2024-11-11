@@ -3,11 +3,15 @@ import {ActivityIndicator, Dimensions, StyleSheet, View} from 'react-native';
 
 import RNFetchBlob from 'react-native-blob-util';
 import Pdf from 'react-native-pdf';
+import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
+import {useStyles} from '../../context/ContextApi';
+import {NavigProps} from '../../interfaces/NaviProps';
 import {makeImage} from '../../utils/utils';
 
-const PDFViewer = ({route}) => {
+const PDFViewer = ({route, navigation}: NavigProps<any>) => {
   const [pdfPath, setPdfPath] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const {colors, font} = useStyles();
   // console.log(route?.params?.data?.pdf);
   useEffect(() => {
     // PDF
@@ -41,6 +45,19 @@ const PDFViewer = ({route}) => {
 
   return (
     <View style={{flex: 1}}>
+      <BackButtonWithTitle
+        navigation={navigation}
+        title="Back"
+        containerStyle={{
+          justifyContent: 'flex-start',
+          gap: 20,
+        }}
+        titleStyle={{
+          fontSize: 20,
+          color: colors.textColor.light,
+          fontFamily: font.PoppinsSemiBold,
+        }}
+      />
       <Pdf
         source={{uri: pdfPath}}
         showsVerticalScrollIndicator={false}

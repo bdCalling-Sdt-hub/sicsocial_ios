@@ -10,6 +10,12 @@ export const faceDownSlices = api.injectEndpoints({
       }),
       providesTags: ['facedown'],
     }),
+    getFaceDownOthers: builder.query<IFacedowns, unknown>({
+      query: ({id, page, limit}) => ({
+        url: `/facedowns/others`,
+      }),
+      providesTags: ['facedown'],
+    }),
     getFaceDownById: builder.query<IFacedownSingle, unknown>({
       query: ({id, page, limit}) => ({
         url: `/facedowns/${id}`,
@@ -42,4 +48,5 @@ export const {
   useGetFaceDownQuery,
   useDeleteFacedownMutation,
   useGetFaceDownByIdQuery,
+  useGetFaceDownOthersQuery,
 } = faceDownSlices;

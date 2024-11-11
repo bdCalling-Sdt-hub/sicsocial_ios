@@ -21,7 +21,6 @@ import {
   useDeleteFacedownMutation,
   useGetFaceDownByIdQuery,
 } from '../../redux/apiSlices/facedwonSlice';
-import {useLazyGetMessageQuery} from '../../redux/apiSlices/messageSlies';
 
 import AudioRecorderPlayer from 'react-native-audio-recorder-player';
 import ImageViewer from 'react-native-image-zoom-viewer';
@@ -36,6 +35,7 @@ import {useStyles} from '../../context/ContextApi';
 import {useAudioPlayer} from '../../hook/playMusic';
 import {NavigProps} from '../../interfaces/NaviProps';
 import {useGetUserProfileQuery} from '../../redux/apiSlices/authSlice';
+import {useLazyGetMessageQuery} from '../../redux/apiSlices/messageSlies';
 import {IMessage} from '../../redux/interface/message';
 import {getSocket} from '../../redux/services/socket';
 import {makeImage} from '../../utils/utils';
@@ -92,7 +92,6 @@ const FaceDownConversation = ({
   const animationStyleForUserConversation = useAnimatedStyle(() => {
     return {
       height: animateHight.value,
-      opacity: animateOpacity.value,
     };
   });
   const animationImageONBanner = useAnimatedStyle(() => {
@@ -107,6 +106,12 @@ const FaceDownConversation = ({
     };
   });
 
+  const opacityAnStyle = useAnimatedStyle(() => {
+    return {
+      opacity: animateOpacity.value,
+    };
+  });
+
   // console.log(messages);
   // console.log(messages.length);
 
@@ -115,6 +120,7 @@ const FaceDownConversation = ({
       animateHight.value = withTiming(FULL_HIGHT, {duration: 500});
       bannerImageHight.value = withTiming(height * 0.22, {duration: 500});
       bannerImageWidth.value = withTiming(window.width * 0.35, {duration: 500});
+      animateOpacity.value = withTiming(1, {duration: 1200});
     }
     if (!fullBanner) {
       animateHight.value = withTiming(REGULAR_REGULAR, {duration: 500});
@@ -122,6 +128,7 @@ const FaceDownConversation = ({
       bannerImageWidth.value = withTiming(window.width * 0.16, {
         duration: 500,
       });
+      animateOpacity.value = withTiming(0, {duration: 50});
     }
   }, [fullBanner]);
 
@@ -290,7 +297,9 @@ const FaceDownConversation = ({
                 <TouchableOpacity
                   activeOpacity={0.9}
                   onPress={() => {
-                    navigation?.navigate('BookShare');
+                    navigation?.navigate('BookShare', {
+                      data: FaceDownData?.book,
+                    });
                   }}>
                   <Image
                     style={[
@@ -308,13 +317,17 @@ const FaceDownConversation = ({
                 </TouchableOpacity>
               </Animated.View>
 
-              <View
-                style={{
-                  justifyContent: 'space-between',
-                  // alignItems: 'center',
-                }}>
-                <View>
+              <Animated.View
+                style={[
+                  {
+                    justifyContent: 'space-between',
+                    flexDirection: 'column',
+                    flex: 1,
+                  },
+                ]}>
+                <Animated.View>
                   <Text
+                    numberOfLines={fullBanner ? 2 : 1}
                     style={{
                       fontSize: 16,
                       color: colors.textColor.secondaryColor,
@@ -323,6 +336,7 @@ const FaceDownConversation = ({
                     {FaceDownData?.book?.name}
                   </Text>
                   <Text
+                    numberOfLines={fullBanner ? 2 : 1}
                     style={{
                       fontSize: 12,
                       color: colors.textColor.neutralColor,
@@ -331,6 +345,7 @@ const FaceDownConversation = ({
                     {FaceDownData?.book?.publisher}
                   </Text>
                   <Text
+                    numberOfLines={1}
                     style={{
                       fontSize: 12,
                       color: colors.blueColor,
@@ -338,62 +353,64 @@ const FaceDownConversation = ({
                     }}>
                     {FaceDownData?.book?.bookUrl}
                   </Text>
-                </View>
+                </Animated.View>
 
-                {fullBanner && (
-                  <View
-                    style={{
+                <Animated.View
+                  style={[
+                    {
                       gap: 10,
+                      flex: 1,
+                      alignItems: 'flex-start',
+                      justifyContent: 'flex-end',
+                    },
+                    opacityAnStyle,
+                  ]}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      navigation?.navigate('PdfViewer', {
+                        data: FaceDownData?.book,
+                      });
+                    }}
+                    style={{
+                      alignItems: 'center',
+                      justifyContent: 'center',
                     }}>
-                    <TouchableOpacity
-                      onPress={() => {
-                        navigation?.navigate('PdfViewer', {
-                          data: FaceDownData?.book,
-                        });
-                      }}
+                    <View
                       style={{
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        backgroundColor: colors.bg,
+                        borderRadius: 5,
+                        backgroundColor: colors.primaryColor,
+                        paddingHorizontal: 10,
+                        paddingVertical: 5,
                       }}>
-                      <View
-                        style={{
-                          borderRadius: 5,
-                          backgroundColor: colors.primaryColor,
-                          paddingHorizontal: 10,
-                          paddingVertical: 5,
-                        }}>
-                        <Text style={{color: colors.textColor.white}}>
-                          Reading This Book
-                        </Text>
-                      </View>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      onPress={() => {
-                        Linking.openURL(FaceDownData?.book?.bookUrl);
-                      }}
+                      <Text style={{color: colors.textColor.white}}>
+                        Reading This Book
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => {
+                      Linking.openURL(FaceDownData?.book?.bookUrl);
+                    }}
+                    style={{
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}>
+                    <View
                       style={{
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        backgroundColor: colors.bg,
+                        borderRadius: 5,
+                        // backgroundColor: colors.blue,
+                        paddingHorizontal: 10,
+                        paddingVertical: 5,
+                        borderColor: colors.primaryColor,
+                        borderWidth: 1,
                       }}>
-                      <View
-                        style={{
-                          borderRadius: 5,
-                          // backgroundColor: colors.blue,
-                          paddingHorizontal: 10,
-                          paddingVertical: 5,
-                          borderColor: colors.primaryColor,
-                          borderWidth: 1,
-                        }}>
-                        <Text style={{color: colors.primaryColor}}>
-                          Listening This Book
-                        </Text>
-                      </View>
-                    </TouchableOpacity>
-                  </View>
-                )}
-              </View>
+                      <Text style={{color: colors.primaryColor}}>
+                        Listening This Book
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                </Animated.View>
+              </Animated.View>
             </Animated.View>
           </TouchableOpacity>
         </Animated.View>

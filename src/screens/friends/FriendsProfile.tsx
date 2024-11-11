@@ -23,6 +23,7 @@ import CustomModal from '../../components/common/customModal/CustomModal';
 import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
 import {useStyles} from '../../context/ContextApi';
 import {useGetUserProfileQuery} from '../../redux/apiSlices/authSlice';
+import {useAddMemberMutation} from '../../redux/apiSlices/chatSlices';
 import {makeImage} from '../../utils/utils';
 
 const FriendsProfile = ({navigation, route}) => {
@@ -104,7 +105,7 @@ const FriendsProfile = ({navigation, route}) => {
       setIsFriendRequestSent(!isFriendRequestSent);
     }
   };
-
+  const [createMember, memberResult] = useAddMemberMutation();
   return (
     <View style={{height: '100%', backgroundColor: colors.bg}}>
       <BackButtonWithTitle
@@ -282,10 +283,21 @@ const FriendsProfile = ({navigation, route}) => {
 
         {friendProfile?.data?.chats?.map((item, index) => (
           <ConversationalCard
-            key={index}
+            key={item._id}
             conversationStyle="normal"
             onPress={() => {
               if (item?.facedown?._id) {
+                if (item?.participants) {
+                  const alreadyExits = item.participants.includes(
+                    userProfile?.data?._id,
+                  );
+                  if (!alreadyExits) {
+                    createMember({
+                      id: item?._id,
+                      participants: userProfile?.data?._id,
+                    });
+                  }
+                }
                 navigation?.navigate('FaceDownConversation', {
                   data: {id: item?._id, facedown: item?.facedown},
                 });
@@ -295,26 +307,23 @@ const FriendsProfile = ({navigation, route}) => {
                 });
               }
             }}
-            participants={item.participants}
+            participants={item.participants?.filter(
+              item => item?._id == route?.params?.data?.id,
+            )}
             cardStyle={
-              item.participants.length > 4
-                ? 'three'
-                : item?.participants.length === 4
-                ? 'four'
-                : item?.participants.length === 3
-                ? 'three'
-                : item?.participants.length === 2
-                ? 'two'
-                : 'single'
+              item?.lastMessage?.book
+                ? 'shear_book'
+                : item?.lastMessage?.image
+                ? 'image'
+                : 'normal'
             }
             manyPeople={item.participants.length > 4}
             conversationTitle={
-              item?.lastMessage?.sender?._id === friendProfile?.data?._id
+              item?.lastMessage?.sender?._id === userProfile?.data?._id
                 ? item?.facedown
-                  ? item?.facedown?.name +
+                  ? item.facedown.name +
                     `${
-                      item?.lastMessage?.sender?._id ===
-                      friendProfile?.data?._id
+                      item?.lastMessage?.sender?._id === userProfile?.data?._id
                         ? ' You'
                         : item?.lastMessage?.sender?.fullName
                     }`
@@ -322,10 +331,11 @@ const FriendsProfile = ({navigation, route}) => {
                 : item?.lastMessage?.sender?.fullName
             }
             conversationSubtitle={
-              item.lastMessage?.sender?._id === friendProfile?.data?._id
-                ? 'Send a message'
-                : 'Replied in chat'
+              item?.lastMessage?.sender?._id === userProfile?.data?._id
+                ? 'send a message'
+                : ' replied in chat'
             }
+            item={item}
             lastMessageTime={format(new Date(item.updatedAt), 'hh :mm a')}
             lastMessage={
               item.lastMessage.audio
@@ -334,8 +344,8 @@ const FriendsProfile = ({navigation, route}) => {
                 ? 'send an image message'
                 : item.lastMessage.text
                 ? item.lastMessage.text
-                : item.lastMessage.path
-                ? 'send a book'
+                : item.lastMessage.book
+                ? 'Shear a book'
                 : 'Start a chat'
             }
           />

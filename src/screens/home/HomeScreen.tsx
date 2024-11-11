@@ -32,6 +32,7 @@ import {NavigProps} from '../../interfaces/NaviProps';
 import {imageUrl} from '../../redux/api/baseApi';
 import {useGetDonationQuery} from '../../redux/apiSlices/additionalSlices';
 import {useGetUserProfileQuery} from '../../redux/apiSlices/authSlice';
+import {useAddMemberMutation} from '../../redux/apiSlices/chatSlices';
 import {useGetNewsFeetQuery} from '../../redux/apiSlices/homeSlices';
 import {getSocket} from '../../redux/services/socket';
 
@@ -67,6 +68,12 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
   useEffect(() => {
     if (userProfile?.data?._id) {
       socket?.emit('active', JSON.stringify({userId: userProfile.data._id}));
+    }
+    if (userProfile?.data?._id) {
+      socket?.emit(
+        'activeUsers',
+        JSON.stringify({userId: userProfile.data._id}),
+      );
     }
 
     // Optional: Add a cleanup to handle when the component unmounts, if needed
@@ -107,6 +114,8 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
       />
     ));
   };
+
+  const [createMember, memberResult] = useAddMemberMutation();
 
   // is live  card have checker and create animation asaa
   const profileImage = userProfile?.data?.avatar.startsWith('https')
@@ -251,9 +260,21 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
           // console.log(item);
           return (
             <ConversationalCard
+              key={item._id}
               conversationStyle="normal"
               onPress={() => {
                 if (item?.facedown?._id) {
+                  if (item?.participants) {
+                    const alreadyExits = item.participants.includes(
+                      userProfile?.data?._id,
+                    );
+                    if (!alreadyExits) {
+                      createMember({
+                        id: item?._id,
+                        participants: userProfile?.data?._id,
+                      });
+                    }
+                  }
                   navigation?.navigate('FaceDownConversation', {
                     data: {id: item?._id, facedown: item?.facedown},
                   });
@@ -269,8 +290,6 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
                   ? 'shear_book'
                   : item?.lastMessage?.image
                   ? 'image'
-                  : item?.lastMessage?.audio
-                  ? 'book_promotion'
                   : 'normal'
               }
               manyPeople={item.participants.length > 4}

@@ -12,6 +12,10 @@ import {
   View,
 } from 'react-native';
 import {useContextApi, useStyles} from '../../context/ContextApi';
+import {
+  useGetFaceDownOthersQuery,
+  useGetFaceDownQuery,
+} from '../../redux/apiSlices/facedwonSlice';
 import {isSmall, makeImage} from '../../utils/utils';
 
 import Clipboard from '@react-native-clipboard/clipboard';
@@ -23,7 +27,6 @@ import ConversationalCard from '../../components/common/ConversationalCard';
 import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
 import {NavigProps} from '../../interfaces/NaviProps';
 import {useGetUserProfileQuery} from '../../redux/apiSlices/authSlice';
-import {useGetFaceDownQuery} from '../../redux/apiSlices/facedwonSlice';
 import {useGetFriendQuery} from '../../redux/apiSlices/friendsSlices';
 import {useGetNewsFeetQuery} from '../../redux/apiSlices/homeSlices';
 
@@ -44,6 +47,12 @@ const ProfileScreen = ({navigation}: NavigProps<null>) => {
     isLoading: facedownsLoading,
   } = useGetFaceDownQuery({});
 
+  const {
+    data: otherFacedowns,
+    refetch: otherFacedownsRefetch,
+    isLoading: otherFacedownsLoading,
+  } = useGetFaceDownOthersQuery({});
+
   const {data: userProfile} = useGetUserProfileQuery({});
   const [modalVisible, setModalVisible] = React.useState(false);
   const {isLive, setIsLive} = useContextApi();
@@ -63,6 +72,7 @@ const ProfileScreen = ({navigation}: NavigProps<null>) => {
               await newsFeetRefetch();
               await friendsRefetch();
               await facedownsRefetch();
+              await otherFacedownsRefetch();
             }}
           />
         }
@@ -512,7 +522,11 @@ const ProfileScreen = ({navigation}: NavigProps<null>) => {
               paddingRight: 20,
               paddingHorizontal: '5%',
             }}
-            data={facedowns?.data}
+            data={
+              facedowns?.data && otherFacedowns
+                ? [...facedowns?.data, ...otherFacedowns?.data]
+                : facedowns?.data || otherFacedowns?.data || []
+            }
             ListFooterComponent={() => {
               return (
                 <View style={{gap: 6}}>
@@ -640,41 +654,53 @@ const ProfileScreen = ({navigation}: NavigProps<null>) => {
               key={index}
               conversationStyle="normal"
               onPress={() => {
-                navigation?.navigate('NormalConversation');
+                if (item?.facedown?._id) {
+                  navigation?.navigate('FaceDownConversation', {
+                    data: {id: item?._id, facedown: item?.facedown},
+                  });
+                } else {
+                  navigation?.navigate('NormalConversation', {
+                    data: {id: item._id},
+                  });
+                }
               }}
               participants={item.participants}
               cardStyle={
-                item.participants.length > 4
-                  ? 'three'
-                  : item?.participants.length === 4
-                  ? 'four'
-                  : item?.participants.length === 3
-                  ? 'three'
-                  : item?.participants.length === 2
-                  ? 'two'
-                  : 'single'
+                item?.lastMessage?.book
+                  ? 'shear_book'
+                  : item?.lastMessage?.image
+                  ? 'image'
+                  : 'normal'
               }
-              manyPeople={item.participants.length > 4 ? true : false}
+              manyPeople={item.participants.length > 4}
               conversationTitle={
                 item.lastMessage.sender._id === userProfile?.data?._id
-                  ? 'You'
-                  : userProfile?.data?.fullName
+                  ? item?.facedown
+                    ? item.facedown.name +
+                      `${
+                        item.lastMessage.sender._id === userProfile?.data?._id
+                          ? ' You'
+                          : item.lastMessage.sender.fullName
+                      }`
+                    : 'You'
+                  : item.lastMessage.sender.fullName
               }
               conversationSubtitle={
                 item.lastMessage.sender._id === userProfile?.data?._id
                   ? 'send a message'
-                  : 'Reply to the message'
+                  : ' replied in chat'
               }
+              item={item}
               lastMessageTime={format(new Date(item.updatedAt), 'hh :mm a')}
               lastMessage={
                 item.lastMessage.audio
-                  ? 'send a audio message'
+                  ? 'send an audio message'
                   : item.lastMessage.image
                   ? 'send an image message'
                   : item.lastMessage.text
                   ? item.lastMessage.text
-                  : item.lastMessage.path
-                  ? 'send a book'
+                  : item.lastMessage.book
+                  ? 'Shear a book'
                   : 'Start a chat'
               }
             />

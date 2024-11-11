@@ -1,6 +1,7 @@
 import {
   FlatList,
   Image,
+  RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
@@ -50,7 +51,11 @@ const data = [
 
 const BooksScreen = ({navigation}: NavigProps<null>) => {
   const {colors, font} = useStyles();
-  const {data: books} = useGetBooksQuery({});
+  const {
+    data: books,
+    isLoading: isBookLoading,
+    refetch: refetchBook,
+  } = useGetBooksQuery({});
   // console.log(books);
   const [selectItem, setSelectIItem] = React.useState<number>(1);
   const {height, width} = useWindowDimensions();
@@ -105,6 +110,13 @@ const BooksScreen = ({navigation}: NavigProps<null>) => {
       </View>
 
       <ScrollView
+        refreshControl={
+          <RefreshControl
+            refreshing={isBookLoading}
+            onRefresh={refetchBook}
+            colors={[colors.primaryColor]}
+          />
+        }
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           paddingBottom: 100,

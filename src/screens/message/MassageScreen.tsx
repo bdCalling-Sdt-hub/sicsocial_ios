@@ -36,6 +36,8 @@ const MassageScreen = ({navigation}: NavigProps<null>) => {
   const [modalVisible, setModalVisible] = React.useState(false);
   const [friends, setFriends] = React.useState([]);
 
+  // console.log(friends);
+
   const socket = getSocket();
 
   const handleActiveUsers = (data: any) => {
@@ -45,9 +47,7 @@ const MassageScreen = ({navigation}: NavigProps<null>) => {
     if (userInfo?.data?._id) {
       socket?.emit('activeUsers', JSON.stringify({userId: userInfo.data._id}));
     }
-
     socket?.on('activeFriends', handleActiveUsers);
-
     return () => {
       // Remove the listener on cleanup to prevent memory leaks
       socket?.off('activeUsers', handleActiveUsers);
@@ -164,89 +164,90 @@ const MassageScreen = ({navigation}: NavigProps<null>) => {
           />
         }
         keyboardShouldPersistTaps="always">
-        {friends?.data?.length > 0 && (
-          <View
-            style={{
-              borderBottomWidth: 1,
-              borderTopWidth: 1,
-              borderTopColor: isDark
-                ? 'rgba(217, 217, 217, 0.1)'
-                : 'rgba(217, 217, 217, 1)',
-              borderBlockColor: isDark
-                ? 'rgba(217, 217, 217, 0.1)'
-                : 'rgba(217, 217, 217, 1)',
-              paddingVertical: 10,
-              marginTop: 10,
-            }}>
-            <FlatList
-              showsHorizontalScrollIndicator={false}
-              keyboardShouldPersistTaps="always"
-              horizontal
-              contentContainerStyle={{
-                gap: 16,
-                paddingHorizontal: 20,
-              }}
-              data={friends}
-              renderItem={item => (
-                <View style={{gap: 6}}>
-                  <TouchableOpacity
-                    activeOpacity={0.8}
-                    onPress={() => {
-                      setModalVisible(!modalVisible);
-                    }}
+        <View
+          style={{
+            borderBottomWidth: 0.5,
+            borderTopWidth: 0.5,
+            borderTopColor: isDark
+              ? 'rgba(217, 217, 217, 0.1)'
+              : 'rgba(217, 217, 217, 1)',
+            borderBlockColor: isDark
+              ? 'rgba(217, 217, 217, 0.1)'
+              : 'rgba(217, 217, 217, 1)',
+            paddingVertical: 10,
+            marginTop: 10,
+          }}>
+          <FlatList
+            showsHorizontalScrollIndicator={false}
+            keyboardShouldPersistTaps="always"
+            horizontal
+            contentContainerStyle={{
+              gap: 16,
+              paddingHorizontal: 20,
+            }}
+            data={friends}
+            renderItem={item => (
+              <View style={{gap: 6}}>
+                <TouchableOpacity
+                  activeOpacity={0.8}
+                  onPress={() => {
+                    // setModalVisible(!modalVisible);
+                    navigation?.navigate('FriendsProfile', {
+                      data: {id: item.item?._id},
+                    });
+                  }}
+                  style={{
+                    backgroundColor: colors.white,
+                    // paddingVertical: 5,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    elevation: 2,
+                    borderRadius: 50,
+                    padding: 2,
+                    position: 'relative',
+                    width: 65,
+                    height: 65,
+                  }}>
+                  <View
                     style={{
-                      backgroundColor: colors.white,
-                      // paddingVertical: 5,
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      elevation: 2,
+                      width: 12,
+                      height: 12,
                       borderRadius: 50,
-                      padding: 2,
-                      position: 'relative',
+                      backgroundColor: colors.green['#00B047'],
+                      position: 'absolute',
+                      right: 0,
+                      zIndex: +1,
+                      bottom: 5,
+                      elevation: 2,
+                    }}
+                  />
+                  <Image
+                    style={{
                       width: 65,
                       height: 65,
-                    }}>
-                    <View
-                      style={{
-                        width: 12,
-                        height: 12,
-                        borderRadius: 50,
-                        backgroundColor: colors.green['#00B047'],
-                        position: 'absolute',
-                        right: 0,
-                        zIndex: +1,
-                        bottom: 5,
-                        elevation: 2,
-                      }}
-                    />
-                    <Image
-                      style={{
-                        width: 65,
-                        height: 65,
-                        borderRadius: 28,
-                        resizeMode: 'contain',
-                        borderColor: 'rgba(255,255,255,1)',
-                        borderWidth: 2,
-                      }}
-                      source={{
-                        uri: makeImage(item.item.avatar),
-                      }}
-                    />
-                  </TouchableOpacity>
-                  <Text
-                    style={{
-                      fontSize: 12,
-                      fontFamily: font.Poppins,
-                      color: colors.textColor.neutralColor,
-                      textAlign: 'center',
-                    }}>
-                    {item?.item?.fullName}
-                  </Text>
-                </View>
-              )}
-            />
-          </View>
-        )}
+                      borderRadius: 28,
+                      resizeMode: 'contain',
+                      borderColor: 'rgba(255,255,255,1)',
+                      borderWidth: 2,
+                    }}
+                    source={{
+                      uri: makeImage(item.item.avatar),
+                    }}
+                  />
+                </TouchableOpacity>
+                <Text
+                  style={{
+                    fontSize: 12,
+                    fontFamily: font.Poppins,
+                    color: colors.textColor.neutralColor,
+                    textAlign: 'center',
+                  }}>
+                  {item?.item?.fullName}
+                </Text>
+              </View>
+            )}
+          />
+        </View>
 
         <View
           style={{
