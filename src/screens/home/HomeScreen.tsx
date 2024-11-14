@@ -24,6 +24,7 @@ import {format} from 'date-fns';
 import LinearGradient from 'react-native-linear-gradient';
 import {SvgXml} from 'react-native-svg';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import {useDispatch} from 'react-redux';
 import ConversationalCard from '../../components/common/ConversationalCard';
 import ConversationalModal from '../../components/common/ConversationalModal/ConversationalModal';
 import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
@@ -34,7 +35,9 @@ import {useGetDonationQuery} from '../../redux/apiSlices/additionalSlices';
 import {useGetUserProfileQuery} from '../../redux/apiSlices/authSlice';
 import {useAddMemberMutation} from '../../redux/apiSlices/chatSlices';
 import {useGetNewsFeetQuery} from '../../redux/apiSlices/homeSlices';
+import {useJoinLiveMutation} from '../../redux/apiSlices/liveSlice';
 import {getSocket} from '../../redux/services/socket';
+import {setUser} from '../../redux/services/userSlice';
 
 const HomeScreen = ({navigation}: NavigProps<null>) => {
   const {isLive, setIsLive, isDark} = useContextApi();
@@ -46,6 +49,7 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
   } = useGetNewsFeetQuery({});
   const {data: userProfile} = useGetUserProfileQuery({});
   const {data: donations} = useGetDonationQuery({});
+  const dispatch = useDispatch();
   // console.log(userProfile);
   const {colors, font} = useStyles();
   const [modalVisible, setModalVisible] = React.useState(false);
@@ -67,9 +71,8 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
 
   useEffect(() => {
     if (userProfile?.data?._id) {
+      dispatch(setUser(userProfile.data));
       socket?.emit('active', JSON.stringify({userId: userProfile.data._id}));
-    }
-    if (userProfile?.data?._id) {
       socket?.emit(
         'activeUsers',
         JSON.stringify({userId: userProfile.data._id}),
@@ -116,6 +119,7 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
   };
 
   const [createMember, memberResult] = useAddMemberMutation();
+  const [joinLive] = useJoinLiveMutation();
 
   // is live  card have checker and create animation asaa
   const profileImage = userProfile?.data?.avatar.startsWith('https')
@@ -278,9 +282,19 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
                   navigation?.navigate('FaceDownConversation', {
                     data: {id: item?._id, facedown: item?.facedown},
                   });
+                } else if (item?.live) {
+                  joinLive({
+                    chatId: item?._id,
+                    role: 'audience',
+                  }).then(res => {
+                    // console.log(res);
+                    navigation?.navigate('LiveConversation', {
+                      data: {id: item?._id, live: item.live},
+                    });
+                  });
                 } else {
                   navigation?.navigate('NormalConversation', {
-                    data: {id: item._id},
+                    data: {id: item?._id},
                   });
                 }
               }}
@@ -294,32 +308,36 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
               }
               manyPeople={item.participants.length > 4}
               conversationTitle={
-                item.lastMessage.sender._id === userProfile?.data?._id
+                item.live
+                  ? 'Live Chat'
+                  : item?.lastMessage?.sender?._id === userProfile?.data?._id
                   ? item?.facedown
-                    ? item.facedown.name +
+                    ? item?.facedown?.name +
                       `${
-                        item.lastMessage.sender._id === userProfile?.data?._id
+                        item.lastMessage?.sender?._id === userProfile?.data?._id
                           ? ' You'
-                          : item.lastMessage.sender.fullName
+                          : item.lastMessage?.sender?.fullName
                       }`
                     : 'You'
-                  : item.lastMessage.sender.fullName
+                  : item?.lastMessage?.sender?.fullName
               }
               conversationSubtitle={
-                item.lastMessage.sender._id === userProfile?.data?._id
-                  ? 'send a message'
-                  : ' replied in chat'
+                !item?.live
+                  ? item?.lastMessage?.sender?._id === userProfile?.data?._id
+                    ? 'send a message'
+                    : ' replied in chat'
+                  : ''
               }
               item={item}
               lastMessageTime={format(new Date(item.updatedAt), 'hh :mm a')}
               lastMessage={
-                item.lastMessage.audio
+                item?.lastMessage?.audio
                   ? 'send an audio message'
-                  : item.lastMessage.image
+                  : item?.lastMessage?.image
                   ? 'send an image message'
-                  : item.lastMessage.text
-                  ? item.lastMessage.text
-                  : item.lastMessage.book
+                  : item?.lastMessage?.text
+                  ? item?.lastMessage?.text
+                  : item?.lastMessage?.book
                   ? 'Shear a book'
                   : 'Start a chat'
               }

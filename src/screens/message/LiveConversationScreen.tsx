@@ -1,8 +1,11 @@
+import React, {useEffect, useRef, useState} from 'react';
 import {
   ActivityIndicator,
   FlatList,
   Image,
   Linking,
+  PermissionsAndroid,
+  Platform,
   SafeAreaView,
   StyleSheet,
   Text,
@@ -11,243 +14,32 @@ import {
   View,
   useWindowDimensions,
 } from 'react-native';
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withRepeat,
-  withTiming,
-} from 'react-native-reanimated';
+import createAgoraRtcEngine, {
+  ChannelProfileType,
+  ClientRoleType,
+  IRtcEngine,
+  IRtcEngineEventHandler,
+} from 'react-native-agora';
 import {useContextApi, useStyles} from '../../context/ContextApi';
 import {isSmall, isTablet} from '../../utils/utils';
 
 import {LinkPreview} from '@flyerhq/react-native-link-preview';
 import Clipboard from '@react-native-clipboard/clipboard';
-import React from 'react';
 import {TextInput} from 'react-native';
 import {SvgXml} from 'react-native-svg';
 import {GridList} from 'react-native-ui-lib';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import {useSelector} from 'react-redux';
+import {AgoraConfig} from '../../../agora.config';
 import CustomModal from '../../components/common/customModal/CustomModal';
 import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
 import NormalButton from '../../components/common/NormalButton';
 import NotifyTopComponent from '../../components/common/notify/NotifyTopComponent';
 import ConversationHeader from '../../components/conversation/ConversationHeader';
 import {NavigProps} from '../../interfaces/NaviProps';
+import {useGetLiveChatQuery} from '../../redux/apiSlices/liveSlice';
+import LiveUserCard from './components/LiveUserCard';
 
-const Friends = [
-  {
-    id: 1,
-    name: 'Amina',
-    img: require('../../assets/tempAssets/3a906b3de8eaa53e14582edf5c918b5d.jpg'),
-    lastMessage: 'Assalamuallikum, how are...',
-  },
-  {
-    id: 2,
-    name: 'Arif',
-    img: require('../../assets/tempAssets/4005b22a3c1c23d7c04f6c9fdbd85468.jpg'),
-    lastMessage: 'Sir you are great.',
-    host: true,
-  },
-  {
-    id: 3,
-    name: 'Rahman',
-    img: require('../../assets/tempAssets/51ad46951bbdc28be4cf7e384964f309.jpg'),
-    lastMessage: 'Brother eid mubarak',
-  },
-  {
-    id: 4,
-    name: 'Mithila',
-    img: require('../../assets/tempAssets/691af02d3a7ca8be2811716f82d9212b.jpg'),
-    lastMessage: 'you: I’m feeling good',
-  },
-  {
-    id: 5,
-    name: 'Samina',
-    img: require('../../assets/tempAssets/7261c2ae940abab762a6e0130b36b3a9.jpg'),
-    lastMessage: 'you: I’m feeling good',
-    group: false,
-  },
-  {
-    id: 6,
-    name: 'Samina',
-    img: require('../../assets/tempAssets/51ad46951bbdc28be4cf7e384964f309.jpg'),
-    lastMessage: 'you: I’m feeling good',
-    group: false,
-  },
-  {
-    id: 7,
-    name: 'Samina',
-    img: require('../../assets/tempAssets/86efa3df337e8c215dd8095476bb6513.jpg'),
-    lastMessage: 'you: I’m feeling good',
-    group: false,
-  },
-  {
-    id: 8,
-    name: 'Samina',
-    img: require('../../assets/tempAssets/86efa3df337e8c215dd8095476bb6513.jpg'),
-    lastMessage: 'you: I’m feeling good',
-    group: false,
-  },
-  {
-    id: 9,
-    name: 'Amina',
-    img: require('../../assets/tempAssets/3a906b3de8eaa53e14582edf5c918b5d.jpg'),
-    lastMessage: 'Assalamuallikum, how are...',
-  },
-  {
-    id: 10,
-    name: 'Arif',
-    img: require('../../assets/tempAssets/4005b22a3c1c23d7c04f6c9fdbd85468.jpg'),
-    lastMessage: 'Sir you are great.',
-  },
-  {
-    id: 11,
-    name: 'Rahman',
-    img: require('../../assets/tempAssets/51ad46951bbdc28be4cf7e384964f309.jpg'),
-    lastMessage: 'Brother eid mubarak',
-  },
-  {
-    id: 12,
-    name: 'Mithila',
-    img: require('../../assets/tempAssets/691af02d3a7ca8be2811716f82d9212b.jpg'),
-    lastMessage: 'you: I’m feeling good',
-  },
-  {
-    id: 13,
-    name: 'Samina',
-    img: require('../../assets/tempAssets/7261c2ae940abab762a6e0130b36b3a9.jpg'),
-    lastMessage: 'you: I’m feeling good',
-    group: false,
-  },
-  {
-    id: 14,
-    name: 'Samina',
-    img: require('../../assets/tempAssets/51ad46951bbdc28be4cf7e384964f309.jpg'),
-    lastMessage: 'you: I’m feeling good',
-    group: false,
-  },
-  {
-    id: 15,
-    name: 'Samina',
-    img: require('../../assets/tempAssets/86efa3df337e8c215dd8095476bb6513.jpg'),
-    lastMessage: 'you: I’m feeling good',
-    group: false,
-    sound: true,
-  },
-  {
-    id: 16,
-    name: 'Samina',
-    img: require('../../assets/tempAssets/86efa3df337e8c215dd8095476bb6513.jpg'),
-    lastMessage: 'you: I’m feeling good',
-    group: false,
-  },
-  {
-    id: 17,
-    name: 'Amina',
-    img: require('../../assets/tempAssets/3a906b3de8eaa53e14582edf5c918b5d.jpg'),
-    lastMessage: 'Assalamuallikum, how are...',
-  },
-  {
-    id: 18,
-    name: 'Arif',
-    img: require('../../assets/tempAssets/4005b22a3c1c23d7c04f6c9fdbd85468.jpg'),
-    lastMessage: 'Sir you are great.',
-    // host: true,
-  },
-  {
-    id: 19,
-    name: 'Rahman',
-    img: require('../../assets/tempAssets/51ad46951bbdc28be4cf7e384964f309.jpg'),
-    lastMessage: 'Brother eid mubarak',
-  },
-  {
-    id: 20,
-    name: 'Mithila',
-    img: require('../../assets/tempAssets/691af02d3a7ca8be2811716f82d9212b.jpg'),
-    lastMessage: 'you: I’m feeling good',
-  },
-  {
-    id: 21,
-    name: 'Samina',
-    img: require('../../assets/tempAssets/7261c2ae940abab762a6e0130b36b3a9.jpg'),
-    lastMessage: 'you: I’m feeling good',
-    group: false,
-  },
-  {
-    id: 22,
-    name: 'Samina',
-    img: require('../../assets/tempAssets/51ad46951bbdc28be4cf7e384964f309.jpg'),
-    lastMessage: 'you: I’m feeling good',
-    group: false,
-  },
-  {
-    id: 23,
-    name: 'Samina',
-    img: require('../../assets/tempAssets/86efa3df337e8c215dd8095476bb6513.jpg'),
-    lastMessage: 'you: I’m feeling good',
-    group: false,
-  },
-  {
-    id: 24,
-    name: 'Samina',
-    img: require('../../assets/tempAssets/86efa3df337e8c215dd8095476bb6513.jpg'),
-    lastMessage: 'you: I’m feeling good',
-    group: false,
-  },
-  {
-    id: 25,
-    name: 'Amina',
-    img: require('../../assets/tempAssets/3a906b3de8eaa53e14582edf5c918b5d.jpg'),
-    lastMessage: 'Assalamuallikum, how are...',
-  },
-  {
-    id: 26,
-    name: 'Arif',
-    img: require('../../assets/tempAssets/4005b22a3c1c23d7c04f6c9fdbd85468.jpg'),
-    lastMessage: 'Sir you are great.',
-  },
-  {
-    id: 27,
-    name: 'Rahman',
-    img: require('../../assets/tempAssets/51ad46951bbdc28be4cf7e384964f309.jpg'),
-    lastMessage: 'Brother eid mubarak',
-  },
-  {
-    id: 28,
-    name: 'Mithila',
-    img: require('../../assets/tempAssets/691af02d3a7ca8be2811716f82d9212b.jpg'),
-    lastMessage: 'you: I’m feeling good',
-  },
-  {
-    id: 29,
-    name: 'Samina',
-    img: require('../../assets/tempAssets/7261c2ae940abab762a6e0130b36b3a9.jpg'),
-    lastMessage: 'you: I’m feeling good',
-    group: false,
-  },
-  {
-    id: 30,
-    name: 'Samina',
-    img: require('../../assets/tempAssets/51ad46951bbdc28be4cf7e384964f309.jpg'),
-    lastMessage: 'you: I’m feeling good',
-    group: false,
-  },
-  {
-    id: 31,
-    name: 'Samina',
-    img: require('../../assets/tempAssets/86efa3df337e8c215dd8095476bb6513.jpg'),
-    lastMessage: 'you: I’m feeling good',
-    group: false,
-    sound: true,
-  },
-  {
-    id: 32,
-    name: 'Samina',
-    img: require('../../assets/tempAssets/86efa3df337e8c215dd8095476bb6513.jpg'),
-    lastMessage: 'you: I’m feeling good',
-    group: false,
-  },
-];
 const Books = [
   {
     id: 1,
@@ -286,7 +78,32 @@ const Books = [
       'https://s3-alpha-sig.figma.com/img/d180/9195/da84fbcfb6556b63dea67af8844a57d8?Expires=1722211200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=XU8OsCuvhuriTh0fx0mDKR5Vz8K81jB6N5Yc~CS44rIvRCRRp4t~rZdYZ6mKP14C4Q8wt3a5WB8B0V1SZQv4gzft-iRV0ZzIFX1yDmy~6IIZmAIeywM2HxOfhutarGZtMxdOguZGlPF4OH4ScrSjjV5RQu5Zy9OHNUw-tPCdwT2oYgNEwtNYcJqAYBfw1IQWsB9l5VpGMsEjprp8QpZADhfvrL5w6Gq2BW1-B6~1cBQhfKV3Y0JefajMOIuI8YH~crtfuXWRP7Rfz7STD3q~iKtsT6fV8HG5e22X9c1RnLyAXIJj43Dd2jRC5kA4QAFkk-hzhihBAS3T5~2Q3rp7Jg__',
   },
 ];
-const LiveConversationScreen = ({navigation}: NavigProps<null>) => {
+const LiveConversationScreen = ({
+  navigation,
+  route,
+}: NavigProps<{
+  id: string;
+  live: string;
+}>) => {
+  // console.log(route?.params?.data?.live);
+  const {data: live} = useGetLiveChatQuery(route?.params?.data?.live, {
+    skip: !route?.params?.data?.live,
+  });
+
+  // console.log(live);
+
+  const [ActiveUser, setActiveUser] = useState<
+    Array<{
+      user: string;
+      role: string;
+      uid: number;
+      token: string;
+      muted?: boolean;
+      volume?: number;
+      volumeEffect?: number;
+    }>
+  >([]);
+
   const {height, width} = useWindowDimensions();
   const {colors, font} = useStyles();
   const {isLive, setIsLive, isDark} = useContextApi();
@@ -297,32 +114,191 @@ const LiveConversationScreen = ({navigation}: NavigProps<null>) => {
   const [open, setNotify] = React.useState(false);
   const [confirmationModal, setConfirmationModal] = React.useState(false);
   const [toggleNotify, setToggleNotify] = React.useState(0);
+  const [volumeEffect, setVolumeEffect] = React.useState(0);
   const [showShortProfile, setShowShortProfile] =
     React.useState<boolean>(false);
   const [booksModal, setBooksModal] = React.useState(false);
   const [selectBook, setSelectBook] = React.useState<number>();
   const [liveModal, setLiveModal] = React.useState(false);
   const [linkUrl, setLinkUrl] = React.useState('');
-  const animatedVoice = useSharedValue(1);
+  const [isMute, setIsMute] = React.useState<null | boolean>();
+
   const [selectOptionItem, setSelectOptionItem] = React.useState<number>();
+  const agoraEngineRef = useRef<IRtcEngine>(); // IRtcEngine instance
 
-  const rVoiceStyle = useAnimatedStyle(() => {
-    return {
-      transform: [
-        {
-          scale: animatedVoice.value,
-        },
-      ],
+  const eventHandler = useRef<IRtcEngineEventHandler>();
+
+  const userInfo = useSelector((state: any) => state?.user?.user);
+
+  const uid = live?.data?.activeUsers?.find(
+    user => user.user._id === userInfo?._id,
+  )?.uid as number;
+
+  const token = live?.data?.activeUsers?.find(
+    user => user.user._id === userInfo?._id,
+  )?.token;
+  const role = live?.data?.activeUsers?.find(
+    user => user.user._id === userInfo?._id,
+  )?.role;
+
+  // console.log(userInfo?.data?._id);
+  useEffect(() => {
+    setupVideoSDKEngine();
+    // Release memory when the App is closed
+    return () => {
+      agoraEngineRef.current?.unregisterEventHandler(eventHandler.current!);
+      agoraEngineRef.current?.release();
     };
-  });
+  }, [uid]);
 
-  React.useEffect(() => {
-    animatedVoice.value = withRepeat(
-      withTiming(1.4, {duration: 1000}),
-      -1,
-      true,
-    );
-  }, []);
+  const setupVideoSDKEngine = async () => {
+    try {
+      // Check and request permissions on Android
+      if (Platform.OS === 'android') {
+        await getPermission();
+      }
+
+      // Clear existing instance if reinitializing
+      if (agoraEngineRef.current) {
+        agoraEngineRef.current.release();
+        agoraEngineRef.current = null;
+      }
+
+      // Initialize Agora engine instance
+      agoraEngineRef.current = createAgoraRtcEngine();
+
+      // Initialize event handlers
+      eventHandler.current = {
+        onJoinChannelSuccess: (connection, uid, elapsed) => {
+          // console.log('JoinChannelSuccess:', {connection, uid, elapsed});
+          const finedUser = live?.data?.activeUsers?.find(
+            user => user.uid === uid,
+          );
+          if (finedUser) {
+            // check already exists
+            const exists = ActiveUser.find(user => user.uid === uid);
+
+            if (!exists) {
+              setActiveUser(prev => [
+                ...prev,
+                {
+                  user: finedUser.user._id,
+                  role: finedUser.role,
+                  uid: uid,
+                  token: finedUser.token,
+                  muted: finedUser.role === 'host' ? true : false,
+                },
+              ]);
+            }
+          }
+        },
+        onUserJoined: (connection, uid, elapsed) => {
+          // console.log('UserJoined:', {connection, uid, elapsed});
+          const finedUser = live?.data?.activeUsers?.find(
+            user => user.uid === uid,
+          );
+          if (finedUser) {
+            // check already exists
+            const exists = ActiveUser.find(user => user.uid === uid);
+
+            if (!exists) {
+              setActiveUser(prev => [
+                ...prev,
+                {
+                  user: finedUser.user._id,
+                  role: finedUser.role,
+                  uid: uid,
+                  token: finedUser.token,
+                  muted: finedUser.role === 'host' ? true : false,
+                },
+              ]);
+            }
+          }
+        },
+        onUserOffline: (connection, uid, reason) => {
+          console.log('UserOffline:', {uid, reason});
+        },
+        onActiveSpeaker: uid => {
+          console.log('ActiveSpeaker:', uid);
+        },
+        onUserMuteAudio(connection, remoteUid, muted) {
+          console.log('UserMuteAudio:', {connection, remoteUid, muted});
+        },
+        // onAudioVolumeIndication(
+        //   connection,
+        //   speakers,
+        //   speakerNumber,
+        //   totalVolume,
+        // ) {
+        //   setVolumeEffect(totalVolume);
+        // },
+      };
+
+      // Register event handler
+      agoraEngineRef.current.registerEventHandler(eventHandler.current);
+
+      // Initialize Agora with App ID
+      agoraEngineRef.current.initialize({
+        appId: AgoraConfig.APP_ID,
+      });
+
+      agoraEngineRef.current.joinChannel(
+        token || '',
+        live?.data?.chat || '',
+        uid || 0,
+        {
+          // Set channel profile to live broadcast
+          channelProfile: ChannelProfileType.ChannelProfileCommunication,
+          // Set user role to audience
+          clientRoleType:
+            role == 'host'
+              ? ClientRoleType.ClientRoleBroadcaster
+              : ClientRoleType.ClientRoleAudience,
+          // Publish audio collected by the microphone
+          publishMicrophoneTrack: role == 'host' ? true : false,
+          // Do not publish video collected by the camera
+          publishMediaPlayerAudioTrack: true,
+          // Automatically subscribe to all audio streams
+          autoSubscribeAudio: true,
+        },
+      );
+
+      // Enable audio volume indication (parameters: interval, smoothness, reportVad)
+      agoraEngineRef.current.enableAudioVolumeIndication(1000, 3, true);
+    } catch (e) {
+      console.log('Error initializing Agora SDK:', e);
+    }
+  };
+
+  console.log(ActiveUser);
+
+  // Permission request function for Android
+  const getPermission = async () => {
+    try {
+      const permissions = [
+        PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+        PermissionsAndroid.PERMISSIONS.CAMERA,
+      ];
+      await PermissionsAndroid.requestMultiple(permissions);
+    } catch (err) {
+      console.warn('Permissions request failed:', err);
+    }
+  };
+
+  const leave = () => {
+    try {
+      // Call leaveChannel method to leave the channel
+      agoraEngineRef.current?.leaveChannel();
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  // Toggle mute/unmute for a specific user
+  const toggleMute = () => {
+    agoraEngineRef.current.muteLocalAudioStream(isMute);
+    setIsMute(!isMute);
+  };
 
   return (
     <SafeAreaView
@@ -352,12 +328,12 @@ const LiveConversationScreen = ({navigation}: NavigProps<null>) => {
 <path d="M6.28534 11.0001C6.15903 10.9997 6.03756 10.9514 5.94534 10.8651C5.48875 10.4316 5.12515 9.90972 4.87668 9.33122C4.62822 8.75272 4.50009 8.1297 4.50009 7.5001C4.50009 6.8705 4.62822 6.24748 4.87668 5.66898C5.12515 5.09048 5.48875 4.5686 5.94534 4.1351C6.04374 4.05532 6.16874 4.01585 6.29511 4.02468C6.42148 4.03351 6.53978 4.08997 6.62612 4.18266C6.71246 4.27535 6.76041 4.39736 6.76026 4.52404C6.76012 4.65071 6.7119 4.77261 6.62534 4.8651C6.26992 5.20579 5.98709 5.61485 5.79388 6.06769C5.60067 6.52052 5.50107 7.00777 5.50107 7.5001C5.50107 7.99243 5.60067 8.47968 5.79388 8.93251C5.98709 9.38535 6.26992 9.79442 6.62534 10.1351C6.69845 10.2035 6.74932 10.2924 6.77136 10.3901C6.7934 10.4877 6.7856 10.5898 6.74897 10.683C6.71233 10.7762 6.64855 10.8563 6.56589 10.9128C6.48323 10.9693 6.38549 10.9998 6.28534 11.0001ZM4.28534 12.3401C4.37847 12.2464 4.43074 12.1197 4.43074 11.9876C4.43074 11.8555 4.37847 11.7288 4.28534 11.6351C3.72596 11.1014 3.28068 10.4598 2.97644 9.74905C2.67221 9.03831 2.51534 8.27322 2.51534 7.5001C2.51534 6.72698 2.67221 5.96189 2.97644 5.25115C3.28068 4.5404 3.72596 3.89878 4.28534 3.3651C4.38215 3.27161 4.43785 3.1435 4.44019 3.00894C4.44254 2.87438 4.39133 2.74441 4.29784 2.6476C4.20436 2.5508 4.07624 2.4951 3.94168 2.49275C3.80713 2.49041 3.67715 2.54161 3.58034 2.6351C2.92171 3.2627 2.39736 4.01751 2.03909 4.85377C1.68083 5.69003 1.49609 6.59033 1.49609 7.5001C1.49609 8.40987 1.68083 9.31017 2.03909 10.1464C2.39736 10.9827 2.92171 11.7375 3.58034 12.3651C3.62846 12.4104 3.68506 12.4456 3.74689 12.4689C3.80871 12.4922 3.87454 12.503 3.94056 12.5006C4.00657 12.4983 4.07148 12.4829 4.13151 12.4554C4.19155 12.4278 4.24554 12.3886 4.29034 12.3401H4.28534ZM11.0503 10.8651C11.5069 10.4316 11.8705 9.90972 12.119 9.33122C12.3675 8.75272 12.4956 8.1297 12.4956 7.5001C12.4956 6.8705 12.3675 6.24748 12.119 5.66898C11.8705 5.09048 11.5069 4.5686 11.0503 4.1351C11.0024 4.09012 10.9461 4.05503 10.8846 4.03182C10.8231 4.00861 10.7576 3.99773 10.6919 3.99982C10.6262 4.00191 10.5616 4.01692 10.5017 4.04399C10.4418 4.07107 10.3878 4.10967 10.3428 4.1576C10.2979 4.20553 10.2628 4.26186 10.2396 4.32335C10.2163 4.38485 10.2055 4.45031 10.2076 4.51601C10.2097 4.58171 10.2247 4.64635 10.2517 4.70625C10.2788 4.76615 10.3174 4.82012 10.3653 4.8651C10.7227 5.20467 11.0072 5.61338 11.2017 6.06637C11.3961 6.51935 11.4963 7.00715 11.4963 7.5001C11.4963 7.99305 11.3961 8.48085 11.2017 8.93384C11.0072 9.38682 10.7227 9.79553 10.3653 10.1351C10.2688 10.2254 10.212 10.3503 10.2073 10.4824C10.2026 10.6146 10.2505 10.7432 10.3403 10.8401C10.3875 10.891 10.4448 10.9315 10.5085 10.959C10.5722 10.9866 10.6409 11.0006 10.7103 11.0001C10.8367 10.9997 10.9581 10.9514 11.0503 10.8651ZM13.4103 12.3651C14.0709 11.7386 14.597 10.9842 14.9565 10.1478C15.316 9.31136 15.5014 8.4105 15.5014 7.5001C15.5014 6.5897 15.316 5.68884 14.9565 4.85243C14.597 4.01602 14.0709 3.26158 13.4103 2.6351C13.312 2.55532 13.1869 2.51585 13.0606 2.52468C12.9342 2.53351 12.8159 2.58997 12.7296 2.68266C12.6432 2.77535 12.5953 2.89736 12.5954 3.02404C12.5956 3.15071 12.6438 3.27261 12.7303 3.3651C13.2897 3.89878 13.735 4.5404 14.0392 5.25115C14.3435 5.96189 14.5003 6.72698 14.5003 7.5001C14.5003 8.27322 14.3435 9.03831 14.0392 9.74905C13.735 10.4598 13.2897 11.1014 12.7303 11.6351C12.6338 11.7254 12.577 11.8503 12.5723 11.9824C12.5676 12.1146 12.6155 12.2432 12.7053 12.3401C12.752 12.3904 12.8084 12.4305 12.8712 12.458C12.934 12.4856 13.0018 12.4999 13.0703 12.5001C13.1967 12.4997 13.3181 12.4514 13.4103 12.3651ZM9.50034 7.5001C9.50034 7.30232 9.4417 7.10898 9.33181 6.94453C9.22193 6.78008 9.06575 6.65191 8.88303 6.57622C8.7003 6.50053 8.49924 6.48073 8.30525 6.51932C8.11127 6.5579 7.93309 6.65314 7.79324 6.79299C7.65339 6.93285 7.55814 7.11103 7.51956 7.30501C7.48097 7.49899 7.50078 7.70006 7.57646 7.88279C7.65215 8.06551 7.78032 8.22169 7.94477 8.33157C8.10922 8.44145 8.30256 8.5001 8.50034 8.5001C8.76556 8.5001 9.01991 8.39474 9.20745 8.20721C9.39499 8.01967 9.50034 7.76532 9.50034 7.5001Z" fill="#DBB162"/>
 </svg>
 
-`}
+          `}
         button
         buttonComponent={
           <TouchableOpacity
             onPress={() => {
-              setIsLive(false);
+              leave();
               navigation?.goBack();
             }}
             activeOpacity={0.9}
@@ -395,7 +371,7 @@ const LiveConversationScreen = ({navigation}: NavigProps<null>) => {
 </clipPath>
 </defs>
 </svg>
-`}
+            `}
             />
             <Text
               style={{
@@ -485,17 +461,16 @@ const LiveConversationScreen = ({navigation}: NavigProps<null>) => {
         </clipPath>
         </defs>
         </svg>
-        `}
+               `}
               />
             </TouchableOpacity>
           </View>
         </View>
-        <View>
+        {/* <View>
           <LinkPreview
             text="https://www.youtube.com/watch?v=TEVXJ5tdzI4"
             enableAnimation
             renderLinkPreview={({aspectRatio, containerWidth, previewData}) => {
-              // console.log(previewData);
               return (
                 <View
                   style={{
@@ -507,7 +482,7 @@ const LiveConversationScreen = ({navigation}: NavigProps<null>) => {
                     borderRadius: 15,
 
                     flexDirection: 'row',
-                    // paddingHorizontal: '4%',
+
                     gap: 10,
                     alignSelf: 'center',
                   }}>
@@ -551,13 +526,11 @@ const LiveConversationScreen = ({navigation}: NavigProps<null>) => {
                       {previewData?.link}
                     </Text>
                   </View>
-                  {/* <Text>{previewData?.link}</Text> */}
-                  {/* {!previewData?.link && <Text>None</Text>} */}
                 </View>
               );
             }}
           />
-        </View>
+        </View> */}
       </View>
 
       <GridList
@@ -566,118 +539,21 @@ const LiveConversationScreen = ({navigation}: NavigProps<null>) => {
         numColumns={isTablet() ? 10 : 4}
         contentContainerStyle={{
           // alignItems: 'center',
-          alignSelf: 'center',
+          // alignSelf: 'center',
+          paddingHorizontal: '4%',
           paddingVertical: 10,
         }}
-        data={Friends.slice(0, 6)}
+        data={live?.data?.activeUsers?.filter(i => i.role === 'host')}
         renderItem={item => {
           return (
-            <TouchableOpacity
-              onLongPress={() => {
-                navigation?.navigate('NormalConversation');
-              }}
-              activeOpacity={0.9}
-              onPress={() => {
-                // setModalVisible(!modalVisible);
-                setShowShortProfile(!showShortProfile);
-              }}
-              style={{
-                // paddingVertical: 5,
-                width: 65,
-                alignItems: 'center',
-                justifyContent: 'center',
-                elevation: 2,
-                borderRadius: 50,
-                padding: 2,
-                position: 'relative',
-              }}>
-              <View
-                style={{
-                  width: 18,
-                  height: 18,
-                  borderRadius: 50,
-                  backgroundColor: colors.primaryColor,
-                  position: 'absolute',
-                  right: 0,
-                  zIndex: +1,
-                  bottom: 0,
-                  elevation: 2,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}>
-                {item?.item.sound ? (
-                  <SvgXml
-                    xml={`<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-<circle cx="9" cy="9" r="9" fill="#F4F4F4"/>
-<g clip-path="url(#clip0_691_4678)">
-<path d="M8.9997 12.2308C8.14314 12.2298 7.32194 11.8891 6.71626 11.2835C6.11058 10.6778 5.76989 9.85658 5.76893 9.00002V7.38464C5.76893 6.52779 6.10931 5.70603 6.7152 5.10014C7.32109 4.49425 8.14285 4.15387 8.9997 4.15387C9.85655 4.15387 10.6783 4.49425 11.2842 5.10014C11.8901 5.70603 12.2305 6.52779 12.2305 7.38464V9.00002C12.2295 9.85658 11.8888 10.6778 11.2831 11.2835C10.6775 11.8891 9.85626 12.2298 8.9997 12.2308ZM8.9997 4.96156C8.42763 4.96262 7.87435 5.16585 7.43761 5.53535C7.00087 5.90484 6.70879 6.4168 6.61297 6.98079H7.78816C7.89527 6.98079 7.99799 7.02334 8.07372 7.09908C8.14946 7.17481 8.19201 7.27753 8.19201 7.38464C8.19201 7.49175 8.14946 7.59447 8.07372 7.6702C7.99799 7.74594 7.89527 7.78848 7.78816 7.78848H6.57662V8.59618H7.78816C7.89527 8.59618 7.99799 8.63872 8.07372 8.71446C8.14946 8.7902 8.19201 8.89292 8.19201 9.00002C8.19201 9.10713 8.14946 9.20985 8.07372 9.28559C7.99799 9.36132 7.89527 9.40387 7.78816 9.40387H6.61297C6.70789 9.96824 6.99972 10.4807 7.43667 10.8503C7.87362 11.2199 8.4274 11.4227 8.9997 11.4227C9.572 11.4227 10.1258 11.2199 10.5627 10.8503C10.9997 10.4807 11.2915 9.96824 11.3864 9.40387H10.2112C10.1041 9.40387 10.0014 9.36132 9.92568 9.28559C9.84994 9.20985 9.80739 9.10713 9.80739 9.00002C9.80739 8.89292 9.84994 8.7902 9.92568 8.71446C10.0014 8.63872 10.1041 8.59618 10.2112 8.59618H11.4228V7.78848H10.2112C10.1041 7.78848 10.0014 7.74594 9.92568 7.6702C9.84994 7.59447 9.80739 7.49175 9.80739 7.38464C9.80739 7.27753 9.84994 7.17481 9.92568 7.09908C10.0014 7.02334 10.1041 6.98079 10.2112 6.98079H11.3864C11.2906 6.4168 10.9985 5.90484 10.5618 5.53535C10.1251 5.16585 9.57177 4.96262 8.9997 4.96156Z" fill="#A9A9A9"/>
-<path d="M4.55919 9C4.6663 9 4.76902 9.04255 4.84476 9.11828C4.92049 9.19402 4.96304 9.29674 4.96304 9.40385C4.96411 10.3675 5.34738 11.2913 6.02878 11.9727C6.71017 12.6541 7.63402 13.0374 8.59766 13.0385H9.40535C10.3689 13.0373 11.2927 12.654 11.9741 11.9726C12.6555 11.2912 13.0388 10.3674 13.04 9.40385C13.04 9.29674 13.0825 9.19402 13.1582 9.11828C13.234 9.04255 13.3367 9 13.4438 9C13.5509 9 13.6536 9.04255 13.7294 9.11828C13.8051 9.19402 13.8477 9.29674 13.8477 9.40385C13.8463 10.5816 13.3778 11.7107 12.545 12.5435C11.7122 13.3763 10.5831 13.8448 9.40535 13.8462H8.59766C7.41991 13.8448 6.2908 13.3763 5.458 12.5435C4.62521 11.7107 4.15674 10.5816 4.15535 9.40385C4.15535 9.29674 4.1979 9.19402 4.27363 9.11828C4.34937 9.04255 4.45209 9 4.55919 9Z" fill="#A9A9A9"/>
-</g>
-<line x1="3.29986" y1="4.15387" x2="13.8465" y2="14.7005" stroke="#A9A9A9" stroke-width="0.75" stroke-linecap="round"/>
-<defs>
-<clipPath id="clip0_691_4678">
-<rect width="9.69231" height="9.69231" fill="white" transform="matrix(-1 0 0 1 13.8477 4.15387)"/>
-</clipPath>
-</defs>
-</svg>
-
-`}
-                  />
-                ) : (
-                  <Animated.Image
-                    style={[
-                      {
-                        width: 10,
-                        height: 10,
-                        borderRadius: 50,
-
-                        // transform: [{scale: 1}],
-                      },
-                      rVoiceStyle,
-                    ]}
-                    source={require('../../assets/icons/microphone/microphone.png')}
-                  />
-                )}
-              </View>
-              {item?.item.host && (
-                <View
-                  style={{
-                    width: 18,
-                    height: 18,
-                    borderRadius: 50,
-                    backgroundColor: colors.green['#00B047'],
-                    position: 'absolute',
-                    left: 0,
-                    zIndex: +1,
-                    bottom: 0,
-                    elevation: 2,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}>
-                  <Text
-                    style={{
-                      fontSize: 10,
-                      fontFamily: font.Poppins,
-                      color: colors.textColor.white,
-                    }}>
-                    H
-                  </Text>
-                </View>
-              )}
-              <Image
-                style={{
-                  width: 65,
-                  height: 65,
-                  borderRadius: 28,
-                  resizeMode: 'contain',
-                  borderColor: item?.item.host
-                    ? colors.green['#00B047']
-                    : colors.secondaryColor,
-                  borderWidth: 2,
-                }}
-                source={item.item.img}
-              />
-            </TouchableOpacity>
+            <LiveUserCard
+              sound
+              isMute={isMute}
+              host={item?.item?.user?._id === live?.data?.host}
+              item={item?.item}
+              setShowShortProfile={setShowShortProfile}
+              showShortProfile={showShortProfile}
+            />
           );
         }}
       />
@@ -685,7 +561,8 @@ const LiveConversationScreen = ({navigation}: NavigProps<null>) => {
       <View
         style={{
           paddingVertical: 9,
-          height: '20%',
+          // height: 120,
+          // gap: 5,
           borderTopColor: colors.gray.variantTwo,
           borderTopWidth: 1,
         }}>
@@ -706,53 +583,16 @@ const LiveConversationScreen = ({navigation}: NavigProps<null>) => {
           keyboardShouldPersistTaps="always"
           horizontal
           contentContainerStyle={{
-            gap: 16,
+            gap: 15,
             paddingHorizontal: '4%',
           }}
-          data={Friends.slice(0, 6)}
+          data={live?.data?.activeUsers?.filter(i => i.role === 'audience')}
           renderItem={item => (
-            <View style={{gap: 6}}>
-              <TouchableOpacity
-                activeOpacity={0.9}
-                onPress={() => {
-                  // setModalVisible(!modalVisible);
-                  setShowShortProfile(!showShortProfile);
-                }}
-                onLongPress={() => {
-                  navigation?.navigate('NormalConversation');
-                }}
-                style={{
-                  backgroundColor: colors.secondaryColor,
-                  // paddingVertical: 5,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  elevation: 2,
-                  borderRadius: 50,
-                  padding: 2,
-                  position: 'relative',
-                }}>
-                <Image
-                  style={{
-                    width: 65,
-                    height: 65,
-                    borderRadius: 28,
-                    resizeMode: 'contain',
-                    borderColor: 'rgba(255,255,255,1)',
-                    borderWidth: 2,
-                  }}
-                  source={item.item.img}
-                />
-              </TouchableOpacity>
-              <Text
-                style={{
-                  fontSize: 12,
-                  fontFamily: font.Poppins,
-                  color: colors.textColor.neutralColor,
-                  textAlign: 'center',
-                }}>
-                Amina
-              </Text>
-            </View>
+            <LiveUserCard
+              item={item?.item}
+              setShowShortProfile={setShowShortProfile}
+              showShortProfile={showShortProfile}
+            />
           )}
         />
       </View>
@@ -812,7 +652,7 @@ const LiveConversationScreen = ({navigation}: NavigProps<null>) => {
 </clipPath>
 </defs>
 </svg>
-`}
+                   `}
                 />
                 <Text
                   style={{
@@ -848,7 +688,7 @@ const LiveConversationScreen = ({navigation}: NavigProps<null>) => {
 <path d="M18.5074 16.1435C17.3575 16.1435 16.3214 16.64 15.6024 17.43L9.13493 13.4243C9.3076 12.9823 9.40337 12.5022 9.40337 12C9.40337 11.4975 9.3076 11.0174 9.13493 10.5756L15.6024 6.56981C16.3214 7.35973 17.3575 7.85649 18.5074 7.85649C20.6735 7.85649 22.4357 6.09429 22.4357 3.92815C22.4357 1.76202 20.6735 0 18.5074 0C16.3412 0 14.579 1.7622 14.579 3.92834C14.579 4.43059 14.675 4.9107 14.8474 5.35271L8.38017 9.35832C7.66112 8.5684 6.62511 8.07164 5.47521 8.07164C3.30908 8.07164 1.54688 9.83403 1.54688 12C1.54688 14.1661 3.30908 15.9283 5.47521 15.9283C6.62511 15.9283 7.66112 15.4317 8.38017 14.6416L14.8474 18.6472C14.675 19.0893 14.579 19.5694 14.579 20.0718C14.579 22.2377 16.3412 24 18.5074 24C20.6735 24 22.4357 22.2377 22.4357 20.0718C22.4357 17.9057 20.6735 16.1435 18.5074 16.1435ZM16.0114 3.92834C16.0114 2.55212 17.1311 1.43243 18.5074 1.43243C19.8836 1.43243 21.0033 2.55212 21.0033 3.92834C21.0033 5.30455 19.8836 6.42424 18.5074 6.42424C17.1311 6.42424 16.0114 5.30455 16.0114 3.92834ZM5.47521 14.4959C4.09881 14.4959 2.97912 13.3762 2.97912 12C2.97912 10.6238 4.09881 9.50407 5.47521 9.50407C6.85143 9.50407 7.97093 10.6238 7.97093 12C7.97093 13.3762 6.85143 14.4959 5.47521 14.4959ZM16.0114 20.0716C16.0114 18.6954 17.1311 17.5757 18.5074 17.5757C19.8836 17.5757 21.0033 18.6954 21.0033 20.0716C21.0033 21.4478 19.8836 22.5675 18.5074 22.5675C17.1311 22.5675 16.0114 21.4478 16.0114 20.0716Z" fill="${colors.textColor.normal}"/>
 </svg>
 
-`}
+                    `}
                 />
                 <Text
                   style={{
@@ -856,7 +696,7 @@ const LiveConversationScreen = ({navigation}: NavigProps<null>) => {
                     fontFamily: font.Poppins,
                     color: colors.textColor.secondaryColor,
                   }}>
-                  12
+                  {/* 12 */}
                 </Text>
               </View>
             </TouchableOpacity>
@@ -885,7 +725,7 @@ const LiveConversationScreen = ({navigation}: NavigProps<null>) => {
 </svg>
 
 
-`}
+                     `}
                 />
               </View>
             </TouchableOpacity>
@@ -897,7 +737,8 @@ const LiveConversationScreen = ({navigation}: NavigProps<null>) => {
             style={{}}
             onPress={() => {
               // setRunOnVoice(!runOnVoice);
-              setNotify(!open);
+              // setNotify(!open);
+              toggleMute();
             }}>
             <View
               style={{
@@ -914,9 +755,9 @@ const LiveConversationScreen = ({navigation}: NavigProps<null>) => {
                 paddingHorizontal: 14,
                 gap: 8,
               }}>
-              {/* <SvgXml
+              <SvgXml
                 xml={
-                  runOnVoice
+                  role === 'host'
                     ? `<svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g clip-path="url(#clip0_691_4364)">
 <path d="M11 18C9.14413 17.9979 7.36487 17.2597 6.05257 15.9474C4.74026 14.6351 4.0021 12.8559 4.00001 11V7.49999C4.00001 5.64348 4.73751 3.863 6.05026 2.55025C7.36302 1.2375 9.14349 0.5 11 0.5C12.8565 0.5 14.637 1.2375 15.9497 2.55025C17.2625 3.863 18 5.64348 18 7.49999V11C17.9979 12.8559 17.2597 14.6351 15.9474 15.9474C14.6351 17.2597 12.8559 17.9979 11 18ZM11 2.25C9.76053 2.2523 8.56175 2.69263 7.61548 3.49319C6.66922 4.29376 6.03637 5.40302 5.82876 6.62499H8.37501C8.60707 6.62499 8.82963 6.71718 8.99373 6.88127C9.15782 7.04537 9.25001 7.26793 9.25001 7.49999C9.25001 7.73206 9.15782 7.95462 8.99373 8.11871C8.82963 8.2828 8.60707 8.37499 8.37501 8.37499H5.75001V10.125H8.37501C8.60707 10.125 8.82963 10.2172 8.99373 10.3813C9.15782 10.5454 9.25001 10.7679 9.25001 11C9.25001 11.2321 9.15782 11.4546 8.99373 11.6187C8.82963 11.7828 8.60707 11.875 8.37501 11.875H5.82876C6.03442 13.0978 6.66673 14.2082 7.61345 15.009C8.56017 15.8097 9.76003 16.2491 11 16.2491C12.24 16.2491 13.4398 15.8097 14.3866 15.009C15.3333 14.2082 15.9656 13.0978 16.1713 11.875H13.625C13.3929 11.875 13.1704 11.7828 13.0063 11.6187C12.8422 11.4546 12.75 11.2321 12.75 11C12.75 10.7679 12.8422 10.5454 13.0063 10.3813C13.1704 10.2172 13.3929 10.125 13.625 10.125H16.25V8.37499H13.625C13.3929 8.37499 13.1704 8.2828 13.0063 8.11871C12.8422 7.95462 12.75 7.73206 12.75 7.49999C12.75 7.26793 12.8422 7.04537 13.0063 6.88127C13.1704 6.71718 13.3929 6.62499 13.625 6.62499H16.1713C15.9636 5.40302 15.3308 4.29376 14.3845 3.49319C13.4383 2.69263 12.2395 2.2523 11 2.25Z" fill="#F4F4F4"/>
@@ -944,7 +785,7 @@ const LiveConversationScreen = ({navigation}: NavigProps<null>) => {
 </svg>
 `
                 }
-              /> */}
+              />
               <SvgXml
                 xml={`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g clip-path="url(#clip0_691_4337)">
@@ -1139,7 +980,7 @@ const LiveConversationScreen = ({navigation}: NavigProps<null>) => {
 <path d="M7.75978 6.97436C8.4921 6.97436 9.20797 6.76984 9.81687 6.38666C10.4258 6.00349 10.9004 5.45887 11.1806 4.82167C11.4608 4.18447 11.5342 3.48331 11.3913 2.80687C11.2484 2.13042 10.8958 1.50906 10.378 1.02137C9.86014 0.533682 9.20038 0.20156 8.48213 0.0670067C7.76389 -0.0675468 7.0194 0.00151094 6.34282 0.265447C5.66625 0.529384 5.08797 0.976344 4.68112 1.54981C4.27426 2.12327 4.0571 2.79748 4.0571 3.48718C4.05826 4.41171 4.44873 5.29805 5.14286 5.95179C5.837 6.60553 6.77812 6.97327 7.75978 6.97436ZM7.75978 1.23077C8.23363 1.23077 8.69685 1.36311 9.09084 1.61104C9.48484 1.85898 9.79192 2.21139 9.97325 2.62369C10.1546 3.036 10.202 3.48968 10.1096 3.92738C10.0171 4.36509 9.78896 4.76714 9.4539 5.0827C9.11883 5.39827 8.69193 5.61317 8.22718 5.70023C7.76244 5.7873 7.28071 5.74261 6.84293 5.57183C6.40514 5.40105 6.03096 5.11184 5.7677 4.74078C5.50444 4.36971 5.36393 3.93346 5.36393 3.48718C5.36462 2.88894 5.61726 2.3154 6.06642 1.89238C6.51558 1.46936 7.12457 1.23142 7.75978 1.23077ZM2.30683 12.9395C2.30683 14.222 2.89316 14.7692 4.26707 14.7692H10.3656C10.5389 14.7692 10.7051 14.8341 10.8276 14.9495C10.9502 15.0649 11.019 15.2214 11.019 15.3846C11.019 15.5478 10.9502 15.7044 10.8276 15.8198C10.7051 15.9352 10.5389 16 10.3656 16H4.26707C2.16046 16 1 14.9128 1 12.9395C1 10.7553 2.31205 8.20513 6.0095 8.20513H9.49437C10.662 8.16083 11.8099 8.49859 12.7431 9.16103C12.8124 9.21082 12.8703 9.27314 12.9136 9.34433C12.9569 9.41552 12.9846 9.49415 12.9952 9.57558C13.0057 9.65701 12.9989 9.73961 12.9751 9.81852C12.9512 9.89742 12.9109 9.97104 12.8564 10.035C12.8019 10.0991 12.7344 10.1522 12.6578 10.1912C12.5812 10.2303 12.4971 10.2546 12.4104 10.2626C12.3237 10.2706 12.2362 10.2622 12.153 10.2379C12.0698 10.2136 11.9926 10.1738 11.9259 10.121C11.2228 9.63678 10.3643 9.39489 9.49437 9.4359H6.0095C5.51198 9.39979 5.01206 9.46578 4.54425 9.62932C4.07644 9.79286 3.65188 10.05 3.29986 10.3831C2.94785 10.7162 2.67676 11.1173 2.50532 11.5586C2.33388 12 2.26615 12.4711 2.30683 12.9395Z" fill="#767676"/>
 <path fill-rule="evenodd" clip-rule="evenodd" d="M15.5345 10.1258C15.712 10.2923 15.7105 10.5609 15.5313 10.7257L11.3806 14.5439C11.2941 14.6235 11.177 14.6676 11.0553 14.6667C10.9336 14.6656 10.8174 14.6195 10.7324 14.5386L9.12968 13.0113C8.95363 12.8436 8.95729 12.5749 9.13785 12.4114C9.31842 12.2478 9.60751 12.2512 9.78356 12.419L11.0651 13.6402L14.8888 10.1228C15.068 9.95792 15.3571 9.95926 15.5345 10.1258Z" fill="#767676"/>
 </svg>
-`}
+                   `}
                 />
               )}
 
@@ -1371,9 +1212,6 @@ const LiveConversationScreen = ({navigation}: NavigProps<null>) => {
       <ModalOfBottom
         modalVisible={liveModal}
         setModalVisible={setLiveModal}
-        // backButton
-
-        height={height * 0.8}
         containerColor={colors.bg}>
         <View
           // showsVerticalScrollIndicator={false}
@@ -1812,6 +1650,13 @@ const LiveConversationScreen = ({navigation}: NavigProps<null>) => {
   );
 };
 
+const getPermission = async () => {
+  if (Platform.OS === 'android') {
+    await PermissionsAndroid.requestMultiple([
+      PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+    ]);
+  }
+};
 export default LiveConversationScreen;
 
 const styles = StyleSheet.create({});

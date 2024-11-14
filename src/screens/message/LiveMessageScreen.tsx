@@ -1,25 +1,22 @@
-import React, { useRef } from 'react';
+import React, {useRef} from 'react';
 import {
-    FlatList,
-    Image,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
-    useWindowDimensions
+  FlatList,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  useWindowDimensions,
 } from 'react-native';
-import {
-    useAnimatedStyle,
-    useSharedValue
-} from 'react-native-reanimated';
+import {useAnimatedStyle, useSharedValue} from 'react-native-reanimated';
 
-import { TextInput } from 'react-native-gesture-handler';
-import { SvgXml } from 'react-native-svg';
+import {TextInput} from 'react-native-gesture-handler';
+import {SvgXml} from 'react-native-svg';
 import Feather from 'react-native-vector-icons/Feather';
 import CustomModal from '../../components/common/customModal/CustomModal';
 import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
-import { useStyles } from '../../context/ContextApi';
-import { NavigProps } from '../../interfaces/NaviProps';
+import {useStyles} from '../../context/ContextApi';
+import {NavigProps} from '../../interfaces/NaviProps';
 
 export interface messagePros {
   id: number;
@@ -34,11 +31,10 @@ export interface messagePros {
   };
 }
 
-
-
-
-
-const LiveMessageScreen = ({navigation}: NavigProps<null>) => {
+const LiveMessageScreen = ({
+  navigation,
+  route,
+}: NavigProps<{id: string; live: string}>) => {
   const {width, height} = useWindowDimensions();
   const {colors, font} = useStyles();
 

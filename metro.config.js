@@ -9,7 +9,6 @@ const {getDefaultConfig, mergeConfig} = require('@react-native/metro-config');
 const config = {
   server: {
     port: 8082,
-    host: '192.168.12.202', // Change to '0.0.0.0',
   },
 };
 

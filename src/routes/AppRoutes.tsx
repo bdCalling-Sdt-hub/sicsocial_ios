@@ -22,7 +22,6 @@ import SignUpScreen from '../screens/Logins/SignUpScreen';
 import VerifyEmailScreen from '../screens/Logins/VerifyEmailScreen';
 import VerifySuccessfulScreen from '../screens/Logins/VerifySuccessfulScreen';
 import SplashScreen from '../screens/SplashScreen';
-import TextScreen from '../screens/TextScreen';
 import DonationScreen from '../screens/donation/DonationScreen';
 import FriendsProfile from '../screens/friends/FriendsProfile';
 import CreateNewFaceDown from '../screens/message/CreateNewFaceDown';
@@ -67,15 +66,18 @@ const Routes = () => {
   const socket = getSocket();
 
   React.useEffect(() => {
-    if (socket) {
-      console.warn('Socket is already initialized');
-      return;
+    if (token) {
+      if (socket) {
+        console.warn('Socket is already initialized');
+        return;
+      }
+      initiateSocket();
     }
-    initiateSocket();
   }, []);
   return (
     <Stack.Navigator
       initialRouteName={token ? 'HomeRoutes' : 'Login'}
+      // initialRouteName={'test'}
       screenOptions={{
         headerShown: false,
         statusBarAnimation: 'fade',
@@ -86,7 +88,7 @@ const Routes = () => {
 
       {/* <Stack.Screen name="TEsting" component={TestScreen} /> */}
       {/* <Stack.Screen name="Splash" component={SplashScreen} /> */}
-      <Stack.Screen name="Test" component={TextScreen} />
+      {/* <Stack.Screen name="Test" component={TextScreen} /> */}
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="Loading" component={LoadingSplash} />
       <Stack.Screen name="SignUp" component={SignUpScreen} />
