@@ -1,6 +1,7 @@
 import {Socket, io} from 'socket.io-client';
 
 const SOCKET_URL = 'http://192.168.12.202:5000'; // Replace with your server URL
+// const SOCKET_URL = 'https://api.sic.org'; // Replace with your server URL
 
 let socket: Socket | null = null;
 
@@ -38,7 +39,7 @@ export const initiateSocket = () => {
   });
 
   socket.on('error', error => {
-    console.warn('Socket Error:', error.message);
+    console.warn('Socket Error:', error);
     // Handle general socket errors
   });
 };

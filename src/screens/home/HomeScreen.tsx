@@ -1,4 +1,8 @@
-import React, {useEffect} from 'react';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
 import {
   Image,
   Linking,
@@ -10,34 +14,30 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
-} from 'react-native-reanimated';
-import {useContextApi, useStyles} from '../../context/ContextApi';
+import React, {useEffect} from 'react';
 import {height, isTablet} from '../../utils/utils';
+import {useContextApi, useStyles} from '../../context/ContextApi';
 
 import Clipboard from '@react-native-clipboard/clipboard';
-import {FlashList} from '@shopify/flash-list';
-import {format} from 'date-fns';
-import LinearGradient from 'react-native-linear-gradient';
-import {SvgXml} from 'react-native-svg';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {useDispatch} from 'react-redux';
 import ConversationalCard from '../../components/common/ConversationalCard';
 import ConversationalModal from '../../components/common/ConversationalModal/ConversationalModal';
-import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
+import {FlashList} from '@shopify/flash-list';
 import {IConversationProps} from '../../interfaces/Interface';
+import LinearGradient from 'react-native-linear-gradient';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
 import {NavigProps} from '../../interfaces/NaviProps';
-import {imageUrl} from '../../redux/api/baseApi';
-import {useGetDonationQuery} from '../../redux/apiSlices/additionalSlices';
-import {useGetUserProfileQuery} from '../../redux/apiSlices/authSlice';
-import {useAddMemberMutation} from '../../redux/apiSlices/chatSlices';
-import {useGetNewsFeetQuery} from '../../redux/apiSlices/homeSlices';
-import {useJoinLiveMutation} from '../../redux/apiSlices/liveSlice';
+import {SvgXml} from 'react-native-svg';
+import {format} from 'date-fns';
 import {getSocket} from '../../redux/services/socket';
+import {imageUrl} from '../../redux/api/baseApi';
 import {setUser} from '../../redux/services/userSlice';
+import {useAddMemberMutation} from '../../redux/apiSlices/chatSlices';
+import {useDispatch} from 'react-redux';
+import {useGetDonationQuery} from '../../redux/apiSlices/additionalSlices';
+import {useGetNewsFeetQuery} from '../../redux/apiSlices/homeSlices';
+import {useGetUserProfileQuery} from '../../redux/apiSlices/authSlice';
+import {useJoinLiveMutation} from '../../redux/apiSlices/liveSlice';
 
 const HomeScreen = ({navigation}: NavigProps<null>) => {
   const {isLive, setIsLive, isDark} = useContextApi();
@@ -73,6 +73,7 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
     if (userProfile?.data?._id) {
       dispatch(setUser(userProfile.data));
       socket?.emit('active', JSON.stringify({userId: userProfile.data._id}));
+
       socket?.emit(
         'activeUsers',
         JSON.stringify({userId: userProfile.data._id}),
@@ -285,7 +286,6 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
                 } else if (item?.live) {
                   joinLive({
                     chatId: item?._id,
-                    role: 'audience',
                   }).then(res => {
                     // console.log(res);
                     navigation?.navigate('LiveConversation', {

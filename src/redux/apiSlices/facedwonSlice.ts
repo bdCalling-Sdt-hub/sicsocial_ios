@@ -40,6 +40,14 @@ export const faceDownSlices = api.injectEndpoints({
       }),
       invalidatesTags: ['facedown'],
     }),
+    updateFacedown: builder.mutation({
+      query: ({id, data}) => ({
+        url: `/facedowns/${id}`,
+        method: 'PATCH',
+        body: data,
+      }),
+      invalidatesTags: ['facedown'],
+    }),
   }),
 });
 
@@ -48,5 +56,6 @@ export const {
   useGetFaceDownQuery,
   useDeleteFacedownMutation,
   useGetFaceDownByIdQuery,
+  useUpdateFacedownMutation,
   useGetFaceDownOthersQuery,
 } = faceDownSlices;

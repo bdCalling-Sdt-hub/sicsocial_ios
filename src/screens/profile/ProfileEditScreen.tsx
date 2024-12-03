@@ -26,7 +26,7 @@ import {makeImage} from '../../utils/utils';
 const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
   const {data: userProfile} = useGetUserProfileQuery({});
 
-  // console.log(userProfile?.data.);
+  console.log(userProfile?.data);
   const [userUpdate] = useUserUpdateMutation();
   const {colors, font} = useStyles();
   const [imageModal, setImageModal] = React.useState(false);

@@ -1,4 +1,3 @@
-import React, {SetStateAction} from 'react';
 import {
   FlatList,
   Image,
@@ -9,24 +8,24 @@ import {
   View,
   useWindowDimensions,
 } from 'react-native';
+import React, {SetStateAction} from 'react';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 
-import {LinkPreview} from '@flyerhq/react-native-link-preview';
-import {SvgXml} from 'react-native-svg';
-import DateTimePicker from 'react-native-ui-datepicker';
-import {GridList} from 'react-native-ui-lib';
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
 import CustomModal from '../../components/common/customModal/CustomModal';
-import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
-import NormalButton from '../../components/common/NormalButton';
-import {useStyles} from '../../context/ContextApi';
-import {NavigProps} from '../../interfaces/NaviProps';
-import {useGetAllBooksQuery} from '../../redux/apiSlices/bookSlices';
-import {useCreateChatMutation} from '../../redux/apiSlices/chatSlices';
-import {useCreateFaceDownMutation} from '../../redux/apiSlices/facedwonSlice';
+import DateTimePicker from 'react-native-ui-datepicker';
+import {GridList} from 'react-native-ui-lib';
 import {IBook} from '../../redux/interface/book';
 import {IParticipant} from '../../redux/interface/participants';
+import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
+import {NavigProps} from '../../interfaces/NaviProps';
+import NormalButton from '../../components/common/NormalButton';
+import {SvgXml} from 'react-native-svg';
 import {makeImage} from '../../utils/utils';
+import {useCreateChatMutation} from '../../redux/apiSlices/chatSlices';
+import {useCreateFaceDownMutation} from '../../redux/apiSlices/facedwonSlice';
+import {useGetAllBooksQuery} from '../../redux/apiSlices/bookSlices';
+import {useStyles} from '../../context/ContextApi';
 
 const CreateNewFaceDown = ({navigation, route}: NavigProps<any>) => {
   const {colors, font, window} = useStyles();
@@ -49,7 +48,7 @@ const CreateNewFaceDown = ({navigation, route}: NavigProps<any>) => {
     url: string;
     book: IBook;
   }>();
-  // console.log(route,participants);
+  console.log(route?.params?.data);
   const handleImagePick = async (option: 'camera' | 'library') => {
     try {
       if (option === 'camera') {
@@ -474,77 +473,7 @@ const CreateNewFaceDown = ({navigation, route}: NavigProps<any>) => {
             }}>
             Share content
           </Text>
-          {faceDownInfo?.url && (
-            <LinkPreview
-              text={faceDownInfo?.url}
-              enableAnimation
-              renderLinkPreview={({
-                aspectRatio,
-                containerWidth,
-                previewData,
-              }) => {
-                // console.log(previewData);
-                return (
-                  <View
-                    style={{
-                      width: '90%',
-                      height: height * 0.1,
-                      backgroundColor: previewData?.title
-                        ? colors.secondaryColor
-                        : colors.white,
-                      borderRadius: 15,
 
-                      flexDirection: 'row',
-                      // paddingHorizontal: '4%',
-                      gap: 10,
-                      alignSelf: 'center',
-                    }}>
-                    {previewData?.image && (
-                      <Image
-                        source={{uri: previewData?.image?.url}}
-                        style={{
-                          width: width * 0.27,
-                          height: height * 0.1,
-                          borderRadius: 15,
-                        }}
-                      />
-                    )}
-                    <View
-                      style={{
-                        width: width * 0.45,
-                        height: '100%',
-                        // alignItems: 'center',
-                        justifyContent: 'center',
-                      }}>
-                      <Text
-                        style={{
-                          fontFamily: font.PoppinsSemiBold,
-                          fontSize: 14,
-                          color: colors.textColor.primaryColor,
-                          marginTop: -15,
-                        }}
-                        numberOfLines={1}>
-                        {previewData?.title}
-                      </Text>
-
-                      <Text
-                        numberOfLines={1}
-                        style={{
-                          marginTop: 10,
-                          fontFamily: font.Poppins,
-                          fontSize: 10,
-                          color: colors.textColor.primaryColor,
-                        }}>
-                        {previewData?.link}
-                      </Text>
-                    </View>
-                    {/* <Text>{previewData?.link}</Text> */}
-                    {/* {!previewData?.link && <Text>None</Text>} */}
-                  </View>
-                );
-              }}
-            />
-          )}
           {faceDownInfo?.book && (
             <TouchableOpacity activeOpacity={0.8}>
               <Image
@@ -568,27 +497,8 @@ const CreateNewFaceDown = ({navigation, route}: NavigProps<any>) => {
             style={{
               flexDirection: 'row',
               gap: 10,
+              paddingHorizontal: '2%',
             }}>
-            <TextInput
-              onChangeText={text =>
-                setFaceDownInfo({
-                  ...faceDownInfo,
-                  url: text,
-                })
-              }
-              style={{
-                fontFamily: font.Poppins,
-                backgroundColor: colors.secondaryColor,
-                borderRadius: 100,
-                fontSize: 14,
-                paddingHorizontal: 20,
-                height: 56,
-                flex: 1,
-                color: colors.textColor.neutralColor,
-              }}
-              placeholder="write image /book/url link"
-              placeholderTextColor={colors.textColor.gray}
-            />
             <TouchableOpacity
               onPress={() => {
                 setBooksModal(true);

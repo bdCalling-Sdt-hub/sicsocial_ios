@@ -1,45 +1,31 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.sicsocial">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.sicsocial">
 
     <!-- Required for internet access -->
     <uses-permission android:name="android.permission.INTERNET" />
-     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.BLUETOOTH"/>
 
-    <application
-        android:name=".MainApplication"
-        android:label="@string/app_name"
-        android:icon="@mipmap/ic_launcher"
-        android:roundIcon="@mipmap/ic_launcher_round"
-        android:allowBackup="false"
-        android:usesCleartextTraffic="true"
-        android:theme="@style/AppTheme">
-       <activity
-    android:name=".MainActivity"
-    android:label="@string/app_name"
-    android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize|smallestScreenSize|uiMode"
-    android:launchMode="singleTask"
-    android:windowSoftInputMode="adjustResize"
-    android:exported="true">
+    <application android:name=".MainApplication" android:label="@string/app_name" android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/ic_launcher_round" android:allowBackup="false" android:usesCleartextTraffic="true" android:theme="@style/AppTheme">
+        <activity android:name=".MainActivity" android:label="@string/app_name" android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize|smallestScreenSize|uiMode" android:launchMode="singleTask" android:windowSoftInputMode="adjustResize" android:exported="true">
 
 
-<intent-filter android:autoVerify="true">
-    <action android:name="android.intent.action.VIEW" />
-    <category android:name="android.intent.category.DEFAULT" />
-    <category android:name="android.intent.category.BROWSABLE" />
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
 
-    <!-- Specify HTTP and HTTPS schemes -->
-    <data android:scheme="http" />
-    <!-- <data android:scheme="https" /> -->
-    
-    <!-- Specify the host only, without any pathPrefix -->
-    <data android:host="192.168.12.202" />
-    <data android:port="5000" />
+                <!-- Specify HTTP and HTTPS schemes -->
+                <data android:scheme="https" />
+                <data android:scheme="https" />
 
-</intent-filter>
+                <!-- Specify the host only, without any pathPrefix -->
+                <data android:host="sic.org" />
+
+
+            </intent-filter>
 
             <!-- Main launcher activity -->
             <intent-filter>

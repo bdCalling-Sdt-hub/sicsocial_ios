@@ -1,39 +1,37 @@
-import {Image, Text, TouchableOpacity, View} from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withRepeat,
   withTiming,
 } from 'react-native-reanimated';
+import {Image, Text, TouchableOpacity, View} from 'react-native';
 
+import {NavigProps} from '../../../interfaces/NaviProps';
 import React from 'react';
 import {SvgXml} from 'react-native-svg';
-import {useStyles} from '../../../context/ContextApi';
-import {NavigProps} from '../../../interfaces/NaviProps';
-import {IActiveLiveUser} from '../../../redux/interface/live';
 import {makeImage} from '../../../utils/utils';
+import {useStyles} from '../../../context/ContextApi';
 
 interface UserCardInfo extends NavigProps<any> {
-  setShowShortProfile: React.Dispatch<React.SetStateAction<boolean>>;
-  showShortProfile: boolean;
-  item: IActiveLiveUser;
+  item: any;
   host?: boolean;
   sound?: boolean;
   isMute?: boolean;
+  currentMute?: boolean;
+  onPress?: () => void;
 }
 
 const LiveUserCard = ({
   navigation,
-  setShowShortProfile,
-  showShortProfile,
   item,
   host,
   sound,
   isMute,
+  onPress,
 }: UserCardInfo) => {
   const {colors, font} = useStyles();
 
-  //   console.log(item);
+  // console.log(item);
 
   const animatedVoice = useSharedValue(1);
   const rVoiceStyle = useAnimatedStyle(() => {
@@ -68,10 +66,7 @@ const LiveUserCard = ({
           navigation?.navigate('NormalConversation');
         }}
         activeOpacity={0.9}
-        onPress={() => {
-          // setModalVisible(!modalVisible);
-          setShowShortProfile && setShowShortProfile(!showShortProfile);
-        }}
+        onPress={onPress}
         style={{
           // paddingVertical: 5,
 
@@ -99,7 +94,7 @@ const LiveUserCard = ({
               alignItems: 'center',
               justifyContent: 'center',
             }}>
-            {!isMute ? (
+            {item.muted ? (
               <SvgXml
                 xml={`<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
     <circle cx="9" cy="9" r="9" fill="#F4F4F4"/>
@@ -135,7 +130,7 @@ const LiveUserCard = ({
           </View>
         )}
 
-        {host && (
+        {item?.isHost && (
           <View
             style={{
               width: 18,
@@ -166,7 +161,9 @@ const LiveUserCard = ({
             height: 65,
             borderRadius: 28,
             resizeMode: 'contain',
-            borderColor: host ? colors.green['#00B047'] : colors.secondaryColor,
+            borderColor: item?.isHost
+              ? colors.green['#00B047']
+              : colors.secondaryColor,
             borderWidth: 2,
           }}
           source={{
@@ -174,7 +171,7 @@ const LiveUserCard = ({
           }}
         />
       </TouchableOpacity>
-      {!host && (
+      {!item.role === 'host' && (
         <View>
           <Text
             style={{

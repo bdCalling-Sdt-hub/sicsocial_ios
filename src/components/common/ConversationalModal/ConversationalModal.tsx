@@ -1,4 +1,3 @@
-import React, {useEffect} from 'react';
 import {
   ActivityIndicator,
   Image,
@@ -11,7 +10,6 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import Animated, {
   Easing,
   interpolate,
@@ -20,25 +18,28 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import Carousel, {TAnimationStyle} from 'react-native-reanimated-carousel';
-import {useContextApi, useStyles} from '../../../context/ContextApi';
+import React, {useEffect, useState} from 'react';
 import {isSmall, isTablet} from '../../../utils/utils';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import {useContextApi, useStyles} from '../../../context/ContextApi';
 
-import {LinkPreview} from '@flyerhq/react-native-link-preview';
-import {DeviceEventEmitter} from 'react-native';
-import AudioRecorderPlayer from 'react-native-audio-recorder-player';
 import {AnimatedCircularProgress} from 'react-native-circular-progress';
-import {TextInput} from 'react-native-gesture-handler';
-import {SvgXml} from 'react-native-svg';
-import {GridList} from 'react-native-ui-lib';
+import AudioRecorderPlayer from 'react-native-audio-recorder-player';
 import CustomModal from '../../../components/common/customModal/CustomModal';
+import {DeviceEventEmitter} from 'react-native';
+import {GridList} from 'react-native-ui-lib';
+import {IConversationProps} from '../../../screens/home/HomeScreen';
+import {ICreateMessage} from '../../../redux/interface/interface';
+import {LinkPreview} from '@flyerhq/react-native-link-preview';
 import ModalOfBottom from '../../../components/common/customModal/ModalOfButtom';
-import NormalButton from '../../../components/common/NormalButton';
 import {NavigProps} from '../../../interfaces/NaviProps';
+import NormalButton from '../../../components/common/NormalButton';
+import {SvgXml} from 'react-native-svg';
+import {TemBooks} from '../../../utils/GetRandomColor';
+import {TextInput} from 'react-native-gesture-handler';
 import {useCreateChatMutation} from '../../../redux/apiSlices/chatSlices';
 import {useCreateMessageMutation} from '../../../redux/apiSlices/messageSlies';
-import {ICreateMessage} from '../../../redux/interface/interface';
-import {IConversationProps} from '../../../screens/home/HomeScreen';
-import {TemBooks} from '../../../utils/GetRandomColor';
+import {useGetFaceDownQuery} from '../../../redux/apiSlices/facedwonSlice';
 
 const data = [
   {
@@ -48,12 +49,12 @@ const data = [
     activeImage: require('../../../assets/icons/modalIcons/microphoneWhite.png'),
     unActive: require('../../../assets/icons/modalIcons/microphoneGray.png'),
   },
-  {
-    id: 2,
-    name: 'Share Books',
-    activeImage: require('../../../assets/icons/modalIcons/boogWhite.png'),
-    unActive: require('../../../assets/icons/modalIcons/bookgray.png'),
-  },
+  // {
+  //   id: 2,
+  //   name: 'Share Books',
+  //   activeImage: require('../../../assets/icons/modalIcons/boogWhite.png'),
+  //   unActive: require('../../../assets/icons/modalIcons/bookgray.png'),
+  // },
   {
     id: 3,
     name: 'Share photo',
@@ -80,7 +81,7 @@ const data = [
   },
 ];
 
-const items = [
+const smallItems = [
   {
     id: 1,
     title: 'Public',
@@ -95,19 +96,19 @@ const items = [
     activeImg: require('../../../assets/icons/modalIcons/shearFriendBlack.png'),
     unActive: require('../../../assets/icons/modalIcons/shearFriendGray.png'),
   },
-  {
-    id: 3,
-    title: 'Chosen buddies',
-    type: 'private',
-    activeImg: require('../../../assets/icons/modalIcons/shearFriendBlack.png'),
-    unActive: require('../../../assets/icons/modalIcons/shearFriendGray.png'),
-  },
-  {
-    id: 3,
-    title: 'Asadullah face',
-    type: 'public',
-    house: true,
-  },
+  // {
+  //   id: 3,
+  //   title: 'Chosen buddies',
+  //   type: 'private',
+  //   activeImg: require('../../../assets/icons/modalIcons/shearFriendBlack.png'),
+  //   unActive: require('../../../assets/icons/modalIcons/shearFriendGray.png'),
+  // },
+  // {
+  //   id: 3,
+  //   title: 'Asadullah face',
+  //   type: 'public',
+  //   house: true,
+  // },
 ];
 const options = {
   sampleRate: 16000, // default 44100
@@ -127,6 +128,22 @@ interface ConversationalModalProps extends NavigProps<null> {
 
 const ConversationalModal = ({navigation}: ConversationalModalProps) => {
   const [createChat, createChartResults] = useCreateChatMutation({});
+  const [items, setItems] = useState([
+    {
+      id: 1,
+      title: 'Public',
+      type: 'public',
+      activeImg: require('../../../assets/icons/modalIcons/earthyGray.png'),
+      unActive: require('../../../assets/icons/modalIcons/earthBlack.png'),
+    },
+    {
+      id: 2,
+      title: 'Friends',
+      type: 'private',
+      activeImg: require('../../../assets/icons/modalIcons/shearFriendBlack.png'),
+      unActive: require('../../../assets/icons/modalIcons/shearFriendGray.png'),
+    },
+  ]);
   const [createMessage, createMessageResult] = useCreateMessageMutation({});
   const {
     colors,
@@ -167,6 +184,9 @@ const ConversationalModal = ({navigation}: ConversationalModalProps) => {
   const backgroundColor = useSharedValue('rgba(219, 177, 98, 1)');
   const opacityDown = useSharedValue(0.2);
   const letsBorderAnimationValue = useSharedValue(23);
+
+  const {data: userFaceDown} = useGetFaceDownQuery({});
+  // console.log(userFaceDown?.data, 'userFaceDown');
 
   const handleOpen = () => {
     setConversationalModal(true);
@@ -494,6 +514,34 @@ const ConversationalModal = ({navigation}: ConversationalModalProps) => {
   const handleCreateNewChat = React.useCallback(
     (data: any) => {
       const formData = new FormData();
+      if (createChartInfo?.chatId) {
+        formData.append('chatId', createChartInfo?.chatId);
+        if (data?.image) {
+          formData.append('image', data?.image);
+        }
+        if (data?.audio) {
+          formData.append('audio', data.audio);
+        }
+        if (data?.text) {
+          formData.append('text', data?.text);
+        }
+        if (data?.path) {
+          formData.append('path', data?.path);
+        }
+        // console.log(formData);
+        createMessage(formData).then(ms => {
+          handleClose();
+          console.log(ms);
+          navigation?.navigate('FaceDownConversation', {
+            data: {
+              id: createChartInfo?.chatId,
+              facedown: userFaceDown?.data?.find(
+                i => i.chatId == createChartInfo?.chatId,
+              ),
+            },
+          });
+        });
+      }
       createChat({type: createChartInfo?.type || 'public'}).then(res => {
         // console.log(res);
         if (res?.data?.data?._id) {
@@ -542,6 +590,11 @@ const ConversationalModal = ({navigation}: ConversationalModalProps) => {
     [createChartInfo, createMessageInfo],
   );
 
+  useEffect(() => {
+    setItems(smallItems?.concat(userFaceDown?.data));
+  }, [userFaceDown?.data]);
+  // console.log(createChartInfo);
+  // console.log(items);
   return (
     <>
       <Animated.View
@@ -785,7 +838,7 @@ const ConversationalModal = ({navigation}: ConversationalModalProps) => {
                       opacityStyle,
                     ]}>
                     <View>
-                      {item?.house ? (
+                      {item?.chatId ? (
                         <View
                           style={{
                             width: 50,
@@ -801,7 +854,7 @@ const ConversationalModal = ({navigation}: ConversationalModalProps) => {
                               color: '#FFD40E',
                               textAlign: 'center',
                             }}>
-                            {item.title.slice(0, 1)}
+                            {item?.name?.slice(0, 1)}
                           </Text>
                         </View>
                       ) : (
@@ -814,7 +867,7 @@ const ConversationalModal = ({navigation}: ConversationalModalProps) => {
                             },
                             opacityStyle,
                           ]}
-                          source={item.activeImg}
+                          source={item?.activeImg}
                         />
                       )}
                     </View>
@@ -831,7 +884,7 @@ const ConversationalModal = ({navigation}: ConversationalModalProps) => {
                         },
                         opacityStyle,
                       ]}>
-                      {item.title}
+                      {item?.title || item?.name}
                     </Animated.Text>
                   )}
                 </TouchableOpacity>
@@ -839,7 +892,7 @@ const ConversationalModal = ({navigation}: ConversationalModalProps) => {
               customAnimation={animationStyle1}
             />
             <Carousel
-              // loop={false}
+              loop={false}
               width={itemSize}
               height={itemSize}
               style={{
@@ -1391,22 +1444,20 @@ const ConversationalModal = ({navigation}: ConversationalModalProps) => {
               />
             ) : (
               <TouchableOpacity activeOpacity={0.8}>
-                <Image
-                  resizeMode="stretch"
-                  style={{
-                    borderRadius: 24,
+                {selectBook && (
+                  <Image
+                    resizeMode="stretch"
+                    style={{
+                      borderRadius: 24,
 
-                    height: 150,
-                    width: 120,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}
-                  source={
-                    selectBook
-                      ? selectBook
-                      : require('../../../assets/tempAssets/book.jpg')
-                  }
-                />
+                      height: 150,
+                      width: 120,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}
+                    source={selectBook}
+                  />
+                )}
               </TouchableOpacity>
             )}
 
@@ -1415,7 +1466,7 @@ const ConversationalModal = ({navigation}: ConversationalModalProps) => {
                 flexDirection: 'row',
                 gap: 10,
               }}>
-              <TextInput
+              {/* <TextInput
                 placeholder="shear url/link"
                 onChangeText={text => setLinkUrl(text)}
                 style={{
@@ -1429,7 +1480,7 @@ const ConversationalModal = ({navigation}: ConversationalModalProps) => {
                   color: colors.textColor.neutralColor,
                 }}
                 // defaultValue="write image /book/url link"
-              />
+              /> */}
               <TouchableOpacity
                 onPress={() => {
                   setBooksModal(true);

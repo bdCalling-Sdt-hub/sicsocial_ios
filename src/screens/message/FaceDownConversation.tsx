@@ -1,4 +1,3 @@
-import React, {useEffect} from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -17,28 +16,29 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
+import React, {useEffect} from 'react';
 import {
   useDeleteFacedownMutation,
   useGetFaceDownByIdQuery,
 } from '../../redux/apiSlices/facedwonSlice';
 
-import AudioRecorderPlayer from 'react-native-audio-recorder-player';
-import ImageViewer from 'react-native-image-zoom-viewer';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import AudioRecorderPlayer from 'react-native-audio-recorder-player';
 import ConversationCarousal from '../../components/common/ConversationCarousal/ConversationCarousal';
+import ConversationHeader from '../../components/conversation/ConversationHeader';
 import CustomModal from '../../components/common/customModal/CustomModal';
+import {IMessage} from '../../redux/interface/message';
+import ImageViewer from 'react-native-image-zoom-viewer';
 import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
+import {NavigProps} from '../../interfaces/NaviProps';
 import NormalButton from '../../components/common/NormalButton';
 import NotifyTopComponent from '../../components/common/notify/NotifyTopComponent';
-import ConversationHeader from '../../components/conversation/ConversationHeader';
-import {useStyles} from '../../context/ContextApi';
-import {useAudioPlayer} from '../../hook/playMusic';
-import {NavigProps} from '../../interfaces/NaviProps';
-import {useGetUserProfileQuery} from '../../redux/apiSlices/authSlice';
-import {useLazyGetMessageQuery} from '../../redux/apiSlices/messageSlies';
-import {IMessage} from '../../redux/interface/message';
 import {getSocket} from '../../redux/services/socket';
 import {makeImage} from '../../utils/utils';
+import {useAudioPlayer} from '../../hook/playMusic';
+import {useGetUserProfileQuery} from '../../redux/apiSlices/authSlice';
+import {useLazyGetMessageQuery} from '../../redux/apiSlices/messageSlies';
+import {useStyles} from '../../context/ContextApi';
 
 const audioRecorderPlayer = new AudioRecorderPlayer();
 const FaceDownConversation = ({
@@ -61,6 +61,7 @@ const FaceDownConversation = ({
   // console.log(FaceDwn);
 
   const FaceDownData = FaceDwn?.data;
+  console.log(FaceDownData);
   // console.log(FaceDownData);
   const {data: userInfo} = useGetUserProfileQuery({});
   const [AllMessages, setAllMessages] = React.useState<IMessage[]>([]);
@@ -84,7 +85,7 @@ const FaceDownConversation = ({
   const REGULAR_REGULAR = height * 0.1;
 
   const animateHight = useSharedValue(0);
-  const animateOpacity = useSharedValue(1);
+  const animateOpacity = useSharedValue(0);
 
   const bannerImageHight = useSharedValue(0);
   const bannerImageWidth = useSharedValue(0);
@@ -242,7 +243,7 @@ const FaceDownConversation = ({
         navigation={navigation}
       />
 
-      {showPinBook && (
+      {showPinBook && FaceDownData?.book && (
         <Animated.View
           style={[
             {
@@ -672,7 +673,7 @@ const FaceDownConversation = ({
         <ConversationCarousal
           photo
           type
-          live
+          // live
           record
           books
           chatIt={route?.params?.data?.id}
@@ -792,7 +793,9 @@ const FaceDownConversation = ({
               // setIsFriendRequestSent(false);
               setModalVisible(false);
 
-              navigation?.navigate('CreateFaceDown');
+              navigation?.navigate('UpdateNewFaceDown', {
+                data: FaceDownData,
+              });
             }}
             style={{
               padding: 10,

@@ -1,23 +1,20 @@
-import { ImageBackground, StyleSheet, View } from 'react-native';
+import React from 'react';
+import {ImageBackground, StyleSheet, View} from 'react-native';
 
 import LottieView from 'lottie-react-native';
-import React from 'react';
-import { useSelector } from 'react-redux';
-import { NavigProps } from '../interfaces/NaviProps';
+import {useSelector} from 'react-redux';
+import {NavigProps} from '../interfaces/NaviProps';
 
-const LoadingSplash = ({navigation}: NavigProps<null>) => {
-  const {token} = useSelector((state: any) => state?.token)
-   
-    // console.log(token);
- 
+const LoadingSplash = ({navigation, route}: NavigProps<null>) => {
+  const {token} = useSelector((state: any) => state?.token);
+
   setTimeout(() => {
-    if(token){
-        navigation?.replace('HomeRoutes');
+    if (token) {
+      (navigation as any)?.replace('HomeRoutes');
+    } else {
+      (navigation as any)?.replace('Login');
     }
-    else{
-        navigation?.replace('Login');
-    }
-  },500)
+  }, 500);
 
   return (
     <View
@@ -43,11 +40,9 @@ const LoadingSplash = ({navigation}: NavigProps<null>) => {
           source={require('../assets/lotties/splash_loading.json')}
           autoPlay
           loop
-        //   duration={1000}
+          //   duration={1000}
           speed={0.7}
-          onAnimationFinish={() => {
-           
-          }}
+          onAnimationFinish={() => {}}
         />
       </ImageBackground>
       {/* <StatusBar hidden /> */}

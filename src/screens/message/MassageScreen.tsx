@@ -9,18 +9,18 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {useContextApi, useStyles} from '../../context/ContextApi';
 import {height, makeImage} from '../../utils/utils';
+import {useContextApi, useStyles} from '../../context/ContextApi';
 
-import {format} from 'date-fns';
+import MessageCard from '../../components/conversation/MessageCard';
+import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
+import {NavigProps} from '../../interfaces/NaviProps';
 import React from 'react';
 import {SvgXml} from 'react-native-svg';
-import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
-import MessageCard from '../../components/conversation/MessageCard';
-import {NavigProps} from '../../interfaces/NaviProps';
-import {useGetUserProfileQuery} from '../../redux/apiSlices/authSlice';
-import {useGetChatListQuery} from '../../redux/apiSlices/chatSlices';
+import {format} from 'date-fns';
 import {getSocket} from '../../redux/services/socket';
+import {useGetChatListQuery} from '../../redux/apiSlices/chatSlices';
+import {useGetUserProfileQuery} from '../../redux/apiSlices/authSlice';
 
 const MassageScreen = ({navigation}: NavigProps<null>) => {
   const {
@@ -44,10 +44,16 @@ const MassageScreen = ({navigation}: NavigProps<null>) => {
     setFriends(data);
   };
   React.useEffect(() => {
-    if (userInfo?.data?._id) {
-      socket?.emit('activeUsers', JSON.stringify({userId: userInfo.data._id}));
+    // console.log(userInfo?.data?._id);
+    if (socket) {
+      if (userInfo?.data?._id) {
+        socket?.emit(
+          'activeUsers',
+          JSON.stringify({userId: userInfo?.data?._id}),
+        );
+      }
+      socket?.on('activeFriends', handleActiveUsers);
     }
-    socket?.on('activeFriends', handleActiveUsers);
     return () => {
       // Remove the listener on cleanup to prevent memory leaks
       socket?.off('activeUsers', handleActiveUsers);

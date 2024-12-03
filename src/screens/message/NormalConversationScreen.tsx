@@ -1,4 +1,3 @@
-import React, {useEffect} from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -10,23 +9,24 @@ import {
   View,
   useWindowDimensions,
 } from 'react-native';
+import React, {useEffect} from 'react';
 import {useSharedValue, withTiming} from 'react-native-reanimated';
 
-import AudioRecorderPlayer from 'react-native-audio-recorder-player';
-import ImageViewer from 'react-native-image-zoom-viewer';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import AudioRecorderPlayer from 'react-native-audio-recorder-player';
 import ConversationCarousal from '../../components/common/ConversationCarousal/ConversationCarousal';
-import CustomModal from '../../components/common/customModal/CustomModal';
-import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
 import ConversationHeader from '../../components/conversation/ConversationHeader';
-import {useStyles} from '../../context/ContextApi';
-import {useAudioPlayer} from '../../hook/playMusic';
-import {NavigProps} from '../../interfaces/NaviProps';
-import {useGetUserProfileQuery} from '../../redux/apiSlices/authSlice';
-import {useLazyGetMessageQuery} from '../../redux/apiSlices/messageSlies';
+import CustomModal from '../../components/common/customModal/CustomModal';
 import {IMessage} from '../../redux/interface/message';
+import ImageViewer from 'react-native-image-zoom-viewer';
+import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
+import {NavigProps} from '../../interfaces/NaviProps';
 import {getSocket} from '../../redux/services/socket';
 import {makeImage} from '../../utils/utils';
+import {useAudioPlayer} from '../../hook/playMusic';
+import {useGetUserProfileQuery} from '../../redux/apiSlices/authSlice';
+import {useLazyGetMessageQuery} from '../../redux/apiSlices/messageSlies';
+import {useStyles} from '../../context/ContextApi';
 
 export interface messagePros {
   id: number;
@@ -287,7 +287,7 @@ const NormalConversationScreen = ({
               <View
                 style={{
                   alignItems:
-                    item.item?.sender._id === userInfo?.data?._id
+                    item.item?.sender?._id === userInfo?.data?._id
                       ? 'flex-end'
                       : 'flex-start',
                   marginTop: 20,
@@ -304,17 +304,17 @@ const NormalConversationScreen = ({
                     alignItems: 'center',
                     minHeight: item.item?.audio === playItem ? 60 : 40,
                     backgroundColor:
-                      item.item?.sender._id === userInfo?.data?._id
+                      item.item?.sender?._id === userInfo?.data?._id
                         ? item.item?.audio === playItem
                           ? colors?.secondaryDeeper1
                           : colors.secondaryColor
                         : colors.redisExtraLight,
                     flexDirection: 'row',
                   }}>
-                  {item.item?.sender._id !== userInfo?.data?._id && (
+                  {item.item?.sender?._id !== userInfo?.data?._id && (
                     <View>
                       <Image
-                        source={{uri: makeImage(item.item.sender.avatar)}}
+                        source={{uri: makeImage(item?.item?.sender?.avatar)}}
                         style={{
                           width: 45,
                           height: 45,
@@ -343,12 +343,12 @@ const NormalConversationScreen = ({
                         paddingVertical: 5,
 
                         alignItems:
-                          item.item?.sender._id === userInfo?.data?._id
+                          item.item?.sender?._id === userInfo?.data?._id
                             ? 'flex-end'
                             : 'flex-start',
                       }}>
                       <View style={{alignItems: 'flex-end', gap: 10}}>
-                        {item.item.image && (
+                        {item?.item?.image && (
                           <TouchableOpacity
                             onPress={() => {
                               handleSelectIndex(item.item.image);
@@ -378,25 +378,25 @@ const NormalConversationScreen = ({
                         <TouchableOpacity
                           style={{}}
                           onPress={async () => {
-                            if (item.item.book?.bookUrl) {
+                            if (item?.item?.book?.bookUrl) {
                               Linking.openURL(item.item.book.bookUrl);
                             } else if (item.item.audio) {
                               setPlayItem(item.item.audio);
                               toggleAudioPlayback(makeImage(item.item.audio));
                             }
                           }}>
-                          {item.item.text && (
+                          {item?.item?.text && (
                             <Text
                               style={{
                                 fontSize: 14,
                                 color: colors.textColor.secondaryColor,
                                 fontFamily:
-                                  playItem === item.item.audio
+                                  playItem === item?.item?.audio
                                     ? font?.PoppinsSemiBold
                                     : font?.Poppins,
                                 maxWidth: width * 0.65,
                                 textAlign:
-                                  item.item?.sender._id === userInfo?.data?._id
+                                  item.item?.sender?._id === userInfo?.data?._id
                                     ? 'right'
                                     : 'left',
                               }}>

@@ -11,12 +11,12 @@ import {
   useGetFaceDownQuery,
 } from '../../redux/apiSlices/facedwonSlice';
 
+import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
+import {NavigProps} from '../../interfaces/NaviProps';
 import React from 'react';
 import {SvgXml} from 'react-native-svg';
-import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
-import {useStyles} from '../../context/ContextApi';
-import {NavigProps} from '../../interfaces/NaviProps';
 import {makeImage} from '../../utils/utils';
+import {useStyles} from '../../context/ContextApi';
 
 const ViewAllFaceDown = ({navigation}: NavigProps<null>) => {
   const {
@@ -117,7 +117,12 @@ const ViewAllFaceDown = ({navigation}: NavigProps<null>) => {
               <View style={{gap: 6}}>
                 <TouchableOpacity
                   onPress={() => {
-                    navigation?.navigate('FaceDownConversation');
+                    navigation?.navigate('FaceDownConversation', {
+                      data: {
+                        id: item.item.chatId,
+                        facedown: item.item,
+                      },
+                    });
                   }}
                   style={{
                     backgroundColor: colors.secondaryColor,
@@ -183,7 +188,14 @@ const ViewAllFaceDown = ({navigation}: NavigProps<null>) => {
               <View style={{gap: 6}}>
                 <TouchableOpacity
                   onPress={() => {
-                    navigation?.navigate('FaceDownConversation');
+                    // console.log(item);
+
+                    navigation?.navigate('FaceDownConversation', {
+                      data: {
+                        id: item.item.chatId,
+                        facedown: item.item,
+                      },
+                    });
                   }}
                   style={{
                     backgroundColor: colors.secondaryColor,

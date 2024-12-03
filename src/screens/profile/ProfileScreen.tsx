@@ -672,34 +672,35 @@ const ProfileScreen = ({navigation}: NavigProps<null>) => {
                   ? 'image'
                   : 'normal'
               }
-              manyPeople={item.participants.length > 4}
+              manyPeople={item?.participants?.length > 4}
               conversationTitle={
-                item.lastMessage.sender._id === userProfile?.data?._id
+                item?.lastMessage?.sender?._id === userProfile?.data?._id
                   ? item?.facedown
-                    ? item.facedown.name +
+                    ? item?.facedown?.name +
                       `${
-                        item.lastMessage.sender._id === userProfile?.data?._id
+                        item?.lastMessage?.sender?._id ===
+                        userProfile?.data?._id
                           ? ' You'
-                          : item.lastMessage.sender.fullName
+                          : item?.lastMessage?.sender?.fullName
                       }`
                     : 'You'
-                  : item.lastMessage.sender.fullName
+                  : item?.lastMessage?.sender?.fullName
               }
               conversationSubtitle={
-                item.lastMessage.sender._id === userProfile?.data?._id
+                item?.lastMessage?.sender?._id === userProfile?.data?._id
                   ? 'send a message'
                   : ' replied in chat'
               }
               item={item}
-              lastMessageTime={format(new Date(item.updatedAt), 'hh :mm a')}
+              lastMessageTime={format(new Date(item?.updatedAt), 'hh :mm a')}
               lastMessage={
-                item.lastMessage.audio
+                item?.lastMessage?.audio
                   ? 'send an audio message'
-                  : item.lastMessage.image
+                  : item?.lastMessage?.image
                   ? 'send an image message'
-                  : item.lastMessage.text
-                  ? item.lastMessage.text
-                  : item.lastMessage.book
+                  : item?.lastMessage?.text
+                  ? item?.lastMessage?.text
+                  : item?.lastMessage?.book
                   ? 'Shear a book'
                   : 'Start a chat'
               }

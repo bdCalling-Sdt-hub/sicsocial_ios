@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -20,24 +20,29 @@ import createAgoraRtcEngine, {
   IRtcEngine,
   IRtcEngineEventHandler,
 } from 'react-native-agora';
+import {ActionSheet, GridList} from 'react-native-ui-lib';
 import {useContextApi, useStyles} from '../../context/ContextApi';
+import {
+  useGetLiveChatQuery,
+  useLeaveLiveMutation,
+  usePermissionRoleMutation,
+  useRequestMutation,
+} from '../../redux/apiSlices/liveSlice';
 import {isSmall, isTablet} from '../../utils/utils';
 
 import {LinkPreview} from '@flyerhq/react-native-link-preview';
 import Clipboard from '@react-native-clipboard/clipboard';
 import {TextInput} from 'react-native';
 import {SvgXml} from 'react-native-svg';
-import {GridList} from 'react-native-ui-lib';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useSelector} from 'react-redux';
 import {AgoraConfig} from '../../../agora.config';
-import CustomModal from '../../components/common/customModal/CustomModal';
 import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
 import NormalButton from '../../components/common/NormalButton';
 import NotifyTopComponent from '../../components/common/notify/NotifyTopComponent';
 import ConversationHeader from '../../components/conversation/ConversationHeader';
 import {NavigProps} from '../../interfaces/NaviProps';
-import {useGetLiveChatQuery} from '../../redux/apiSlices/liveSlice';
+import {getSocket} from '../../redux/services/socket';
 import LiveUserCard from './components/LiveUserCard';
 
 const Books = [
@@ -86,19 +91,23 @@ const LiveConversationScreen = ({
   live: string;
 }>) => {
   // console.log(route?.params?.data?.live);
-  const {data: live} = useGetLiveChatQuery(route?.params?.data?.live, {
-    skip: !route?.params?.data?.live,
-  });
+  const {
+    data: live,
+    refetch: refetchLive,
+    isLoading: isLoadingLive,
+    isFetching: isFetchingLive,
+  } = useGetLiveChatQuery(route?.params?.data?.live);
 
   // console.log(live);
 
   const [ActiveUser, setActiveUser] = useState<
     Array<{
-      user: string;
+      user: any;
       role: string;
       uid: number;
       token: string;
       muted?: boolean;
+      isHost?: boolean;
       volume?: number;
       volumeEffect?: number;
     }>
@@ -111,17 +120,20 @@ const LiveConversationScreen = ({
   const [isFriendRequest, setIsFriendRequest] = React.useState(false);
   const [isFriendRequestSent, setIsFriendRequestSent] = React.useState(false);
   const [modalVisible, setModalVisible] = React.useState(false);
-  const [open, setNotify] = React.useState(false);
+  const [open, setNotify] = React.useState<{
+    open: boolean;
+    status: 'normal' | 'error' | 'success';
+  }>();
   const [confirmationModal, setConfirmationModal] = React.useState(false);
   const [toggleNotify, setToggleNotify] = React.useState(0);
   const [volumeEffect, setVolumeEffect] = React.useState(0);
-  const [showShortProfile, setShowShortProfile] =
-    React.useState<boolean>(false);
+  const [showAction, setShowAction] = React.useState<boolean>(false);
   const [booksModal, setBooksModal] = React.useState(false);
-  const [selectBook, setSelectBook] = React.useState<number>();
+  const [SelectItem, setSelectItem] = React.useState<any>();
   const [liveModal, setLiveModal] = React.useState(false);
   const [linkUrl, setLinkUrl] = React.useState('');
-  const [isMute, setIsMute] = React.useState<null | boolean>();
+  const [isMute, setIsMute] = React.useState<null | boolean>(true);
+  const [localId, setLocalId] = useState<number>();
 
   const [selectOptionItem, setSelectOptionItem] = React.useState<number>();
   const agoraEngineRef = useRef<IRtcEngine>(); // IRtcEngine instance
@@ -129,6 +141,11 @@ const LiveConversationScreen = ({
   const eventHandler = useRef<IRtcEngineEventHandler>();
 
   const userInfo = useSelector((state: any) => state?.user?.user);
+
+  const Captain = live?.data?.host === userInfo?._id;
+  const Host = live?.data?.activeUsers?.find(
+    user => user.user._id === userInfo?._id,
+  );
 
   const uid = live?.data?.activeUsers?.find(
     user => user.user._id === userInfo?._id,
@@ -146,12 +163,19 @@ const LiveConversationScreen = ({
     setupVideoSDKEngine();
     // Release memory when the App is closed
     return () => {
+      const finedUser = live?.data?.activeUsers?.find(user => user.uid === uid);
+
+      if (finedUser) {
+        setActiveUser(prevUsers => prevUsers?.filter(user => user.uid !== uid));
+      }
       agoraEngineRef.current?.unregisterEventHandler(eventHandler.current!);
       agoraEngineRef.current?.release();
     };
-  }, [uid]);
+  }, [uid, token, role]);
 
-  const setupVideoSDKEngine = async () => {
+  // console.log(friends);
+
+  const setupVideoSDKEngine = useCallback(async () => {
     try {
       // Check and request permissions on Android
       if (Platform.OS === 'android') {
@@ -171,67 +195,103 @@ const LiveConversationScreen = ({
       eventHandler.current = {
         onJoinChannelSuccess: (connection, uid, elapsed) => {
           // console.log('JoinChannelSuccess:', {connection, uid, elapsed});
+          setLocalId(uid);
           const finedUser = live?.data?.activeUsers?.find(
-            user => user.uid === uid,
+            user => user.uid === connection?.localUid,
           );
           if (finedUser) {
-            // check already exists
-            const exists = ActiveUser.find(user => user.uid === uid);
+            // check if already exists
+            const exists = ActiveUser.find(
+              user => user.uid === connection?.localUid,
+            );
+            // remove first one
+            setActiveUser(prevUsers =>
+              prevUsers?.filter(user => user.uid !== connection?.localUid),
+            );
 
-            if (!exists) {
-              setActiveUser(prev => [
-                ...prev,
-                {
-                  user: finedUser.user._id,
-                  role: finedUser.role,
-                  uid: uid,
-                  token: finedUser.token,
-                  muted: finedUser.role === 'host' ? true : false,
-                },
-              ]);
-            }
+            setActiveUser(prev => [
+              ...prev,
+              {
+                user: finedUser.user,
+                role: finedUser.role,
+                uid: uid,
+                isHost: finedUser?.user?._id === live?.data?.host,
+                token: finedUser.token,
+                muted: finedUser.role === 'host' ? false : true,
+              },
+            ]);
           }
         },
-        onUserJoined: (connection, uid, elapsed) => {
-          // console.log('UserJoined:', {connection, uid, elapsed});
-          const finedUser = live?.data?.activeUsers?.find(
-            user => user.uid === uid,
-          );
-          if (finedUser) {
-            // check already exists
-            const exists = ActiveUser.find(user => user.uid === uid);
+        // onUserJoined: (connection, uid, elapsed) => {
+        //   // console.log('UserJoined:', {connection, uid, elapsed});
+        //   const finedUser = live?.data?.activeUsers?.find(
+        //     user => user.uid === uid,
+        //   );
+        //   if (finedUser) {
+        //     // check if already exists
+        //     const exists = ActiveUser.find(user => user.uid === uid);
 
-            if (!exists) {
-              setActiveUser(prev => [
-                ...prev,
-                {
-                  user: finedUser.user._id,
-                  role: finedUser.role,
-                  uid: uid,
-                  token: finedUser.token,
-                  muted: finedUser.role === 'host' ? true : false,
-                },
-              ]);
-            }
-          }
-        },
-        onUserOffline: (connection, uid, reason) => {
-          console.log('UserOffline:', {uid, reason});
-        },
-        onActiveSpeaker: uid => {
-          console.log('ActiveSpeaker:', uid);
-        },
-        onUserMuteAudio(connection, remoteUid, muted) {
-          console.log('UserMuteAudio:', {connection, remoteUid, muted});
-        },
-        // onAudioVolumeIndication(
-        //   connection,
-        //   speakers,
-        //   speakerNumber,
-        //   totalVolume,
-        // ) {
-        //   setVolumeEffect(totalVolume);
+        //     if (!exists) {
+        //       setActiveUser(prev => [
+        //         ...prev,
+        //         {
+        //           user: finedUser.user,
+        //           role: finedUser.role,
+        //           uid: uid,
+        //           isHost: finedUser?.user?._id === live?.data?.host,
+        //           token: finedUser.token,
+        //           muted: finedUser.role === 'host' ? false : true,
+        //         },
+        //       ]);
+        //     }
+        //   }
         // },
+        onUserOffline: (connection, uid, reason) => {
+          // console.log('UserOffline:', {uid, reason});
+          const finedUser = live?.data?.activeUsers?.find(
+            user => user.uid === uid,
+          );
+
+          if (finedUser) {
+            setActiveUser(prevUsers =>
+              prevUsers?.filter(user => user.uid !== uid),
+            );
+          }
+        },
+
+        onActiveSpeaker: uid => {
+          // console.log('ActiveSpeaker:', uid);
+          const finedUser = live?.data?.activeUsers?.find(
+            user => user.uid === uid,
+          );
+          if (finedUser) {
+            setActiveUser(prev =>
+              prev?.map(user => {
+                if (user.uid === uid) {
+                  return {...user, volume: 1};
+                }
+                return user;
+              }),
+            );
+          }
+        },
+
+        onUserMuteAudio(connection, remoteUid, muted) {
+          // console.log('UserMuteAudio:', {connection, remoteUid, muted});
+          const finedUser = live?.data?.activeUsers?.find(
+            user => user.uid === remoteUid,
+          );
+          if (finedUser) {
+            setActiveUser(prev =>
+              prev?.map(user => {
+                if (user.uid === remoteUid) {
+                  return {...user, muted};
+                }
+                return user;
+              }),
+            );
+          }
+        },
       };
 
       // Register event handler
@@ -256,21 +316,19 @@ const LiveConversationScreen = ({
               : ClientRoleType.ClientRoleAudience,
           // Publish audio collected by the microphone
           publishMicrophoneTrack: role == 'host' ? true : false,
+          // publishMicrophoneTrack: false,
           // Do not publish video collected by the camera
           publishMediaPlayerAudioTrack: true,
           // Automatically subscribe to all audio streams
           autoSubscribeAudio: true,
         },
       );
-
-      // Enable audio volume indication (parameters: interval, smoothness, reportVad)
-      agoraEngineRef.current.enableAudioVolumeIndication(1000, 3, true);
     } catch (e) {
       console.log('Error initializing Agora SDK:', e);
     }
-  };
+  }, [live?.data?.activeUsers]);
 
-  console.log(ActiveUser);
+  // console.log(ActiveUser);
 
   // Permission request function for Android
   const getPermission = async () => {
@@ -288,6 +346,9 @@ const LiveConversationScreen = ({
   const leave = () => {
     try {
       // Call leaveChannel method to leave the channel
+      leaveLive({chatId: live?.data?.chat}).then(res => {
+        console.log(res);
+      });
       agoraEngineRef.current?.leaveChannel();
     } catch (e) {
       console.log(e);
@@ -296,9 +357,130 @@ const LiveConversationScreen = ({
 
   // Toggle mute/unmute for a specific user
   const toggleMute = () => {
+    console.log(isMute);
+    // chnage local user muted
     agoraEngineRef.current.muteLocalAudioStream(isMute);
+    setActiveUser(prev =>
+      prev?.map(user => {
+        if (user.uid === localId) {
+          return {...user, muted: isMute};
+        }
+
+        return user;
+      }),
+    );
     setIsMute(!isMute);
+    // console.log(ActiveUser);
   };
+
+  // console.log(ActiveUser);
+
+  const [updateRole] = usePermissionRoleMutation();
+  const [requestRoleUpdate] = useRequestMutation();
+  const [leaveLive] = useLeaveLiveMutation();
+
+  const handleRequestAccess = () => {
+    // setNotify(true);
+    requestRoleUpdate({
+      chatId: live?.data?.chat,
+      userId: SelectItem?.user,
+      message: 'accept',
+    });
+    updateRole({
+      chatId: live?.data?.chat,
+      role: 'host', ///[host | audience]
+      userId: SelectItem?.user,
+    }).then(res => {});
+  };
+  const handleRequest = () => {
+    // setNotify(true);
+    requestRoleUpdate({
+      chatId: live?.data?.chat,
+      userId: userInfo?._id,
+      message: 'request',
+    });
+
+    setNotify({
+      open: false,
+      status: 'normal',
+    });
+  };
+  const handleRequestReject = () => {
+    // setNotify(true);
+    requestRoleUpdate({
+      chatId: live?.data?.chat,
+      userId: SelectItem?.user,
+      message: 'reject',
+    });
+
+    setNotify({
+      open: false,
+      status: 'normal',
+    });
+  };
+
+  const handleSocketUpdate = useCallback((data: any) => {
+    refetchLive();
+    console.log(data);
+  }, []);
+
+  const handleSocketRequest = useCallback((data: any) => {
+    console.log('reqested', data);
+    if (data?.message === 'request') {
+      setSelectItem(data);
+      setNotify({
+        open: true,
+        status: 'normal',
+      });
+    }
+    if (data?.message === 'reject') {
+      setNotify({
+        open: true,
+        status: 'error',
+      });
+    }
+    if (data?.message === 'accept') {
+      setNotify({
+        open: true,
+        status: 'success',
+      });
+    }
+  }, []);
+
+  const socket = getSocket();
+
+  // console.log(live?.data?.chat);
+
+  useEffect(() => {
+    if (socket) {
+      socket?.on(`live::${live?.data?.chat}`, handleSocketUpdate);
+    }
+    return () => {
+      if (socket) {
+        socket?.off(`live::${live?.data?.chat}`, handleSocketUpdate);
+      }
+    };
+  }, [socket, live?.data]);
+
+  useEffect(() => {
+    if (socket) {
+      socket?.on(
+        `live::${userInfo?._id?.toString()}::${live?.data?.chat}`,
+        handleSocketRequest,
+      );
+    }
+    return () => {
+      if (socket) {
+        socket?.off(
+          `live::${userInfo?._id?.toString()}::${live?.data?.chat}`,
+          handleSocketRequest,
+        );
+        // leave();
+      }
+    };
+  }, [socket, live?.data]);
+
+  // Optimized version for filtering and rendering the host users
 
   return (
     <SafeAreaView
@@ -309,10 +491,17 @@ const LiveConversationScreen = ({
       }}>
       {/* all notification of lives start  */}
       <NotifyTopComponent
+        onRejectOnPress={handleRequestReject}
+        normalOnPress={handleRequestAccess}
         context=""
-        variant="success"
-        open={open}
-        onDismiss={setNotify}
+        variant={open?.status}
+        open={open?.open || false}
+        onDismiss={() => {
+          setNotify({
+            open: false,
+            status: open?.status,
+          });
+        }}
       />
       {/* all notification of lives end  */}
 
@@ -543,16 +732,19 @@ const LiveConversationScreen = ({
           paddingHorizontal: '4%',
           paddingVertical: 10,
         }}
-        data={live?.data?.activeUsers?.filter(i => i.role === 'host')}
+        data={live?.data?.activeUsers?.filter(item => item.role === 'host')}
         renderItem={item => {
           return (
             <LiveUserCard
+              onPress={() => {
+                if (item?.item?.user?._id !== userInfo?._id) {
+                  setShowAction(!showAction);
+                  setSelectItem(item?.item);
+                }
+              }}
               sound
-              isMute={isMute}
               host={item?.item?.user?._id === live?.data?.host}
               item={item?.item}
-              setShowShortProfile={setShowShortProfile}
-              showShortProfile={showShortProfile}
             />
           );
         }}
@@ -586,12 +778,18 @@ const LiveConversationScreen = ({
             gap: 15,
             paddingHorizontal: '4%',
           }}
-          data={live?.data?.activeUsers?.filter(i => i.role === 'audience')}
+          data={live?.data?.activeUsers?.filter(
+            item => item.role === 'audience',
+          )}
           renderItem={item => (
             <LiveUserCard
               item={item?.item}
-              setShowShortProfile={setShowShortProfile}
-              showShortProfile={showShortProfile}
+              onPress={() => {
+                if (item?.item?.user?._id !== userInfo?._id) {
+                  setShowAction(!showAction);
+                  setSelectItem(item?.item);
+                }
+              }}
             />
           )}
         />
@@ -621,25 +819,28 @@ const LiveConversationScreen = ({
             }}>
             {/* ==================live group message start ===================*/}
 
-            <TouchableOpacity
-              activeOpacity={0.9}
-              style={{}}
-              onPress={() => {
-                navigation?.navigate('LiveMessage');
-              }}>
-              <View
-                style={{
-                  backgroundColor: colors.secondaryColor,
-                  paddingVertical: 8,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexDirection: 'row',
-                  borderRadius: 50,
-                  paddingHorizontal: 15,
-                  gap: 8,
+            <View style={{flexDirection: 'row', alignItems: 'center', gap: 10}}>
+              <TouchableOpacity
+                activeOpacity={0.9}
+                style={{}}
+                onPress={() => {
+                  navigation?.navigate('LiveMessage', {
+                    data: {id: live?.data?.chat},
+                  });
                 }}>
-                <SvgXml
-                  xml={`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <View
+                  style={{
+                    backgroundColor: colors.secondaryColor,
+                    paddingVertical: 8,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexDirection: 'row',
+                    borderRadius: 50,
+                    paddingHorizontal: 15,
+                    gap: 8,
+                  }}>
+                  <SvgXml
+                    xml={`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g clip-path="url(#clip0_691_4737)">
 <path d="M20.2587 4.35977C19.1146 3.12092 17.7062 2.15563 16.138 1.53552C14.5699 0.91542 12.8822 0.656429 11.2002 0.77777C8.33274 1.01978 5.66261 2.33637 3.72478 4.46376C1.78696 6.59115 0.724568 9.37222 0.750462 12.2498V22.5C0.750425 22.6483 0.794369 22.7934 0.876736 22.9167C0.959104 23.0401 1.0762 23.1362 1.21321 23.193C1.30421 23.231 1.40187 23.2503 1.50046 23.25C1.69936 23.25 1.89009 23.1709 2.03071 23.0303L3.80371 21.258C4.02001 21.0467 4.30474 20.9196 4.6065 20.8998C4.90825 20.88 5.20715 20.9688 5.44921 21.15C7.71476 22.778 10.5044 23.5061 13.2766 23.1931C16.0488 22.88 18.6057 21.5481 20.4512 19.4558C22.2966 17.3636 23.2988 14.6603 23.2632 11.8707C23.2276 9.08115 22.1569 6.40429 20.2587 4.35977ZM21.6402 13.4895C21.3862 15.1363 20.7144 16.6906 19.6888 18.0039C18.6633 19.3172 17.3183 20.3458 15.7822 20.9915C14.2461 21.6371 12.5702 21.8784 10.9143 21.6921C9.25847 21.5058 7.67799 20.8983 6.32371 19.9275C5.84556 19.5822 5.27105 19.3956 4.68121 19.3943C4.32116 19.3937 3.96456 19.4644 3.63195 19.6023C3.29934 19.7401 2.99729 19.9424 2.74321 20.1975L2.25046 20.6895V12.2498C2.22364 9.75179 3.14168 7.33592 4.82066 5.48614C6.49964 3.63637 8.81556 2.48931 11.3045 2.27477C12.7658 2.17081 14.2319 2.3973 15.5937 2.93743C16.9556 3.47755 18.1784 4.31744 19.1713 5.39476C20.1641 6.47208 20.9017 7.75918 21.3291 9.16051C21.7565 10.5619 21.8628 12.0415 21.6402 13.4895Z" fill="${colors.textColor.normal}"/>
 <rect x="7" y="9" width="2" height="5" rx="1" fill="${colors.textColor.normal}"/>
@@ -653,56 +854,57 @@ const LiveConversationScreen = ({
 </defs>
 </svg>
                    `}
-                />
-                <Text
+                  />
+                  {/* <Text
+                    style={{
+                      fontSize: 14,
+                      fontFamily: font.Poppins,
+                      color: colors.textColor.secondaryColor,
+                    }}>
+                    10
+                  </Text> */}
+                </View>
+              </TouchableOpacity>
+              {/*==================== live group message end =======================*/}
+              {/*===================== live link shear start ======================*/}
+              <TouchableOpacity
+                onPress={() => {
+                  setModalVisible(!modalVisible);
+                }}
+                activeOpacity={0.9}
+                style={{}}>
+                <View
                   style={{
-                    fontSize: 14,
-                    fontFamily: font.Poppins,
-                    color: colors.textColor.secondaryColor,
+                    backgroundColor: colors.secondaryColor,
+                    paddingVertical: 8,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexDirection: 'row',
+                    borderRadius: 50,
+                    paddingHorizontal: 15,
+                    gap: 8,
                   }}>
-                  10
-                </Text>
-              </View>
-            </TouchableOpacity>
-            {/*==================== live group message end =======================*/}
-            {/*===================== live link shear start ======================*/}
-            <TouchableOpacity
-              onPress={() => {
-                setModalVisible(!modalVisible);
-              }}
-              activeOpacity={0.9}
-              style={{}}>
-              <View
-                style={{
-                  backgroundColor: colors.secondaryColor,
-                  paddingVertical: 8,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexDirection: 'row',
-                  borderRadius: 50,
-                  paddingHorizontal: 15,
-                  gap: 8,
-                }}>
-                <SvgXml
-                  xml={`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <SvgXml
+                    xml={`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M18.5074 16.1435C17.3575 16.1435 16.3214 16.64 15.6024 17.43L9.13493 13.4243C9.3076 12.9823 9.40337 12.5022 9.40337 12C9.40337 11.4975 9.3076 11.0174 9.13493 10.5756L15.6024 6.56981C16.3214 7.35973 17.3575 7.85649 18.5074 7.85649C20.6735 7.85649 22.4357 6.09429 22.4357 3.92815C22.4357 1.76202 20.6735 0 18.5074 0C16.3412 0 14.579 1.7622 14.579 3.92834C14.579 4.43059 14.675 4.9107 14.8474 5.35271L8.38017 9.35832C7.66112 8.5684 6.62511 8.07164 5.47521 8.07164C3.30908 8.07164 1.54688 9.83403 1.54688 12C1.54688 14.1661 3.30908 15.9283 5.47521 15.9283C6.62511 15.9283 7.66112 15.4317 8.38017 14.6416L14.8474 18.6472C14.675 19.0893 14.579 19.5694 14.579 20.0718C14.579 22.2377 16.3412 24 18.5074 24C20.6735 24 22.4357 22.2377 22.4357 20.0718C22.4357 17.9057 20.6735 16.1435 18.5074 16.1435ZM16.0114 3.92834C16.0114 2.55212 17.1311 1.43243 18.5074 1.43243C19.8836 1.43243 21.0033 2.55212 21.0033 3.92834C21.0033 5.30455 19.8836 6.42424 18.5074 6.42424C17.1311 6.42424 16.0114 5.30455 16.0114 3.92834ZM5.47521 14.4959C4.09881 14.4959 2.97912 13.3762 2.97912 12C2.97912 10.6238 4.09881 9.50407 5.47521 9.50407C6.85143 9.50407 7.97093 10.6238 7.97093 12C7.97093 13.3762 6.85143 14.4959 5.47521 14.4959ZM16.0114 20.0716C16.0114 18.6954 17.1311 17.5757 18.5074 17.5757C19.8836 17.5757 21.0033 18.6954 21.0033 20.0716C21.0033 21.4478 19.8836 22.5675 18.5074 22.5675C17.1311 22.5675 16.0114 21.4478 16.0114 20.0716Z" fill="${colors.textColor.normal}"/>
 </svg>
 
                     `}
-                />
-                <Text
-                  style={{
-                    fontSize: 14,
-                    fontFamily: font.Poppins,
-                    color: colors.textColor.secondaryColor,
-                  }}>
-                  {/* 12 */}
-                </Text>
-              </View>
-            </TouchableOpacity>
+                  />
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      fontFamily: font.Poppins,
+                      color: colors.textColor.secondaryColor,
+                    }}>
+                    {/* 12 */}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            </View>
             {/* =================live link shear end ======================*/}
             {/*====================== live add more member start==================== */}
-            <TouchableOpacity
+            {/* <TouchableOpacity
               onPress={() => {
                 navigation?.navigate('LiveAddFriends');
               }}
@@ -728,7 +930,7 @@ const LiveConversationScreen = ({
                      `}
                 />
               </View>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
             {/* live add more member end */}
           </View>
           {/* ===============live joined and knock and voice run on or off start============ */}
@@ -737,8 +939,12 @@ const LiveConversationScreen = ({
             style={{}}
             onPress={() => {
               // setRunOnVoice(!runOnVoice);
-              // setNotify(!open);
-              toggleMute();
+
+              if (role === 'host') {
+                toggleMute();
+              } else {
+                handleRequest();
+              }
             }}>
             <View
               style={{
@@ -755,39 +961,41 @@ const LiveConversationScreen = ({
                 paddingHorizontal: 14,
                 gap: 8,
               }}>
-              <SvgXml
-                xml={
-                  role === 'host'
-                    ? `<svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-<g clip-path="url(#clip0_691_4364)">
-<path d="M11 18C9.14413 17.9979 7.36487 17.2597 6.05257 15.9474C4.74026 14.6351 4.0021 12.8559 4.00001 11V7.49999C4.00001 5.64348 4.73751 3.863 6.05026 2.55025C7.36302 1.2375 9.14349 0.5 11 0.5C12.8565 0.5 14.637 1.2375 15.9497 2.55025C17.2625 3.863 18 5.64348 18 7.49999V11C17.9979 12.8559 17.2597 14.6351 15.9474 15.9474C14.6351 17.2597 12.8559 17.9979 11 18ZM11 2.25C9.76053 2.2523 8.56175 2.69263 7.61548 3.49319C6.66922 4.29376 6.03637 5.40302 5.82876 6.62499H8.37501C8.60707 6.62499 8.82963 6.71718 8.99373 6.88127C9.15782 7.04537 9.25001 7.26793 9.25001 7.49999C9.25001 7.73206 9.15782 7.95462 8.99373 8.11871C8.82963 8.2828 8.60707 8.37499 8.37501 8.37499H5.75001V10.125H8.37501C8.60707 10.125 8.82963 10.2172 8.99373 10.3813C9.15782 10.5454 9.25001 10.7679 9.25001 11C9.25001 11.2321 9.15782 11.4546 8.99373 11.6187C8.82963 11.7828 8.60707 11.875 8.37501 11.875H5.82876C6.03442 13.0978 6.66673 14.2082 7.61345 15.009C8.56017 15.8097 9.76003 16.2491 11 16.2491C12.24 16.2491 13.4398 15.8097 14.3866 15.009C15.3333 14.2082 15.9656 13.0978 16.1713 11.875H13.625C13.3929 11.875 13.1704 11.7828 13.0063 11.6187C12.8422 11.4546 12.75 11.2321 12.75 11C12.75 10.7679 12.8422 10.5454 13.0063 10.3813C13.1704 10.2172 13.3929 10.125 13.625 10.125H16.25V8.37499H13.625C13.3929 8.37499 13.1704 8.2828 13.0063 8.11871C12.8422 7.95462 12.75 7.73206 12.75 7.49999C12.75 7.26793 12.8422 7.04537 13.0063 6.88127C13.1704 6.71718 13.3929 6.62499 13.625 6.62499H16.1713C15.9636 5.40302 15.3308 4.29376 14.3845 3.49319C13.4383 2.69263 12.2395 2.2523 11 2.25Z" fill="#F4F4F4"/>
-<path d="M1.37502 11C1.60708 11 1.82965 11.0922 1.99374 11.2563C2.15783 11.4204 2.25002 11.6429 2.25002 11.875C2.25234 13.9629 3.08276 15.9646 4.55911 17.4409C6.03545 18.9172 8.03714 19.7477 10.125 19.75H11.875C13.9628 19.7474 15.9644 18.9169 17.4407 17.4406C18.917 15.9644 19.7475 13.9628 19.75 11.875C19.75 11.6429 19.8422 11.4204 20.0063 11.2563C20.1704 11.0922 20.3929 11 20.625 11C20.8571 11 21.0796 11.0922 21.2437 11.2563C21.4078 11.4204 21.5 11.6429 21.5 11.875C21.497 14.4268 20.482 16.8732 18.6776 18.6776C16.8732 20.482 14.4268 21.497 11.875 21.5H10.125C7.57323 21.497 5.12683 20.482 3.32244 18.6776C1.51806 16.8732 0.503033 14.4268 0.500021 11.875C0.500021 11.6429 0.592209 11.4204 0.756302 11.2563C0.920397 11.0922 1.14296 11 1.37502 11Z" fill="#F4F4F4"/>
-</g>
-<defs>
-<clipPath id="clip0_691_4364">
-<rect width="21" height="21" fill="white" transform="matrix(-1 0 0 1 21.5 0.5)"/>
-</clipPath>
-</defs>
-</svg>
-
-`
-                    : `<svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-<g clip-path="url(#clip0_1609_1031)">
-<path d="M13.5 18.5C11.6441 18.4979 9.86487 17.7597 8.55257 16.4474C7.24026 15.1351 6.5021 13.3559 6.50001 11.5V7.99999C6.50001 6.14348 7.23751 4.363 8.55026 3.05025C9.86302 1.7375 11.6435 1 13.5 1C15.3565 1 17.137 1.7375 18.4497 3.05025C19.7625 4.363 20.5 6.14348 20.5 7.99999V11.5C20.4979 13.3559 19.7597 15.1351 18.4474 16.4474C17.1351 17.7597 15.3559 18.4979 13.5 18.5ZM13.5 2.75C12.2605 2.7523 11.0617 3.19263 10.1155 3.99319C9.16922 4.79376 8.53637 5.90302 8.32876 7.12499H10.875C11.1071 7.12499 11.3296 7.21718 11.4937 7.38127C11.6578 7.54537 11.75 7.76793 11.75 7.99999C11.75 8.23206 11.6578 8.45462 11.4937 8.61871C11.3296 8.7828 11.1071 8.87499 10.875 8.87499H8.25001V10.625H10.875C11.1071 10.625 11.3296 10.7172 11.4937 10.8813C11.6578 11.0454 11.75 11.2679 11.75 11.5C11.75 11.7321 11.6578 11.9546 11.4937 12.1187C11.3296 12.2828 11.1071 12.375 10.875 12.375H8.32876C8.53442 13.5978 9.16673 14.7082 10.1135 15.509C11.0602 16.3097 12.26 16.7491 13.5 16.7491C14.74 16.7491 15.9398 16.3097 16.8866 15.509C17.8333 14.7082 18.4656 13.5978 18.6713 12.375H16.125C15.8929 12.375 15.6704 12.2828 15.5063 12.1187C15.3422 11.9546 15.25 11.7321 15.25 11.5C15.25 11.2679 15.3422 11.0454 15.5063 10.8813C15.6704 10.7172 15.8929 10.625 16.125 10.625H18.75V8.87499H16.125C15.8929 8.87499 15.6704 8.7828 15.5063 8.61871C15.3422 8.45462 15.25 8.23206 15.25 7.99999C15.25 7.76793 15.3422 7.54537 15.5063 7.38127C15.6704 7.21718 15.8929 7.12499 16.125 7.12499H18.6713C18.4636 5.90302 17.8308 4.79376 16.8845 3.99319C15.9383 3.19263 14.7395 2.7523 13.5 2.75Z" fill="#646464"/>
-<path d="M3.87502 11.5C4.10708 11.5 4.32965 11.5922 4.49374 11.7563C4.65783 11.9204 4.75002 12.1429 4.75002 12.375C4.75234 14.4629 5.58276 16.4646 7.05911 17.9409C8.53545 19.4172 10.5371 20.2477 12.625 20.25H14.375C16.4628 20.2474 18.4644 19.4169 19.9407 17.9406C21.417 16.4644 22.2475 14.4628 22.25 12.375C22.25 12.1429 22.3422 11.9204 22.5063 11.7563C22.6704 11.5922 22.8929 11.5 23.125 11.5C23.3571 11.5 23.5796 11.5922 23.7437 11.7563C23.9078 11.9204 24 12.1429 24 12.375C23.997 14.9268 22.982 17.3732 21.1776 19.1776C19.3732 20.982 16.9268 21.997 14.375 22H12.625C10.0732 21.997 7.62683 20.982 5.82244 19.1776C4.01806 17.3732 3.00303 14.9268 3.00002 12.375C3.00002 12.1429 3.09221 11.9204 3.2563 11.7563C3.4204 11.5922 3.64296 11.5 3.87502 11.5Z" fill="#646464"/>
-</g>
-<line x1="1.06066" y1="1" x2="24" y2="23.9393" stroke="#646464" stroke-width="1.5" stroke-linecap="round"/>
-<defs>
-<clipPath id="clip0_1609_1031">
-<rect width="21" height="21" fill="white" transform="matrix(-1 0 0 1 24 1)"/>
-</clipPath>
-</defs>
-</svg>
-`
-                }
-              />
-              <SvgXml
-                xml={`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              {role === 'host' ? (
+                <SvgXml
+                  xml={
+                    !isMute
+                      ? `<svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <g clip-path="url(#clip0_691_4364)">
+  <path d="M11 18C9.14413 17.9979 7.36487 17.2597 6.05257 15.9474C4.74026 14.6351 4.0021 12.8559 4.00001 11V7.49999C4.00001 5.64348 4.73751 3.863 6.05026 2.55025C7.36302 1.2375 9.14349 0.5 11 0.5C12.8565 0.5 14.637 1.2375 15.9497 2.55025C17.2625 3.863 18 5.64348 18 7.49999V11C17.9979 12.8559 17.2597 14.6351 15.9474 15.9474C14.6351 17.2597 12.8559 17.9979 11 18ZM11 2.25C9.76053 2.2523 8.56175 2.69263 7.61548 3.49319C6.66922 4.29376 6.03637 5.40302 5.82876 6.62499H8.37501C8.60707 6.62499 8.82963 6.71718 8.99373 6.88127C9.15782 7.04537 9.25001 7.26793 9.25001 7.49999C9.25001 7.73206 9.15782 7.95462 8.99373 8.11871C8.82963 8.2828 8.60707 8.37499 8.37501 8.37499H5.75001V10.125H8.37501C8.60707 10.125 8.82963 10.2172 8.99373 10.3813C9.15782 10.5454 9.25001 10.7679 9.25001 11C9.25001 11.2321 9.15782 11.4546 8.99373 11.6187C8.82963 11.7828 8.60707 11.875 8.37501 11.875H5.82876C6.03442 13.0978 6.66673 14.2082 7.61345 15.009C8.56017 15.8097 9.76003 16.2491 11 16.2491C12.24 16.2491 13.4398 15.8097 14.3866 15.009C15.3333 14.2082 15.9656 13.0978 16.1713 11.875H13.625C13.3929 11.875 13.1704 11.7828 13.0063 11.6187C12.8422 11.4546 12.75 11.2321 12.75 11C12.75 10.7679 12.8422 10.5454 13.0063 10.3813C13.1704 10.2172 13.3929 10.125 13.625 10.125H16.25V8.37499H13.625C13.3929 8.37499 13.1704 8.2828 13.0063 8.11871C12.8422 7.95462 12.75 7.73206 12.75 7.49999C12.75 7.26793 12.8422 7.04537 13.0063 6.88127C13.1704 6.71718 13.3929 6.62499 13.625 6.62499H16.1713C15.9636 5.40302 15.3308 4.29376 14.3845 3.49319C13.4383 2.69263 12.2395 2.2523 11 2.25Z" fill="#F4F4F4"/>
+  <path d="M1.37502 11C1.60708 11 1.82965 11.0922 1.99374 11.2563C2.15783 11.4204 2.25002 11.6429 2.25002 11.875C2.25234 13.9629 3.08276 15.9646 4.55911 17.4409C6.03545 18.9172 8.03714 19.7477 10.125 19.75H11.875C13.9628 19.7474 15.9644 18.9169 17.4407 17.4406C18.917 15.9644 19.7475 13.9628 19.75 11.875C19.75 11.6429 19.8422 11.4204 20.0063 11.2563C20.1704 11.0922 20.3929 11 20.625 11C20.8571 11 21.0796 11.0922 21.2437 11.2563C21.4078 11.4204 21.5 11.6429 21.5 11.875C21.497 14.4268 20.482 16.8732 18.6776 18.6776C16.8732 20.482 14.4268 21.497 11.875 21.5H10.125C7.57323 21.497 5.12683 20.482 3.32244 18.6776C1.51806 16.8732 0.503033 14.4268 0.500021 11.875C0.500021 11.6429 0.592209 11.4204 0.756302 11.2563C0.920397 11.0922 1.14296 11 1.37502 11Z" fill="#F4F4F4"/>
+  </g>
+  <defs>
+  <clipPath id="clip0_691_4364">
+  <rect width="21" height="21" fill="white" transform="matrix(-1 0 0 1 21.5 0.5)"/>
+  </clipPath>
+  </defs>
+  </svg>
+  
+  `
+                      : `<svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <g clip-path="url(#clip0_1609_1031)">
+  <path d="M13.5 18.5C11.6441 18.4979 9.86487 17.7597 8.55257 16.4474C7.24026 15.1351 6.5021 13.3559 6.50001 11.5V7.99999C6.50001 6.14348 7.23751 4.363 8.55026 3.05025C9.86302 1.7375 11.6435 1 13.5 1C15.3565 1 17.137 1.7375 18.4497 3.05025C19.7625 4.363 20.5 6.14348 20.5 7.99999V11.5C20.4979 13.3559 19.7597 15.1351 18.4474 16.4474C17.1351 17.7597 15.3559 18.4979 13.5 18.5ZM13.5 2.75C12.2605 2.7523 11.0617 3.19263 10.1155 3.99319C9.16922 4.79376 8.53637 5.90302 8.32876 7.12499H10.875C11.1071 7.12499 11.3296 7.21718 11.4937 7.38127C11.6578 7.54537 11.75 7.76793 11.75 7.99999C11.75 8.23206 11.6578 8.45462 11.4937 8.61871C11.3296 8.7828 11.1071 8.87499 10.875 8.87499H8.25001V10.625H10.875C11.1071 10.625 11.3296 10.7172 11.4937 10.8813C11.6578 11.0454 11.75 11.2679 11.75 11.5C11.75 11.7321 11.6578 11.9546 11.4937 12.1187C11.3296 12.2828 11.1071 12.375 10.875 12.375H8.32876C8.53442 13.5978 9.16673 14.7082 10.1135 15.509C11.0602 16.3097 12.26 16.7491 13.5 16.7491C14.74 16.7491 15.9398 16.3097 16.8866 15.509C17.8333 14.7082 18.4656 13.5978 18.6713 12.375H16.125C15.8929 12.375 15.6704 12.2828 15.5063 12.1187C15.3422 11.9546 15.25 11.7321 15.25 11.5C15.25 11.2679 15.3422 11.0454 15.5063 10.8813C15.6704 10.7172 15.8929 10.625 16.125 10.625H18.75V8.87499H16.125C15.8929 8.87499 15.6704 8.7828 15.5063 8.61871C15.3422 8.45462 15.25 8.23206 15.25 7.99999C15.25 7.76793 15.3422 7.54537 15.5063 7.38127C15.6704 7.21718 15.8929 7.12499 16.125 7.12499H18.6713C18.4636 5.90302 17.8308 4.79376 16.8845 3.99319C15.9383 3.19263 14.7395 2.7523 13.5 2.75Z" fill="#F4F4F4"/>
+  <path d="M3.87502 11.5C4.10708 11.5 4.32965 11.5922 4.49374 11.7563C4.65783 11.9204 4.75002 12.1429 4.75002 12.375C4.75234 14.4629 5.58276 16.4646 7.05911 17.9409C8.53545 19.4172 10.5371 20.2477 12.625 20.25H14.375C16.4628 20.2474 18.4644 19.4169 19.9407 17.9406C21.417 16.4644 22.2475 14.4628 22.25 12.375C22.25 12.1429 22.3422 11.9204 22.5063 11.7563C22.6704 11.5922 22.8929 11.5 23.125 11.5C23.3571 11.5 23.5796 11.5922 23.7437 11.7563C23.9078 11.9204 24 12.1429 24 12.375C23.997 14.9268 22.982 17.3732 21.1776 19.1776C19.3732 20.982 16.9268 21.997 14.375 22H12.625C10.0732 21.997 7.62683 20.982 5.82244 19.1776C4.01806 17.3732 3.00303 14.9268 3.00002 12.375C3.00002 12.1429 3.09221 11.9204 3.2563 11.7563C3.4204 11.5922 3.64296 11.5 3.87502 11.5Z" fill="#F4F4F4"/>
+  </g>
+  <line x1="1.06066" y1="1" x2="24" y2="23.9393" stroke="#F4F4F4" stroke-width="1.5" stroke-linecap="round"/>
+  <defs>
+  <clipPath id="clip0_1609_1031">
+  <rect width="21" height="21" fill="white" transform="matrix(-1 0 0 1 24 1)"/>
+  </clipPath>
+  </defs>
+  </svg>
+  `
+                  }
+                />
+              ) : (
+                <SvgXml
+                  xml={`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g clip-path="url(#clip0_691_4337)">
 <path d="M7.74006 9.51886C7.7041 8.85163 8.21819 8.28189 8.88646 8.24455C9.42785 8.21689 9.90529 8.54774 10.0871 9.03313C10.0778 8.97851 10.075 8.92561 10.075 8.87099C10.075 8.13219 10.6745 7.53133 11.4147 7.53133C11.907 7.53133 12.336 7.79926 12.568 8.19511C12.5659 8.16745 12.5639 8.14256 12.5639 8.1156C12.5639 7.37611 13.1633 6.77802 13.9028 6.77802C14.6423 6.77802 15.2404 7.37611 15.2404 8.1156" stroke="#F4F4F4" stroke-width="1.25" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
 <path d="M12.5664 8.19531V9.71267" stroke="#F4F4F4" stroke-width="1.25" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
@@ -812,336 +1020,124 @@ const LiveConversationScreen = ({
 </defs>
 </svg>
 `}
-              />
+                />
+              )}
             </View>
           </TouchableOpacity>
           {/*=============== live joined and knock and voice run on or off end================ */}
         </View>
       </View>
 
-      <ModalOfBottom
-        modalVisible={showShortProfile}
-        setModalVisible={setShowShortProfile}>
-        <View>
-          <View
-            style={{
-              // paddingHorizontal: '4%',
-              flexDirection: 'row',
-              alignItems: 'center',
-              // justifyContent: 'center',
-              gap: 16,
-            }}>
-            <View
-              style={{
-                elevation: 10,
-                backgroundColor: colors.normal,
-                padding: 1,
-                width: 106,
-                borderRadius: 46,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              <Image
-                style={{
-                  width: 100,
-                  height: 100,
-                  borderRadius: 46,
-                  alignSelf: 'center',
-                }}
-                source={require('../../assets/tempAssets/4005b22a3c1c23d7c04f6c9fdbd85468.jpg')}
-              />
-            </View>
-            <View
-              style={{
-                gap: 4,
-              }}>
-              <View
-                style={{
-                  gap: -4,
-                }}>
-                <Text
-                  style={{
-                    fontFamily: font.PoppinsSemiBold,
-                    fontSize: 17,
-                    color: colors.textColor.primaryColor,
-                  }}>
-                  Mithila
-                </Text>
-                <Text
-                  style={{
-                    fontFamily: font.Poppins,
-                    fontSize: 13,
-                    color: colors.textColor.neutralColor,
-                  }}>
-                  amina111@gmail.com
-                </Text>
-              </View>
-              <View
-                style={{
-                  gap: -4,
-                }}>
-                <Text
-                  style={{
-                    fontFamily: font.PoppinsSemiBold,
-                    fontSize: 17,
-                    color: colors.primaryColor,
-                  }}>
-                  420
-                </Text>
-                <Text
-                  style={{
-                    fontFamily: font.Poppins,
-                    fontSize: 13,
-                    color: colors.primaryColor,
-                  }}>
-                  friend
-                </Text>
-              </View>
-            </View>
-          </View>
-          <View
-            style={
-              {
-                // paddingHorizontal: '5%',
-              }
-            }>
-            <TouchableOpacity
-              onPress={() => {
-                Linking.openURL('https://asadullah@insta.com');
-              }}
-              style={{
-                marginTop: 16,
-                flexDirection: 'row',
+      <ActionSheet
+        containerStyle={{
+          paddingVertical: 10,
+        }}
+        dialogStyle={{borderTopLeftRadius: 20, borderTopRightRadius: 20}}
+        cancelButtonIndex={4}
+        visible={showAction}
+        onDismiss={() => setShowAction(false)}
+        destructiveButtonIndex={0}
+        options={
+          Captain
+            ? [
+                SelectItem?.role === 'host'
+                  ? {
+                      label: 'Kick',
+                      onPress: () => {
+                        updateRole({
+                          chatId: live?.data?.chat,
+                          role: 'audience', ///[host | audience]
+                          userId: SelectItem?.user?._id,
+                        }).then(res => {
+                          setActiveUser(prev =>
+                            prev?.map(user => {
+                              if (user.uid === SelectItem?.uid) {
+                                return {...user, role: 'audience'};
+                              }
+                              return user;
+                            }),
+                          );
+                        });
+                      },
+                    }
+                  : {
+                      label: 'Add',
+                      onPress: () => {
+                        updateRole({
+                          chatId: live?.data?.chat,
+                          role: 'host', ///[host | audience]
+                          userId: SelectItem?.user?._id,
+                        }).then(res => {
+                          setActiveUser(prev =>
+                            prev?.map(user => {
+                              if (user.uid === SelectItem?.uid) {
+                                return {...user, role: 'host'};
+                              }
+                              return user;
+                            }),
+                          );
+                        });
+                      },
+                    },
 
-                alignItems: 'center',
-                gap: 8,
-              }}>
-              <Image
-                style={{
-                  width: 16,
-                  height: 16,
-                }}
-                source={require('../../assets/icons/instagram/instagram.png')}
-              />
-              <Text
-                style={{
-                  fontFamily: font.Poppins,
-                  fontSize: 14,
-                  color: colors.textColor.rare,
-                }}>
-                asadullah@insta.com
-              </Text>
-            </TouchableOpacity>
-            <Text
-              style={{
-                marginTop: 10,
-                fontFamily: font.Poppins,
-                fontSize: 14,
-                color: colors.textColor.neutralColor,
-              }}>
-              scelerisque Praesent Donec amet, eget lorem. consectetur id varius
-              at, nec nec dolor quam amet, tincidunt quis vitae In Ut laoreet
-            </Text>
-          </View>
-          <View
-            style={{
-              flexDirection: 'row',
-              marginTop: 20,
-              // marginHorizontal: '4%',
-              gap: 24,
-            }}>
-            <TouchableOpacity
-              activeOpacity={0.9}
-              onPress={() => {
-                if (isFriendRequest) {
-                  setIsFriend(true);
-                  setIsFriendRequest(false);
-                }
-                if (isFriend) {
-                  setConfirmationModal(!confirmationModal);
-                } else {
-                  setIsFriendRequestSent(!isFriendRequestSent);
-                }
-              }}
-              style={{
-                backgroundColor: isFriend ? colors.redisLight : colors.redis,
-                height: 35,
-                flexDirection: 'row',
-                gap: 8,
-                justifyContent: 'center',
-                alignItems: 'center',
-                paddingHorizontal: 15,
-                borderRadius: 50,
-                elevation: 2,
-              }}>
-              {isFriend && (
-                <SvgXml
-                  xml={`<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M7.75978 6.97436C8.4921 6.97436 9.20797 6.76984 9.81687 6.38666C10.4258 6.00349 10.9004 5.45887 11.1806 4.82167C11.4608 4.18447 11.5342 3.48331 11.3913 2.80687C11.2484 2.13042 10.8958 1.50906 10.378 1.02137C9.86014 0.533682 9.20038 0.20156 8.48213 0.0670067C7.76389 -0.0675468 7.0194 0.00151094 6.34282 0.265447C5.66625 0.529384 5.08797 0.976344 4.68112 1.54981C4.27426 2.12327 4.0571 2.79748 4.0571 3.48718C4.05826 4.41171 4.44873 5.29805 5.14286 5.95179C5.837 6.60553 6.77812 6.97327 7.75978 6.97436ZM7.75978 1.23077C8.23363 1.23077 8.69685 1.36311 9.09084 1.61104C9.48484 1.85898 9.79192 2.21139 9.97325 2.62369C10.1546 3.036 10.202 3.48968 10.1096 3.92738C10.0171 4.36509 9.78896 4.76714 9.4539 5.0827C9.11883 5.39827 8.69193 5.61317 8.22718 5.70023C7.76244 5.7873 7.28071 5.74261 6.84293 5.57183C6.40514 5.40105 6.03096 5.11184 5.7677 4.74078C5.50444 4.36971 5.36393 3.93346 5.36393 3.48718C5.36462 2.88894 5.61726 2.3154 6.06642 1.89238C6.51558 1.46936 7.12457 1.23142 7.75978 1.23077ZM2.30683 12.9395C2.30683 14.222 2.89316 14.7692 4.26707 14.7692H10.3656C10.5389 14.7692 10.7051 14.8341 10.8276 14.9495C10.9502 15.0649 11.019 15.2214 11.019 15.3846C11.019 15.5478 10.9502 15.7044 10.8276 15.8198C10.7051 15.9352 10.5389 16 10.3656 16H4.26707C2.16046 16 1 14.9128 1 12.9395C1 10.7553 2.31205 8.20513 6.0095 8.20513H9.49437C10.662 8.16083 11.8099 8.49859 12.7431 9.16103C12.8124 9.21082 12.8703 9.27314 12.9136 9.34433C12.9569 9.41552 12.9846 9.49415 12.9952 9.57558C13.0057 9.65701 12.9989 9.73961 12.9751 9.81852C12.9512 9.89742 12.9109 9.97104 12.8564 10.035C12.8019 10.0991 12.7344 10.1522 12.6578 10.1912C12.5812 10.2303 12.4971 10.2546 12.4104 10.2626C12.3237 10.2706 12.2362 10.2622 12.153 10.2379C12.0698 10.2136 11.9926 10.1738 11.9259 10.121C11.2228 9.63678 10.3643 9.39489 9.49437 9.4359H6.0095C5.51198 9.39979 5.01206 9.46578 4.54425 9.62932C4.07644 9.79286 3.65188 10.05 3.29986 10.3831C2.94785 10.7162 2.67676 11.1173 2.50532 11.5586C2.33388 12 2.26615 12.4711 2.30683 12.9395Z" fill="#767676"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M15.5345 10.1258C15.712 10.2923 15.7105 10.5609 15.5313 10.7257L11.3806 14.5439C11.2941 14.6235 11.177 14.6676 11.0553 14.6667C10.9336 14.6656 10.8174 14.6195 10.7324 14.5386L9.12968 13.0113C8.95363 12.8436 8.95729 12.5749 9.13785 12.4114C9.31842 12.2478 9.60751 12.2512 9.78356 12.419L11.0651 13.6402L14.8888 10.1228C15.068 9.95792 15.3571 9.95926 15.5345 10.1258Z" fill="#767676"/>
-</svg>
-                   `}
-                />
-              )}
+                {
+                  label: 'View Profile',
 
-              {!isFriendRequestSent && !isFriend && (
-                <Image
-                  resizeMode="contain"
-                  style={{
-                    width: 16,
-                    height: 16,
-                  }}
-                  source={require('../../assets/icons/user/add_user.png')}
-                />
-              )}
-              {isFriendRequestSent && !isFriend && (
-                <SvgXml
-                  xml={`<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M7.75978 6.97436C8.4921 6.97436 9.20797 6.76984 9.81687 6.38666C10.4258 6.00349 10.9004 5.45887 11.1806 4.82167C11.4608 4.18447 11.5342 3.48331 11.3913 2.80687C11.2484 2.13042 10.8958 1.50906 10.378 1.02137C9.86014 0.533682 9.20038 0.20156 8.48213 0.0670067C7.76388 -0.0675468 7.0194 0.00151095 6.34282 0.265447C5.66625 0.529384 5.08797 0.976344 4.68112 1.54981C4.27426 2.12327 4.0571 2.79748 4.0571 3.48718C4.05826 4.41171 4.44873 5.29805 5.14286 5.95179C5.837 6.60553 6.77812 6.97327 7.75978 6.97436ZM7.75978 1.23077C8.23363 1.23077 8.69685 1.36311 9.09084 1.61104C9.48484 1.85898 9.79192 2.21139 9.97325 2.62369C10.1546 3.036 10.202 3.48968 10.1096 3.92738C10.0171 4.36509 9.78897 4.76714 9.4539 5.0827C9.11883 5.39827 8.69193 5.61317 8.22718 5.70023C7.76244 5.7873 7.28071 5.74261 6.84293 5.57183C6.40514 5.40105 6.03096 5.11184 5.7677 4.74078C5.50444 4.36971 5.36393 3.93346 5.36393 3.48718C5.36462 2.88894 5.61726 2.3154 6.06642 1.89238C6.51558 1.46936 7.12457 1.23142 7.75978 1.23077ZM2.30683 12.9395C2.30683 14.222 2.89316 14.7692 4.26707 14.7692H10.3656C10.5389 14.7692 10.7051 14.8341 10.8276 14.9495C10.9502 15.0649 11.019 15.2214 11.019 15.3846C11.019 15.5478 10.9502 15.7044 10.8276 15.8198C10.7051 15.9352 10.5389 16 10.3656 16H4.26707C2.16046 16 1 14.9128 1 12.9395C1 10.7553 2.31205 8.20513 6.0095 8.20513H9.49437C10.662 8.16083 11.8099 8.49859 12.7431 9.16103C12.8124 9.21082 12.8703 9.27314 12.9136 9.34433C12.9569 9.41552 12.9846 9.49415 12.9952 9.57558C13.0057 9.65701 12.9989 9.73961 12.9751 9.81852C12.9512 9.89742 12.9109 9.97104 12.8564 10.035C12.8019 10.0991 12.7344 10.1522 12.6578 10.1912C12.5812 10.2303 12.4971 10.2546 12.4104 10.2626C12.3237 10.2706 12.2362 10.2622 12.153 10.2379C12.0698 10.2136 11.9926 10.1738 11.9259 10.121C11.2228 9.63678 10.3643 9.39489 9.49437 9.4359H6.0095C5.51198 9.39979 5.01206 9.46578 4.54425 9.62932C4.07644 9.79286 3.65188 10.05 3.29986 10.3831C2.94785 10.7162 2.67676 11.1173 2.50532 11.5586C2.33388 12 2.26615 12.4711 2.30683 12.9395Z" fill="#FFFDFB"/>
-<g clip-path="url(#clip0_517_4657)">
-<path d="M11.6 13.7999C11.5477 13.7976 11.4979 13.7545 11.4613 13.6798C11.4248 13.605 11.4043 13.5046 11.4043 13.4C11.4043 13.2954 11.4248 13.195 11.4613 13.1202C11.4979 13.0455 11.5477 13.0023 11.6 13H15.1992C15.2515 13.0023 15.3012 13.0455 15.3378 13.1202C15.3744 13.195 15.3949 13.2954 15.3949 13.4C15.3949 13.5046 15.3744 13.605 15.3378 13.6798C15.3012 13.7545 15.2515 13.7976 15.1992 13.7999H11.6Z" fill="#FFFDFB"/>
-</g>
-<defs>
-<clipPath id="clip0_517_4657">
-<rect width="4.8" height="4.8" fill="white" transform="translate(11 11)"/>
-</clipPath>
-</defs>
-</svg>
+                  onPress: () => {
+                    setShowAction(false);
+                    if (SelectItem?.user?._id === userInfo?._id) {
+                      navigation?.navigate('UserProfile');
+                    } else {
+                      navigation?.navigate('FriendsProfile', {
+                        data: {id: SelectItem?.user?._id},
+                      });
+                    }
+                  },
+                },
+                {label: 'Cancel', onPress: () => console.log('cancel')},
+              ]
+            : Host
+            ? [
+                // {
 
-`}
-                />
-              )}
-              <Text
-                style={{
-                  fontFamily: font.Poppins,
-                  fontSize: 14,
-                  color: isFriend
-                    ? colors.textColor.light
-                    : colors.textColor.white,
-                }}>
-                {isFriend
-                  ? 'friends'
-                  : isFriendRequest
-                  ? 'accept request'
-                  : isFriendRequestSent
-                  ? 'Cancel Request'
-                  : 'Add friends'}
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              activeOpacity={0.9}
-              onPress={() => {
-                setConfirmationModal(false); //
-                setShowShortProfile(false); //)
-                navigation?.navigate('NormalConversation');
-              }}
-              style={{
-                backgroundColor: colors.primaryColor,
-                height: 35,
-                flexDirection: 'row',
-                gap: 8,
-                justifyContent: 'center',
-                alignItems: 'center',
-                paddingHorizontal: 15,
-                borderRadius: 50,
-                elevation: 2,
-              }}>
-              <Image
-                resizeMode="contain"
-                style={{
-                  width: 16,
-                  height: 16,
-                }}
-                source={require('../../assets/icons/message/message.png')}
-              />
-              <Text
-                style={{
-                  fontFamily: font.Poppins,
-                  fontSize: 14,
-                  color: colors.textColor.white,
-                }}>
-                message
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </ModalOfBottom>
-      <CustomModal
-        modalVisible={confirmationModal}
-        setModalVisible={setConfirmationModal}
-        height={'14%'}
-        containerColor={colors.bg}
-        Radius={20}>
-        <View
-          style={{
-            padding: 20,
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
-          <Text
-            style={{
-              fontFamily: font.Poppins,
-              fontSize: 12,
-              color: colors.textColor.neutralColor,
-            }}>
-            Are you sure you want to remove your friend!
-          </Text>
-          <View
-            style={{
-              marginTop: 20,
-              flexDirection: 'row',
-              justifyContent: 'space-around',
-              width: '100%',
-            }}>
-            <TouchableOpacity
-              onPress={() => {
-                setConfirmationModal(false);
-              }}
-              style={{
-                borderRadius: 100,
-                borderColor: colors.green['#00B047'],
-                borderWidth: 1,
-                paddingHorizontal: 10,
-                height: 24,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              <Text
-                style={{
-                  fontFamily: font.PoppinsSemiBold,
-                  fontSize: 12,
-                  color: colors.green['#00B047'],
-                }}>
-                Cancel
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => {
-                setIsFriend(false);
-                setModalVisible(false);
-                setConfirmationModal(false);
-              }}
-              style={{
-                borderRadius: 100,
-                backgroundColor: 'rgba(241, 99, 101, 1)',
+                //   label: "Add", onPress: () => {}
 
-                paddingHorizontal: 10,
-                height: 24,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              <Text
-                style={{
-                  fontFamily: font.PoppinsSemiBold,
-                  fontSize: 12,
-                  color: colors.white,
-                }}>
-                Confirm
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </CustomModal>
+                // },
+
+                {
+                  label: 'View Profile',
+                  onPress: () => {
+                    setShowAction(false);
+                    if (SelectItem?.user?._id === userInfo?._id) {
+                      navigation?.navigate('UserProfile');
+                    } else {
+                      navigation?.navigate('FriendsProfile', {
+                        data: {id: SelectItem?.user?._id},
+                      });
+                    }
+                  },
+                },
+                {label: 'Cancel', onPress: () => console.log('cancel')},
+              ]
+            : [
+                {
+                  label: 'View Profile',
+                  onPress: () => {
+                    setShowAction(false);
+                    if (SelectItem?.user?._id === userInfo?._id) {
+                      navigation?.navigate('UserProfile');
+                    } else {
+                      navigation?.navigate('FriendsProfile', {
+                        data: {id: SelectItem?.user?._id},
+                      });
+                    }
+                  },
+                },
+                {label: 'Cancel', onPress: () => console.log('cancel')},
+              ]
+        }
+      />
+      {/* //search link modal? */}
       <ModalOfBottom
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
@@ -1209,6 +1205,7 @@ const LiveConversationScreen = ({
           </View>
         </View>
       </ModalOfBottom>
+      {/* update live  */}
       <ModalOfBottom
         modalVisible={liveModal}
         setModalVisible={setLiveModal}
@@ -1392,24 +1389,7 @@ const LiveConversationScreen = ({
                 }}
               />
             ) : (
-              <TouchableOpacity activeOpacity={0.8}>
-                <Image
-                  resizeMode="stretch"
-                  style={{
-                    borderRadius: 24,
-
-                    height: 150,
-                    width: 120,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}
-                  source={
-                    selectBook
-                      ? {uri: selectBook}
-                      : require('../../assets/tempAssets/book.jpg')
-                  }
-                />
-              </TouchableOpacity>
+              <TouchableOpacity activeOpacity={0.8}></TouchableOpacity>
             )}
 
             <View
@@ -1517,135 +1497,6 @@ const LiveConversationScreen = ({
           />
         </View>
       </ModalOfBottom>
-      {/* book selection modal  */}
-      <CustomModal
-        modalVisible={booksModal}
-        setModalVisible={setBooksModal}
-        height={'85%'}
-        containerColor={colors.bg}
-        Radius={20}
-        appearance
-        backButton>
-        <>
-          <View
-            style={{
-              paddingHorizontal: '4%',
-              marginTop: 15,
-            }}>
-            <View
-              style={{
-                backgroundColor: colors.search,
-                flexDirection: 'row',
-                alignItems: 'center',
-                gap: 10,
-                height: 48,
-                paddingHorizontal: 20,
-                borderRadius: 50,
-              }}>
-              <SvgXml
-                xml={`<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M12.6267 11.5129L16 14.8861L14.8861 16L11.5129 12.6267C10.3 13.5971 8.76177 14.1776 7.08881 14.1776C3.17579 14.1776 0 11.0018 0 7.08881C0 3.17579 3.17579 0 7.08881 0C11.0018 0 14.1776 3.17579 14.1776 7.08881C14.1776 8.76177 13.5971 10.3 12.6267 11.5129ZM11.0465 10.9284C12.0096 9.93584 12.6023 8.58187 12.6023 7.08881C12.6023 4.04259 10.135 1.57529 7.08881 1.57529C4.04259 1.57529 1.57529 4.04259 1.57529 7.08881C1.57529 10.135 4.04259 12.6023 7.08881 12.6023C8.58187 12.6023 9.93584 12.0096 10.9284 11.0465L11.0465 10.9284Z" fill="${colors.textColor.neutralColor}"/>
-</svg>
-`}
-              />
-              <TextInput
-                style={{flex: 1}}
-                placeholder="Search your books"
-                placeholderTextColor={colors.textColor.neutralColor}
-              />
-            </View>
-          </View>
-          <View
-            style={{
-              borderBottomWidth: 1,
-              borderBlockColor: 'rgba(217, 217, 217, 1)',
-            }}>
-            <FlatList
-              showsHorizontalScrollIndicator={false}
-              keyboardShouldPersistTaps="always"
-              horizontal
-              contentContainerStyle={{
-                gap: 16,
-                paddingHorizontal: 20,
-                paddingTop: 20,
-                paddingBottom: 15,
-              }}
-              data={Books}
-              renderItem={item => (
-                <>
-                  <TouchableOpacity
-                    onPress={() => {
-                      setSelectOptionItem(item.index);
-                    }}
-                    style={{
-                      backgroundColor:
-                        selectOptionItem === item.index
-                          ? colors.primaryColor
-                          : colors.secondaryColor,
-                      height: 35,
-                      paddingHorizontal: 20,
-                      // paddingVertical: 5,
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      borderRadius: 50,
-                    }}>
-                    <Text
-                      style={{
-                        color:
-                          selectOptionItem === item.index
-                            ? colors.textColor.white
-                            : colors.textColor.light,
-                        fontSize: 12,
-                        fontFamily: font.PoppinsMedium,
-                        textAlign: 'center',
-                      }}>
-                      {item.item.content}
-                    </Text>
-                  </TouchableOpacity>
-                </>
-              )}
-            />
-          </View>
-
-          <FlatList
-            showsVerticalScrollIndicator={false}
-            numColumns={2}
-            data={Books}
-            columnWrapperStyle={{
-              gap: 20,
-              alignSelf: 'center',
-            }}
-            contentContainerStyle={{
-              gap: 20,
-              paddingVertical: 20,
-            }}
-            renderItem={item => (
-              <TouchableOpacity
-                onPress={() => {
-                  setSelectBook(item.item.image);
-                  setBooksModal(false);
-                }}
-                style={{
-                  elevation: 2,
-                  backgroundColor: colors.bg,
-                  padding: 2,
-                  borderRadius: 24,
-                }}>
-                <Image
-                  style={{
-                    height: height * 0.24,
-                    width: width * 0.4,
-                    borderRadius: 24,
-                  }}
-                  source={{
-                    uri: item.item.image,
-                  }}
-                />
-              </TouchableOpacity>
-            )}
-          />
-        </>
-      </CustomModal>
     </SafeAreaView>
   );
 };

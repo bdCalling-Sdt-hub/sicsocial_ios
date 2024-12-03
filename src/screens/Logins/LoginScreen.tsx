@@ -1,3 +1,6 @@
+import PopUpModal, {
+  PopUpModalRef,
+} from '../../components/common/modals/PopUpModal';
 import {
   ScrollView,
   StyleSheet,
@@ -6,21 +9,18 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import PopUpModal, {
-  PopUpModalRef,
-} from '../../components/common/modals/PopUpModal';
 
-import {Formik} from 'formik';
-import React from 'react';
+import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
 import {Checkbox} from 'react-native-ui-lib';
 import Feather from 'react-native-vector-icons/Feather';
-import {useDispatch} from 'react-redux';
-import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
-import {useStyles} from '../../context/ContextApi';
+import {Formik} from 'formik';
 import {NavigProps} from '../../interfaces/NaviProps';
-import {useLoginUserMutation} from '../../redux/apiSlices/authSlice';
-import {setToken} from '../../redux/apiSlices/tokenSlice';
+import React from 'react';
 import {lStorage} from '../../utils/utils';
+import {setToken} from '../../redux/apiSlices/tokenSlice';
+import {useDispatch} from 'react-redux';
+import {useLoginUserMutation} from '../../redux/apiSlices/authSlice';
+import {useStyles} from '../../context/ContextApi';
 
 const LoginScreen = ({navigation}: NavigProps<null>) => {
   const modalRef = React.useRef<PopUpModalRef>();

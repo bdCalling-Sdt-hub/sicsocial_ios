@@ -1,26 +1,28 @@
-import {
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  useWindowDimensions,
-  View,
-} from 'react-native';
-import React, {Dispatch, SetStateAction, useEffect} from 'react';
-import {Toast} from 'react-native-ui-lib';
-import {SvgXml} from 'react-native-svg';
-import {useStyles} from '../../../context/ContextApi';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withSpring,
   withTiming,
 } from 'react-native-reanimated';
+import React, {Dispatch, SetStateAction, useEffect} from 'react';
+import {
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  useWindowDimensions,
+} from 'react-native';
+
+import {SvgXml} from 'react-native-svg';
+import {useStyles} from '../../../context/ContextApi';
 
 interface NotifyTopComponentProps {
   onDismiss?: Dispatch<SetStateAction<boolean>>;
   open: boolean;
   variant?: 'success' | 'error' | 'normal';
+  normalOnPress?: () => void;
   context: string;
+  onRejectOnPress?: () => void;
 }
 
 const NotifyTopComponent = ({
@@ -28,6 +30,8 @@ const NotifyTopComponent = ({
   variant,
   open,
   context,
+  normalOnPress,
+  onRejectOnPress,
 }: NotifyTopComponentProps) => {
   const {height, width} = useWindowDimensions();
   const {colors, font} = useStyles();
@@ -153,6 +157,10 @@ const NotifyTopComponent = ({
                 gap: 10,
               }}>
               <TouchableOpacity
+                onPress={() => {
+                  onRejectOnPress && onRejectOnPress();
+                  onDismiss && onDismiss(false);
+                }}
                 style={{
                   width: 48,
                   height: 48,
@@ -172,6 +180,9 @@ const NotifyTopComponent = ({
                 />
               </TouchableOpacity>
               <TouchableOpacity
+                onPress={() => {
+                  normalOnPress && normalOnPress();
+                }}
                 style={{
                   width: 48,
                   height: 48,
