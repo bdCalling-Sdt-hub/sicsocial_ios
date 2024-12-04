@@ -1,5 +1,5 @@
+import React, {SetStateAction} from 'react';
 import {
-  FlatList,
   Image,
   ScrollView,
   Text,
@@ -8,24 +8,23 @@ import {
   View,
   useWindowDimensions,
 } from 'react-native';
-import React, {SetStateAction} from 'react';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 
-import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
-import CustomModal from '../../components/common/customModal/CustomModal';
+import {SvgXml} from 'react-native-svg';
 import DateTimePicker from 'react-native-ui-datepicker';
 import {GridList} from 'react-native-ui-lib';
-import {IBook} from '../../redux/interface/book';
-import {IParticipant} from '../../redux/interface/participants';
+import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
+import CustomModal from '../../components/common/customModal/CustomModal';
 import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
-import {NavigProps} from '../../interfaces/NaviProps';
 import NormalButton from '../../components/common/NormalButton';
-import {SvgXml} from 'react-native-svg';
-import {makeImage} from '../../utils/utils';
+import {useStyles} from '../../context/ContextApi';
+import {NavigProps} from '../../interfaces/NaviProps';
+import {useGetAllBooksQuery} from '../../redux/apiSlices/bookSlices';
 import {useCreateChatMutation} from '../../redux/apiSlices/chatSlices';
 import {useCreateFaceDownMutation} from '../../redux/apiSlices/facedwonSlice';
-import {useGetAllBooksQuery} from '../../redux/apiSlices/bookSlices';
-import {useStyles} from '../../context/ContextApi';
+import {IBook} from '../../redux/interface/book';
+import {IParticipant} from '../../redux/interface/participants';
+import {makeImage} from '../../utils/utils';
 
 const CreateNewFaceDown = ({navigation, route}: NavigProps<any>) => {
   const {colors, font, window} = useStyles();
@@ -307,157 +306,6 @@ const CreateNewFaceDown = ({navigation, route}: NavigProps<any>) => {
           />
         </View>
 
-        <View
-          style={{
-            gap: 15,
-            marginHorizontal: '4%',
-            marginVertical: 10,
-          }}>
-          <Text
-            style={{
-              fontFamily: font.Poppins,
-              fontSize: 14,
-              color: '#A1A1A1',
-              paddingLeft: 10,
-            }}>
-            Face Dwn members
-          </Text>
-
-          {participants?.length !== 0 && (
-            <View
-              style={{
-                borderBottomWidth: 1,
-                borderBottomColor: 'rgba(217, 217, 217, 1)',
-
-                paddingBottom: 10,
-              }}>
-              <FlatList
-                showsHorizontalScrollIndicator={false}
-                keyboardShouldPersistTaps="always"
-                horizontal
-                contentContainerStyle={{
-                  gap: 16,
-                  paddingHorizontal: 20,
-                }}
-                data={participants}
-                keyExtractor={item => item?._id + Math.random()}
-                renderItem={item => (
-                  <View style={{gap: 6}}>
-                    <TouchableOpacity
-                      onPress={() => {
-                        if (
-                          participants.find(
-                            friend => friend._id === item.item._id,
-                          )
-                        ) {
-                          setParticipants(
-                            participants.filter(
-                              friend => friend._id !== item.item._id,
-                            ),
-                          );
-                        }
-                      }}
-                      style={{
-                        backgroundColor: colors.secondaryColor,
-                        // paddingVertical: 5,
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        elevation: 2,
-                        borderRadius: 50,
-                        padding: 2,
-                        position: 'relative',
-                        width: 70,
-                        height: 70,
-                      }}>
-                      <View
-                        style={{
-                          width: 16,
-                          height: 16,
-                          borderRadius: 50,
-                          backgroundColor: colors.green['#00B047'],
-                          position: 'absolute',
-                          right: 0,
-                          zIndex: +1,
-                          bottom: 5,
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                        }}>
-                        <View
-                          style={{
-                            backgroundColor: 'white',
-                            width: 8,
-                            height: 2,
-                          }}
-                        />
-                      </View>
-                      <Image
-                        style={{
-                          width: 65,
-                          height: 65,
-                          borderRadius: 28,
-                          resizeMode: 'contain',
-                        }}
-                        source={{
-                          uri: makeImage(item.item.avatar),
-                        }}
-                      />
-                    </TouchableOpacity>
-                    <Text
-                      style={{
-                        fontSize: 12,
-                        fontFamily: font.Poppins,
-                        color: colors.textColor.neutralColor,
-                        textAlign: 'center',
-                      }}>
-                      {item.item?.fullName}
-                    </Text>
-                  </View>
-                )}
-                ListFooterComponent={() => (
-                  <TouchableOpacity
-                    activeOpacity={0.9}
-                    onPress={() => {
-                      navigation?.navigate('FaceDownAddMember', participants);
-                    }}>
-                    <Image
-                      resizeMode="cover"
-                      style={{
-                        borderRadius: 24,
-
-                        height: 70,
-                        width: 70,
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                      }}
-                      source={require('../../assets/icons/unknown/addMember.png')}
-                    />
-                  </TouchableOpacity>
-                )}
-              />
-            </View>
-          )}
-
-          {participants?.length === 0 && (
-            <TouchableOpacity
-              activeOpacity={0.9}
-              onPress={() => {
-                navigation?.navigate('FaceDownAddMember', participants);
-              }}>
-              <Image
-                resizeMode="cover"
-                style={{
-                  borderRadius: 24,
-
-                  height: 80,
-                  width: 80,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}
-                source={require('../../assets/icons/unknown/addMember.png')}
-              />
-            </TouchableOpacity>
-          )}
-        </View>
         <View
           style={{
             gap: 15,

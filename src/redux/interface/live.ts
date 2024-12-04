@@ -4,7 +4,15 @@ import {IUserSingle} from './user';
 export interface ILive {
   _id: string;
   chat: string;
+  book: {
+    _id: string;
+    name: string;
+    publisher: string;
+    bookImage: string;
+    bookUrl: string;
+  };
   host: string;
+  name: string;
   activeUsers: Array<IActiveLiveUser>;
   __v: 0;
 }

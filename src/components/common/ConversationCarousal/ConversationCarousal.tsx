@@ -137,6 +137,7 @@ const ConversationCarousal = ({
   const socket = getSocket();
 
   const {data: BooksData} = useGetAllBooksQuery({});
+  const [booksModal, setBooksModal] = React.useState(false);
 
   const [createMessage, createMessageResult] = useCreateMessageMutation({});
   const {height, width} = useWindowDimensions();
@@ -148,7 +149,6 @@ const ConversationCarousal = ({
   const [recordOnDone, setRecordOnDone] = React.useState(false);
   const [textMessage, setTextMessage] = React.useState<string>('');
   const textInputRef = React.useRef<TextInput>(null);
-  const [booksModal, setBooksModal] = React.useState(false);
   const letsBorderAnimationValue = useSharedValue(23);
 
   const itemSize = 100;

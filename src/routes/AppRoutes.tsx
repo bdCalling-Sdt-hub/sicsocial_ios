@@ -2,390 +2,63 @@
 
 import * as React from 'react';
 
-import ContextApi, {useContextApi, useStyles} from '../context/ContextApi';
-import {Provider, useSelector} from 'react-redux';
+import {Alert, Linking} from 'react-native';
 import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
+import {Provider, useSelector} from 'react-redux';
+import ContextApi, {useContextApi, useStyles} from '../context/ContextApi';
 import {getSocket, initiateSocket} from '../redux/services/socket';
 
-import AboutSicScreen from '../screens/profile/settings/AboutSicScreen';
-import BookShareScreen from '../screens/sharebooks/BookShareScreen';
-import BookShareWithCategory from '../screens/sharebooks/BookShareWithCategory';
-import BooksScreen from '../screens/sharebooks/BooksScreen';
-import BottomBarRoutes from './BottomBarRoutes';
-import ChangePassword from '../screens/Logins/ChnagePassword';
-import CreateNewFaceDown from '../screens/message/CreateNewFaceDown';
-import DeleteAccount from '../screens/Logins/DeleteAccount';
-import DonationScreen from '../screens/donation/DonationScreen';
-import EmailConfirmationScreen from '../screens/Logins/EmailConfirmationScreen';
-import FAQScreen from '../screens/profile/settings/FAQScreen';
-import FaceDownAddMember from '../screens/message/FaceDownAddMember';
-import FaceDownConversation from '../screens/message/FaceDownConversation';
-import FeedBackScreen from '../screens/profile/settings/FeedBackScreen';
-import FriendsProfile from '../screens/friends/FriendsProfile';
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
-import GroupConversationScreen from '../screens/message/GroupConversationScreen';
+import {hostUrl} from '../redux/api/baseApi';
+import store from '../redux/store';
+import LoadingSplash from '../screens/LoadingSplash';
+import ChangePassword from '../screens/Logins/ChnagePassword';
+import DeleteAccount from '../screens/Logins/DeleteAccount';
+import EmailConfirmationScreen from '../screens/Logins/EmailConfirmationScreen';
 import InterestScreen from '../screens/Logins/InterestScreen';
+import LoginScreen from '../screens/Logins/LoginScreen';
+import ResetPasswordScreen from '../screens/Logins/ResetPasswordScreen';
+import SignUpScreen from '../screens/Logins/SignUpScreen';
+import VerifyEmailScreen from '../screens/Logins/VerifyEmailScreen';
+import VerifySuccessfulScreen from '../screens/Logins/VerifySuccessfulScreen';
+import SplashScreen from '../screens/SplashScreen';
+import DonationScreen from '../screens/donation/DonationScreen';
+import FriendsProfile from '../screens/friends/FriendsProfile';
+import CreateNewFaceDown from '../screens/message/CreateNewFaceDown';
+import FaceDownConversation from '../screens/message/FaceDownConversation';
+import GroupConversationScreen from '../screens/message/GroupConversationScreen';
 import LiveAddFriendsScreen from '../screens/message/LiveAddFriendsScreen';
 import LiveConversationScreen from '../screens/message/LiveConversationScreen';
 import LiveMessageScreen from '../screens/message/LiveMessageScreen';
-import LoadingSplash from '../screens/LoadingSplash';
-import LoginScreen from '../screens/Logins/LoginScreen';
 import MakeGroupScreen from '../screens/message/MakeGroupScreen';
-import ManageAccounts from '../screens/profile/settings/ManageAccoutns';
 import MassageScreen from '../screens/message/MassageScreen';
-import MyAllFriends from '../screens/profile/MyAllFriends';
-import {NavigationContainer} from '@react-navigation/native';
+import MembersManage from '../screens/message/MembersMange';
 import NormalConversationScreen from '../screens/message/NormalConversationScreen';
+import UpdateNewFaceDown from '../screens/message/UpdateNewFaceDown';
 import NotificationsScreen from '../screens/notification/NotificationsScreen';
-import PDFViewer from '../screens/sharebooks/PDFViewer';
 import PaymentsScreen from '../screens/payments/PaymentsScreen';
-import PrivacyPolicyScreen from '../screens/profile/settings/PrivacyPolicyScreen';
+import MyAllFriends from '../screens/profile/MyAllFriends';
 import ProfileEditScreen from '../screens/profile/ProfileEditScreen';
 import ProfileScreen from '../screens/profile/ProfileScreen';
-import ResetPasswordScreen from '../screens/Logins/ResetPasswordScreen';
-import SearchScreen from '../screens/search/SearchScreen';
 import SettingScreen from '../screens/profile/SettingScreen';
-import SicGuidelinesScreen from '../screens/profile/settings/SicGuidelinesScreen';
-import SignUpScreen from '../screens/Logins/SignUpScreen';
-import SplashScreen from '../screens/SplashScreen';
-import TermsAndConditions from '../screens/profile/settings/TermsAndConditions';
-import UpdateNewFaceDown from '../screens/message/UpdateNewFaceDown';
-import VerifyEmailScreen from '../screens/Logins/VerifyEmailScreen';
-import VerifySuccessfulScreen from '../screens/Logins/VerifySuccessfulScreen';
 import ViewAllFaceDown from '../screens/profile/ViewAllFaceDown';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {hostUrl} from '../redux/api/baseApi';
-import store from '../redux/store';
+import AboutSicScreen from '../screens/profile/settings/AboutSicScreen';
+import FAQScreen from '../screens/profile/settings/FAQScreen';
+import FeedBackScreen from '../screens/profile/settings/FeedBackScreen';
+import ManageAccounts from '../screens/profile/settings/ManageAccoutns';
+import PrivacyPolicyScreen from '../screens/profile/settings/PrivacyPolicyScreen';
+import SicGuidelinesScreen from '../screens/profile/settings/SicGuidelinesScreen';
+import TermsAndConditions from '../screens/profile/settings/TermsAndConditions';
+import SearchScreen from '../screens/search/SearchScreen';
+import BookShareScreen from '../screens/sharebooks/BookShareScreen';
+import BookShareWithCategory from '../screens/sharebooks/BookShareWithCategory';
+import BooksScreen from '../screens/sharebooks/BooksScreen';
+import PDFViewer from '../screens/sharebooks/PDFViewer';
+import BottomBarRoutes from './BottomBarRoutes';
 
 const Stack = createNativeStackNavigator();
-
-const Routes = () => {
-  const {colors} = useStyles();
-  const {isDark} = useContextApi();
-
-  const {token} = useSelector((state: any) => state?.token);
-
-  const socket = getSocket();
-
-  // const handleDeepLink = (event: any) => {
-  //   const url = event?.url;
-  //   console.log(url);
-  // };
-
-  // React.useEffect(() => {
-  //   // Add deep link listener
-  //   Linking.addEventListener('url', handleDeepLink);
-
-  //   // Handle initial URL if the app is opened from a deep link
-  //   Linking.getInitialURL().then(url => {
-  //     if (url) {
-  //       handleDeepLink({url});
-  //     }
-  //   });
-
-  //   // Clean up the listener
-  //   return () => {
-  //     Linking?.removeAllListeners('url');
-  //   };
-  // }, []);
-
-  React.useEffect(() => {
-    if (token) {
-      if (socket) {
-        console.warn('Socket is already initialized');
-        return;
-      }
-      initiateSocket();
-    }
-  }, []);
-  return (
-    <Stack.Navigator
-      initialRouteName={token ? 'HomeRoutes' : 'Login'}
-      // initialRouteName={'test'}
-      screenOptions={{
-        headerShown: false,
-        statusBarAnimation: 'fade',
-        statusBarColor: colors.bg,
-        statusBarStyle: isDark ? 'light' : 'dark',
-      }}>
-      {/* <Stack.Screen name="Test" component={TestScreen} /> */}
-
-      {/* <Stack.Screen name="TEsting" component={TestScreen} /> */}
-      {/* <Stack.Screen name="Splash" component={SplashScreen} /> */}
-      {/* <Stack.Screen name="Test" component={TextScreen} /> */}
-      <Stack.Screen name="Login" component={LoginScreen} />
-      <Stack.Screen name="Loading" component={LoadingSplash} />
-      <Stack.Screen name="SignUp" component={SignUpScreen} />
-      <Stack.Screen
-        name="EmailConfirmation"
-        component={EmailConfirmationScreen}
-      />
-      <Stack.Screen name="VerifyEmail" component={VerifyEmailScreen} />
-      <Stack.Screen name="ResetPassword" component={ResetPasswordScreen} />
-      <Stack.Screen name="ChangePassword" component={ChangePassword} />
-      <Stack.Screen
-        name="VerifySuccessful"
-        component={VerifySuccessfulScreen}
-      />
-      <Stack.Screen name="DeleteAccount" component={DeleteAccount} />
-
-      {token && (
-        <>
-          {/*=================== under the home ====================== */}
-          <Stack.Screen name="HomeRoutes" component={BottomBarRoutes} />
-          <Stack.Screen
-            name="donation"
-            component={DonationScreen}
-            options={{
-              animation: 'slide_from_right',
-            }}
-          />
-          <Stack.Screen
-            name="Notifications"
-            component={NotificationsScreen}
-            options={{
-              animation: 'slide_from_right',
-            }}
-          />
-          <Stack.Screen
-            name="Payments"
-            component={PaymentsScreen}
-            options={{
-              animation: 'slide_from_right',
-            }}
-          />
-          <Stack.Screen
-            name="Search"
-            component={SearchScreen}
-            options={{
-              animation: 'slide_from_right',
-            }}
-          />
-          <Stack.Screen
-            name="ShareBooks"
-            component={BooksScreen}
-            options={{
-              animation: 'slide_from_right',
-            }}
-          />
-          <Stack.Screen
-            name="BookShare"
-            component={BookShareScreen}
-            options={{
-              animation: 'slide_from_right',
-            }}
-          />
-          <Stack.Screen
-            name="BookShareWithCategory"
-            component={BookShareWithCategory}
-            options={{
-              animation: 'slide_from_right',
-            }}
-          />
-          <Stack.Screen
-            name="Interest"
-            component={InterestScreen}
-            options={{
-              animation: 'slide_from_right',
-            }}
-          />
-          <Stack.Screen
-            name="FaceDownAddMember"
-            component={FaceDownAddMember}
-            options={{
-              animation: 'slide_from_right',
-            }}
-          />
-          {/*======================== Home end ============================ */}
-
-          {/*======================== Friend start ============================ */}
-
-          <Stack.Screen
-            name="FriendsProfile"
-            component={FriendsProfile}
-            options={{
-              animation: 'slide_from_right',
-            }}
-          />
-
-          {/*======================== Friend end ============================ */}
-
-          {/*============================ message screens start ====================*/}
-          <Stack.Screen
-            name="Messages"
-            component={MassageScreen}
-            options={{
-              animation: 'slide_from_right',
-            }}
-          />
-
-          <Stack.Screen
-            name="MakeGroup"
-            component={MakeGroupScreen}
-            options={{
-              animation: 'slide_from_right',
-            }}
-          />
-
-          <Stack.Screen
-            name="GroupConversation"
-            component={GroupConversationScreen}
-            options={{
-              animation: 'slide_from_right',
-            }}
-          />
-          <Stack.Screen
-            name="NormalConversation"
-            component={NormalConversationScreen}
-            options={{
-              animation: 'slide_from_right',
-            }}
-          />
-          <Stack.Screen
-            name="LiveConversation"
-            component={LiveConversationScreen}
-            options={{
-              animation: 'slide_from_right',
-            }}
-          />
-          <Stack.Screen
-            name="LiveMessage"
-            component={LiveMessageScreen}
-            options={{
-              animation: 'slide_from_right',
-            }}
-          />
-          <Stack.Screen
-            name="LiveAddFriends"
-            component={LiveAddFriendsScreen}
-            options={{
-              animation: 'slide_from_right',
-            }}
-          />
-          <Stack.Screen
-            name="UpdateNewFaceDown"
-            component={UpdateNewFaceDown}
-            options={{
-              animation: 'slide_from_right',
-            }}
-          />
-          <Stack.Screen
-            name="CreateFaceDown"
-            component={CreateNewFaceDown}
-            options={{
-              animation: 'slide_from_right',
-            }}
-          />
-          <Stack.Screen
-            name="FaceDownConversation"
-            component={FaceDownConversation}
-            options={{
-              animation: 'slide_from_right',
-            }}
-          />
-
-          {/*============================ message screens end ====================*/}
-
-          {/*======================== Profile start ============================ */}
-          <Stack.Screen
-            name="Profile"
-            component={ProfileScreen}
-            options={{
-              animation: 'slide_from_right',
-            }}
-          />
-          <Stack.Screen
-            name="Settings"
-            component={SettingScreen}
-            options={{
-              animation: 'slide_from_right',
-            }}
-          />
-          <Stack.Screen
-            name="ProfileEdit"
-            component={ProfileEditScreen}
-            options={{
-              animation: 'slide_from_right',
-            }}
-          />
-          <Stack.Screen
-            name="ManageAccounts"
-            component={ManageAccounts}
-            options={{
-              animation: 'slide_from_right',
-            }}
-          />
-          <Stack.Screen
-            name="FAQ"
-            component={FAQScreen}
-            options={{
-              animation: 'slide_from_right',
-            }}
-          />
-          <Stack.Screen
-            name="TermsAndConditions"
-            component={TermsAndConditions}
-            options={{
-              animation: 'slide_from_right',
-            }}
-          />
-          <Stack.Screen
-            name="PrivacyPolicy"
-            component={PrivacyPolicyScreen}
-            options={{
-              animation: 'slide_from_right',
-            }}
-          />
-          <Stack.Screen
-            name="SicGuidelines"
-            component={SicGuidelinesScreen}
-            options={{
-              animation: 'slide_from_right',
-            }}
-          />
-          <Stack.Screen
-            name="AboutSic"
-            component={AboutSicScreen}
-            options={{
-              animation: 'slide_from_right',
-            }}
-          />
-
-          <Stack.Screen
-            name="Feedback"
-            component={FeedBackScreen}
-            options={{
-              animation: 'slide_from_right',
-            }}
-          />
-          <Stack.Screen
-            name="MyAllFriends"
-            component={MyAllFriends}
-            options={{
-              animation: 'slide_from_right',
-            }}
-          />
-          <Stack.Screen
-            name="ViewAllFaceDown"
-            component={ViewAllFaceDown}
-            options={{
-              animation: 'slide_from_right',
-            }}
-          />
-          <Stack.Screen
-            name="PdfViewer"
-            component={PDFViewer}
-            options={{
-              animation: 'slide_from_right',
-            }}
-          />
-          {/*======================== Profile end ============================ */}
-        </>
-      )}
-    </Stack.Navigator>
-  );
-};
-
 const linking = {
   prefixes: [hostUrl],
   config: {
@@ -396,15 +69,360 @@ const linking = {
       donation: {
         path: 'donation',
       },
-      NormalConversation: {
-        path: 'conversation/:id',
+      LiveConversation: {
+        path: 'conversation/:live',
       },
       FriendsProfile: {
-        path: 'profile/:userId',
+        path: 'profile/:id',
+      },
+      HomeRoutes: {
+        path: 'homeRoutes/userProfile',
       },
     },
   },
 };
+const Routes = () => {
+  const {colors} = useStyles();
+  const {isDark} = useContextApi();
+
+  const {token} = useSelector((state: any) => state?.token);
+
+  const socket = getSocket();
+
+  const handleDeepLink = (event: any) => {
+    const url = event?.url;
+    if (url && !token) {
+      Alert.alert('Please Login First');
+    } else {
+      // Linking.openURL(url);
+      if (socket) {
+        console.warn('Socket is already initialized');
+        return;
+      }
+      initiateSocket();
+    }
+  };
+
+  React.useEffect(() => {
+    // Add deep link listener
+    Linking.addEventListener('url', handleDeepLink);
+
+    // Handle initial URL if the app is opened from a deep link
+    Linking.getInitialURL().then(url => {
+      if (url) {
+        handleDeepLink({url});
+      }
+    });
+
+    // Clean up the listener
+    return () => {
+      Linking?.removeAllListeners('url');
+    };
+  }, []);
+
+  React.useEffect(() => {
+    if (token) {
+      if (socket) {
+        console.warn('Socket is already initialized');
+        return;
+      }
+      initiateSocket();
+    }
+  }, []);
+
+  return (
+    <NavigationContainer linking={token && linking}>
+      <SafeAreaView style={{flex: 1}}>
+        <Stack.Navigator
+          initialRouteName={token ? 'HomeRoutes' : 'Login'}
+          // initialRouteName={'test'}
+          screenOptions={{
+            headerShown: false,
+            statusBarAnimation: 'fade',
+            statusBarColor: colors.bg,
+            statusBarStyle: isDark ? 'light' : 'dark',
+          }}>
+          {/* <Stack.Screen name="Test" component={TestScreen} /> */}
+
+          {/* <Stack.Screen name="TEsting" component={TestScreen} /> */}
+          {/* <Stack.Screen name="Splash" component={SplashScreen} /> */}
+          {/* <Stack.Screen name="Test" component={TextScreen} /> */}
+          <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="Loading" component={LoadingSplash} />
+          <Stack.Screen name="SignUp" component={SignUpScreen} />
+          <Stack.Screen
+            name="EmailConfirmation"
+            component={EmailConfirmationScreen}
+          />
+          <Stack.Screen name="VerifyEmail" component={VerifyEmailScreen} />
+          <Stack.Screen name="ResetPassword" component={ResetPasswordScreen} />
+          <Stack.Screen name="ChangePassword" component={ChangePassword} />
+          <Stack.Screen
+            name="VerifySuccessful"
+            component={VerifySuccessfulScreen}
+          />
+          <Stack.Screen name="DeleteAccount" component={DeleteAccount} />
+
+          {token && (
+            <>
+              {/*=================== under the home ====================== */}
+              <Stack.Screen name="HomeRoutes" component={BottomBarRoutes} />
+              <Stack.Screen
+                name="donation"
+                component={DonationScreen}
+                options={{
+                  animation: 'slide_from_right',
+                }}
+              />
+              <Stack.Screen
+                name="Notifications"
+                component={NotificationsScreen}
+                options={{
+                  animation: 'slide_from_right',
+                }}
+              />
+              <Stack.Screen
+                name="Payments"
+                component={PaymentsScreen}
+                options={{
+                  animation: 'slide_from_right',
+                }}
+              />
+              <Stack.Screen
+                name="Search"
+                component={SearchScreen}
+                options={{
+                  animation: 'slide_from_right',
+                }}
+              />
+              <Stack.Screen
+                name="ShareBooks"
+                component={BooksScreen}
+                options={{
+                  animation: 'slide_from_right',
+                }}
+              />
+              <Stack.Screen
+                name="BookShare"
+                component={BookShareScreen}
+                options={{
+                  animation: 'slide_from_right',
+                }}
+              />
+              <Stack.Screen
+                name="BookShareWithCategory"
+                component={BookShareWithCategory}
+                options={{
+                  animation: 'slide_from_right',
+                }}
+              />
+              <Stack.Screen
+                name="Interest"
+                component={InterestScreen}
+                options={{
+                  animation: 'slide_from_right',
+                }}
+              />
+              <Stack.Screen
+                name="MembersManage"
+                component={MembersManage}
+                options={{
+                  animation: 'slide_from_right',
+                }}
+              />
+              {/*======================== Home end ============================ */}
+
+              {/*======================== Friend start ============================ */}
+
+              <Stack.Screen
+                name="FriendsProfile"
+                component={FriendsProfile}
+                options={{
+                  animation: 'slide_from_right',
+                }}
+              />
+
+              {/*======================== Friend end ============================ */}
+
+              {/*============================ message screens start ====================*/}
+              <Stack.Screen
+                name="Messages"
+                component={MassageScreen}
+                options={{
+                  animation: 'slide_from_right',
+                }}
+              />
+
+              <Stack.Screen
+                name="MakeGroup"
+                component={MakeGroupScreen}
+                options={{
+                  animation: 'slide_from_right',
+                }}
+              />
+
+              <Stack.Screen
+                name="GroupConversation"
+                component={GroupConversationScreen}
+                options={{
+                  animation: 'slide_from_right',
+                }}
+              />
+              <Stack.Screen
+                name="NormalConversation"
+                component={NormalConversationScreen}
+                options={{
+                  animation: 'slide_from_right',
+                }}
+              />
+              <Stack.Screen
+                name="LiveConversation"
+                component={LiveConversationScreen}
+                options={{
+                  animation: 'slide_from_right',
+                }}
+              />
+              <Stack.Screen
+                name="LiveMessage"
+                component={LiveMessageScreen}
+                options={{
+                  animation: 'slide_from_right',
+                }}
+              />
+              <Stack.Screen
+                name="LiveAddFriends"
+                component={LiveAddFriendsScreen}
+                options={{
+                  animation: 'slide_from_right',
+                }}
+              />
+              <Stack.Screen
+                name="UpdateNewFaceDown"
+                component={UpdateNewFaceDown}
+                options={{
+                  animation: 'slide_from_right',
+                }}
+              />
+              <Stack.Screen
+                name="CreateFaceDown"
+                component={CreateNewFaceDown}
+                options={{
+                  animation: 'slide_from_right',
+                }}
+              />
+              <Stack.Screen
+                name="FaceDownConversation"
+                component={FaceDownConversation}
+                options={{
+                  animation: 'slide_from_right',
+                }}
+              />
+
+              {/*============================ message screens end ====================*/}
+
+              {/*======================== Profile start ============================ */}
+              <Stack.Screen
+                name="Profile"
+                component={ProfileScreen}
+                options={{
+                  animation: 'slide_from_right',
+                }}
+              />
+              <Stack.Screen
+                name="Settings"
+                component={SettingScreen}
+                options={{
+                  animation: 'slide_from_right',
+                }}
+              />
+              <Stack.Screen
+                name="ProfileEdit"
+                component={ProfileEditScreen}
+                options={{
+                  animation: 'slide_from_right',
+                }}
+              />
+              <Stack.Screen
+                name="ManageAccounts"
+                component={ManageAccounts}
+                options={{
+                  animation: 'slide_from_right',
+                }}
+              />
+              <Stack.Screen
+                name="FAQ"
+                component={FAQScreen}
+                options={{
+                  animation: 'slide_from_right',
+                }}
+              />
+              <Stack.Screen
+                name="TermsAndConditions"
+                component={TermsAndConditions}
+                options={{
+                  animation: 'slide_from_right',
+                }}
+              />
+              <Stack.Screen
+                name="PrivacyPolicy"
+                component={PrivacyPolicyScreen}
+                options={{
+                  animation: 'slide_from_right',
+                }}
+              />
+              <Stack.Screen
+                name="SicGuidelines"
+                component={SicGuidelinesScreen}
+                options={{
+                  animation: 'slide_from_right',
+                }}
+              />
+              <Stack.Screen
+                name="AboutSic"
+                component={AboutSicScreen}
+                options={{
+                  animation: 'slide_from_right',
+                }}
+              />
+
+              <Stack.Screen
+                name="Feedback"
+                component={FeedBackScreen}
+                options={{
+                  animation: 'slide_from_right',
+                }}
+              />
+              <Stack.Screen
+                name="MyAllFriends"
+                component={MyAllFriends}
+                options={{
+                  animation: 'slide_from_right',
+                }}
+              />
+              <Stack.Screen
+                name="ViewAllFaceDown"
+                component={ViewAllFaceDown}
+                options={{
+                  animation: 'slide_from_right',
+                }}
+              />
+              <Stack.Screen
+                name="PdfViewer"
+                component={PDFViewer}
+                options={{
+                  animation: 'slide_from_right',
+                }}
+              />
+              {/*======================== Profile end ============================ */}
+            </>
+          )}
+        </Stack.Navigator>
+      </SafeAreaView>
+    </NavigationContainer>
+  );
+};
+// console.log(hostUrl);
+
 function AppRoutes() {
   const [isSplash, setIsSplash] = React.useState(true);
 
@@ -416,11 +434,7 @@ function AppRoutes() {
         ) : (
           <SafeAreaProvider>
             <GestureHandlerRootView>
-              <NavigationContainer linking={linking}>
-                <SafeAreaView style={{flex: 1}}>
-                  <Routes />
-                </SafeAreaView>
-              </NavigationContainer>
+              <Routes />
             </GestureHandlerRootView>
           </SafeAreaProvider>
         )}

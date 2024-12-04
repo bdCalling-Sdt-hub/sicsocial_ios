@@ -18,6 +18,7 @@ interface BackButtonWithTitleProps extends NavigProps<null> {
   button?: boolean;
   buttonComponent?: React.ReactNode;
   thirdRoll?: boolean;
+  height: number;
 }
 
 const BackButtonWithTitle = ({
@@ -34,13 +35,14 @@ const BackButtonWithTitle = ({
   onOptions,
   button,
   buttonComponent,
+  height = 80,
 }: BackButtonWithTitleProps) => {
   return (
     <View
       style={[
         {
-          height: 80,
-          paddingTop: 20,
+          height: height,
+          // paddingTop: 20,
           paddingHorizontal: 21,
           flexDirection: 'row',
           justifyContent: offBack ? 'center' : 'space-between',

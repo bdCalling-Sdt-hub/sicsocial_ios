@@ -1,5 +1,5 @@
-import {ISingleLive} from '../interface/live';
 import {api} from '../api/baseApi';
+import {ISingleLive} from '../interface/live';
 
 export const liveSlices = api.injectEndpoints({
   endpoints: builder => ({
@@ -49,6 +49,14 @@ export const liveSlices = api.injectEndpoints({
       }),
       invalidatesTags: ['live'],
     }),
+    updateLive: builder.mutation({
+      query: data => ({
+        url: `/live/update`,
+        method: 'PATCH',
+        body: data,
+      }),
+      invalidatesTags: ['live'],
+    }),
   }),
 });
 
@@ -59,4 +67,5 @@ export const {
   useGetLiveChatQuery,
   useRequestMutation,
   useLeaveLiveMutation,
+  useUpdateLiveMutation,
 } = liveSlices;

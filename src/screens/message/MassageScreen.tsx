@@ -9,18 +9,18 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {height, makeImage} from '../../utils/utils';
 import {useContextApi, useStyles} from '../../context/ContextApi';
+import {height, makeImage} from '../../utils/utils';
 
-import MessageCard from '../../components/conversation/MessageCard';
-import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
-import {NavigProps} from '../../interfaces/NaviProps';
+import {format} from 'date-fns';
 import React from 'react';
 import {SvgXml} from 'react-native-svg';
-import {format} from 'date-fns';
-import {getSocket} from '../../redux/services/socket';
-import {useGetChatListQuery} from '../../redux/apiSlices/chatSlices';
+import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
+import MessageCard from '../../components/conversation/MessageCard';
+import {NavigProps} from '../../interfaces/NaviProps';
 import {useGetUserProfileQuery} from '../../redux/apiSlices/authSlice';
+import {useGetChatListQuery} from '../../redux/apiSlices/chatSlices';
+import {getSocket} from '../../redux/services/socket';
 
 const MassageScreen = ({navigation}: NavigProps<null>) => {
   const {
@@ -170,19 +170,7 @@ const MassageScreen = ({navigation}: NavigProps<null>) => {
           />
         }
         keyboardShouldPersistTaps="always">
-        <View
-          style={{
-            borderBottomWidth: 0.5,
-            borderTopWidth: 0.5,
-            borderTopColor: isDark
-              ? 'rgba(217, 217, 217, 0.1)'
-              : 'rgba(217, 217, 217, 1)',
-            borderBlockColor: isDark
-              ? 'rgba(217, 217, 217, 0.1)'
-              : 'rgba(217, 217, 217, 1)',
-            paddingVertical: 10,
-            marginTop: 10,
-          }}>
+        <View>
           <FlatList
             showsHorizontalScrollIndicator={false}
             keyboardShouldPersistTaps="always"

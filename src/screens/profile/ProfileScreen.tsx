@@ -7,7 +7,6 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  ToastAndroid,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -18,17 +17,15 @@ import {
 } from '../../redux/apiSlices/facedwonSlice';
 import {isSmall, makeImage} from '../../utils/utils';
 
-import Clipboard from '@react-native-clipboard/clipboard';
 import {format} from 'date-fns';
 import React from 'react';
 import {SvgXml} from 'react-native-svg';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import ConversationalCard from '../../components/common/ConversationalCard';
-import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
 import {NavigProps} from '../../interfaces/NaviProps';
 import {useGetUserProfileQuery} from '../../redux/apiSlices/authSlice';
 import {useGetFriendQuery} from '../../redux/apiSlices/friendsSlices';
 import {useGetNewsFeetQuery} from '../../redux/apiSlices/homeSlices';
+import {useShearLink} from '../../utils/conentShare';
 
 const ProfileScreen = ({navigation}: NavigProps<null>) => {
   const {
@@ -57,6 +54,7 @@ const ProfileScreen = ({navigation}: NavigProps<null>) => {
   const [modalVisible, setModalVisible] = React.useState(false);
   const {isLive, setIsLive} = useContextApi();
   const {colors, font} = useStyles();
+
   return (
     <View
       style={{
@@ -228,7 +226,13 @@ const ProfileScreen = ({navigation}: NavigProps<null>) => {
             gap: isSmall() ? 8 : 24,
           }}>
           <TouchableOpacity
-            onPress={() => setModalVisible(!modalVisible)}
+            onPress={() =>
+              useShearLink({
+                title: 'Share',
+                message: 'Share your profile with your friends',
+                url: `https://sic.org/profile/${userProfile?.data?._id}`,
+              })
+            }
             style={{
               backgroundColor: colors.secondaryColor,
               height: 35,
@@ -708,75 +712,6 @@ const ProfileScreen = ({navigation}: NavigProps<null>) => {
           ))}
         </View>
       </ScrollView>
-
-      <ModalOfBottom
-        key={'modal'}
-        modalVisible={modalVisible}
-        setModalVisible={setModalVisible}
-        backButton
-        containerColor={colors.bg}>
-        <View>
-          <Text
-            style={{
-              textAlign: 'center',
-              fontSize: 20,
-              fontFamily: font.PoppinsSemiBold,
-              color: colors.textColor.neutralColor,
-            }}>
-            Share
-          </Text>
-          <TouchableOpacity
-            style={{}}
-            onPress={() => {
-              Linking.openURL(
-                `https://192.168.12.202:5000/profile/672886329f6598ff131b1960`,
-              );
-            }}>
-            <Text
-              style={{
-                fontFamily: font.Poppins,
-                fontSize: 12,
-                color: colors.blue,
-                marginTop: '10%',
-              }}>
-              9dc7-103-174-189-193.ngrok-free.app
-            </Text>
-          </TouchableOpacity>
-          <View
-            style={{
-              justifyContent: 'center',
-              alignItems: 'center',
-              marginTop: '10%',
-            }}>
-            <TouchableOpacity
-              onPress={() => {
-                Clipboard.setString(
-                  `http://192.168.12.202:5000/profile/672886329f6598ff131b1960`,
-                );
-                ToastAndroid.showWithGravity(
-                  `link copy to http://192.168.12.202:5000/profile/672886329f6598ff131b1960`,
-                  ToastAndroid.SHORT,
-                  ToastAndroid.CENTER,
-                );
-              }}
-              style={{
-                flexDirection: 'row',
-                gap: 8,
-                width: 84,
-                justifyContent: 'center',
-                alignItems: 'center',
-                padding: 8,
-                elevation: 2,
-                backgroundColor: colors.white,
-                borderRadius: 100,
-                marginBottom: 10,
-              }}>
-              <MaterialCommunityIcons name="content-copy" size={15} />
-              <Text>Copy</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </ModalOfBottom>
 
       <View
         style={{

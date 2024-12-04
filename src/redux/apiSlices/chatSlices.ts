@@ -26,6 +26,12 @@ export const chatSlices = api.injectEndpoints({
       }),
       invalidatesTags: ['chat'],
     }),
+    getMembers: builder.query({
+      query: id => ({
+        url: `/chat/participants/${id}`,
+      }),
+      providesTags: ['chat'],
+    }),
   }),
 });
 
@@ -33,5 +39,6 @@ export const {
   useGetChatListQuery,
   useCreateChatMutation,
   useAddMemberMutation,
+  useGetMembersQuery,
   usePrefetch: useChatPrefetch,
 } = chatSlices;

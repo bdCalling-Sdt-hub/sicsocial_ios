@@ -1,3 +1,4 @@
+import React, {SetStateAction} from 'react';
 import {
   Image,
   ScrollView,
@@ -7,24 +8,23 @@ import {
   View,
   useWindowDimensions,
 } from 'react-native';
-import React, {SetStateAction} from 'react';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 
-import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
-import CustomModal from '../../components/common/customModal/CustomModal';
+import {SvgXml} from 'react-native-svg';
 import DateTimePicker from 'react-native-ui-datepicker';
 import {GridList} from 'react-native-ui-lib';
+import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
+import CustomModal from '../../components/common/customModal/CustomModal';
+import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
+import NormalButton from '../../components/common/NormalButton';
+import {useStyles} from '../../context/ContextApi';
+import {NavigProps} from '../../interfaces/NaviProps';
+import {useGetAllBooksQuery} from '../../redux/apiSlices/bookSlices';
+import {useCreateChatMutation} from '../../redux/apiSlices/chatSlices';
+import {useUpdateFacedownMutation} from '../../redux/apiSlices/facedwonSlice';
 import {IBook} from '../../redux/interface/book';
 import {IParticipant} from '../../redux/interface/participants';
-import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
-import {NavigProps} from '../../interfaces/NaviProps';
-import NormalButton from '../../components/common/NormalButton';
-import {SvgXml} from 'react-native-svg';
 import {makeImage} from '../../utils/utils';
-import {useCreateChatMutation} from '../../redux/apiSlices/chatSlices';
-import {useGetAllBooksQuery} from '../../redux/apiSlices/bookSlices';
-import {useStyles} from '../../context/ContextApi';
-import {useUpdateFacedownMutation} from '../../redux/apiSlices/facedwonSlice';
 
 const UpdateNewFaceDown = ({navigation, route}: NavigProps<any>) => {
   const {colors, font, window} = useStyles();
@@ -44,7 +44,6 @@ const UpdateNewFaceDown = ({navigation, route}: NavigProps<any>) => {
   // console.log(route?.params?.data);
 
   const [booksModal, setBooksModal] = React.useState(false);
-  const [selectBook, setSelectBook] = React.useState<number>();
   const [faceDownInfo, setFaceDownInfo] = React.useState<{
     url: string;
     book: IBook;
@@ -87,7 +86,7 @@ const UpdateNewFaceDown = ({navigation, route}: NavigProps<any>) => {
   // console.log(selectDate);
 
   // console.log(faceDownInfo);
-  const handleCreateFaceDown = React.useCallback(
+  const handleUpdateFaceDown = React.useCallback(
     async (Udata: any) => {
       // console.log(Udata);
       if (!Udata?.schedule) {
@@ -109,8 +108,7 @@ const UpdateNewFaceDown = ({navigation, route}: NavigProps<any>) => {
           name: 'image.jpg',
         });
       }
-      console.log(formData);
-      updateFaceDown({id: route?.params?.data?.id, data: formData}).then(
+      updateFaceDown({id: route?.params?.data?._id, data: formData}).then(
         faceDown => {
           console.log(faceDown);
           if (faceDown.data?.data?._id) {
@@ -505,7 +503,7 @@ const UpdateNewFaceDown = ({navigation, route}: NavigProps<any>) => {
         <NormalButton
           title="Create Face Dwn"
           onPress={() => {
-            handleCreateFaceDown(faceDownInfo);
+            handleUpdateFaceDown(faceDownInfo);
             // navigation?.navigate('FaceDownConversation');
           }}
         />

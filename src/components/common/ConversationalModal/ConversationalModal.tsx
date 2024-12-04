@@ -1,5 +1,7 @@
+import React, {useEffect, useState} from 'react';
 import {
-  ActivityIndicator,
+  Alert,
+  DeviceEventEmitter,
   Image,
   Modal,
   PermissionsAndroid,
@@ -10,6 +12,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import Animated, {
   Easing,
   interpolate,
@@ -18,28 +21,26 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import Carousel, {TAnimationStyle} from 'react-native-reanimated-carousel';
-import React, {useEffect, useState} from 'react';
-import {isSmall, isTablet} from '../../../utils/utils';
-import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import {useContextApi, useStyles} from '../../../context/ContextApi';
+import {isSmall, isTablet, makeImage} from '../../../utils/utils';
 
-import {AnimatedCircularProgress} from 'react-native-circular-progress';
 import AudioRecorderPlayer from 'react-native-audio-recorder-player';
-import CustomModal from '../../../components/common/customModal/CustomModal';
-import {DeviceEventEmitter} from 'react-native';
-import {GridList} from 'react-native-ui-lib';
-import {IConversationProps} from '../../../screens/home/HomeScreen';
-import {ICreateMessage} from '../../../redux/interface/interface';
-import {LinkPreview} from '@flyerhq/react-native-link-preview';
-import ModalOfBottom from '../../../components/common/customModal/ModalOfButtom';
-import {NavigProps} from '../../../interfaces/NaviProps';
-import NormalButton from '../../../components/common/NormalButton';
-import {SvgXml} from 'react-native-svg';
-import {TemBooks} from '../../../utils/GetRandomColor';
+import {AnimatedCircularProgress} from 'react-native-circular-progress';
 import {TextInput} from 'react-native-gesture-handler';
+import {SvgXml} from 'react-native-svg';
+import {GridList} from 'react-native-ui-lib';
+import CustomModal from '../../../components/common/customModal/CustomModal';
+import ModalOfBottom from '../../../components/common/customModal/ModalOfButtom';
+import NormalButton from '../../../components/common/NormalButton';
+import {NavigProps} from '../../../interfaces/NaviProps';
+import {useGetAllBooksQuery} from '../../../redux/apiSlices/bookSlices';
 import {useCreateChatMutation} from '../../../redux/apiSlices/chatSlices';
-import {useCreateMessageMutation} from '../../../redux/apiSlices/messageSlies';
 import {useGetFaceDownQuery} from '../../../redux/apiSlices/facedwonSlice';
+import {useCreateLiveMutation} from '../../../redux/apiSlices/liveSlice';
+import {useCreateMessageMutation} from '../../../redux/apiSlices/messageSlies';
+import {IBook} from '../../../redux/interface/book';
+import {ICreateMessage} from '../../../redux/interface/interface';
+import {IConversationProps} from '../../../screens/home/HomeScreen';
 
 const data = [
   {
@@ -150,6 +151,9 @@ const ConversationalModal = ({navigation}: ConversationalModalProps) => {
     font,
     window: {height, width},
   } = useStyles();
+  const {data: BooksData} = useGetAllBooksQuery({});
+  const [booksModal, setBooksModal] = React.useState(false);
+  const [selectBook, setSelectBook] = React.useState<IBook>();
 
   const {isLive, setIsLive, isDark} = useContextApi();
   const [modalVisible, setModalVisible] = React.useState(false);
@@ -164,10 +168,8 @@ const ConversationalModal = ({navigation}: ConversationalModalProps) => {
   const [imageAssets, setImageAssets] = React.useState<any>({});
   const textInputRef = React.useRef<TextInput>(null);
   const [selectOptionItem, setSelectOptionItem] = React.useState<number>();
-  const [booksModal, setBooksModal] = React.useState(false);
-  const [selectBook, setSelectBook] = React.useState<number>();
   const [liveModal, setLiveModal] = React.useState(false);
-  const [linkUrl, setLinkUrl] = React.useState('');
+  const [liveInfo, setLiveInfo] = React.useState<any>();
 
   const [createChartInfo, setCreateChatInfo] = React.useState();
   const [createMessageInfo, setCreateMessageInfo] =
@@ -590,11 +592,49 @@ const ConversationalModal = ({navigation}: ConversationalModalProps) => {
     [createChartInfo, createMessageInfo],
   );
 
+  const [createLive] = useCreateLiveMutation();
+
+  const handleCreateLive = React.useCallback(async () => {
+    // console.log(liveInfo?.name);
+    if (!selectBook?._id) return Alert.alert('Please Select the book');
+    if (!liveInfo?.name) return Alert.alert('Please give a live name');
+    const chatRes = await createChat({type: 'public'});
+    // console.log(selectBook);
+
+    if (chatRes?.data?.data?._id) {
+      const createdLive = await createLive({
+        chatId: chatRes?.data?.data?._id,
+        role: 'host',
+        name: liveInfo?.name,
+        book: selectBook?._id,
+      });
+      if (createdLive?.data) {
+        setLiveInfo(null);
+        setSelectBook(null);
+        setLiveModal(false);
+
+        navigation?.navigate('LiveConversation', {
+          live: createdLive?.data?.data?._id,
+        });
+      }
+      if (createdLive?.error) {
+        Alert.alert(
+          'Warring',
+          'You have already live please end th previous session',
+        );
+
+        console.log('Warring', createdLive?.error?.data?.message);
+      }
+    } else {
+      console.log(chatRes?.error?.data?.message);
+    }
+  }, [selectBook, liveInfo]);
+
   useEffect(() => {
     setItems(smallItems?.concat(userFaceDown?.data));
   }, [userFaceDown?.data]);
   // console.log(createChartInfo);
-  // console.log(items);
+  // console.log(selectBook);
   return (
     <>
       <Animated.View
@@ -1265,8 +1305,6 @@ const ConversationalModal = ({navigation}: ConversationalModalProps) => {
         // backButton
         containerColor={colors.bg}>
         <View
-          // showsVerticalScrollIndicator={false}
-          // keyboardShouldPersistTaps="always"
           style={{
             gap: 25,
           }}>
@@ -1279,48 +1317,7 @@ const ConversationalModal = ({navigation}: ConversationalModalProps) => {
             }}>
             Live setup
           </Text>
-          <View
-            style={{
-              backgroundColor: isDark
-                ? colors.neutralColor
-                : colors.gray.variant,
-              paddingHorizontal: 20,
-              paddingVertical: 10,
-              borderRadius: 50,
-              flexDirection: 'row',
-              gap: 15,
-            }}>
-            <Image
-              style={{
-                width: 24,
-                height: 24,
-                resizeMode: 'contain',
-              }}
-              source={
-                isDark
-                  ? require('../../../assets/icons/modalIcons/earthBlack.png')
-                  : require('../../../assets/icons/modalIcons/earthyGray.png')
-              }
-            />
-            <View>
-              <Text
-                style={{
-                  fontFamily: font.PoppinsSemiBold,
-                  fontSize: 14,
-                  color: colors.textColor.neutralColor,
-                }}>
-                Public
-              </Text>
-              <Text
-                style={{
-                  fontFamily: font.Poppins,
-                  fontSize: 12,
-                  color: colors.textColor.neutralColor,
-                }}>
-                Everyone can join this room
-              </Text>
-            </View>
-          </View>
+
           <View>
             <View
               style={{
@@ -1335,8 +1332,8 @@ const ConversationalModal = ({navigation}: ConversationalModalProps) => {
                 Add title
               </Text>
               <TextInput
-                value="Asadullah calling live"
-                placeholderTextColor={colors.textColor.light}
+                value={liveInfo?.name}
+                placeholderTextColor={colors.textColor.gray}
                 style={{
                   fontFamily: font.Poppins,
                   backgroundColor: colors.secondaryColor,
@@ -1346,7 +1343,12 @@ const ConversationalModal = ({navigation}: ConversationalModalProps) => {
                   height: 56,
                   color: colors.textColor.neutralColor,
                 }}
-                placeholder="type "
+                onChangeText={text =>
+                  setLiveInfo({
+                    name: text,
+                  })
+                }
+                placeholder="title"
               />
             </View>
           </View>
@@ -1366,105 +1368,30 @@ const ConversationalModal = ({navigation}: ConversationalModalProps) => {
               Share content
             </Text>
 
-            {linkUrl ? (
-              <LinkPreview
-                text={linkUrl}
-                enableAnimation
-                renderLinkPreview={({
-                  aspectRatio,
-                  containerWidth,
-                  previewData,
-                }) => {
-                  // console.log(previewData);
-                  return (
-                    <>
-                      {previewData?.image ? (
-                        <View
-                          style={{
-                            width: '90%',
-                            height: height * 0.1,
-                            backgroundColor: previewData?.title
-                              ? colors.secondaryColor
-                              : colors.white,
-                            borderRadius: 15,
+            <TouchableOpacity activeOpacity={0.8}>
+              {selectBook && (
+                <Image
+                  resizeMode="stretch"
+                  style={{
+                    borderRadius: 24,
 
-                            flexDirection: 'row',
-                            // paddingHorizontal: '4%',
-                            gap: 10,
-                            alignSelf: 'center',
-                          }}>
-                          {previewData?.image && (
-                            <Image
-                              source={{uri: previewData?.image?.url}}
-                              style={{
-                                width: width * 0.27,
-                                height: height * 0.1,
-                                borderRadius: 15,
-                              }}
-                            />
-                          )}
-                          <View
-                            style={{
-                              width: width * 0.45,
-                              height: '100%',
-                              // alignItems: 'center',
-                              justifyContent: 'center',
-                            }}>
-                            <Text
-                              style={{
-                                fontFamily: font.PoppinsSemiBold,
-                                fontSize: 14,
-                                color: colors.textColor.primaryColor,
-                                marginTop: -15,
-                              }}
-                              numberOfLines={1}>
-                              {previewData?.title}
-                            </Text>
-
-                            <Text
-                              numberOfLines={1}
-                              style={{
-                                marginTop: 10,
-                                fontFamily: font.Poppins,
-                                fontSize: 10,
-                                color: colors.textColor.primaryColor,
-                              }}>
-                              {previewData?.link}
-                            </Text>
-                          </View>
-                          {/* <Text>{previewData?.link}</Text> */}
-                          {/* {!previewData?.link && <Text>None</Text>} */}
-                        </View>
-                      ) : (
-                        <ActivityIndicator />
-                      )}
-                    </>
-                  );
-                }}
-              />
-            ) : (
-              <TouchableOpacity activeOpacity={0.8}>
-                {selectBook && (
-                  <Image
-                    resizeMode="stretch"
-                    style={{
-                      borderRadius: 24,
-
-                      height: 150,
-                      width: 120,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                    }}
-                    source={selectBook}
-                  />
-                )}
-              </TouchableOpacity>
-            )}
+                    height: 150,
+                    width: 120,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
+                  source={{
+                    uri: makeImage(selectBook?.bookImage),
+                  }}
+                />
+              )}
+            </TouchableOpacity>
 
             <View
               style={{
                 flexDirection: 'row',
                 gap: 10,
+                paddingHorizontal: 10,
               }}>
               {/* <TextInput
                 placeholder="shear url/link"
@@ -1558,15 +1485,16 @@ const ConversationalModal = ({navigation}: ConversationalModalProps) => {
           </View>
           <NormalButton
             onPress={() => {
-              setLiveModal(false);
-              navigation?.navigate('LiveConversation');
+              handleCreateLive();
+              // setLiveModal(false);
+              // navigation?.navigate('LiveConversation');
             }}
             title="Start Live"
           />
         </View>
       </ModalOfBottom>
 
-      {/*===================== book selection modal  =====================================*/}
+      {/* book selection modal  */}
       <CustomModal
         modalVisible={booksModal}
         setModalVisible={setBooksModal}
@@ -1604,63 +1532,12 @@ const ConversationalModal = ({navigation}: ConversationalModalProps) => {
               />
             </View>
           </View>
-          {/* <View
-            style={{
-              borderBottomWidth: 1,
-              borderBlockColor: 'rgba(217, 217, 217, 1)',
-            }}>
-            <FlatList
-              showsHorizontalScrollIndicator={false}
-              keyboardShouldPersistTaps="always"
-              horizontal
-              contentContainerStyle={{
-                gap: 16,
-                paddingHorizontal: 20,
-                paddingTop: 20,
-                paddingBottom: 15,
-              }}
-              data={TemBooks}
-              renderItem={item => (
-                <>
-                  <TouchableOpacity
-                    onPress={() => {
-                      setSelectOptionItem(item.index);
-                    }}
-                    style={{
-                      backgroundColor:
-                        selectOptionItem === item.index
-                          ? colors.primaryColor
-                          : colors.secondaryColor,
-                      height: 35,
-                      paddingHorizontal: 20,
-                      // paddingVertical: 5,
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      borderRadius: 50,
-                    }}>
-                    <Text
-                      style={{
-                        color:
-                          selectOptionItem === item.index
-                            ? colors.textColor.white
-                            : colors.textColor.light,
-                        fontSize: 12,
-                        fontFamily: font.PoppinsMedium,
-                        textAlign: 'center',
-                      }}>
-                      {item.item.content}
-                    </Text>
-                  </TouchableOpacity>
-                </>
-              )}
-            />
-          </View> */}
 
           <GridList
             showsVerticalScrollIndicator={false}
             containerWidth={width * 0.82}
             numColumns={2}
-            data={TemBooks}
+            data={BooksData?.data}
             columnWrapperStyle={{
               gap: 20,
               alignSelf: 'center',
@@ -1672,9 +1549,8 @@ const ConversationalModal = ({navigation}: ConversationalModalProps) => {
             renderItem={item => (
               <TouchableOpacity
                 onPress={() => {
+                  setSelectBook(item?.item);
                   setBooksModal(false);
-                  setSelectBook(item?.item.image);
-                  // navigation?.navigate('BookShare', {data: item.item});
                 }}
                 style={{
                   // elevation: 2,
@@ -1699,7 +1575,9 @@ const ConversationalModal = ({navigation}: ConversationalModalProps) => {
                       borderWidth: 2,
                       borderColor: colors.bg,
                     }}
-                    source={item.item.image}
+                    source={{
+                      uri: makeImage(item.item.bookImage),
+                    }}
                   />
                 </View>
                 <View
@@ -1715,7 +1593,7 @@ const ConversationalModal = ({navigation}: ConversationalModalProps) => {
                       fontSize: 14,
                       fontFamily: font.PoppinsMedium,
                     }}>
-                    {item.item.title}
+                    {item.item.name}
                   </Text>
                   <Text
                     style={{

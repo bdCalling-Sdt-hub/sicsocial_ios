@@ -44,8 +44,9 @@ const PDFViewer = ({route, navigation}: NavigProps<any>) => {
   }
 
   return (
-    <View style={{flex: 1}}>
+    <View style={{flex: 1, backgroundColor: colors?.bg}}>
       <BackButtonWithTitle
+        height={60}
         navigation={navigation}
         title="Back"
         containerStyle={{

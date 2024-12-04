@@ -1,43 +1,39 @@
+import React, {useEffect} from 'react';
+import {
+  Image,
+  RefreshControl,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
-import {
-  Image,
-  Linking,
-  RefreshControl,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  ToastAndroid,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import React, {useEffect} from 'react';
-import {height, isTablet} from '../../utils/utils';
 import {useContextApi, useStyles} from '../../context/ContextApi';
+import {height, isTablet} from '../../utils/utils';
 
-import Clipboard from '@react-native-clipboard/clipboard';
+import {FlashList} from '@shopify/flash-list';
+import {format} from 'date-fns';
+import LinearGradient from 'react-native-linear-gradient';
+import {SvgXml} from 'react-native-svg';
+import {useDispatch} from 'react-redux';
 import ConversationalCard from '../../components/common/ConversationalCard';
 import ConversationalModal from '../../components/common/ConversationalModal/ConversationalModal';
-import {FlashList} from '@shopify/flash-list';
 import {IConversationProps} from '../../interfaces/Interface';
-import LinearGradient from 'react-native-linear-gradient';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
 import {NavigProps} from '../../interfaces/NaviProps';
-import {SvgXml} from 'react-native-svg';
-import {format} from 'date-fns';
-import {getSocket} from '../../redux/services/socket';
 import {imageUrl} from '../../redux/api/baseApi';
-import {setUser} from '../../redux/services/userSlice';
-import {useAddMemberMutation} from '../../redux/apiSlices/chatSlices';
-import {useDispatch} from 'react-redux';
 import {useGetDonationQuery} from '../../redux/apiSlices/additionalSlices';
-import {useGetNewsFeetQuery} from '../../redux/apiSlices/homeSlices';
 import {useGetUserProfileQuery} from '../../redux/apiSlices/authSlice';
+import {useAddMemberMutation} from '../../redux/apiSlices/chatSlices';
+import {useGetNewsFeetQuery} from '../../redux/apiSlices/homeSlices';
 import {useJoinLiveMutation} from '../../redux/apiSlices/liveSlice';
+import {getSocket} from '../../redux/services/socket';
+import {setUser} from '../../redux/services/userSlice';
+import {useShearLink} from '../../utils/conentShare';
 
 const HomeScreen = ({navigation}: NavigProps<null>) => {
   const {isLive, setIsLive, isDark} = useContextApi();
@@ -111,7 +107,13 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
         conversationStyle="donation"
         conversationTitle={item?.details?.title}
         conversationSubtitle={item?.details?.content}
-        onDonationShearPress={() => setModalVisible(true)}
+        onDonationShearPress={() =>
+          useShearLink({
+            title: 'Share Donation Link',
+            message: 'Share Donation Link',
+            url: `https://sic.org/donation/`,
+          })
+        }
         onDonationViewDetailsPress={() =>
           navigation?.navigate('donation', {data: item})
         }
@@ -289,7 +291,7 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
                   }).then(res => {
                     // console.log(res);
                     navigation?.navigate('LiveConversation', {
-                      data: {id: item?._id, live: item.live},
+                      data: {live: item.live},
                     });
                   });
                 } else {
@@ -352,80 +354,6 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
       {/*==================== Body part Start ===================  */}
 
       <ConversationalModal navigation={navigation} />
-
-      {/* donation modal  */}
-      <ModalOfBottom
-        modalVisible={modalVisible}
-        setModalVisible={setModalVisible}>
-        <View>
-          <Text
-            style={{
-              textAlign: 'center',
-              fontSize: 20,
-              fontFamily: font.PoppinsSemiBold,
-              color: colors.textColor.neutralColor,
-            }}>
-            Share Integrity Donation
-          </Text>
-          <TouchableOpacity
-            style={{}}
-            onPress={() => {
-              Linking.openURL('https://www.sic.com/donation');
-            }}>
-            <Text
-              style={{
-                fontFamily: font.Poppins,
-                fontSize: 12,
-                color: colors.blue,
-                marginTop: '10%',
-              }}>
-              https://www.sic.com/donation
-            </Text>
-          </TouchableOpacity>
-          <View
-            style={{
-              justifyContent: 'center',
-              alignItems: 'center',
-              marginTop: '10%',
-            }}>
-            <TouchableOpacity
-              onPress={() => {
-                Clipboard.setString('https://www.sic.com/donation');
-                ToastAndroid.showWithGravity(
-                  'link copy to https://www.sic.com/donation',
-                  ToastAndroid.SHORT,
-                  ToastAndroid.CENTER,
-                );
-              }}
-              style={{
-                flexDirection: 'row',
-                gap: 8,
-                width: 84,
-                justifyContent: 'center',
-                alignItems: 'center',
-                padding: 8,
-                elevation: 2,
-                backgroundColor: colors.white,
-                borderRadius: 100,
-                marginBottom: 10,
-              }}>
-              <MaterialCommunityIcons
-                name="content-copy"
-                size={15}
-                color={'rgba(0,0,0,.5)'}
-              />
-              <Text
-                style={{
-                  fontFamily: font.Poppins,
-                  // fontSize: 12,
-                  color: 'rgba(0,0,0,.5)',
-                }}>
-                Copy
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </ModalOfBottom>
 
       <View
         style={{

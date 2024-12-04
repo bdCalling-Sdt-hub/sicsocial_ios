@@ -22,11 +22,12 @@ import ConversationalCard from '../../components/common/ConversationalCard';
 import CustomModal from '../../components/common/customModal/CustomModal';
 import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
 import {useStyles} from '../../context/ContextApi';
+import {NavigProps} from '../../interfaces/NaviProps';
 import {useGetUserProfileQuery} from '../../redux/apiSlices/authSlice';
 import {useAddMemberMutation} from '../../redux/apiSlices/chatSlices';
 import {makeImage} from '../../utils/utils';
 
-const FriendsProfile = ({navigation, route}) => {
+const FriendsProfile = ({navigation, route}: NavigProps<null>) => {
   const {colors, font} = useStyles();
 
   const {
@@ -34,6 +35,8 @@ const FriendsProfile = ({navigation, route}) => {
     refetch: refetchUserProfile,
     isLoading: isLoadingUserProfile,
   } = useGetUserProfileQuery({});
+
+  // console.log(route?.params);
 
   const [isFriend, setIsFriend] = React.useState(false);
   const [isFriendRequest, setIsFriendRequest] = React.useState(false);
@@ -46,7 +49,7 @@ const FriendsProfile = ({navigation, route}) => {
     refetch: refetchFriendProfile,
     isLoading: isLoadingFriendProfile,
   } = useGetFriendProfileQuery({
-    id: route?.params?.data?.id,
+    id: route?.params?.data?.id || route?.params?.id,
   });
 
   // console.log(friendProfile);
@@ -106,6 +109,13 @@ const FriendsProfile = ({navigation, route}) => {
     }
   };
   const [createMember, memberResult] = useAddMemberMutation();
+
+  // React.useEffect(() => {
+  //   if (route?.params?.id === userProfile?.data?._id) {
+  //     navigation?.navigate('UserProfile');
+  //   }
+  // }, []);
+
   return (
     <View style={{height: '100%', backgroundColor: colors.bg}}>
       <BackButtonWithTitle
@@ -180,48 +190,19 @@ const FriendsProfile = ({navigation, route}) => {
         </View>
 
         {/* Friend Button */}
-        <View
-          style={{
-            flexDirection: 'row',
-            marginTop: 20,
-            marginHorizontal: '4%',
-            gap: 24,
-          }}>
-          <TouchableOpacity
-            onPress={handleFriendButtonPress}
-            style={{
-              backgroundColor: isFriend ? colors.redisLight : colors.redis,
-              height: 35,
-              flexDirection: 'row',
-              gap: 8,
-              justifyContent: 'center',
-              alignItems: 'center',
-              paddingHorizontal: 15,
-              borderRadius: 50,
-              elevation: 2,
-            }}>
-            <Text
-              style={{
-                fontFamily: font.Poppins,
-                fontSize: 14,
-                color: isFriend
-                  ? colors.textColor.light
-                  : colors.textColor.white,
-              }}>
-              {isFriend
-                ? 'Friends'
-                : isFriendRequest
-                ? 'Accept Request'
-                : isFriendRequestSent
-                ? 'Cancel Request'
-                : 'Add Friend'}
-            </Text>
-          </TouchableOpacity>
 
-          {isFriend && (
+        {route?.params?.id !== userProfile?.data?._id && (
+          <View
+            style={{
+              flexDirection: 'row',
+              marginTop: 20,
+              marginHorizontal: '4%',
+              gap: 24,
+            }}>
             <TouchableOpacity
+              onPress={handleFriendButtonPress}
               style={{
-                backgroundColor: colors.primaryColor,
+                backgroundColor: isFriend ? colors.redisLight : colors.redis,
                 height: 35,
                 flexDirection: 'row',
                 gap: 8,
@@ -235,49 +216,83 @@ const FriendsProfile = ({navigation, route}) => {
                 style={{
                   fontFamily: font.Poppins,
                   fontSize: 14,
-                  color: colors.textColor.white,
+                  color: isFriend
+                    ? colors.textColor.light
+                    : colors.textColor.white,
                 }}>
-                Message
+                {isFriend
+                  ? 'Friends'
+                  : isFriendRequest
+                  ? 'Accept Request'
+                  : isFriendRequestSent
+                  ? 'Cancel Request'
+                  : 'Add Friend'}
               </Text>
             </TouchableOpacity>
-          )}
-        </View>
+
+            {isFriend && (
+              <TouchableOpacity
+                style={{
+                  backgroundColor: colors.primaryColor,
+                  height: 35,
+                  flexDirection: 'row',
+                  gap: 8,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  paddingHorizontal: 15,
+                  borderRadius: 50,
+                  elevation: 2,
+                }}>
+                <Text
+                  style={{
+                    fontFamily: font.Poppins,
+                    fontSize: 14,
+                    color: colors.textColor.white,
+                  }}>
+                  Message
+                </Text>
+              </TouchableOpacity>
+            )}
+          </View>
+        )}
 
         {/* Bio and Social Link */}
-        <View style={{paddingHorizontal: '5%'}}>
-          <TouchableOpacity
-            onPress={() => {
-              Linking.openURL('https://asadullah@insta.com');
-            }}
-            style={{
-              marginTop: 16,
-              flexDirection: 'row',
-              alignItems: 'center',
-              gap: 8,
-            }}>
-            <Image
-              style={{width: 16, height: 16}}
-              source={require('../../assets/icons/instagram/instagram.png')}
-            />
+        {friendProfile?.data?.instagramUrl && (
+          <View style={{paddingHorizontal: '5%'}}>
+            <TouchableOpacity
+              onPress={() => {
+                Linking.openURL('https://asadullah@insta.com');
+              }}
+              style={{
+                marginTop: 16,
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: 8,
+              }}>
+              <Image
+                style={{width: 16, height: 16}}
+                source={require('../../assets/icons/instagram/instagram.png')}
+              />
+              <Text
+                style={{
+                  fontFamily: font.Poppins,
+                  fontSize: 14,
+                  color: colors.textColor.rare,
+                }}>
+                {friendProfile?.data?.instagramUrl}
+              </Text>
+            </TouchableOpacity>
             <Text
               style={{
+                marginTop: 10,
                 fontFamily: font.Poppins,
                 fontSize: 14,
-                color: colors.textColor.rare,
+                color: colors.textColor.neutralColor,
               }}>
-              {friendProfile?.data?.instagramUrl}
+              {friendProfile?.data?.bio}
             </Text>
-          </TouchableOpacity>
-          <Text
-            style={{
-              marginTop: 10,
-              fontFamily: font.Poppins,
-              fontSize: 14,
-              color: colors.textColor.neutralColor,
-            }}>
-            {friendProfile?.data?.bio}
-          </Text>
-        </View>
+          </View>
+        )}
 
         {/* Posts */}
 

@@ -10,6 +10,7 @@ export const homeSlices = api.injectEndpoints({
       providesTags: [
         'news_feed',
         'chat',
+        'live',
         'message',
         'facedown',
         'friend',
