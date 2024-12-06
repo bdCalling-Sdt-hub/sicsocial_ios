@@ -785,73 +785,77 @@ const FaceDownConversation = ({
               Show pin
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              // setIsFriend(false);
-              // setConfirmationModal(!confirmationModal);
-              // setIsFriendRequest(false);
-              // setIsFriendRequestSent(false);
-              setModalVisible(false);
-              navigation?.navigate('UpdateNewFaceDown', {
-                data: FaceDownData,
-              });
-            }}
-            style={{
-              padding: 10,
-            }}>
-            <Text
-              style={{
-                fontFamily: font.Poppins,
-                fontSize: 14,
-                color: colors.textColor.neutralColor,
-              }}>
-              Edit Face Dwn
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              // setIsFriend(false);
-              // setConfirmationModal(!confirmationModal);
-              // setIsFriendRequest(false);
-              // setIsFriendRequestSent(false);
-              setModalVisible(false);
-              // console.log(FaceDownData);
-              navigation?.navigate('MembersManage', {
-                data: {id: route?.params?.data?.id},
-              });
-            }}
-            style={{
-              padding: 10,
-            }}>
-            <Text
-              style={{
-                fontFamily: font.Poppins,
-                fontSize: 14,
-                color: colors.textColor.neutralColor,
-              }}>
-              Manage members
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              // setIsFriend(false);
+          {FaceDownData?.createdBy === userInfo?.data?._id && (
+            <>
+              <TouchableOpacity
+                onPress={() => {
+                  // setIsFriend(false);
+                  // setConfirmationModal(!confirmationModal);
+                  // setIsFriendRequest(false);
+                  // setIsFriendRequestSent(false);
+                  setModalVisible(false);
+                  navigation?.navigate('UpdateNewFaceDown', {
+                    data: FaceDownData,
+                  });
+                }}
+                style={{
+                  padding: 10,
+                }}>
+                <Text
+                  style={{
+                    fontFamily: font.Poppins,
+                    fontSize: 14,
+                    color: colors.textColor.neutralColor,
+                  }}>
+                  Edit Face Dwn
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  // setIsFriend(false);
+                  // setConfirmationModal(!confirmationModal);
+                  // setIsFriendRequest(false);
+                  // setIsFriendRequestSent(false);
+                  setModalVisible(false);
+                  // console.log(FaceDownData);
+                  navigation?.navigate('MembersManage', {
+                    data: {id: route?.params?.data?.id},
+                  });
+                }}
+                style={{
+                  padding: 10,
+                }}>
+                <Text
+                  style={{
+                    fontFamily: font.Poppins,
+                    fontSize: 14,
+                    color: colors.textColor.neutralColor,
+                  }}>
+                  Manage members
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  // setIsFriend(false);
 
-              setConfirmationModal(!confirmationModal);
-              // setIsFriendRequest(false);
-              // setIsFriendRequestSent(false);
-            }}
-            style={{
-              padding: 10,
-            }}>
-            <Text
-              style={{
-                fontFamily: font.Poppins,
-                fontSize: 14,
-                color: 'red',
-              }}>
-              Delete chat
-            </Text>
-          </TouchableOpacity>
+                  setConfirmationModal(!confirmationModal);
+                  // setIsFriendRequest(false);
+                  // setIsFriendRequestSent(false);
+                }}
+                style={{
+                  padding: 10,
+                }}>
+                <Text
+                  style={{
+                    fontFamily: font.Poppins,
+                    fontSize: 14,
+                    color: 'red',
+                  }}>
+                  Delete chat
+                </Text>
+              </TouchableOpacity>
+            </>
+          )}
         </View>
       </ModalOfBottom>
       <ModalOfBottom

@@ -254,6 +254,9 @@ const MassageScreen = ({navigation}: NavigProps<null>) => {
             // console.log(item);
             return (
               <MessageCard
+                secondImage={
+                  item.lastMessage?.image || item.lastMessage?.book?.bookImage
+                }
                 key={index}
                 active={
                   friends?.find(
@@ -270,11 +273,9 @@ const MassageScreen = ({navigation}: NavigProps<null>) => {
                   });
                 }}
                 avatar={
-                  item?.participants?.length > 2
-                    ? item?.participants[0]?._id === userInfo?.data?._id
-                      ? item?.participants![1]?.avatar
-                      : item?.participants![0]?.avatar
-                    : ''
+                  item?.participants[0]?._id === userInfo?.data?._id
+                    ? item?.participants![1]?.avatar
+                    : item?.participants![0]?.avatar
                 }
                 lastMessage={
                   item.lastMessage.audio
@@ -293,7 +294,7 @@ const MassageScreen = ({navigation}: NavigProps<null>) => {
                     ? item?.participants![1]?.fullName || 'No Name'
                     : item?.participants![0]?.fullName || 'No Name'
                 }
-                people={'two'}
+                people={item?.participants?.length > 2 ? 'two' : 'one'}
               />
             );
           })}

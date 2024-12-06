@@ -212,26 +212,26 @@ const MessageCard = ({
 
                   transform: [
                     {
-                      translateX: 18,
+                      translateX: 30,
                     },
                     {
-                      translateY: 12,
+                      translateY: 35,
                     },
                   ],
                 }}>
                 <View
                   style={{
                     elevation: 2,
-                    maxWidth: 47,
-                    width: 47,
+                    maxWidth: 30,
+                    width: 30,
                     borderRadius: 28,
                     backgroundColor: colors.white,
                   }}>
                   <Image
                     style={{
-                      maxWidth: 47,
-                      width: 47,
-                      height: 49,
+                      maxWidth: 30,
+                      width: 30,
+                      height: 30,
                       borderRadius: 28,
                       resizeMode: 'contain',
                       borderColor: 'rgba(255,255,255,1)',

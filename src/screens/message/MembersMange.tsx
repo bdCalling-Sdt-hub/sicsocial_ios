@@ -1,5 +1,6 @@
 import {
   FlatList,
+  RefreshControl,
   StyleSheet,
   Text,
   TextInput,
@@ -30,7 +31,11 @@ const MembersManage = ({navigation, route}: NavigProps<any>) => {
 
   // console.log(route?.params?.data);
 
-  const {data: participants} = useGetParticipantsQuery(route?.params?.data?.id);
+  const {
+    data: participants,
+    refetch: reFetchParticipant,
+    isLoading: isParticipantLoading,
+  } = useGetParticipantsQuery(route?.params?.data?.id);
 
   return (
     <View
@@ -118,6 +123,15 @@ const MembersManage = ({navigation, route}: NavigProps<any>) => {
       {/* want to join the group */}
 
       <FlatList
+        refreshControl={
+          <RefreshControl
+            refreshing={isParticipantLoading}
+            onRefresh={() => {
+              reFetchParticipant();
+            }}
+            colors={[colors.primaryColor]}
+          />
+        }
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="always"
         contentContainerStyle={{

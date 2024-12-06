@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 
 import React from 'react';
+import {RefreshControl} from 'react-native-gesture-handler';
 import {SvgXml} from 'react-native-svg';
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
 import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
@@ -22,12 +23,19 @@ import {makeImage} from '../../utils/utils';
 
 const AddParticipants = ({navigation, route}: NavigProps<any>) => {
   const {colors, font} = useStyles();
-  const {data: friends, refetch: refetchFriend} = useGetFriendQuery({});
+  const {
+    data: friends,
+    refetch: refetchFriend,
+    isLoading: isFriendLoading,
+  } = useGetFriendQuery({});
   const [modalVisible, setModalVisible] = React.useState(false);
   const [selectedUser, setSelectUser] = React.useState<Array<IParticipant>>();
   // console.log(selectedUser);
-  const {data: participants, refetch: reFetchParticipant} =
-    useGetParticipantsQuery(route?.params?.data?.id);
+  const {
+    data: participants,
+    refetch: reFetchParticipant,
+    isLoading: isParticipantLoading,
+  } = useGetParticipantsQuery(route?.params?.data?.id);
 
   const [addMembers] = useAddMemberMutation({});
 
@@ -106,6 +114,16 @@ const AddParticipants = ({navigation, route}: NavigProps<any>) => {
       {/* want to join the group */}
 
       <FlatList
+        refreshControl={
+          <RefreshControl
+            refreshing={isFriendLoading || isParticipantLoading}
+            onRefresh={() => {
+              refetchFriend();
+              reFetchParticipant();
+            }}
+            colors={[colors.primaryColor]}
+          />
+        }
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="always"
         contentContainerStyle={{
