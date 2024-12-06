@@ -1315,7 +1315,7 @@ const ConversationalModal = ({navigation}: ConversationalModalProps) => {
               color: colors.textColor.secondaryColor,
               // marginBottom: 10,
             }}>
-            Live setup
+            Room setup
           </Text>
 
           <View>
@@ -1489,7 +1489,7 @@ const ConversationalModal = ({navigation}: ConversationalModalProps) => {
               // setLiveModal(false);
               // navigation?.navigate('LiveConversation');
             }}
-            title="Start Live"
+            title="Start Room"
           />
         </View>
       </ModalOfBottom>

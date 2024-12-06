@@ -18,7 +18,7 @@ interface BackButtonWithTitleProps extends NavigProps<null> {
   button?: boolean;
   buttonComponent?: React.ReactNode;
   thirdRoll?: boolean;
-  height: number;
+  height?: number;
 }
 
 const BackButtonWithTitle = ({

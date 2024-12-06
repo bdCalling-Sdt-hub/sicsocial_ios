@@ -38,12 +38,12 @@ export interface messagePros {
   };
 }
 
-const LiveMessageScreen = ({
-  navigation,
-  route,
-}: NavigProps<{id: string; live: string}>) => {
+const LiveMessageScreen = ({navigation, route}: NavigProps<{data: any}>) => {
+  console.log();
   const {width, height} = useWindowDimensions();
   const {colors, font} = useStyles();
+
+  console.log(route?.params?.data);
 
   const [getAllMessage, messageResult] = useLazyGetMessageQuery();
   const [AllMessages, setAllMessages] = React.useState<any>([]);
@@ -55,7 +55,7 @@ const LiveMessageScreen = ({
   const {data: userInfo} = useGetUserProfileQuery({});
   const handleLoadData = async () => {
     const res = await getAllMessage({
-      id: route?.params?.data?.id,
+      id: route?.params?.data?.chat,
     });
     setAllMessages(res?.data?.data);
   };
@@ -68,12 +68,12 @@ const LiveMessageScreen = ({
     try {
       // console.log(data, 'data');
       const formData = new FormData();
-      formData.append('chatId', route?.params?.data?.id);
+      formData.append('chatId', route?.params?.data?.chat);
       data?.text && formData.append('text', data?.text);
       const res = await createMessage(formData);
       if (res.data?.id) {
         setNewMessages('');
-        socket?.emit(`message::${route?.params?.data?.id}`, res.data);
+        socket?.emit(`message::${route?.params?.data?.chat}`, res.data);
       }
       // console.log(res, 'res');
     } catch (error) {
@@ -85,7 +85,7 @@ const LiveMessageScreen = ({
     if (AllMessages?.length === 0) {
       handleLoadData();
     }
-    socket?.on(`message::${route?.params?.data?.id}`, (data: IMessage) => {
+    socket?.on(`message::${route?.params?.data?.chat}`, (data: IMessage) => {
       handleLoadData();
     });
   }, [socket]);
@@ -136,7 +136,7 @@ const LiveMessageScreen = ({
                   fontSize: 12,
                   color: colors.textColor.neutralColor,
                 }}>
-                Asadullah created a group
+                {route?.params?.data?.name}
               </Text>
               <Text
                 style={{
@@ -144,9 +144,9 @@ const LiveMessageScreen = ({
                   fontSize: 14,
                   color: colors.textColor.secondaryColor,
                 }}>
-                Asadullah calling live{' '}
+                Room Conversations
               </Text>
-              <View
+              {/* <View
                 style={{
                   flexDirection: 'row',
                   alignItems: 'center',
@@ -167,7 +167,7 @@ const LiveMessageScreen = ({
                   }}>
                   Public
                 </Text>
-              </View>
+              </View> */}
             </View>
           </View>
         </View>

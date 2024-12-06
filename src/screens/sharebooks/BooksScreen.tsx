@@ -67,6 +67,7 @@ const BooksScreen = ({navigation}: NavigProps<null>) => {
         backgroundColor: colors.bg,
       }}>
       <BackButtonWithTitle
+        offBack
         navigation={navigation}
         title="Books Library"
         containerStyle={{

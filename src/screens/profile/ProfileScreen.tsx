@@ -471,7 +471,7 @@ const ProfileScreen = ({navigation}: NavigProps<null>) => {
                     color: colors.textColor.neutralColor,
                     textAlign: 'center',
                   }}>
-                  {item.item.fullName}{' '}
+                  {item.item.fullName?.slice(0, 8) + '...'}
                 </Text>
               </View>
             )}

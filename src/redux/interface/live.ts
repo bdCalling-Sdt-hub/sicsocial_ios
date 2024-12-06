@@ -11,7 +11,7 @@ export interface ILive {
     bookImage: string;
     bookUrl: string;
   };
-  host: string;
+  createBy: string;
   name: string;
   activeUsers: Array<IActiveLiveUser>;
   __v: 0;

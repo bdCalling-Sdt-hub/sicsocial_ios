@@ -1,9 +1,3 @@
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-  withTiming,
-} from 'react-native-reanimated';
 import React, {Dispatch, SetStateAction, useEffect} from 'react';
 import {
   StyleSheet,
@@ -12,6 +6,12 @@ import {
   View,
   useWindowDimensions,
 } from 'react-native';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+  withTiming,
+} from 'react-native-reanimated';
 
 import {SvgXml} from 'react-native-svg';
 import {useStyles} from '../../../context/ContextApi';
@@ -21,17 +21,19 @@ interface NotifyTopComponentProps {
   open: boolean;
   variant?: 'success' | 'error' | 'normal';
   normalOnPress?: () => void;
-  context: string;
+
   onRejectOnPress?: () => void;
+  name?: string;
 }
 
 const NotifyTopComponent = ({
   onDismiss,
   variant,
   open,
-  context,
+
   normalOnPress,
   onRejectOnPress,
+  name,
 }: NotifyTopComponentProps) => {
   const {height, width} = useWindowDimensions();
   const {colors, font} = useStyles();
@@ -137,7 +139,7 @@ const NotifyTopComponent = ({
             {variant === 'error'
               ? 'knock for join this live conversations'
               : variant === 'normal'
-              ? 'Shapla knocked for join this live conversations'
+              ? `${name} knocked for join this live conversations`
               : 'knock is accepted for this live conversations'}
           </Text>
         </View>

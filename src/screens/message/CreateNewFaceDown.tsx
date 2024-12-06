@@ -41,13 +41,15 @@ const CreateNewFaceDown = ({navigation, route}: NavigProps<any>) => {
     new Date(),
   );
 
+  // console.log(route?.params?.data);
+
   const [booksModal, setBooksModal] = React.useState(false);
   const [selectBook, setSelectBook] = React.useState<number>();
   const [faceDownInfo, setFaceDownInfo] = React.useState<{
     url: string;
     book: IBook;
   }>();
-  console.log(route?.params?.data);
+  // console.log(route?.params?.data);
   const handleImagePick = async (option: 'camera' | 'library') => {
     try {
       if (option === 'camera') {
@@ -107,9 +109,9 @@ const CreateNewFaceDown = ({navigation, route}: NavigProps<any>) => {
           name: 'image.jpg',
         });
       }
-      console.log(formData);
+      // console.log(formData);
       createFaceDown(formData).then(faceDown => {
-        console.log(faceDown);
+        // console.log(faceDown);
         if (faceDown.data?.data?._id) {
           createChat({
             participants: participants,
@@ -135,10 +137,13 @@ const CreateNewFaceDown = ({navigation, route}: NavigProps<any>) => {
   );
 
   React.useEffect(() => {
-    if (route?.params) {
-      setParticipants(route?.params);
+    if (route?.params?.data) {
+      setFaceDownInfo({
+        ...faceDownInfo,
+        book: route?.params?.data,
+      });
     }
-  }, [route?.params]);
+  }, [route?.params?.data]);
 
   return (
     <View
@@ -398,28 +403,6 @@ const CreateNewFaceDown = ({navigation, route}: NavigProps<any>) => {
 `}
               />
             </TouchableOpacity>
-            {/* <TouchableOpacity
-              activeOpacity={0.9}
-              style={{
-                height: 50,
-                width: 50,
-                backgroundColor: colors.secondaryColor,
-                borderRadius: 100,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              <SvgXml
-                xml={`<svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M8 9.75C6.48 9.75 5.25 8.52 5.25 7C5.25 5.48 6.48 4.25 8 4.25C9.52 4.25 10.75 5.48 10.75 7C10.75 8.52 9.52 9.75 8 9.75ZM8 5.75C7.31 5.75 6.75 6.31 6.75 7C6.75 7.69 7.31 8.25 8 8.25C8.69 8.25 9.25 7.69 9.25 7C9.25 6.31 8.69 5.75 8 5.75Z" fill="${colors.textColor.normal}"/>
-<path d="M14 21.75H8C2.57 21.75 0.25 19.43 0.25 14V8C0.25 2.57 2.57 0.25 8 0.25H12C12.41 0.25 12.75 0.59 12.75 1C12.75 1.41 12.41 1.75 12 1.75H8C3.39 1.75 1.75 3.39 1.75 8V14C1.75 18.61 3.39 20.25 8 20.25H14C18.61 20.25 20.25 18.61 20.25 14V9C20.25 8.59 20.59 8.25 21 8.25C21.41 8.25 21.75 8.59 21.75 9V14C21.75 19.43 19.43 21.75 14 21.75Z" fill="${colors.textColor.normal}"/>
-<path d="M17 7.74994C16.59 7.74994 16.25 7.40994 16.25 6.99994V0.999939C16.25 0.699939 16.43 0.419939 16.71 0.309939C16.99 0.199939 17.31 0.259939 17.53 0.469939L19.53 2.46994C19.82 2.75994 19.82 3.23994 19.53 3.52994C19.24 3.81994 18.76 3.81994 18.47 3.52994L17.75 2.80994V6.99994C17.75 7.40994 17.41 7.74994 17 7.74994Z" fill="${colors.textColor.normal}"/>
-<path d="M15.0014 3.74994C14.8114 3.74994 14.6214 3.67994 14.4714 3.52994C14.1814 3.23994 14.1814 2.75994 14.4714 2.46994L16.4714 0.469941C16.7614 0.179941 17.2414 0.179941 17.5314 0.469941C17.8214 0.759941 17.8214 1.23994 17.5314 1.52994L15.5314 3.52994C15.3814 3.67994 15.1914 3.74994 15.0014 3.74994Z" fill="${colors.textColor.normal}"/>
-<path d="M1.66932 18.7001C1.42932 18.7001 1.18932 18.5801 1.04932 18.3701C0.819316 18.0301 0.909317 17.5601 1.24932 17.3301L6.17932 14.0201C7.25932 13.3001 8.74932 13.3801 9.72932 14.2101L10.0593 14.5001C10.5593 14.9301 11.4093 14.9301 11.8993 14.5001L16.0593 10.9301C17.1193 10.0201 18.7893 10.0201 19.8593 10.9301L21.4893 12.3301C21.7993 12.6001 21.8393 13.0701 21.5693 13.3901C21.2993 13.7001 20.8193 13.7401 20.5093 13.4701L18.8793 12.0701C18.3793 11.6401 17.5393 11.6401 17.0393 12.0701L12.8793 15.6401C11.8193 16.5501 10.1493 16.5501 9.07932 15.6401L8.74932 15.3501C8.28932 14.9601 7.52933 14.9201 7.01933 15.2701L2.09932 18.5801C1.95932 18.6601 1.80932 18.7001 1.66932 18.7001Z" fill="${colors.textColor.normal}"/>
-</svg>
-
-`}
-              />
-            </TouchableOpacity> */}
           </View>
         </View>
         <View

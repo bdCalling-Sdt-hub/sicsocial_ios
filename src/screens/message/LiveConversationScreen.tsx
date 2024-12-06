@@ -18,13 +18,15 @@ import createAgoraRtcEngine, {
   IRtcEngineEventHandler,
 } from 'react-native-agora';
 import {ActionSheet, GridList} from 'react-native-ui-lib';
+import PopUpModal, {
+  PopUpModalRef,
+} from '../../components/common/modals/PopUpModal';
 import {useContextApi, useStyles} from '../../context/ContextApi';
 import {
   useGetLiveChatQuery,
   useLeaveLiveMutation,
   usePermissionRoleMutation,
   useRequestMutation,
-  useUpdateLiveMutation,
 } from '../../redux/apiSlices/liveSlice';
 import {isSmall, isTablet, makeImage} from '../../utils/utils';
 
@@ -34,6 +36,7 @@ import {AgoraConfig} from '../../../agora.config';
 import NotifyTopComponent from '../../components/common/notify/NotifyTopComponent';
 import ConversationHeader from '../../components/conversation/ConversationHeader';
 import {NavigProps} from '../../interfaces/NaviProps';
+import {useGetNewsFeetQuery} from '../../redux/apiSlices/homeSlices';
 import {getSocket} from '../../redux/services/socket';
 import {useShearLink} from '../../utils/conentShare';
 import LiveUserCard from './components/LiveUserCard';
@@ -54,8 +57,11 @@ const LiveConversationScreen = ({
 
   // console.log(route?.params);
   const [liveInfo, setLiveInfo] = React.useState<any>();
-  // console.log(live);
 
+  const {refetch: newsFeetRefetch} = useGetNewsFeetQuery({});
+
+  // console.log(live);
+  const modalRef = React.useRef<PopUpModalRef>();
   const [ActiveUser, setActiveUser] = useState<
     Array<{
       user: any;
@@ -98,7 +104,7 @@ const LiveConversationScreen = ({
 
   const userInfo = useSelector((state: any) => state?.user?.user);
 
-  const Captain = live?.data?.host === userInfo?._id;
+  const Captain = live?.data?.createBy === userInfo?._id;
   const Host = live?.data?.activeUsers?.find(
     user => user.user._id === userInfo?._id,
   );
@@ -123,6 +129,7 @@ const LiveConversationScreen = ({
 
       if (finedUser) {
         setActiveUser(prevUsers => prevUsers?.filter(user => user.uid !== uid));
+      } else {
       }
       agoraEngineRef.current?.unregisterEventHandler(eventHandler.current!);
       agoraEngineRef.current?.release();
@@ -171,7 +178,7 @@ const LiveConversationScreen = ({
                 user: finedUser.user,
                 role: finedUser.role,
                 uid: uid,
-                isHost: finedUser?.user?._id === live?.data?.host,
+                isHost: finedUser?.user?._id === live?.data?.createBy,
                 token: finedUser.token,
                 muted: finedUser.role === 'host' ? false : true,
               },
@@ -379,11 +386,27 @@ const LiveConversationScreen = ({
 
   const handleSocketUpdate = useCallback((data: any) => {
     refetchLive();
-    console.log(data);
+    if (data?.end) {
+      newsFeetRefetch();
+      modalRef?.current?.open({
+        content: 'Live session ended',
+        title: 'Live Session',
+        button: true,
+        buttonColor: colors.primaryColor,
+        buttonText: 'Close',
+        disable: true,
+        onPress() {
+          modalRef?.current?.close();
+          navigation?.canGoBack()
+            ? navigation.goBack()
+            : navigation?.navigate('HomeRoutes');
+        },
+      });
+    }
   }, []);
 
   const handleSocketRequest = useCallback((data: any) => {
-    console.log('reqested', data);
+    // console.log('reqested', data);
     if (data?.message === 'request') {
       setSelectItem(data);
       setNotify({
@@ -413,6 +436,7 @@ const LiveConversationScreen = ({
     if (socket) {
       socket?.on(`live::${live?.data?.chat}`, handleSocketUpdate);
     }
+
     return () => {
       if (socket) {
         socket?.off(`live::${live?.data?.chat}`, handleSocketUpdate);
@@ -427,6 +451,7 @@ const LiveConversationScreen = ({
         handleSocketRequest,
       );
     }
+
     return () => {
       if (socket) {
         socket?.off(
@@ -440,14 +465,14 @@ const LiveConversationScreen = ({
 
   // Optimized version for filtering and rendering the host users
 
-  const [updateLive] = useUpdateLiveMutation();
-  const handleUpdateLive = React.useCallback(async () => {
-    updateLive({
-      name: live?.data?.name,
-      chatId: live?.data?.chat,
-      book: live?.data?.book._id,
-    });
-  }, []);
+  // const [updateLive] = useUpdateLiveMutation();
+  // const handleUpdateLive = React.useCallback(async () => {
+  //   updateLive({
+  //     name: live?.data?.name,
+  //     chatId: live?.data?.chat,
+  //     book: live?.data?.book._id,
+  //   });
+  // }, []);
 
   return (
     <SafeAreaView
@@ -460,7 +485,11 @@ const LiveConversationScreen = ({
       <NotifyTopComponent
         onRejectOnPress={handleRequestReject}
         normalOnPress={handleRequestAccess}
-        context=""
+        name={
+          live?.data?.activeUsers?.find(
+            user => user.user._id === SelectItem?.user,
+          )?.user.fullName
+        }
         variant={open?.status}
         open={open?.open || false}
         onDismiss={() => {
@@ -474,7 +503,7 @@ const LiveConversationScreen = ({
 
       <View
         style={{
-          height: '9.5%',
+          height: '8%',
         }}
       />
 
@@ -555,21 +584,19 @@ const LiveConversationScreen = ({
             borderBottomWidth: 1,
           }}
           contentContainerStyle={{
-            gap: 10,
+            // gap: 10,
             paddingVertical: 5,
           }}
           ListFooterComponent={() => (
-            <>
+            <View style={{height: 100, justifyContent: 'center'}}>
               <View
                 style={{
-                  flexDirection: 'row',
-                  paddingHorizontal: '4%',
-                  paddingVertical: '3%',
-                  borderRadius: 100,
-                  alignItems: 'center',
-                  height: 100,
-
-                  width: width,
+                  padding: 10,
+                  marginRight: 10,
+                  width: width * 0.95,
+                  height: 70,
+                  backgroundColor: colors.secondaryColor,
+                  borderRadius: 5,
                 }}>
                 <View
                   style={{
@@ -581,7 +608,7 @@ const LiveConversationScreen = ({
                       fontSize: 12,
                       color: colors.textColor.neutralColor,
                     }}>
-                    Asadullah created a group
+                    {live?.data?.name}
                   </Text>
                   <Text
                     style={{
@@ -589,11 +616,16 @@ const LiveConversationScreen = ({
                       fontSize: 14,
                       color: colors.textColor.secondaryColor,
                     }}>
-                    Asadullah calling live
+                    {
+                      live?.data?.activeUsers?.find(
+                        u => u.user._id === live?.data?.createBy,
+                      )?.user?.fullName
+                    }{' '}
+                    calling live
                   </Text>
                 </View>
               </View>
-            </>
+            </View>
           )}
           renderItem={({item, index}) => {
             return (
@@ -620,17 +652,20 @@ const LiveConversationScreen = ({
                       backgroundColor: colors.secondaryColor,
                     }}>
                     {live?.data?.book?.bookImage && (
-                      <Image
-                        source={{
-                          uri: makeImage(live?.data?.book?.bookImage),
-                        }}
-                        style={{
-                          height: 60,
-                          aspectRatio: 1,
-                        }}
-                        resizeMethod="scale"
-                        resizeMode="contain"
-                      />
+                      <View style={{paddingLeft: 10}}>
+                        <Image
+                          source={{
+                            uri: makeImage(live?.data?.book?.bookImage),
+                          }}
+                          style={{
+                            height: 60,
+                            aspectRatio: 1,
+                            borderRadius: 10,
+                          }}
+                          resizeMethod="scale"
+                          resizeMode="cover"
+                        />
+                      </View>
                     )}
                     <View
                       style={{
@@ -781,7 +816,7 @@ const LiveConversationScreen = ({
                 style={{}}
                 onPress={() => {
                   navigation?.navigate('LiveMessage', {
-                    data: {id: live?.data?.chat},
+                    data: live?.data,
                   });
                 }}>
                 <View
@@ -1097,6 +1132,7 @@ const LiveConversationScreen = ({
               ]
         }
       />
+      <PopUpModal ref={modalRef} />
     </SafeAreaView>
   );
 };
