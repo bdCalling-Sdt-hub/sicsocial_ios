@@ -13,6 +13,8 @@ interface IGroupUserCardProps {
   isSelect?: boolean;
   selectOnPress: () => void;
   screenTitle: string;
+  component: React.ReactNode;
+  option?: boolean;
 }
 
 const GroupUserCard = ({
@@ -26,6 +28,7 @@ const GroupUserCard = ({
   isSelect,
   screenTitle,
   option,
+  component,
 }: IGroupUserCardProps) => {
   const {colors, font} = useStyles();
   return (
@@ -110,22 +113,7 @@ const GroupUserCard = ({
           </Text>
         </View>
       </View>
-      <View>
-        <TouchableOpacity
-          style={{
-            backgroundColor: colors?.redis,
-            padding: 5,
-            paddingHorizontal: 10,
-            borderRadius: 50,
-          }}>
-          <Text
-            style={{
-              color: colors?.white,
-            }}>
-            Remove
-          </Text>
-        </TouchableOpacity>
-      </View>
+      {component && component}
     </TouchableOpacity>
   );
 };

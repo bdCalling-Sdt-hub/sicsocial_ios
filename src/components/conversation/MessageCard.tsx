@@ -10,6 +10,7 @@ interface IMessageCardProps extends IParticipant {
   lastMessage: string;
   lastTime: string;
   active?: boolean;
+  secondImage: any;
   onPress?: () => void;
   people?: 'one' | 'two';
 }
@@ -24,6 +25,7 @@ const MessageCard = ({
   _id,
   avatar,
   fullName,
+  secondImage,
 }: IMessageCardProps) => {
   // console.log(avatar);
   const {colors, font} = useStyles();
@@ -149,25 +151,57 @@ const MessageCard = ({
                 }}>
                 <View
                   style={{
+                    // padding: 2,
+
+                    // backgroundColor: colors.white,
                     elevation: 2,
-                    maxWidth: 47,
-                    width: 47,
+                    width: 65,
+                    height: 65,
                     borderRadius: 28,
                   }}>
-                  <Image
-                    style={{
-                      maxWidth: 47,
-                      width: 47,
-                      height: 49,
-                      borderRadius: 28,
-                      resizeMode: 'contain',
-                      borderColor: 'rgba(255,255,255,1)',
-                      borderWidth: 2,
-                    }}
-                    source={{
-                      uri: makeImage(avatar || ''),
-                    }}
-                  />
+                  {secondImage ? (
+                    <Image
+                      style={{
+                        width: 65,
+                        height: 65,
+                        borderRadius: 28,
+                        resizeMode: 'cover',
+                        borderColor: 'rgba(255,255,255,1)',
+                        borderWidth: 2,
+                      }}
+                      source={{
+                        uri: makeImage(secondImage || ''),
+                      }}
+                    />
+                  ) : (
+                    <View
+                      style={{
+                        width: 65,
+                        height: 65,
+                        borderRadius: 28,
+                      }}>
+                      <View
+                        style={{
+                          borderWidth: 2,
+                          borderColor: 'rgba(255,255,255,1)',
+                          width: 65,
+                          height: 65,
+                          borderRadius: 28,
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          backgroundColor: colors.primaryColor,
+                        }}>
+                        <Text
+                          style={{
+                            fontSize: 25,
+                            fontFamily: font.PoppinsBold,
+                            color: colors.textColor.white,
+                          }}>
+                          {name?.slice(0, 1)}
+                        </Text>
+                      </View>
+                    </View>
+                  )}
                 </View>
               </View>
               <View

@@ -14,23 +14,45 @@ import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
 import GroupUserCard from '../../components/conversation/GroupUserCard';
 import {useStyles} from '../../context/ContextApi';
 import {NavigProps} from '../../interfaces/NaviProps';
+import {useAddMemberMutation} from '../../redux/apiSlices/chatSlices';
 import {useGetFriendQuery} from '../../redux/apiSlices/friendsSlices';
 import {useGetParticipantsQuery} from '../../redux/apiSlices/messageSlies';
 import {IParticipant} from '../../redux/interface/participants';
 import {makeImage} from '../../utils/utils';
 
-const MembersManage = ({navigation, route}: NavigProps<any>) => {
+const AddParticipants = ({navigation, route}: NavigProps<any>) => {
   const {colors, font} = useStyles();
-  const {data: friends} = useGetFriendQuery({});
+  const {data: friends, refetch: refetchFriend} = useGetFriendQuery({});
   const [modalVisible, setModalVisible] = React.useState(false);
-  const [selectedUser, setSelectUser] = React.useState<Array<IParticipant>>(
-    route?.params || [],
-  );
+  const [selectedUser, setSelectUser] = React.useState<Array<IParticipant>>();
   // console.log(selectedUser);
+  const {data: participants, refetch: reFetchParticipant} =
+    useGetParticipantsQuery(route?.params?.data?.id);
 
-  // console.log(route?.params?.data);
+  const [addMembers] = useAddMemberMutation({});
 
-  const {data: participants} = useGetParticipantsQuery(route?.params?.data?.id);
+  const handleAddParticipant = (id: string) => {
+    addMembers({
+      id: route?.params?.data?.id,
+      participants: [id],
+    }).then(res => {
+      reFetchParticipant();
+      refetchFriend();
+    });
+  };
+
+  React.useEffect(() => {
+    if (friends?.data?.length > 0) {
+      const participantIds =
+        participants?.data?.map(participant => participant?._id) || [];
+      const filteredFriends = friends?.data.filter(
+        friend => !participantIds.includes(friend?._id),
+      );
+      setSelectUser(filteredFriends);
+    } else {
+      setSelectUser([]);
+    }
+  }, [friends?.data, participants?.data]);
 
   return (
     <View
@@ -40,46 +62,12 @@ const MembersManage = ({navigation, route}: NavigProps<any>) => {
       }}>
       <BackButtonWithTitle
         navigation={navigation}
-        title="Manage members"
+        title="Add members"
         containerStyle={{
           justifyContent: 'flex-start',
           gap: 20,
         }}
         button
-        buttonComponent={
-          <View
-            style={{
-              alignItems: 'flex-end',
-              justifyContent: 'flex-end',
-              flex: 1,
-            }}>
-            <TouchableOpacity
-              onPress={() =>
-                navigation?.navigate('AddParticipants', {
-                  data: route?.params?.data,
-                })
-              }
-              style={{
-                alignItems: 'flex-end',
-                backgroundColor: colors.neutralColor,
-                // width: 55,
-                paddingHorizontal: 10,
-                padding: 1,
-                borderRadius: 100,
-              }}
-              activeOpacity={0.9}>
-              <Text
-                style={{
-                  fontFamily: font.PoppinsSemiBold,
-                  fontSize: 12,
-                  paddingVertical: 5,
-                  color: colors.textColor.white,
-                }}>
-                Add Members
-              </Text>
-            </TouchableOpacity>
-          </View>
-        }
         titleStyle={{
           fontSize: 20,
           color: colors.textColor.light,
@@ -104,9 +92,9 @@ const MembersManage = ({navigation, route}: NavigProps<any>) => {
           }}>
           <SvgXml
             xml={`<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M12.6267 11.5129L16 14.8861L14.8861 16L11.5129 12.6267C10.3 13.5971 8.76177 14.1776 7.08881 14.1776C3.17579 14.1776 0 11.0018 0 7.08881C0 3.17579 3.17579 0 7.08881 0C11.0018 0 14.1776 3.17579 14.1776 7.08881C14.1776 8.76177 13.5971 10.3 12.6267 11.5129ZM11.0465 10.9284C12.0096 9.93584 12.6023 8.58187 12.6023 7.08881C12.6023 4.04259 10.135 1.57529 7.08881 1.57529C4.04259 1.57529 1.57529 4.04259 1.57529 7.08881C1.57529 10.135 4.04259 12.6023 7.08881 12.6023C8.58187 12.6023 9.93584 12.0096 10.9284 11.0465L11.0465 10.9284Z" fill="${colors.textColor.neutralColor}"/>
-      </svg>
-      `}
+        <path d="M12.6267 11.5129L16 14.8861L14.8861 16L11.5129 12.6267C10.3 13.5971 8.76177 14.1776 7.08881 14.1776C3.17579 14.1776 0 11.0018 0 7.08881C0 3.17579 3.17579 0 7.08881 0C11.0018 0 14.1776 3.17579 14.1776 7.08881C14.1776 8.76177 13.5971 10.3 12.6267 11.5129ZM11.0465 10.9284C12.0096 9.93584 12.6023 8.58187 12.6023 7.08881C12.6023 4.04259 10.135 1.57529 7.08881 1.57529C4.04259 1.57529 1.57529 4.04259 1.57529 7.08881C1.57529 10.135 4.04259 12.6023 7.08881 12.6023C8.58187 12.6023 9.93584 12.0096 10.9284 11.0465L11.0465 10.9284Z" fill="${colors.textColor.neutralColor}"/>
+        </svg>
+        `}
           />
           <TextInput
             style={{flex: 1}}
@@ -124,19 +112,23 @@ const MembersManage = ({navigation, route}: NavigProps<any>) => {
           paddingHorizontal: 8,
           paddingTop: 10,
         }}
-        data={participants?.data}
+        data={selectedUser}
         renderItem={item => (
           <>
             <GroupUserCard
               img={makeImage(item.item.avatar)}
               // lastMessage={item.item?.lastMessage}
               // lastTime="9:51 am"
+
               name={item.item.fullName}
               component={
                 <View>
                   <TouchableOpacity
+                    onPress={() => {
+                      handleAddParticipant(item.item?._id);
+                    }}
                     style={{
-                      backgroundColor: colors?.redis,
+                      backgroundColor: colors?.primaryColor,
                       padding: 5,
                       paddingHorizontal: 10,
                       borderRadius: 50,
@@ -145,7 +137,7 @@ const MembersManage = ({navigation, route}: NavigProps<any>) => {
                       style={{
                         color: colors?.white,
                       }}>
-                      Remove
+                      Add Member
                     </Text>
                   </TouchableOpacity>
                 </View>
@@ -205,6 +197,6 @@ const MembersManage = ({navigation, route}: NavigProps<any>) => {
   );
 };
 
-export default MembersManage;
+export default AddParticipants;
 
 const styles = StyleSheet.create({});

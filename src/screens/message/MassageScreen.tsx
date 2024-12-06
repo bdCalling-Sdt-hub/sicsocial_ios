@@ -265,18 +265,16 @@ const MassageScreen = ({navigation}: NavigProps<null>) => {
                     : false
                 }
                 onPress={() => {
-                  if (item.group) {
-                    navigation?.navigate('GroupConversation');
-                  } else {
-                    navigation?.navigate('NormalConversation', {
-                      data: {id: item?._id},
-                    });
-                  }
+                  navigation?.navigate('NormalConversation', {
+                    data: {id: item?._id},
+                  });
                 }}
                 avatar={
-                  item?.participants[0]?._id === userInfo?.data?._id
-                    ? item?.participants![1]?.avatar
-                    : item?.participants![0]?.avatar
+                  item?.participants?.length > 2
+                    ? item?.participants[0]?._id === userInfo?.data?._id
+                      ? item?.participants![1]?.avatar
+                      : item?.participants![0]?.avatar
+                    : ''
                 }
                 lastMessage={
                   item.lastMessage.audio
@@ -295,7 +293,7 @@ const MassageScreen = ({navigation}: NavigProps<null>) => {
                     ? item?.participants![1]?.fullName || 'No Name'
                     : item?.participants![0]?.fullName || 'No Name'
                 }
-                people={'one'}
+                people={'two'}
               />
             );
           })}

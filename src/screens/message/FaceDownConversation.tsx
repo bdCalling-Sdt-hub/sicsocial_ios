@@ -815,7 +815,10 @@ const FaceDownConversation = ({
               // setIsFriendRequest(false);
               // setIsFriendRequestSent(false);
               setModalVisible(false);
-              navigation?.navigate('MembersManage');
+              // console.log(FaceDownData);
+              navigation?.navigate('MembersManage', {
+                data: {id: route?.params?.data?.id},
+              });
             }}
             style={{
               padding: 10,

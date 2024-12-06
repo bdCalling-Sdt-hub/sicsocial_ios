@@ -26,6 +26,7 @@ import VerifySuccessfulScreen from '../screens/Logins/VerifySuccessfulScreen';
 import SplashScreen from '../screens/SplashScreen';
 import DonationScreen from '../screens/donation/DonationScreen';
 import FriendsProfile from '../screens/friends/FriendsProfile';
+import AddParticipants from '../screens/message/AddParticipants';
 import CreateNewFaceDown from '../screens/message/CreateNewFaceDown';
 import FaceDownConversation from '../screens/message/FaceDownConversation';
 import GroupConversationScreen from '../screens/message/GroupConversationScreen';
@@ -256,6 +257,13 @@ const Routes = () => {
               <Stack.Screen
                 name="MakeGroup"
                 component={MakeGroupScreen}
+                options={{
+                  animation: 'slide_from_right',
+                }}
+              />
+              <Stack.Screen
+                name="AddParticipants"
+                component={AddParticipants}
                 options={{
                   animation: 'slide_from_right',
                 }}

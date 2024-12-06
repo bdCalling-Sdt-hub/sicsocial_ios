@@ -28,7 +28,7 @@ const BackButtonWithTitle = ({
   BackButtonStyle,
   containerStyle,
   titleStyle,
-
+  route,
   offTitle,
   thirdRoll,
   onOptionPress,
