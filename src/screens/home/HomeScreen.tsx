@@ -1,4 +1,8 @@
-import React, {useEffect} from 'react';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
 import {
   Image,
   RefreshControl,
@@ -8,31 +12,27 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
-} from 'react-native-reanimated';
-import {useContextApi, useStyles} from '../../context/ContextApi';
+import React, {useEffect} from 'react';
 import {height, isTablet} from '../../utils/utils';
+import {useContextApi, useStyles} from '../../context/ContextApi';
 
-import {FlashList} from '@shopify/flash-list';
-import {format} from 'date-fns';
-import LinearGradient from 'react-native-linear-gradient';
-import {SvgXml} from 'react-native-svg';
-import {useDispatch} from 'react-redux';
 import ConversationalCard from '../../components/common/ConversationalCard';
 import ConversationalModal from '../../components/common/ConversationalModal/ConversationalModal';
+import {FlashList} from '@shopify/flash-list';
 import {IConversationProps} from '../../interfaces/Interface';
+import LinearGradient from 'react-native-linear-gradient';
 import {NavigProps} from '../../interfaces/NaviProps';
-import {imageUrl} from '../../redux/api/baseApi';
-import {useGetDonationQuery} from '../../redux/apiSlices/additionalSlices';
-import {useGetUserProfileQuery} from '../../redux/apiSlices/authSlice';
-import {useAddMemberMutation} from '../../redux/apiSlices/chatSlices';
-import {useGetNewsFeetQuery} from '../../redux/apiSlices/homeSlices';
-import {useJoinLiveMutation} from '../../redux/apiSlices/liveSlice';
+import {SvgXml} from 'react-native-svg';
+import {format} from 'date-fns';
 import {getSocket} from '../../redux/services/socket';
+import {imageUrl} from '../../redux/api/baseApi';
 import {setUser} from '../../redux/services/userSlice';
+import {useAddMemberMutation} from '../../redux/apiSlices/chatSlices';
+import {useDispatch} from 'react-redux';
+import {useGetDonationQuery} from '../../redux/apiSlices/additionalSlices';
+import {useGetNewsFeetQuery} from '../../redux/apiSlices/homeSlices';
+import {useGetUserProfileQuery} from '../../redux/apiSlices/authSlice';
+import {useJoinLiveMutation} from '../../redux/apiSlices/liveSlice';
 import {useShearLink} from '../../utils/conentShare';
 
 const HomeScreen = ({navigation}: NavigProps<null>) => {
@@ -291,7 +291,7 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
                   }).then(res => {
                     // console.log(res);
                     navigation?.navigate('LiveConversation', {
-                      data: {live: item.live},
+                      data: {live: item.live?._id},
                     });
                   });
                 } else {
@@ -311,7 +311,7 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
               manyPeople={item.participants.length > 4}
               conversationTitle={
                 item.live
-                  ? 'Live Chat'
+                  ? 'Room Chat' + item.live.name
                   : item?.lastMessage?.sender?._id === userProfile?.data?._id
                   ? item?.facedown
                     ? item?.facedown?.name +

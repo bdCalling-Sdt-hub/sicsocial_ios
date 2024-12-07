@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import {ActionSheet, GridList} from 'react-native-ui-lib';
 import {
   FlatList,
   Image,
@@ -11,35 +11,36 @@ import {
   View,
   useWindowDimensions,
 } from 'react-native';
+import PopUpModal, {
+  PopUpModalRef,
+} from '../../components/common/modals/PopUpModal';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import createAgoraRtcEngine, {
   ChannelProfileType,
   ClientRoleType,
   IRtcEngine,
   IRtcEngineEventHandler,
 } from 'react-native-agora';
-import {ActionSheet, GridList} from 'react-native-ui-lib';
-import PopUpModal, {
-  PopUpModalRef,
-} from '../../components/common/modals/PopUpModal';
+import {isSmall, isTablet, makeImage} from '../../utils/utils';
 import {useContextApi, useStyles} from '../../context/ContextApi';
 import {
   useGetLiveChatQuery,
+  useJoinLiveMutation,
   useLeaveLiveMutation,
   usePermissionRoleMutation,
   useRequestMutation,
 } from '../../redux/apiSlices/liveSlice';
-import {isSmall, isTablet, makeImage} from '../../utils/utils';
 
-import {SvgXml} from 'react-native-svg';
-import {useSelector} from 'react-redux';
 import {AgoraConfig} from '../../../agora.config';
-import NotifyTopComponent from '../../components/common/notify/NotifyTopComponent';
 import ConversationHeader from '../../components/conversation/ConversationHeader';
-import {NavigProps} from '../../interfaces/NaviProps';
-import {useGetNewsFeetQuery} from '../../redux/apiSlices/homeSlices';
-import {getSocket} from '../../redux/services/socket';
-import {useShearLink} from '../../utils/conentShare';
 import LiveUserCard from './components/LiveUserCard';
+import {NavigProps} from '../../interfaces/NaviProps';
+import NotifyTopComponent from '../../components/common/notify/NotifyTopComponent';
+import {SvgXml} from 'react-native-svg';
+import {getSocket} from '../../redux/services/socket';
+import {useGetNewsFeetQuery} from '../../redux/apiSlices/homeSlices';
+import {useGetUserProfileQuery} from '../../redux/apiSlices/authSlice';
+import {useShearLink} from '../../utils/conentShare';
 
 const LiveConversationScreen = ({
   navigation,
@@ -102,22 +103,22 @@ const LiveConversationScreen = ({
 
   const eventHandler = useRef<IRtcEngineEventHandler>();
 
-  const userInfo = useSelector((state: any) => state?.user?.user);
+  const {data: userInfo} = useGetUserProfileQuery({});
 
-  const Captain = live?.data?.createBy === userInfo?._id;
+  const Captain = live?.data?.createBy === userInfo?.data?._id;
   const Host = live?.data?.activeUsers?.find(
-    user => user.user._id === userInfo?._id,
+    user => user.user._id === userInfo?.data?._id,
   );
 
   const uid = live?.data?.activeUsers?.find(
-    user => user.user._id === userInfo?._id,
+    user => user.user._id === userInfo?.data?._id,
   )?.uid as number;
 
   const token = live?.data?.activeUsers?.find(
-    user => user.user._id === userInfo?._id,
+    user => user.user._id === userInfo?.data?._id,
   )?.token;
   const role = live?.data?.activeUsers?.find(
-    user => user.user._id === userInfo?._id,
+    user => user.user._id === userInfo?.data?._id,
   )?.role;
 
   // console.log(userInfo?.data?._id);
@@ -361,7 +362,7 @@ const LiveConversationScreen = ({
     // setNotify(true);
     requestRoleUpdate({
       chatId: live?.data?.chat,
-      userId: userInfo?._id,
+      userId: userInfo?.data?._id,
       message: 'request',
     });
 
@@ -447,7 +448,7 @@ const LiveConversationScreen = ({
   useEffect(() => {
     if (socket) {
       socket?.on(
-        `live::${userInfo?._id?.toString()}::${live?.data?.chat}`,
+        `live::${userInfo?.data?._id?.toString()}::${live?.data?.chat}`,
         handleSocketRequest,
       );
     }
@@ -455,7 +456,7 @@ const LiveConversationScreen = ({
     return () => {
       if (socket) {
         socket?.off(
-          `live::${userInfo?._id?.toString()}::${live?.data?.chat}`,
+          `live::${userInfo?.data?._id?.toString()}::${live?.data?.chat}`,
           handleSocketRequest,
         );
         // leave();
@@ -473,6 +474,37 @@ const LiveConversationScreen = ({
   //     book: live?.data?.book._id,
   //   });
   // }, []);
+
+  const [joinLive] = useJoinLiveMutation();
+  useEffect(() => {
+    if (userInfo?.data?._id && live?.data?.activeUsers) {
+      // check user axist on live others wise give the popup to join the live
+      if (
+        live?.data?.activeUsers?.find(
+          user => user.user._id === userInfo?.data?._id,
+        )
+      ) {
+        return;
+      } else {
+        modalRef?.current?.open({
+          content: 'Are you want to join the Room',
+          title: 'Live Session',
+          button: true,
+          buttonColor: colors.primaryColor,
+          buttonText: 'Join',
+          disable: true,
+          onPress() {
+            joinLive({
+              chatId: live?.data?.chat,
+            }).then(res => {
+              modalRef?.current?.close();
+              // console.log(res);
+            });
+          },
+        });
+      }
+    }
+  }, [userInfo?.data?._id, live?.data?.activeUsers]);
 
   return (
     <SafeAreaView
@@ -728,7 +760,7 @@ const LiveConversationScreen = ({
           return (
             <LiveUserCard
               onPress={() => {
-                if (item?.item?.user?._id !== userInfo?._id) {
+                if (item?.item?.user?._id !== userInfo?.data?._id) {
                   setShowAction(!showAction);
                   setSelectItem(item?.item);
                 }
@@ -776,7 +808,7 @@ const LiveConversationScreen = ({
             <LiveUserCard
               item={item?.item}
               onPress={() => {
-                if (item?.item?.user?._id !== userInfo?._id) {
+                if (item?.item?.user?._id !== userInfo?.data?._id) {
                   setShowAction(!showAction);
                   setSelectItem(item?.item);
                 }
@@ -1080,7 +1112,7 @@ const LiveConversationScreen = ({
 
                   onPress: () => {
                     setShowAction(false);
-                    if (SelectItem?.user?._id === userInfo?._id) {
+                    if (SelectItem?.user?._id === userInfo?.data?._id) {
                       navigation?.navigate('UserProfile');
                     } else {
                       navigation?.navigate('FriendsProfile', {
@@ -1103,7 +1135,7 @@ const LiveConversationScreen = ({
                   label: 'View Profile',
                   onPress: () => {
                     setShowAction(false);
-                    if (SelectItem?.user?._id === userInfo?._id) {
+                    if (SelectItem?.user?._id === userInfo?.data?._id) {
                       navigation?.navigate('UserProfile');
                     } else {
                       navigation?.navigate('FriendsProfile', {
@@ -1119,7 +1151,7 @@ const LiveConversationScreen = ({
                   label: 'View Profile',
                   onPress: () => {
                     setShowAction(false);
-                    if (SelectItem?.user?._id === userInfo?._id) {
+                    if (SelectItem?.user?._id === userInfo?.data?._id) {
                       navigation?.navigate('UserProfile');
                     } else {
                       navigation?.navigate('FriendsProfile', {

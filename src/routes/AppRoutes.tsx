@@ -3,61 +3,61 @@
 import * as React from 'react';
 
 import {Alert, Linking} from 'react-native';
-import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
-import {Provider, useSelector} from 'react-redux';
 import ContextApi, {useContextApi, useStyles} from '../context/ContextApi';
+import {Provider, useSelector} from 'react-redux';
+import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
 import {getSocket, initiateSocket} from '../redux/services/socket';
 
-import {NavigationContainer} from '@react-navigation/native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {GestureHandlerRootView} from 'react-native-gesture-handler';
-import {hostUrl} from '../redux/api/baseApi';
-import store from '../redux/store';
-import LoadingSplash from '../screens/LoadingSplash';
-import ChangePassword from '../screens/Logins/ChnagePassword';
-import DeleteAccount from '../screens/Logins/DeleteAccount';
-import EmailConfirmationScreen from '../screens/Logins/EmailConfirmationScreen';
-import InterestScreen from '../screens/Logins/InterestScreen';
-import LoginScreen from '../screens/Logins/LoginScreen';
-import ResetPasswordScreen from '../screens/Logins/ResetPasswordScreen';
-import SignUpScreen from '../screens/Logins/SignUpScreen';
-import VerifyEmailScreen from '../screens/Logins/VerifyEmailScreen';
-import VerifySuccessfulScreen from '../screens/Logins/VerifySuccessfulScreen';
-import SplashScreen from '../screens/SplashScreen';
-import DonationScreen from '../screens/donation/DonationScreen';
-import FriendsProfile from '../screens/friends/FriendsProfile';
-import AddParticipants from '../screens/message/AddParticipants';
-import CreateNewFaceDown from '../screens/message/CreateNewFaceDown';
-import FaceDownConversation from '../screens/message/FaceDownConversation';
-import GroupConversationScreen from '../screens/message/GroupConversationScreen';
-import LiveAddFriendsScreen from '../screens/message/LiveAddFriendsScreen';
-import LiveConversationScreen from '../screens/message/LiveConversationScreen';
-import LiveMessageScreen from '../screens/message/LiveMessageScreen';
-import MakeGroupScreen from '../screens/message/MakeGroupScreen';
-import MassageScreen from '../screens/message/MassageScreen';
-import MembersManage from '../screens/message/MembersMange';
-import NormalConversationScreen from '../screens/message/NormalConversationScreen';
-import UpdateNewFaceDown from '../screens/message/UpdateNewFaceDown';
-import NotificationsScreen from '../screens/notification/NotificationsScreen';
-import PaymentsScreen from '../screens/payments/PaymentsScreen';
-import MyAllFriends from '../screens/profile/MyAllFriends';
-import ProfileEditScreen from '../screens/profile/ProfileEditScreen';
-import ProfileScreen from '../screens/profile/ProfileScreen';
-import SettingScreen from '../screens/profile/SettingScreen';
-import ViewAllFaceDown from '../screens/profile/ViewAllFaceDown';
 import AboutSicScreen from '../screens/profile/settings/AboutSicScreen';
-import FAQScreen from '../screens/profile/settings/FAQScreen';
-import FeedBackScreen from '../screens/profile/settings/FeedBackScreen';
-import ManageAccounts from '../screens/profile/settings/ManageAccoutns';
-import PrivacyPolicyScreen from '../screens/profile/settings/PrivacyPolicyScreen';
-import SicGuidelinesScreen from '../screens/profile/settings/SicGuidelinesScreen';
-import TermsAndConditions from '../screens/profile/settings/TermsAndConditions';
-import SearchScreen from '../screens/search/SearchScreen';
+import AddParticipants from '../screens/message/AddParticipants';
 import BookShareScreen from '../screens/sharebooks/BookShareScreen';
 import BookShareWithCategory from '../screens/sharebooks/BookShareWithCategory';
 import BooksScreen from '../screens/sharebooks/BooksScreen';
-import PDFViewer from '../screens/sharebooks/PDFViewer';
 import BottomBarRoutes from './BottomBarRoutes';
+import ChangePassword from '../screens/Logins/ChnagePassword';
+import CreateNewFaceDown from '../screens/message/CreateNewFaceDown';
+import DeleteAccount from '../screens/Logins/DeleteAccount';
+import DonationScreen from '../screens/donation/DonationScreen';
+import EmailConfirmationScreen from '../screens/Logins/EmailConfirmationScreen';
+import FAQScreen from '../screens/profile/settings/FAQScreen';
+import FaceDownConversation from '../screens/message/FaceDownConversation';
+import FeedBackScreen from '../screens/profile/settings/FeedBackScreen';
+import FriendsProfile from '../screens/friends/FriendsProfile';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
+import GroupConversationScreen from '../screens/message/GroupConversationScreen';
+import InterestScreen from '../screens/Logins/InterestScreen';
+import LiveAddFriendsScreen from '../screens/message/LiveAddFriendsScreen';
+import LiveConversationScreen from '../screens/message/LiveConversationScreen';
+import LiveMessageScreen from '../screens/message/LiveMessageScreen';
+import LoadingSplash from '../screens/LoadingSplash';
+import LoginScreen from '../screens/Logins/LoginScreen';
+import MakeGroupScreen from '../screens/message/MakeGroupScreen';
+import ManageAccounts from '../screens/profile/settings/ManageAccoutns';
+import MassageScreen from '../screens/message/MassageScreen';
+import MembersManage from '../screens/message/MembersMange';
+import MyAllFriends from '../screens/profile/MyAllFriends';
+import {NavigationContainer} from '@react-navigation/native';
+import NormalConversationScreen from '../screens/message/NormalConversationScreen';
+import NotificationsScreen from '../screens/notification/NotificationsScreen';
+import PDFViewer from '../screens/sharebooks/PDFViewer';
+import PaymentsScreen from '../screens/payments/PaymentsScreen';
+import PrivacyPolicyScreen from '../screens/profile/settings/PrivacyPolicyScreen';
+import ProfileEditScreen from '../screens/profile/ProfileEditScreen';
+import ProfileScreen from '../screens/profile/ProfileScreen';
+import ResetPasswordScreen from '../screens/Logins/ResetPasswordScreen';
+import SearchScreen from '../screens/search/SearchScreen';
+import SettingScreen from '../screens/profile/SettingScreen';
+import SicGuidelinesScreen from '../screens/profile/settings/SicGuidelinesScreen';
+import SignUpScreen from '../screens/Logins/SignUpScreen';
+import SplashScreen from '../screens/SplashScreen';
+import TermsAndConditions from '../screens/profile/settings/TermsAndConditions';
+import UpdateNewFaceDown from '../screens/message/UpdateNewFaceDown';
+import VerifyEmailScreen from '../screens/Logins/VerifyEmailScreen';
+import VerifySuccessfulScreen from '../screens/Logins/VerifySuccessfulScreen';
+import ViewAllFaceDown from '../screens/profile/ViewAllFaceDown';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {hostUrl} from '../redux/api/baseApi';
+import store from '../redux/store';
 
 const Stack = createNativeStackNavigator();
 const linking = {
@@ -111,7 +111,7 @@ const Routes = () => {
     // Handle initial URL if the app is opened from a deep link
     Linking.getInitialURL().then(url => {
       if (url) {
-        handleDeepLink({url});
+        // handleDeepLink({url});
       }
     });
 
@@ -139,7 +139,8 @@ const Routes = () => {
           // initialRouteName={'test'}
           screenOptions={{
             headerShown: false,
-            statusBarAnimation: 'fade',
+            statusBarAnimation: 'slide',
+            animation: 'slide_from_right',
             statusBarColor: colors.bg,
             statusBarStyle: isDark ? 'light' : 'dark',
           }}>
