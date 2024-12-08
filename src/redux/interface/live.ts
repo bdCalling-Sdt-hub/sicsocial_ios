@@ -23,6 +23,7 @@ export interface IActiveLiveUser {
   uid: number;
   joinTime: string;
   token: string;
+  isMute: boolean;
   _id: string;
 }
 

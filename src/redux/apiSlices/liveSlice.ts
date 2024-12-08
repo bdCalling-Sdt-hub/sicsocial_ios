@@ -57,6 +57,13 @@ export const liveSlices = api.injectEndpoints({
       }),
       invalidatesTags: ['live'],
     }),
+    ToggleMute: builder.mutation({
+      query: id => ({
+        url: `/live/toggle_mute?chatId=${id}`,
+        method: 'PATCH',
+      }),
+      invalidatesTags: ['live'],
+    }),
   }),
 });
 
@@ -68,4 +75,5 @@ export const {
   useRequestMutation,
   useLeaveLiveMutation,
   useUpdateLiveMutation,
+  useToggleMuteMutation,
 } = liveSlices;

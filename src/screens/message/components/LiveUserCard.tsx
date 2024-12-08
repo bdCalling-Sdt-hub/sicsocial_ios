@@ -1,16 +1,16 @@
+import {Image, Text, TouchableOpacity, View} from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withRepeat,
   withTiming,
 } from 'react-native-reanimated';
-import {Image, Text, TouchableOpacity, View} from 'react-native';
 
-import {NavigProps} from '../../../interfaces/NaviProps';
 import React from 'react';
 import {SvgXml} from 'react-native-svg';
-import {makeImage} from '../../../utils/utils';
 import {useStyles} from '../../../context/ContextApi';
+import {NavigProps} from '../../../interfaces/NaviProps';
+import {makeImage} from '../../../utils/utils';
 
 interface UserCardInfo extends NavigProps<any> {
   item: any;
@@ -51,6 +51,8 @@ const LiveUserCard = ({
       true,
     );
   }, []);
+
+  // console.log(item);
 
   // Define the setupVideoSDKEngine method called when the App starts
 
@@ -94,7 +96,7 @@ const LiveUserCard = ({
               alignItems: 'center',
               justifyContent: 'center',
             }}>
-            {item.muted ? (
+            {!isMute ? (
               <SvgXml
                 xml={`<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
     <circle cx="9" cy="9" r="9" fill="#F4F4F4"/>

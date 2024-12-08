@@ -1,4 +1,4 @@
-import {ActionSheet, GridList} from 'react-native-ui-lib';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   FlatList,
   Image,
@@ -11,17 +11,16 @@ import {
   View,
   useWindowDimensions,
 } from 'react-native';
-import PopUpModal, {
-  PopUpModalRef,
-} from '../../components/common/modals/PopUpModal';
-import React, {useCallback, useEffect, useRef, useState} from 'react';
 import createAgoraRtcEngine, {
   ChannelProfileType,
   ClientRoleType,
   IRtcEngine,
   IRtcEngineEventHandler,
 } from 'react-native-agora';
-import {isSmall, isTablet, makeImage} from '../../utils/utils';
+import {ActionSheet, GridList} from 'react-native-ui-lib';
+import PopUpModal, {
+  PopUpModalRef,
+} from '../../components/common/modals/PopUpModal';
 import {useContextApi, useStyles} from '../../context/ContextApi';
 import {
   useGetLiveChatQuery,
@@ -29,18 +28,20 @@ import {
   useLeaveLiveMutation,
   usePermissionRoleMutation,
   useRequestMutation,
+  useToggleMuteMutation,
 } from '../../redux/apiSlices/liveSlice';
+import {isSmall, isTablet, makeImage} from '../../utils/utils';
 
-import {AgoraConfig} from '../../../agora.config';
-import ConversationHeader from '../../components/conversation/ConversationHeader';
-import LiveUserCard from './components/LiveUserCard';
-import {NavigProps} from '../../interfaces/NaviProps';
-import NotifyTopComponent from '../../components/common/notify/NotifyTopComponent';
 import {SvgXml} from 'react-native-svg';
-import {getSocket} from '../../redux/services/socket';
-import {useGetNewsFeetQuery} from '../../redux/apiSlices/homeSlices';
+import {AgoraConfig} from '../../../agora.config';
+import NotifyTopComponent from '../../components/common/notify/NotifyTopComponent';
+import ConversationHeader from '../../components/conversation/ConversationHeader';
+import {NavigProps} from '../../interfaces/NaviProps';
 import {useGetUserProfileQuery} from '../../redux/apiSlices/authSlice';
+import {useGetNewsFeetQuery} from '../../redux/apiSlices/homeSlices';
+import {getSocket} from '../../redux/services/socket';
 import {useShearLink} from '../../utils/conentShare';
+import LiveUserCard from './components/LiveUserCard';
 
 const LiveConversationScreen = ({
   navigation,
@@ -79,26 +80,16 @@ const LiveConversationScreen = ({
   const {height, width} = useWindowDimensions();
   const {colors, font} = useStyles();
   const {isLive, setIsLive, isDark} = useContextApi();
-  const [isFriend, setIsFriend] = React.useState(false);
-  const [isFriendRequest, setIsFriendRequest] = React.useState(false);
-  const [isFriendRequestSent, setIsFriendRequestSent] = React.useState(false);
-  const [modalVisible, setModalVisible] = React.useState(false);
   const [open, setNotify] = React.useState<{
     open: boolean;
     status: 'normal' | 'error' | 'success';
   }>();
-  const [confirmationModal, setConfirmationModal] = React.useState(false);
-  const [toggleNotify, setToggleNotify] = React.useState(0);
-  const [volumeEffect, setVolumeEffect] = React.useState(0);
   const [showAction, setShowAction] = React.useState<boolean>(false);
-  const [booksModal, setBooksModal] = React.useState(false);
   const [SelectItem, setSelectItem] = React.useState<any>();
-  const [liveModal, setLiveModal] = React.useState(false);
-  const [linkUrl, setLinkUrl] = React.useState('');
-  const [isMute, setIsMute] = React.useState<null | boolean>(true);
+  const [isMute, setIsMute] = React.useState(
+    live?.data?.activeUsers.find(user => user.uid === uid)?.isMute,
+  );
   const [localId, setLocalId] = useState<number>();
-
-  const [selectOptionItem, setSelectOptionItem] = React.useState<number>();
   const agoraEngineRef = useRef<IRtcEngine>(); // IRtcEngine instance
 
   const eventHandler = useRef<IRtcEngineEventHandler>();
@@ -160,31 +151,6 @@ const LiveConversationScreen = ({
         onJoinChannelSuccess: (connection, uid, elapsed) => {
           // console.log('JoinChannelSuccess:', {connection, uid, elapsed});
           setLocalId(uid);
-          const finedUser = live?.data?.activeUsers?.find(
-            user => user.uid === connection?.localUid,
-          );
-          if (finedUser) {
-            // check if already exists
-            const exists = ActiveUser.find(
-              user => user.uid === connection?.localUid,
-            );
-            // remove first one
-            setActiveUser(prevUsers =>
-              prevUsers?.filter(user => user.uid !== connection?.localUid),
-            );
-
-            setActiveUser(prev => [
-              ...prev,
-              {
-                user: finedUser.user,
-                role: finedUser.role,
-                uid: uid,
-                isHost: finedUser?.user?._id === live?.data?.createBy,
-                token: finedUser.token,
-                muted: finedUser.role === 'host' ? false : true,
-              },
-            ]);
-          }
         },
         // onUserJoined: (connection, uid, elapsed) => {
         //   // console.log('UserJoined:', {connection, uid, elapsed});
@@ -210,52 +176,31 @@ const LiveConversationScreen = ({
         //     }
         //   }
         // },
-        onUserOffline: (connection, uid, reason) => {
-          // console.log('UserOffline:', {uid, reason});
-          const finedUser = live?.data?.activeUsers?.find(
-            user => user.uid === uid,
-          );
+        // onUserOffline: (connection, uid, reason) => {
+        //   // console.log('UserOffline:', {uid, reason});
+        // },
 
-          if (finedUser) {
-            setActiveUser(prevUsers =>
-              prevUsers?.filter(user => user.uid !== uid),
-            );
-          }
-        },
+        // onActiveSpeaker: uid => {
+        //   // console.log('ActiveSpeaker:', uid);
+        //   const finedUser = live?.data?.activeUsers?.find(
+        //     user => user.uid === uid,
+        //   );
+        //   if (finedUser) {
+        //     setActiveUser(prev =>
+        //       prev?.map(user => {
+        //         if (user.uid === uid) {
+        //           return {...user, volume: 1};
+        //         }
+        //         return user;
+        //       }),
+        //     );
+        //   }
+        // },
 
-        onActiveSpeaker: uid => {
-          // console.log('ActiveSpeaker:', uid);
-          const finedUser = live?.data?.activeUsers?.find(
-            user => user.uid === uid,
-          );
-          if (finedUser) {
-            setActiveUser(prev =>
-              prev?.map(user => {
-                if (user.uid === uid) {
-                  return {...user, volume: 1};
-                }
-                return user;
-              }),
-            );
-          }
-        },
+        // onUserMuteAudio(connection, remoteUid, muted) {
+        //   console.log('UserMuteAudio:', {connection, remoteUid, muted, uid});
 
-        onUserMuteAudio(connection, remoteUid, muted) {
-          // console.log('UserMuteAudio:', {connection, remoteUid, muted});
-          const finedUser = live?.data?.activeUsers?.find(
-            user => user.uid === remoteUid,
-          );
-          if (finedUser) {
-            setActiveUser(prev =>
-              prev?.map(user => {
-                if (user.uid === remoteUid) {
-                  return {...user, muted};
-                }
-                return user;
-              }),
-            );
-          }
-        },
+        // },
       };
 
       // Register event handler
@@ -280,6 +225,7 @@ const LiveConversationScreen = ({
               : ClientRoleType.ClientRoleAudience,
           // Publish audio collected by the microphone
           publishMicrophoneTrack: role == 'host' ? true : false,
+          // publishMicrophoneTrack: false,
           // publishMicrophoneTrack: false,
           // Do not publish video collected by the camera
           publishMediaPlayerAudioTrack: true,
@@ -322,20 +268,15 @@ const LiveConversationScreen = ({
   };
 
   // Toggle mute/unmute for a specific user
-  const toggleMute = () => {
+  const toggleMute = async () => {
     // console.log(isMute);
     // chnage local user muted
-    agoraEngineRef.current.muteLocalAudioStream(isMute);
-    setActiveUser(prev =>
-      prev?.map(user => {
-        if (user.uid === localId) {
-          return {...user, muted: isMute};
-        }
+    agoraEngineRef.current.muteLocalAudioStream(isMute ? false : true);
 
-        return user;
-      }),
-    );
+    await ToggleMute(live?.data.chat);
+
     setIsMute(!isMute);
+
     // console.log(ActiveUser);
   };
 
@@ -344,6 +285,7 @@ const LiveConversationScreen = ({
   const [updateRole] = usePermissionRoleMutation();
   const [requestRoleUpdate] = useRequestMutation();
   const [leaveLive] = useLeaveLiveMutation();
+  const [ToggleMute] = useToggleMuteMutation();
 
   const handleRequestAccess = () => {
     // setNotify(true);
@@ -505,6 +447,8 @@ const LiveConversationScreen = ({
       }
     }
   }, [userInfo?.data?._id, live?.data?.activeUsers]);
+
+  // console.log(isMuteHost, 'ismutehost');
 
   return (
     <SafeAreaView
@@ -759,6 +703,7 @@ const LiveConversationScreen = ({
         renderItem={item => {
           return (
             <LiveUserCard
+              isMute={isMute}
               onPress={() => {
                 if (item?.item?.user?._id !== userInfo?.data?._id) {
                   setShowAction(!showAction);
@@ -766,7 +711,7 @@ const LiveConversationScreen = ({
                 }
               }}
               sound
-              host={item?.item?.user?._id === live?.data?.host}
+              host={item?.item?.user?._id === live?.data?.createBy}
               item={item?.item}
             />
           );
