@@ -24,13 +24,28 @@ export const chatSlices = api.injectEndpoints({
         method: 'PATCH',
         body: {participants},
       }),
+      invalidatesTags: ['chat', 'members'],
+    }),
+    removeMember: builder.mutation({
+      query: ({id, participantId}) => ({
+        url: `/chat/remove/${id}`,
+        method: 'PATCH',
+        body: {participantId},
+      }),
+      invalidatesTags: ['members', 'chat'],
+    }),
+    deletedChat: builder.mutation({
+      query: id => ({
+        url: `/chat/delete/${id}`,
+        method: 'DELETE',
+      }),
       invalidatesTags: ['chat'],
     }),
     getMembers: builder.query({
       query: id => ({
         url: `/chat/participants/${id}`,
       }),
-      providesTags: ['chat'],
+      providesTags: ['members'],
     }),
   }),
 });
@@ -40,5 +55,7 @@ export const {
   useCreateChatMutation,
   useAddMemberMutation,
   useGetMembersQuery,
+  useRemoveMemberMutation,
+  useDeletedChatMutation,
   usePrefetch: useChatPrefetch,
 } = chatSlices;

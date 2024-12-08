@@ -15,6 +15,7 @@ import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
 import GroupUserCard from '../../components/conversation/GroupUserCard';
 import {useStyles} from '../../context/ContextApi';
 import {NavigProps} from '../../interfaces/NaviProps';
+import {useRemoveMemberMutation} from '../../redux/apiSlices/chatSlices';
 import {useGetFriendQuery} from '../../redux/apiSlices/friendsSlices';
 import {useGetParticipantsQuery} from '../../redux/apiSlices/messageSlies';
 import {IParticipant} from '../../redux/interface/participants';
@@ -36,6 +37,8 @@ const MembersManage = ({navigation, route}: NavigProps<any>) => {
     refetch: reFetchParticipant,
     isLoading: isParticipantLoading,
   } = useGetParticipantsQuery(route?.params?.data?.id);
+
+  const [removeMembers] = useRemoveMemberMutation({});
 
   return (
     <View
@@ -149,6 +152,14 @@ const MembersManage = ({navigation, route}: NavigProps<any>) => {
               component={
                 <View>
                   <TouchableOpacity
+                    onPress={() => {
+                      removeMembers({
+                        id: route?.params?.data?.id,
+                        participantId: item.item._id,
+                      }).then(res => {
+                        reFetchParticipant();
+                      });
+                    }}
                     style={{
                       backgroundColor: colors?.redis,
                       padding: 5,

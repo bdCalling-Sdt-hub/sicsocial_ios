@@ -35,6 +35,7 @@ import {useStyles} from '../../context/ContextApi';
 import {useAudioPlayer} from '../../hook/playMusic';
 import {NavigProps} from '../../interfaces/NaviProps';
 import {useGetUserProfileQuery} from '../../redux/apiSlices/authSlice';
+import {useDeletedChatMutation} from '../../redux/apiSlices/chatSlices';
 import {useLazyGetMessageQuery} from '../../redux/apiSlices/messageSlies';
 import {IMessage} from '../../redux/interface/message';
 import {getSocket} from '../../redux/services/socket';
@@ -57,6 +58,8 @@ const FaceDownConversation = ({
   });
 
   const [deletedFaceDown] = useDeleteFacedownMutation();
+
+  const [deletedChat] = useDeletedChatMutation();
 
   // console.log(FaceDwn);
 
@@ -732,10 +735,18 @@ const FaceDownConversation = ({
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => {
-                console.log(FaceDownData?._id);
                 deletedFaceDown(FaceDownData?._id).then(res => {
-                  console.log(res);
-                  // setConfirmationModal(false);
+                  if (res?.data) {
+                    deletedChat(
+                      route?.params?.data?.id || route?.params?.id,
+                    ).then(res => {
+                      if (res?.data) {
+                        setConfirmationModal(false);
+                        setShowPinBook(false);
+                        navigation?.canGoBack() && navigation?.goBack();
+                      }
+                    });
+                  }
                 });
               }}
               style={{

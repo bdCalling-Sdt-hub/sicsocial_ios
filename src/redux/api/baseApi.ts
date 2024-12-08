@@ -57,6 +57,7 @@ export const api = createApi({
     'book',
     'payment',
     'live',
+    'members',
   ],
 });
 
