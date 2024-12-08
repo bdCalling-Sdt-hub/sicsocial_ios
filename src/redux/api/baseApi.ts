@@ -65,4 +65,3 @@ export const api = createApi({
 // export const imageUrl = 'http://192.168.12.202:5000/';
 // export const imageUrl = 'https://api.sic.org/'
 export const imageUrl = 'http://146.190.126.8:5000/';
-export const hostUrl = 'https://sic.org';

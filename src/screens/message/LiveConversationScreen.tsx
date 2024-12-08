@@ -180,22 +180,22 @@ const LiveConversationScreen = ({
         //   // console.log('UserOffline:', {uid, reason});
         // },
 
-        // onActiveSpeaker: uid => {
-        //   // console.log('ActiveSpeaker:', uid);
-        //   const finedUser = live?.data?.activeUsers?.find(
-        //     user => user.uid === uid,
-        //   );
-        //   if (finedUser) {
-        //     setActiveUser(prev =>
-        //       prev?.map(user => {
-        //         if (user.uid === uid) {
-        //           return {...user, volume: 1};
-        //         }
-        //         return user;
-        //       }),
-        //     );
-        //   }
-        // },
+        onActiveSpeaker: uid => {
+          // console.log('ActiveSpeaker:', uid);
+          const finedUser = live?.data?.activeUsers?.find(
+            user => user.uid === uid,
+          );
+          if (finedUser) {
+            setActiveUser(prev =>
+              prev?.map(user => {
+                if (user.uid === uid) {
+                  return {...user, volume: 1};
+                }
+                return user;
+              }),
+            );
+          }
+        },
 
         // onUserMuteAudio(connection, remoteUid, muted) {
         //   console.log('UserMuteAudio:', {connection, remoteUid, muted, uid});
@@ -328,6 +328,8 @@ const LiveConversationScreen = ({
   };
 
   const handleSocketUpdate = useCallback((data: any) => {
+    // console.log(data);
+
     refetchLive();
     if (data?.end) {
       newsFeetRefetch();
@@ -703,7 +705,6 @@ const LiveConversationScreen = ({
         renderItem={item => {
           return (
             <LiveUserCard
-              isMute={isMute}
               onPress={() => {
                 if (item?.item?.user?._id !== userInfo?.data?._id) {
                   setShowAction(!showAction);
@@ -907,7 +908,6 @@ const LiveConversationScreen = ({
           </View>
           {/* ===============live joined and knock and voice run on or off start============ */}
           <TouchableOpacity
-            activeOpacity={0.9}
             style={{}}
             onPress={() => {
               // setRunOnVoice(!runOnVoice);
@@ -936,7 +936,8 @@ const LiveConversationScreen = ({
               {role === 'host' ? (
                 <SvgXml
                   xml={
-                    !isMute
+                    !live?.data?.activeUsers.find(user => user.uid === uid)
+                      ?.isMute
                       ? `<svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
   <g clip-path="url(#clip0_691_4364)">
   <path d="M11 18C9.14413 17.9979 7.36487 17.2597 6.05257 15.9474C4.74026 14.6351 4.0021 12.8559 4.00001 11V7.49999C4.00001 5.64348 4.73751 3.863 6.05026 2.55025C7.36302 1.2375 9.14349 0.5 11 0.5C12.8565 0.5 14.637 1.2375 15.9497 2.55025C17.2625 3.863 18 5.64348 18 7.49999V11C17.9979 12.8559 17.2597 14.6351 15.9474 15.9474C14.6351 17.2597 12.8559 17.9979 11 18ZM11 2.25C9.76053 2.2523 8.56175 2.69263 7.61548 3.49319C6.66922 4.29376 6.03637 5.40302 5.82876 6.62499H8.37501C8.60707 6.62499 8.82963 6.71718 8.99373 6.88127C9.15782 7.04537 9.25001 7.26793 9.25001 7.49999C9.25001 7.73206 9.15782 7.95462 8.99373 8.11871C8.82963 8.2828 8.60707 8.37499 8.37501 8.37499H5.75001V10.125H8.37501C8.60707 10.125 8.82963 10.2172 8.99373 10.3813C9.15782 10.5454 9.25001 10.7679 9.25001 11C9.25001 11.2321 9.15782 11.4546 8.99373 11.6187C8.82963 11.7828 8.60707 11.875 8.37501 11.875H5.82876C6.03442 13.0978 6.66673 14.2082 7.61345 15.009C8.56017 15.8097 9.76003 16.2491 11 16.2491C12.24 16.2491 13.4398 15.8097 14.3866 15.009C15.3333 14.2082 15.9656 13.0978 16.1713 11.875H13.625C13.3929 11.875 13.1704 11.7828 13.0063 11.6187C12.8422 11.4546 12.75 11.2321 12.75 11C12.75 10.7679 12.8422 10.5454 13.0063 10.3813C13.1704 10.2172 13.3929 10.125 13.625 10.125H16.25V8.37499H13.625C13.3929 8.37499 13.1704 8.2828 13.0063 8.11871C12.8422 7.95462 12.75 7.73206 12.75 7.49999C12.75 7.26793 12.8422 7.04537 13.0063 6.88127C13.1704 6.71718 13.3929 6.62499 13.625 6.62499H16.1713C15.9636 5.40302 15.3308 4.29376 14.3845 3.49319C13.4383 2.69263 12.2395 2.2523 11 2.25Z" fill="#F4F4F4"/>
