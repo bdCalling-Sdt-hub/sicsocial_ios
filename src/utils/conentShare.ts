@@ -7,7 +7,7 @@ export const useShearLink = async (options: {
 }) => {
   try {
     const result = Share.open(options);
-    console.log(await result);
+    // console.log(await result);
   } catch (error) {
     // console.log(error);
   }

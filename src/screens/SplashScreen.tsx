@@ -45,7 +45,7 @@ const SplashScreen = ({navigation, setIsSplash}: SplashProps) => {
           loop={false}
           speed={0.7}
           onAnimationFinish={() => {
-            console.log('animation finished');
+            // console.log('animation finished');
             // navigation?.navigate('Login');
             setIsSplash(false);
           }}

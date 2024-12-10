@@ -110,7 +110,7 @@ const UpdateNewFaceDown = ({navigation, route}: NavigProps<any>) => {
       }
       updateFaceDown({id: route?.params?.data?._id, data: formData}).then(
         faceDown => {
-          console.log(faceDown);
+          // console.log(faceDown);
           if (faceDown.data?.data?._id) {
             createChat({
               participants: participants,

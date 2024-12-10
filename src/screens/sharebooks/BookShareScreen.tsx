@@ -61,15 +61,15 @@ const BookShareScreen = ({navigation, route}: NavigProps<{data: any}>) => {
     const formData = new FormData();
 
     createChat({type: 'public'}).then(res => {
-      console.log(res);
-      console.log(BookData?.data?._id);
+      // console.log(res);
+      // console.log(BookData?.data?._id);
       if (res?.data?.data?._id) {
         formData.append('chatId', res.data?.data?._id);
 
         BookData?.data?._id && formData.append('book', BookData?.data?._id);
 
         createMessage(formData).then(ms => {
-          console.log(ms);
+          // console.log(ms);
         });
       }
     });
@@ -89,7 +89,7 @@ const BookShareScreen = ({navigation, route}: NavigProps<{data: any}>) => {
         setPdfPath(res.path());
         setIsLoading(false); // লোডিং সম্পূর্ণ হলে লোডার বন্ধ করুন
       } catch (error) {
-        console.log('Error downloading PDF:', error);
+        // console.log('Error downloading PDF:', error);
         setIsLoading(false); // ত্রুটি হলেও লোডার বন্ধ করুন
       }
     };

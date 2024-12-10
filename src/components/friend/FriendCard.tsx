@@ -262,7 +262,7 @@ const FriendCard = ({
                   cancelRequest({
                     recipientId: item._id,
                   }).then(res => {
-                    console.log(res);
+                    // console.log(res);
                   });
                 }}
                 onPressIn={() => setRejectBtnPress(true)}
@@ -297,7 +297,7 @@ const FriendCard = ({
                   acceptRequest({
                     senderId: item._id,
                   }).then(res => {
-                    console.log(res);
+                    // console.log(res);
                   });
                 }}
                 onPressIn={() => setAcceptBtnPress(true)}
@@ -344,7 +344,7 @@ const FriendCard = ({
                   removeFriendRequest({
                     senderId: item._id,
                   }).then(res => {
-                    console.log(res);
+                    // console.log(res);
                   });
                 }}
                 onPressIn={() => setRejectBtnPress(true)}
@@ -376,11 +376,11 @@ const FriendCard = ({
               <TouchableOpacity
                 activeOpacity={0.9}
                 onPress={() => {
-                  console.log(item);
+                  // console.log(item);
                   sendFriendRequest({
                     recipientId: item?._id,
                   }).then(res => {
-                    console.log(res);
+                    // console.log(res);
                     if (res.error?.data) {
                       alert(res.error?.data?.message);
                     }

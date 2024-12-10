@@ -4,32 +4,40 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View
+  View,
 } from 'react-native';
-import PopUpModal, { PopUpModalRef } from '../../components/common/modals/PopUpModal';
-import { useSendCodeAgainMutation, useVerifyUserMutation } from '../../redux/apiSlices/authSlice';
+import PopUpModal, {
+  PopUpModalRef,
+} from '../../components/common/modals/PopUpModal';
+import {
+  useSendCodeAgainMutation,
+  useVerifyUserMutation,
+} from '../../redux/apiSlices/authSlice';
 
 import React from 'react';
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
 import NormalButton from '../../components/common/NormalButton';
-import { useStyles } from '../../context/ContextApi';
-import { IVerifyUserRoute } from '../../interfaces/Interface';
-import { NavigProps } from '../../interfaces/NaviProps';
-import { lStorage } from '../../utils/utils';
+import {useStyles} from '../../context/ContextApi';
+import {IVerifyUserRoute} from '../../interfaces/Interface';
+import {NavigProps} from '../../interfaces/NaviProps';
+import {lStorage} from '../../utils/utils';
 
-const VerifyEmailScreen = ({navigation,route}: NavigProps<IVerifyUserRoute>) => {
+const VerifyEmailScreen = ({
+  navigation,
+  route,
+}: NavigProps<IVerifyUserRoute>) => {
   const verifyInfo = route?.params.data;
-   const [sendVerifyCodeAgain, sendCodeResult] = useSendCodeAgainMutation();
-   const [VerifyEmail, results] = useVerifyUserMutation();
-   const modalRef = React.useRef<PopUpModalRef>();
-  console.log(verifyInfo);
+  const [sendVerifyCodeAgain, sendCodeResult] = useSendCodeAgainMutation();
+  const [VerifyEmail, results] = useVerifyUserMutation();
+  const modalRef = React.useRef<PopUpModalRef>();
+  // console.log(verifyInfo);
 
   const {colors, font} = useStyles();
   const [pin, setPin] = React.useState('');
   const textInputRef = React.useRef<TextInput>(null);
   const handlePress = () => {
     if (textInputRef.current) {
-   textInputRef.current?.focus()
+      textInputRef.current?.focus();
     }
   };
   React.useEffect(() => {
@@ -43,7 +51,7 @@ const VerifyEmailScreen = ({navigation,route}: NavigProps<IVerifyUserRoute>) => 
   };
 
   const handleEmailVerify = () => {
-    // check have pin or pin must be 8 digits 
+    // check have pin or pin must be 8 digits
     if (pin.length < 6) {
       modalRef.current?.open({
         // title : "Error",
@@ -54,14 +62,26 @@ const VerifyEmailScreen = ({navigation,route}: NavigProps<IVerifyUserRoute>) => 
     }
     // console.log(pin);
 
-      verifyInfo.otp = Number(pin);
-    
+    verifyInfo.otp = Number(pin);
+
     VerifyEmail(verifyInfo).then(res => {
-      if (res?.data) {
-        lStorage.setString("token", res.data?.data?.accessToken);
+      if (
+        res?.data &&
+        route?.params?.data?.verificationType === 'passwordReset'
+      ) {
+        lStorage.setString('token', res.data?.data?.accessToken);
+        navigation?.navigate('ChangePassword', {
+          email: route?.params?.data?.email,
+        });
+      }
+      if (
+        res?.data &&
+        route?.params?.data?.verificationType !== 'passwordReset'
+      ) {
+        lStorage.setString('token', res.data?.data?.accessToken);
         navigation?.navigate('VerifySuccessful');
       }
-      if(res.error){
+      if (res.error) {
         modalRef.current?.open({
           // title : "Error",
           content: res?.error?.data?.message,
@@ -129,7 +149,7 @@ const VerifyEmailScreen = ({navigation,route}: NavigProps<IVerifyUserRoute>) => 
           style={{
             gap: 8,
             marginVertical: 15,
-            maxWidth : '100%'
+            maxWidth: '100%',
           }}>
           <View
             style={{
@@ -269,19 +289,19 @@ const VerifyEmailScreen = ({navigation,route}: NavigProps<IVerifyUserRoute>) => 
             I didn't find confirmation code,{' '}
           </Text>
           <TouchableOpacity
-        disabled={sendCodeResult.isLoading}
-          onPress={()=>{
-            sendVerifyCodeAgain({email :verifyInfo?.email}).then((res)=>{
-              if(res.data){
-                modalRef.current?.open({
-                  title: 'Please check your email',
-                  content: res?.data?.message,
-                  lottify : require("../../assets/lotties/notifyEmail.json"),
-                })
-                setPin('')
-              }
-            })
-          }}
+            disabled={sendCodeResult.isLoading}
+            onPress={() => {
+              sendVerifyCodeAgain({email: verifyInfo?.email}).then(res => {
+                if (res.data) {
+                  modalRef.current?.open({
+                    title: 'Please check your email',
+                    content: res?.data?.message,
+                    lottify: require('../../assets/lotties/notifyEmail.json'),
+                  });
+                  setPin('');
+                }
+              });
+            }}
             style={{
               justifyContent: 'center',
               alignItems: 'center',
@@ -299,13 +319,13 @@ const VerifyEmailScreen = ({navigation,route}: NavigProps<IVerifyUserRoute>) => 
         </View>
         <View>
           <NormalButton
-          isLoading={results.isLoading}
+            isLoading={results.isLoading}
             title="Confirm"
             marginVertical={31}
             onPress={() => {
               // navigation?.navigate('ResetPassword');
               // navigation?.navigate('VerifySuccessful');
-              handleEmailVerify()
+              handleEmailVerify();
             }}
           />
         </View>
@@ -322,7 +342,7 @@ const VerifyEmailScreen = ({navigation,route}: NavigProps<IVerifyUserRoute>) => 
         onChangeText={handlePinChange}
         maxLength={6}
       />
-          <PopUpModal ref={modalRef} />
+      <PopUpModal ref={modalRef} />
     </View>
   );
 };

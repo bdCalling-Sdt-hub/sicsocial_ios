@@ -71,7 +71,7 @@ const App = () => {
 
       eventHandler.current = {
         onJoinChannelSuccess: data => {
-          console.log('on join on channelsuccess', data);
+          // console.log('on join on channelsuccess', data);
           setLocalId(data.localUid?.toFixed());
           if (!hostId) {
             setHostId(data.localUid?.toFixed());
@@ -101,12 +101,12 @@ const App = () => {
           setUsers(prevUsers =>
             prevUsers?.filter(user => user.uid !== uid.toFixed()),
           );
-          console.log('User offline', uid);
+          // console.log('User offline', uid);
         },
         // Adding the audio volume indication event handler
         onAudioVolumeIndication: speakers => {
           // console.log('Audio volume indication:', speakers);
-          console.log({});
+          // console.log({});
           if (speakers.length > 0) {
             // Find the speaker with the highest volume
             const activeSpeaker = speakers.reduce((prev, current) =>
@@ -133,11 +133,11 @@ const App = () => {
       // Enable audio volume indication
       agoraEngine.enableAudioVolumeIndication(1000, 3, true); // Parameters: interval, smooth, reportVad
     } catch (e) {
-      console.log(e);
+      // console.log(e);
     }
   };
 
-  console.log(users);
+  // console.log(users);
 
   // Define the join method called after clicking the join channel button
   const join = async (selectRole: string) => {
@@ -171,7 +171,7 @@ const App = () => {
       agoraEngineRef?.current?.isSpeakerphoneEnabled();
       setModalVisible(false);
     } catch (e) {
-      console.log(e);
+      // console.log(e);
     }
   };
   // Define the leave method called after clicking the leave channel button
@@ -183,7 +183,7 @@ const App = () => {
       setIsJoined(false);
       setModalVisible(true);
     } catch (e) {
-      console.log(e);
+      // console.log(e);
     }
   };
 

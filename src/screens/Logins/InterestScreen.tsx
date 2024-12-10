@@ -297,7 +297,7 @@ const InterestScreen = ({navigation}: NavigProps<null>) => {
     );
 
     const result = await userUpdate(formData);
-    console.log(result);
+    // console.log(result);
     if (result) {
       navigation?.goBack();
     }

@@ -10,14 +10,14 @@ import PopUpModal, {
   PopUpModalRef,
 } from '../../components/common/modals/PopUpModal';
 
-import { Formik } from 'formik';
+import {Formik} from 'formik';
 import React from 'react';
 import Feather from 'react-native-vector-icons/Feather';
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
 import NormalButton from '../../components/common/NormalButton';
-import { useStyles } from '../../context/ContextApi';
-import { NavigProps } from '../../interfaces/NaviProps';
-import { useCreateUserMutation } from '../../redux/apiSlices/authSlice';
+import {useStyles} from '../../context/ContextApi';
+import {NavigProps} from '../../interfaces/NaviProps';
+import {useCreateUserMutation} from '../../redux/apiSlices/authSlice';
 
 const SignUpScreen = ({navigation}: NavigProps<null>) => {
   const modalRef = React.useRef<PopUpModalRef>();
@@ -26,7 +26,7 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
   const [isShow, setIsShow] = React.useState(false);
   const [check, setCheck] = React.useState(false);
   const OnSubmitHandler = values => {
-    console.log(values);
+    // console.log(values);
     if (!values?.fullName) {
       modalRef.current?.open({
         // title : "Error",
@@ -70,7 +70,7 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
       });
     } else {
       createUser(values).then(res => {
-        console.log(res);
+        // console.log(res);
         if (res.error) {
           modalRef.current?.open({
             // title : "Error",
@@ -83,7 +83,7 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
             navigation?.navigate('VerifyEmail', {
               data: {
                 email: values?.email,
-                otp : "",
+                otp: '',
                 verificationType: 'emailVerification',
               },
             });

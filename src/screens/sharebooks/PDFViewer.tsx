@@ -27,7 +27,7 @@ const PDFViewer = ({route, navigation}: NavigProps<any>) => {
         setPdfPath(res.path());
         setIsLoading(false); // লোডিং সম্পূর্ণ হলে লোডার বন্ধ করুন
       } catch (error) {
-        console.log('Error downloading PDF:', error);
+        // console.log('Error downloading PDF:', error);
         setIsLoading(false); // ত্রুটি হলেও লোডার বন্ধ করুন
       }
     };

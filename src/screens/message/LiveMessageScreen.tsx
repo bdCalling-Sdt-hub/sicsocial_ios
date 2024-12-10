@@ -1,3 +1,4 @@
+import React, {useEffect} from 'react';
 import {
   FlatList,
   Image,
@@ -8,22 +9,21 @@ import {
   View,
   useWindowDimensions,
 } from 'react-native';
-import React, {useEffect} from 'react';
 import {
   useCreateMessageMutation,
   useLazyGetMessageQuery,
 } from '../../redux/apiSlices/messageSlies';
 
-import CustomModal from '../../components/common/customModal/CustomModal';
-import Feather from 'react-native-vector-icons/Feather';
-import {IMessage} from '../../redux/interface/message';
-import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
-import {NavigProps} from '../../interfaces/NaviProps';
 import {SvgXml} from 'react-native-svg';
+import Feather from 'react-native-vector-icons/Feather';
+import CustomModal from '../../components/common/customModal/CustomModal';
+import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
+import {useStyles} from '../../context/ContextApi';
+import {NavigProps} from '../../interfaces/NaviProps';
+import {useGetUserProfileQuery} from '../../redux/apiSlices/authSlice';
+import {IMessage} from '../../redux/interface/message';
 import {getSocket} from '../../redux/services/socket';
 import {makeImage} from '../../utils/utils';
-import {useGetUserProfileQuery} from '../../redux/apiSlices/authSlice';
-import {useStyles} from '../../context/ContextApi';
 
 export interface messagePros {
   id: number;
@@ -39,11 +39,11 @@ export interface messagePros {
 }
 
 const LiveMessageScreen = ({navigation, route}: NavigProps<{data: any}>) => {
-  console.log();
+  // console.log();
   const {width, height} = useWindowDimensions();
   const {colors, font} = useStyles();
 
-  console.log(route?.params?.data);
+  // console.log(route?.params?.data);
 
   const [getAllMessage, messageResult] = useLazyGetMessageQuery();
   const [AllMessages, setAllMessages] = React.useState<any>([]);

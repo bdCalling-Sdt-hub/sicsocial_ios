@@ -1,6 +1,3 @@
-import PopUpModal, {
-  PopUpModalRef,
-} from '../../components/common/modals/PopUpModal';
 import {
   ScrollView,
   StyleSheet,
@@ -9,18 +6,21 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import PopUpModal, {
+  PopUpModalRef,
+} from '../../components/common/modals/PopUpModal';
 
-import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
+import {Formik} from 'formik';
+import React from 'react';
 import {Checkbox} from 'react-native-ui-lib';
 import Feather from 'react-native-vector-icons/Feather';
-import {Formik} from 'formik';
-import {NavigProps} from '../../interfaces/NaviProps';
-import React from 'react';
-import {lStorage} from '../../utils/utils';
-import {setToken} from '../../redux/apiSlices/tokenSlice';
 import {useDispatch} from 'react-redux';
-import {useLoginUserMutation} from '../../redux/apiSlices/authSlice';
+import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
 import {useStyles} from '../../context/ContextApi';
+import {NavigProps} from '../../interfaces/NaviProps';
+import {useLoginUserMutation} from '../../redux/apiSlices/authSlice';
+import {setToken} from '../../redux/apiSlices/tokenSlice';
+import {lStorage} from '../../utils/utils';
 
 const LoginScreen = ({navigation}: NavigProps<null>) => {
   const modalRef = React.useRef<PopUpModalRef>();
@@ -49,14 +49,14 @@ const LoginScreen = ({navigation}: NavigProps<null>) => {
     } else {
       loginUser(values).then(res => {
         if (res.error) {
-          console.log(res.error);
+          // console.log(res.error);
           modalRef.current?.open({
             // title : "Error",
             content: res?.error?.data?.message,
           });
         }
         if (res?.data) {
-          console.log(res.data?.data?.accessToken);
+          // console.log(res.data?.data?.accessToken);
           dispatch(setToken(res.data?.data?.accessToken));
           lStorage.setString('token', res.data?.data?.accessToken);
           navigation?.navigate('Loading');

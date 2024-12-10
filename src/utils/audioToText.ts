@@ -34,7 +34,7 @@ export async function speechToText(audioFile: {
       },
     };
 
-    console.log('Request Body:', JSON.stringify(requestBody, null, 2));
+    // console.log('Request Body:', JSON.stringify(requestBody, null, 2));
 
     const response: Response = await fetch(url, {
       method: 'POST',
@@ -53,7 +53,7 @@ export async function speechToText(audioFile: {
     }
 
     const data = await response.json();
-    console.log('Full response data:', data);
+    // console.log('Full response data:', data);
 
     // Handle response
   } catch (error) {

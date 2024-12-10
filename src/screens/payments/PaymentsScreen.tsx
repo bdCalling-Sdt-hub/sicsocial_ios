@@ -61,7 +61,7 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
       });
       // console.log(paymentInt?.data?.data?.clientSecret);
       if (paymentInt?.error) {
-        console.log('Payment intent error', paymentInt?.error);
+        // console.log('Payment intent error', paymentInt?.error);
       }
       if (paymentInt?.data?.data?.clientSecret) {
         // Confirm the payment with the card details
@@ -77,7 +77,7 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
 
         if (error) {
           setExtraLoading(false);
-          console.log('Payment confirmation error', error);
+          // console.log('Payment confirmation error', error);
           modalRef.current?.open({
             title: 'Warning',
             content: error.message,

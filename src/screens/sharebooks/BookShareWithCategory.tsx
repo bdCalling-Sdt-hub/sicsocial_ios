@@ -58,7 +58,7 @@ const BookShareWithCategory = ({
     category: Item?.name,
   });
 
-  console.log(allBooks);
+  // console.log(allBooks);
   const {height, width} = useWindowDimensions();
 
   return (

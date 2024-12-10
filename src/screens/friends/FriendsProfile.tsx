@@ -95,7 +95,7 @@ const FriendsProfile = ({navigation, route}: NavigProps<null>) => {
       acceptRequest({
         senderId: friendProfile?.data?._id,
       }).then(res => {
-        console.log(res);
+        // console.log(res);
       });
     } else if (isFriend) {
       setModalVisible(!modalVisible);
@@ -103,7 +103,7 @@ const FriendsProfile = ({navigation, route}: NavigProps<null>) => {
       sendFriendRequest({
         recipientId: friendProfile?.data?._id,
       }).then(res => {
-        console.log(res);
+        // console.log(res);
       });
       setIsFriendRequestSent(!isFriendRequestSent);
     }
@@ -456,7 +456,7 @@ const FriendsProfile = ({navigation, route}: NavigProps<null>) => {
                 removeFriendRequest({
                   senderId: friendProfile?.data?._id,
                 }).then(res => {
-                  console.log(res);
+                  // console.log(res);
                 });
               }}
               style={{

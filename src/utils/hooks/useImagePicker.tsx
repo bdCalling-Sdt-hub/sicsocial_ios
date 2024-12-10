@@ -23,7 +23,7 @@ export const useImagePicker = async ({
       if (!result.didCancel && result.assets) {
         return result.assets; // Return selected images
       } else {
-        console.log('Camera operation canceled.');
+        // console.log('Camera operation canceled.');
         return null; // Handle case where user cancels
       }
     }
@@ -40,14 +40,14 @@ export const useImagePicker = async ({
       if (!result.didCancel && result.assets) {
         return result.assets; // Return selected images
       } else {
-        console.log('Image selection operation canceled.');
+        // console.log('Image selection operation canceled.');
         return null; // Handle case where user cancels
       }
     }
 
     return null; // If the option is neither 'camera' nor 'library'
   } catch (error) {
-    console.log('Error during image picker:', error);
+    // console.log('Error during image picker:', error);
     return null; // Return null on error
   }
 };
