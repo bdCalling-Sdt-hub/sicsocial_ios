@@ -80,11 +80,7 @@ const ModalOfBottom = ({
                   <AntDesign
                     name="close"
                     size={24}
-                    color={
-                      backButtonColor
-                        ? backButtonColor
-                        : colors.textColor.normal
-                    }
+                    color={colors.btn.variantOne}
                   />
                 </View>
               </TouchableOpacity>

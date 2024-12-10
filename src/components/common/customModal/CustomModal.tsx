@@ -58,7 +58,7 @@ const CustomModal = ({
             borderTopRightRadius: onlyTopRadius && 9,
             borderTopLeftRadius: onlyTopRadius && 9,
             backgroundColor: containerColor ? containerColor : colors.bg,
-            height: height ? height : '50%',
+            height: height && height,
             width: width ? width : '90%',
             padding: 10,
             justifyContent: center && 'center',

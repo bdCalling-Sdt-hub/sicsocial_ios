@@ -14,7 +14,7 @@ import {FontSize} from '../../../utils/utils';
 
 // Define the ref object type
 export interface PopUpModalRef {
-  open?: (data: PopUpModalProps) => void;
+  open?: (data: PopUpModalProps) => void | undefined;
   close?: () => void;
 }
 

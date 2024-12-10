@@ -1,27 +1,25 @@
-import { api } from "../api/baseApi";
+import {api} from '../api/baseApi';
 
 export const paymentSlices = api.injectEndpoints({
-    endpoints: (builder) => ({
-        getPaymentRecords: builder.query<null , unknown>({
-            query: ({id,page,limit}) => ({
-                url: `/payments`,
-              
-            }),
-            providesTags : ["payment"]
-        }),
-      
-        paymentIntent: builder.mutation({
-            query: (data) => ({
-                url: `/payments/create-payment-intent`,
-              method: 'POST',
-              body: data,
-            }),
-            invalidatesTags : ["payment"]
-          }),
+  endpoints: builder => ({
+    paymentRecord: builder.mutation({
+      query: data => ({
+        url: `/payments`,
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['payment'],
     }),
-})
+    paymentIntent: builder.mutation({
+      query: data => ({
+        url: `/payments/payment-intent/create`,
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['payment'],
+    }),
+  }),
+});
 
-
-export const {
-useGetPaymentRecordsQuery,usePaymentIntentMutation
- } = paymentSlices;
+export const {usePaymentRecordMutation, usePaymentIntentMutation} =
+  paymentSlices;

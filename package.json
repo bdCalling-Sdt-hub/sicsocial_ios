@@ -18,6 +18,7 @@
     "@react-navigation/native-stack": "^6.11.0",
     "@reduxjs/toolkit": "^2.3.0",
     "@shopify/flash-list": "^1.7.1",
+    "@stripe/stripe-react-native": "^0.40.0",
     "axios": "^1.7.7",
     "date-fns": "^4.1.0",
     "formik": "^2.4.6",
