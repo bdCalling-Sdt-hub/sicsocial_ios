@@ -3,23 +3,23 @@ import {
   StripeProvider,
   useConfirmPayment,
 } from '@stripe/stripe-react-native';
-import {ScrollView, StyleSheet, Text, TextInput, View} from 'react-native';
 import PopUpModal, {
   PopUpModalRef,
 } from '../../components/common/modals/PopUpModal';
+import {ScrollView, StyleSheet, Text, TextInput, View} from 'react-native';
 import {
   usePaymentIntentMutation,
   usePaymentRecordMutation,
 } from '../../redux/apiSlices/paymnetSlices';
 
-import React from 'react';
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
 import CustomModal from '../../components/common/customModal/CustomModal';
 import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
-import NormalButton from '../../components/common/NormalButton';
-import {useStyles} from '../../context/ContextApi';
 import {NavigProps} from '../../interfaces/NaviProps';
+import NormalButton from '../../components/common/NormalButton';
+import React from 'react';
 import {useGetUserProfileQuery} from '../../redux/apiSlices/authSlice';
+import {useStyles} from '../../context/ContextApi';
 
 const PaymentsScreen = ({navigation}: NavigProps<null>) => {
   const {confirmPayment, loading} = useConfirmPayment();
@@ -61,7 +61,7 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
       });
       // console.log(paymentInt?.data?.data?.clientSecret);
       if (paymentInt?.error) {
-        // console.log('Payment intent error', paymentInt?.error);
+        console.log('Payment intent error', paymentInt?.error);
       }
       if (paymentInt?.data?.data?.clientSecret) {
         // Confirm the payment with the card details
@@ -69,9 +69,9 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
           paymentInt?.data?.data?.clientSecret,
           {
             paymentMethodType: 'Card',
-            // paymentMethodData: {
-            //   billingDetails,
-            // },
+            paymentMethodData: {
+              billingDetails,
+            },
           },
         );
 
@@ -83,7 +83,7 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
             content: error.message,
           });
           setPaymentModal(false);
-        } else if (paymentIntent) {
+        } else if (paymentIntent?.status === 'succeeded') {
           setPaymentModal(false);
 
           await paymentRecord({
@@ -546,6 +546,7 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
                 borderColor: colors.textColor.secondaryColor,
                 borderWidth: 1,
                 borderRadius: 8,
+                placeholderColor: colors.textColor.palaceHolderColor,
               }}
               style={{
                 width: '100%',
@@ -731,7 +732,7 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
                   customerName: '',
                   customerEmail: '',
                 });
-                // navigation?.navigate('Home');
+                navigation?.navigate('Home');
               }}
             />
           </View>
