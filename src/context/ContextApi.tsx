@@ -111,6 +111,7 @@ export const useStyles = () => {
         primaryColor: isDark ? '#FFFFFF' : '#151515',
         secondaryColor: isDark ? '#E6E6E6' : '#333333',
         neutralColor: isDark ? '#A5A5A5' : '#767676',
+        palaceHolderColor: isDark ? '#A5A5A5' : 'rgba(161, 161, 161, 1)',
         white: isDark ? 'white' : 'white',
         light: isDark ? '#767676' : '#5C5C5C',
         rare: isDark ? '#D29E3B' : '#720B24',

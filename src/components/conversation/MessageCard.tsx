@@ -1,9 +1,10 @@
-import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 
-import React from 'react';
-import {useStyles} from '../../context/ContextApi';
+import {AnimatedImage} from 'react-native-ui-lib';
 import {IParticipant} from '../../redux/interface/participants';
+import React from 'react';
 import {makeImage} from '../../utils/utils';
+import {useStyles} from '../../context/ContextApi';
 
 interface IMessageCardProps extends IParticipant {
   name: string;
@@ -89,7 +90,7 @@ const MessageCard = ({
                   borderRadius: 28,
                 }}>
                 {avatar ? (
-                  <Image
+                  <AnimatedImage
                     style={{
                       width: 65,
                       height: 65,
@@ -160,7 +161,7 @@ const MessageCard = ({
                     borderRadius: 28,
                   }}>
                   {secondImage ? (
-                    <Image
+                    <AnimatedImage
                       style={{
                         width: 65,
                         height: 65,
@@ -227,7 +228,7 @@ const MessageCard = ({
                     borderRadius: 28,
                     backgroundColor: colors.white,
                   }}>
-                  <Image
+                  <AnimatedImage
                     style={{
                       maxWidth: 30,
                       width: 30,

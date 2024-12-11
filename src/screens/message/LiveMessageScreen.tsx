@@ -297,9 +297,13 @@ const LiveMessageScreen = ({navigation, route}: NavigProps<{data: any}>) => {
         <TextInput
           placeholder="Message"
           onChangeText={text => setNewMessages(text)}
+          placeholderTextColor={colors.textColor.palaceHolderColor}
           value={newMessages}
           style={{
-            backgroundColor: 'rgba(235, 235, 235, 1)',
+            color: colors.textColor.normal,
+            backgroundColor: colors.bg,
+            borderWidth: 1,
+            borderColor: colors.secondaryColor,
             flex: 1,
             borderRadius: 100,
             height: 50,

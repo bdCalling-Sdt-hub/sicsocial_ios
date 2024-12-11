@@ -103,9 +103,12 @@ const BooksScreen = ({navigation}: NavigProps<null>) => {
 `}
           />
           <TextInput
-            style={{flex: 1}}
+            style={{
+              color: colors.textColor.normal,
+              flex: 1,
+            }}
             placeholder="Search your books"
-            placeholderTextColor={colors.textColor.neutralColor}
+            placeholderTextColor={colors.textColor.palaceHolderColor}
           />
         </View>
       </View>

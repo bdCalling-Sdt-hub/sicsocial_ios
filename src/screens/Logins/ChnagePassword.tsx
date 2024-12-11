@@ -1,3 +1,6 @@
+import PopUpModal, {
+  PopUpModalRef,
+} from '../../components/common/modals/PopUpModal';
 import {
   ScrollView,
   StyleSheet,
@@ -6,21 +9,18 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import PopUpModal, {
-  PopUpModalRef,
-} from '../../components/common/modals/PopUpModal';
 import {
   useChangePasswordMutation,
   useGetUserProfileQuery,
 } from '../../redux/apiSlices/authSlice';
 
-import {Formik} from 'formik';
-import React from 'react';
-import Feather from 'react-native-vector-icons/Feather';
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
-import NormalButton from '../../components/common/NormalButton';
-import {useStyles} from '../../context/ContextApi';
+import Feather from 'react-native-vector-icons/Feather';
+import {Formik} from 'formik';
 import {NavigProps} from '../../interfaces/NaviProps';
+import NormalButton from '../../components/common/NormalButton';
+import React from 'react';
+import {useStyles} from '../../context/ContextApi';
 
 const ChangePassword = ({navigation, route}: NavigProps<null>) => {
   const modalRef = React.useRef<PopUpModalRef>();
@@ -135,14 +135,15 @@ const ChangePassword = ({navigation, route}: NavigProps<null>) => {
                 <TextInput
                   value={values?.newPassword}
                   style={{
+                    color: colors.textColor.normal,
                     fontFamily: font.Poppins,
                     backgroundColor: colors.secondaryColor,
                     borderRadius: 100,
                     fontSize: 14,
                     paddingHorizontal: 20,
                     height: 56,
-                    color: colors.textColor.neutralColor,
                   }}
+                  placeholderTextColor={colors.textColor.palaceHolderColor}
                   onChangeText={handleChange('newPassword')}
                   onBlur={handleBlur('newPassword')}
                   placeholder="Enter new password "
@@ -159,9 +160,17 @@ const ChangePassword = ({navigation, route}: NavigProps<null>) => {
                     padding: 10,
                   }}>
                   {isShow ? (
-                    <Feather name="eye" size={24} />
+                    <Feather
+                      name="eye"
+                      color={colors.textColor.normal}
+                      size={24}
+                    />
                   ) : (
-                    <Feather name="eye-off" size={24} />
+                    <Feather
+                      name="eye-off"
+                      color={colors.textColor.normal}
+                      size={24}
+                    />
                   )}
                 </TouchableOpacity>
               </View>
@@ -179,14 +188,15 @@ const ChangePassword = ({navigation, route}: NavigProps<null>) => {
                 </Text>
                 <TextInput
                   value={values?.confirmPassword}
+                  placeholderTextColor={colors.textColor.palaceHolderColor}
                   style={{
+                    color: colors.textColor.normal,
                     fontFamily: font.Poppins,
                     backgroundColor: colors.secondaryColor,
                     borderRadius: 100,
                     fontSize: 14,
                     paddingHorizontal: 20,
                     height: 56,
-                    color: colors.textColor.neutralColor,
                   }}
                   onChangeText={handleChange('confirmPassword')}
                   onBlur={handleBlur('confirmPassword')}
@@ -207,9 +217,17 @@ const ChangePassword = ({navigation, route}: NavigProps<null>) => {
                     padding: 10,
                   }}>
                   {isShow ? (
-                    <Feather name="eye" size={24} />
+                    <Feather
+                      name="eye"
+                      color={colors.textColor.normal}
+                      size={24}
+                    />
                   ) : (
-                    <Feather name="eye-off" size={24} />
+                    <Feather
+                      name="eye-off"
+                      color={colors.textColor.normal}
+                      size={24}
+                    />
                   )}
                 </TouchableOpacity>
               </View>

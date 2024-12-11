@@ -241,8 +241,9 @@ const SettingScreen = ({navigation}: NavigProps<null>) => {
                 key={lang.country_code}
                 onPress={() => {
                   // change language
+                  console.log(lang.language_code);
                   // navigation?.navigate('Home');
-                  // setLanguageModal(false);
+                  setLanguageModal(false);
                   lStorage.setString('language', lang.language_code);
                   setSelectedLanguage(lang.language_code);
                 }}

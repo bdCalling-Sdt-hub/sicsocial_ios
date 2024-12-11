@@ -117,9 +117,9 @@ const MembersManage = ({navigation, route}: NavigProps<any>) => {
       `}
           />
           <TextInput
-            style={{flex: 1}}
+            style={{flex: 1, color: colors.textColor.neutralColor}}
             placeholder="Search your friends"
-            placeholderTextColor={colors.textColor.neutralColor}
+            placeholderTextColor={colors.textColor.palaceHolderColor}
           />
         </View>
       </View>

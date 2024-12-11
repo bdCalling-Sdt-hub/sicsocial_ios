@@ -1,3 +1,4 @@
+import React, {useEffect} from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -9,24 +10,23 @@ import {
   View,
   useWindowDimensions,
 } from 'react-native';
-import React, {useEffect} from 'react';
 import {useSharedValue, withTiming} from 'react-native-reanimated';
 
-import AntDesign from 'react-native-vector-icons/AntDesign';
 import AudioRecorderPlayer from 'react-native-audio-recorder-player';
-import ConversationCarousal from '../../components/common/ConversationCarousal/ConversationCarousal';
-import ConversationHeader from '../../components/conversation/ConversationHeader';
-import CustomModal from '../../components/common/customModal/CustomModal';
-import {IMessage} from '../../redux/interface/message';
 import ImageViewer from 'react-native-image-zoom-viewer';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import ConversationCarousal from '../../components/common/ConversationCarousal/ConversationCarousal';
+import CustomModal from '../../components/common/customModal/CustomModal';
 import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
-import {NavigProps} from '../../interfaces/NaviProps';
-import {getSocket} from '../../redux/services/socket';
-import {makeImage} from '../../utils/utils';
+import ConversationHeader from '../../components/conversation/ConversationHeader';
+import {useStyles} from '../../context/ContextApi';
 import {useAudioPlayer} from '../../hook/playMusic';
+import {NavigProps} from '../../interfaces/NaviProps';
 import {useGetUserProfileQuery} from '../../redux/apiSlices/authSlice';
 import {useLazyGetMessageQuery} from '../../redux/apiSlices/messageSlies';
-import {useStyles} from '../../context/ContextApi';
+import {IMessage} from '../../redux/interface/message';
+import {getSocket} from '../../redux/services/socket';
+import {makeImage} from '../../utils/utils';
 
 export interface messagePros {
   id: number;
@@ -139,7 +139,7 @@ const NormalConversationScreen = ({
 </defs>
 </svg>
 `}
-        title="Voice Message"
+        title="Message"
         optionOnPress={() => {
           setModalVisible(true);
         }}

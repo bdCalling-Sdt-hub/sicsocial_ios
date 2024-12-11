@@ -939,15 +939,15 @@ const FaceDownConversation = ({
               </Text>
               <TextInput
                 value="Asadullah calling live"
-                placeholderTextColor={colors.textColor.light}
+                placeholderTextColor={colors.textColor.palaceHolderColor}
                 style={{
+                  color: colors.textColor.normal,
                   fontFamily: font.Poppins,
                   backgroundColor: colors.secondaryColor,
                   borderRadius: 100,
                   fontSize: 14,
                   paddingHorizontal: 20,
                   height: 56,
-                  color: colors.textColor.neutralColor,
                 }}
                 placeholder="type "
               />
@@ -968,7 +968,7 @@ const FaceDownConversation = ({
               </Text>
               <TextInput
                 value="https://www.youtube.com/watch?v=...."
-                placeholderTextColor={colors.textColor.light}
+                placeholderTextColor={colors.textColor.palaceHolderColor}
                 style={{
                   fontFamily: font.Poppins,
                   backgroundColor: colors.secondaryColor,
@@ -976,7 +976,7 @@ const FaceDownConversation = ({
                   fontSize: 14,
                   paddingHorizontal: 20,
                   height: 56,
-                  color: colors.textColor.neutralColor,
+                  color: colors.textColor.normal,
                 }}
                 placeholder="type "
               />

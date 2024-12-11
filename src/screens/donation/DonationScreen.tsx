@@ -1,5 +1,4 @@
 import {
-  Image,
   ScrollView,
   StyleSheet,
   Text,
@@ -7,15 +6,16 @@ import {
   View,
 } from 'react-native';
 
-import React from 'react';
-import {FlatList} from 'react-native-gesture-handler';
+import {AnimatedImage} from 'react-native-ui-lib';
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
-import NormalButton from '../../components/common/NormalButton';
-import {useStyles} from '../../context/ContextApi';
-import {NavigProps} from '../../interfaces/NaviProps';
-import {useGetDonationQuery} from '../../redux/apiSlices/additionalSlices';
+import {FlatList} from 'react-native-gesture-handler';
 import {IDonation} from '../../redux/interface/donation';
+import {NavigProps} from '../../interfaces/NaviProps';
+import NormalButton from '../../components/common/NormalButton';
+import React from 'react';
 import {makeImageUrl} from '../../utils/utils';
+import {useGetDonationQuery} from '../../redux/apiSlices/additionalSlices';
+import {useStyles} from '../../context/ContextApi';
 
 const data = [
   {
@@ -106,18 +106,21 @@ const DonationScreen = ({navigation, route}: NavigProps<IDonation>) => {
             style={{
               paddingHorizontal: 20,
             }}>
-            <Image
-              resizeMode="cover"
-              style={{
-                width: '100%',
-                height: 200,
-                borderRadius: 16,
-                marginBottom: 20,
-              }}
-              source={{
-                uri: makeImageUrl(Item?.details?.image || ''),
-              }}
-            />
+            {Item?.details?.image && (
+              <AnimatedImage
+                resizeMode="cover"
+                style={{
+                  width: '100%',
+                  height: 200,
+                  borderRadius: 16,
+                  marginBottom: 20,
+                }}
+                source={{
+                  uri: makeImageUrl(Item?.details?.image),
+                }}
+              />
+            )}
+
             <View>
               <Text
                 style={{

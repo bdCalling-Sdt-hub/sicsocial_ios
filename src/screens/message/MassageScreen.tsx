@@ -1,5 +1,4 @@
 import {
-  FlatList,
   Image,
   RefreshControl,
   ScrollView,
@@ -10,7 +9,6 @@ import {
   View,
 } from 'react-native';
 import {useContextApi, useStyles} from '../../context/ContextApi';
-import {height, makeImage} from '../../utils/utils';
 
 import {format} from 'date-fns';
 import React from 'react';
@@ -21,6 +19,7 @@ import {NavigProps} from '../../interfaces/NaviProps';
 import {useGetUserProfileQuery} from '../../redux/apiSlices/authSlice';
 import {useGetChatListQuery} from '../../redux/apiSlices/chatSlices';
 import {getSocket} from '../../redux/services/socket';
+import {height} from '../../utils/utils';
 
 const MassageScreen = ({navigation}: NavigProps<null>) => {
   const {
@@ -29,6 +28,9 @@ const MassageScreen = ({navigation}: NavigProps<null>) => {
     isLoading: chatLoading,
   } = useGetChatListQuery({});
   const {data: userInfo} = useGetUserProfileQuery({});
+
+  const [search, setSearch] = React.useState('');
+
   // console.log(userInfo);
   // console.log(cat);
   const {colors, font} = useStyles();
@@ -148,9 +150,11 @@ const MassageScreen = ({navigation}: NavigProps<null>) => {
 `}
           />
           <TextInput
-            style={{flex: 1, color: colors.textColor.neutralColor}}
+            style={{flex: 1, color: colors.textColor.normal}}
             placeholder="Search your books"
-            placeholderTextColor={colors.textColor.neutralColor}
+            value={search}
+            onChangeText={text => setSearch(text)}
+            placeholderTextColor={colors.textColor.palaceHolderColor}
           />
         </View>
       </View>
@@ -170,7 +174,7 @@ const MassageScreen = ({navigation}: NavigProps<null>) => {
           />
         }
         keyboardShouldPersistTaps="always">
-        <View>
+        {/* <View>
           <FlatList
             showsHorizontalScrollIndicator={false}
             keyboardShouldPersistTaps="always"
@@ -179,7 +183,7 @@ const MassageScreen = ({navigation}: NavigProps<null>) => {
               gap: 16,
               paddingHorizontal: 20,
             }}
-            data={friends}
+            data={friends?.filter(f => f?.fullName?.includes(search))}
             renderItem={item => (
               <View style={{gap: 6}}>
                 <TouchableOpacity
@@ -241,7 +245,7 @@ const MassageScreen = ({navigation}: NavigProps<null>) => {
               </View>
             )}
           />
-        </View>
+        </View> */}
 
         <View
           style={{
@@ -250,54 +254,60 @@ const MassageScreen = ({navigation}: NavigProps<null>) => {
             paddingBottom: 25,
             paddingTop: 15,
           }}>
-          {chatList?.data?.map((item, index) => {
-            // console.log(item);
-            return (
-              <MessageCard
-                secondImage={
-                  item.lastMessage?.image || item.lastMessage?.book?.bookImage
-                }
-                key={index}
-                active={
-                  friends?.find(
-                    friend =>
-                      friend?._id === item?.participants[0]?._id ||
-                      friend?._id === item?.participants[1]?._id,
-                  )?._id
-                    ? true
-                    : false
-                }
-                onPress={() => {
-                  navigation?.navigate('NormalConversation', {
-                    data: {id: item?._id},
-                  });
-                }}
-                avatar={
-                  item?.participants[0]?._id === userInfo?.data?._id
-                    ? item?.participants![1]?.avatar
-                    : item?.participants![0]?.avatar
-                }
-                lastMessage={
-                  item.lastMessage.audio
-                    ? 'send a audio message'
-                    : item.lastMessage.image
-                    ? 'send an image message'
-                    : item.lastMessage.text
-                    ? item.lastMessage.text
-                    : item.lastMessage.path
-                    ? 'send a book'
-                    : 'Start a chat'
-                }
-                lastTime={format(new Date(item.updatedAt), 'hh :mm a')}
-                name={
-                  item?.participants[0]?._id === userInfo?.data?._id
-                    ? item?.participants![1]?.fullName || 'No Name'
-                    : item?.participants![0]?.fullName || 'No Name'
-                }
-                people={item?.participants?.length > 2 ? 'two' : 'one'}
-              />
-            );
-          })}
+          {chatList?.data
+            ?.filter(f => {
+              return f.participants?.filter(ff =>
+                ff.fullName?.includes(search),
+              );
+            })
+            .map((item, index) => {
+              // console.log(item);
+              return (
+                <MessageCard
+                  secondImage={
+                    item.lastMessage?.image || item.lastMessage?.book?.bookImage
+                  }
+                  key={index}
+                  active={
+                    friends?.find(
+                      friend =>
+                        friend?._id === item?.participants[0]?._id ||
+                        friend?._id === item?.participants[1]?._id,
+                    )?._id
+                      ? true
+                      : false
+                  }
+                  onPress={() => {
+                    navigation?.navigate('NormalConversation', {
+                      data: {id: item?._id},
+                    });
+                  }}
+                  avatar={
+                    item?.participants[0]?._id === userInfo?.data?._id
+                      ? item?.participants![1]?.avatar
+                      : item?.participants![0]?.avatar
+                  }
+                  lastMessage={
+                    item.lastMessage.audio
+                      ? 'send a audio message'
+                      : item.lastMessage.image
+                      ? 'send an image message'
+                      : item.lastMessage.text
+                      ? item.lastMessage.text
+                      : item.lastMessage.path
+                      ? 'send a book'
+                      : 'Start a chat'
+                  }
+                  lastTime={format(new Date(item.updatedAt), 'hh :mm a')}
+                  name={
+                    item?.participants[0]?._id === userInfo?.data?._id
+                      ? item?.participants![1]?.fullName || 'No Name'
+                      : item?.participants![0]?.fullName || 'No Name'
+                  }
+                  people={item?.participants?.length > 2 ? 'two' : 'one'}
+                />
+              );
+            })}
         </View>
       </ScrollView>
 

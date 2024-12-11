@@ -1264,12 +1264,15 @@ const ConversationalModal = ({navigation}: ConversationalModalProps) => {
               onChangeText={text => {
                 setCreateMessageInfo({text});
               }}
-              placeholderTextColor={colors.textColor.neutralColor}
+              placeholderTextColor={colors.textColor.palaceHolderColor}
               style={{
-                backgroundColor: isDark ? colors.whiteDark : '#F1F1F1',
+                color: colors.textColor.normal,
+                backgroundColor: colors.bg,
                 // backgroundColor : colors.whiteDark,
                 borderRadius: 100,
                 paddingHorizontal: 15,
+                borderWidth: 1,
+                borderColor: colors.secondaryColor,
                 paddingVertical: 10,
                 flex: 1,
               }}
@@ -1333,15 +1336,15 @@ const ConversationalModal = ({navigation}: ConversationalModalProps) => {
               </Text>
               <TextInput
                 value={liveInfo?.name}
-                placeholderTextColor={colors.textColor.gray}
+                placeholderTextColor={colors.textColor.palaceHolderColor}
                 style={{
+                  color: colors.textColor.normal,
                   fontFamily: font.Poppins,
                   backgroundColor: colors.secondaryColor,
                   borderRadius: 100,
                   fontSize: 14,
                   paddingHorizontal: 20,
                   height: 56,
-                  color: colors.textColor.neutralColor,
                 }}
                 onChangeText={text =>
                   setLiveInfo({
@@ -1526,9 +1529,12 @@ const ConversationalModal = ({navigation}: ConversationalModalProps) => {
 `}
               />
               <TextInput
-                style={{flex: 1}}
+                style={{
+                  color: colors.textColor.normal,
+                  flex: 1,
+                }}
                 placeholder="Search your books"
-                placeholderTextColor={colors.textColor.neutralColor}
+                placeholderTextColor={colors.textColor.palaceHolderColor}
               />
             </View>
           </View>

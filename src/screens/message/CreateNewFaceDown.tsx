@@ -292,13 +292,13 @@ const CreateNewFaceDown = ({navigation, route}: NavigProps<any>) => {
           </Text>
           <TextInput
             style={{
+              color: colors.textColor.normal,
               fontFamily: font.Poppins,
               backgroundColor: colors.secondaryColor,
               borderRadius: 100,
               fontSize: 14,
               paddingHorizontal: 20,
               height: 56,
-              color: colors.textColor.neutralColor,
             }}
             placeholder="name"
             onChangeText={text =>
@@ -307,7 +307,7 @@ const CreateNewFaceDown = ({navigation, route}: NavigProps<any>) => {
                 name: text,
               })
             }
-            placeholderTextColor={colors.textColor.gray}
+            placeholderTextColor={colors.textColor.palaceHolderColor}
           />
         </View>
 
@@ -424,13 +424,13 @@ const CreateNewFaceDown = ({navigation, route}: NavigProps<any>) => {
             multiline
             textAlignVertical="top"
             style={{
+              color: colors.textColor.normal,
               fontFamily: font.Poppins,
               backgroundColor: colors.secondaryColor,
               borderRadius: 20,
               fontSize: 14,
               paddingHorizontal: 20,
               height: window.height * 0.25,
-              color: colors.textColor.neutralColor,
             }}
             onChangeText={text =>
               setFaceDownInfo({
@@ -439,7 +439,7 @@ const CreateNewFaceDown = ({navigation, route}: NavigProps<any>) => {
               })
             }
             placeholder="write a description"
-            placeholderTextColor={colors.textColor.gray}
+            placeholderTextColor={colors.textColor.palaceHolderColor}
           />
         </View>
         <View
@@ -733,9 +733,9 @@ const CreateNewFaceDown = ({navigation, route}: NavigProps<any>) => {
 `}
               />
               <TextInput
-                style={{flex: 1}}
+                style={{flex: 1, color: colors.textColor.normal}}
                 placeholder="Search your books"
-                placeholderTextColor={colors.textColor.neutralColor}
+                placeholderTextColor={colors.textColor.palaceHolderColor}
               />
             </View>
           </View>

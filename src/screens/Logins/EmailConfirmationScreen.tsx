@@ -2,13 +2,13 @@ import {StyleSheet, Text, TextInput, View} from 'react-native';
 import PopUpModal, {
   PopUpModalRef,
 } from '../../components/common/modals/PopUpModal';
-import {useForgotPasswordMutation} from '../../redux/apiSlices/authSlice';
 
 import React from 'react';
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
 import NormalButton from '../../components/common/NormalButton';
 import {useStyles} from '../../context/ContextApi';
 import {NavigProps} from '../../interfaces/NaviProps';
+import {useForgotPasswordMutation} from '../../redux/apiSlices/authSlice';
 
 const EmailConfirmationScreen = ({navigation}: NavigProps<null>) => {
   const {colors, font} = useStyles();
@@ -112,14 +112,15 @@ const EmailConfirmationScreen = ({navigation}: NavigProps<null>) => {
           <TextInput
             value={email}
             onChangeText={text => setEmail(text)}
+            placeholderTextColor={colors.textColor.palaceHolderColor}
             style={{
+              color: colors.textColor.normal,
               fontFamily: font.Poppins,
               backgroundColor: colors.secondaryColor,
               borderRadius: 100,
               fontSize: 14,
               paddingHorizontal: 20,
               height: 56,
-              color: colors.textColor.neutralColor,
             }}
             placeholder="Enter your email"
           />

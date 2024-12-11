@@ -1,20 +1,20 @@
 import {
-    FlatList,
-    Image,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  FlatList,
+  Image,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 
 import React from 'react';
-import { SvgXml } from 'react-native-svg';
+import {SvgXml} from 'react-native-svg';
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
 import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
 import GroupUserCard from '../../components/conversation/GroupUserCard';
-import { useStyles } from '../../context/ContextApi';
-import { NavigProps } from '../../interfaces/NaviProps';
+import {useStyles} from '../../context/ContextApi';
+import {NavigProps} from '../../interfaces/NaviProps';
 
 const friends = [
   {
@@ -190,9 +190,9 @@ const LiveAddFriendsScreen = ({navigation}: NavigProps<null>) => {
     `}
           />
           <TextInput
-            style={{flex: 1}}
+            style={{flex: 1, color: colors.textColor.normal}}
             placeholder="Search your friends"
-            placeholderTextColor={colors.textColor.neutralColor}
+            placeholderTextColor={colors.textColor.palaceHolderColor}
           />
         </View>
       </View>

@@ -103,9 +103,12 @@ const BookShareWithCategory = ({
 `}
           />
           <TextInput
-            style={{flex: 1}}
+            style={{
+              flex: 1,
+              color: colors.textColor.neutralColor,
+            }}
             placeholder="Search your books"
-            placeholderTextColor={colors.textColor.neutralColor}
+            placeholderTextColor={colors.textColor.palaceHolderColor}
           />
         </View>
       </View>

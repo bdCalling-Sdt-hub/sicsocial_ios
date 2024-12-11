@@ -151,15 +151,16 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
                 editable={false}
                 value={userData?.data?.fullName}
                 style={{
+                  color: colors.textColor.normal,
                   fontFamily: font.Poppins,
                   backgroundColor: colors.gray.variant,
                   borderRadius: 100,
                   fontSize: 14,
                   paddingHorizontal: 20,
                   height: 56,
-                  color: colors.textColor.normal,
                 }}
-                placeholder="type "
+                placeholder="Enter full name"
+                placeholderTextColor={colors.textColor.palaceHolderColor}
               />
             </View>
           )}
@@ -179,16 +180,17 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
               <TextInput
                 editable={false}
                 value={userData?.data?.email}
+                placeholderTextColor={colors.textColor.palaceHolderColor}
                 style={{
+                  color: colors.textColor.normal,
                   fontFamily: font.Poppins,
                   backgroundColor: colors.gray.variant,
                   borderRadius: 100,
                   fontSize: 14,
                   paddingHorizontal: 20,
                   height: 56,
-                  color: colors.textColor.normal,
                 }}
-                placeholder="type "
+                placeholder="Enter email"
               />
             </View>
           )}
@@ -209,15 +211,16 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
                 editable={false}
                 value={userData?.data?.phoneNumber}
                 style={{
+                  color: colors.textColor.normal,
                   fontFamily: font.Poppins,
                   backgroundColor: colors.gray.variant,
                   borderRadius: 100,
                   fontSize: 14,
                   paddingHorizontal: 20,
                   height: 56,
-                  color: colors.textColor.normal,
                 }}
-                placeholder="type "
+                placeholder="Enter contact no"
+                placeholderTextColor={colors.textColor.palaceHolderColor}
               />
             </View>
           )}
@@ -246,7 +249,8 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
                   height: 56,
                   color: colors.textColor.normal,
                 }}
-                placeholder="type "
+                placeholder="Enter address"
+                placeholderTextColor={colors.textColor.palaceHolderColor}
               />
             </View>
           )}
@@ -265,18 +269,18 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
             </Text>
             <TextInput
               style={{
+                color: colors.textColor.normal,
                 fontFamily: font.Poppins,
                 backgroundColor: colors.secondaryColor,
                 borderRadius: 100,
                 fontSize: 14,
                 paddingHorizontal: 20,
                 height: 56,
-                color: colors.textColor.normal,
               }}
               value={amount}
               onChangeText={text => setAmount(text)}
               placeholder="min-$50"
-              placeholderTextColor={colors.textColor.neutralColor}
+              placeholderTextColor={colors.textColor.palaceHolderColor}
               keyboardType="decimal-pad"
             />
           </View>
@@ -499,7 +503,7 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
                 color: colors.textColor.normal,
                 height: 50,
               }}
-              placeholderTextColor={colors.textColor.gray}
+              placeholderTextColor={colors.textColor.palaceHolderColor}
               placeholder="Full Name"
               value={personalInfo.customerName}
               onChangeText={text =>
@@ -521,7 +525,7 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
                 color: colors.textColor.normal,
                 height: 50,
               }}
-              placeholderTextColor={colors.textColor.gray}
+              placeholderTextColor={colors.textColor.palaceHolderColor}
               placeholder="Email"
               value={personalInfo.customerEmail}
               onChangeText={text =>
@@ -537,9 +541,9 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
                 number: '4242 4242 4242 4242',
               }}
               cardStyle={{
-                backgroundColor: '#FFFFFF',
-                textColor: '#000000',
-                borderColor: '#D1D1D1',
+                backgroundColor: colors.bg,
+                textColor: colors.textColor.normal,
+                borderColor: colors.textColor.secondaryColor,
                 borderWidth: 1,
                 borderRadius: 8,
               }}
@@ -727,7 +731,7 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
                   customerName: '',
                   customerEmail: '',
                 });
-                navigation?.navigate('Home');
+                // navigation?.navigate('Home');
               }}
             />
           </View>

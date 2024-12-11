@@ -272,7 +272,7 @@ const BookShareScreen = ({navigation, route}: NavigProps<{data: any}>) => {
                   <Text
                     style={{
                       fontSize: 12,
-                      color: colors.blueColor,
+                      color: colors.textColor.neutralColor,
                       fontFamily: font.Poppins,
                     }}>
                     {BookData?.data?.bookUrl}
@@ -445,15 +445,15 @@ const BookShareScreen = ({navigation, route}: NavigProps<{data: any}>) => {
               </Text>
               <TextInput
                 value={liveInfo?.name}
-                placeholderTextColor={colors.textColor.gray}
+                placeholderTextColor={colors.textColor.palaceHolderColor}
                 style={{
+                  color: colors.textColor.normal,
                   fontFamily: font.Poppins,
                   backgroundColor: colors.secondaryColor,
                   borderRadius: 100,
                   fontSize: 14,
                   paddingHorizontal: 20,
                   height: 56,
-                  color: colors.textColor.neutralColor,
                 }}
                 placeholder="title"
                 onChangeText={(text: any) =>

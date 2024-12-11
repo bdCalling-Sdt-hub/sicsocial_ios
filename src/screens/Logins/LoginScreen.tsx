@@ -1,3 +1,6 @@
+import PopUpModal, {
+  PopUpModalRef,
+} from '../../components/common/modals/PopUpModal';
 import {
   ScrollView,
   StyleSheet,
@@ -6,21 +9,18 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import PopUpModal, {
-  PopUpModalRef,
-} from '../../components/common/modals/PopUpModal';
 
-import {Formik} from 'formik';
-import React from 'react';
+import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
 import {Checkbox} from 'react-native-ui-lib';
 import Feather from 'react-native-vector-icons/Feather';
-import {useDispatch} from 'react-redux';
-import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
-import {useStyles} from '../../context/ContextApi';
+import {Formik} from 'formik';
 import {NavigProps} from '../../interfaces/NaviProps';
-import {useLoginUserMutation} from '../../redux/apiSlices/authSlice';
-import {setToken} from '../../redux/apiSlices/tokenSlice';
+import React from 'react';
 import {lStorage} from '../../utils/utils';
+import {setToken} from '../../redux/apiSlices/tokenSlice';
+import {useDispatch} from 'react-redux';
+import {useLoginUserMutation} from '../../redux/apiSlices/authSlice';
+import {useStyles} from '../../context/ContextApi';
 
 const LoginScreen = ({navigation}: NavigProps<null>) => {
   const modalRef = React.useRef<PopUpModalRef>();
@@ -128,16 +128,16 @@ const LoginScreen = ({navigation}: NavigProps<null>) => {
                 </Text>
                 <TextInput
                   style={{
+                    color: colors.textColor.normal,
                     fontFamily: font.Poppins,
                     backgroundColor: colors.secondaryColor,
                     borderRadius: 100,
                     fontSize: 14,
                     paddingHorizontal: 20,
                     height: 56,
-                    color: colors.textColor.neutralColor,
                   }}
-                  placeholderTextColor={colors.textColor.gray}
-                  placeholder="example@email.com"
+                  placeholderTextColor={colors.textColor.palaceHolderColor}
+                  placeholder="Enter your email"
                   onChangeText={handleChange('email')}
                   onBlur={handleBlur('email')}
                   value={values?.email}
@@ -157,18 +157,19 @@ const LoginScreen = ({navigation}: NavigProps<null>) => {
                 </Text>
                 <TextInput
                   value={values.password}
+                  placeholderTextColor={colors.textColor.palaceHolderColor}
                   style={{
+                    color: colors.textColor.normal,
                     fontFamily: font.Poppins,
                     backgroundColor: colors.secondaryColor,
                     borderRadius: 100,
                     fontSize: 14,
                     paddingHorizontal: 20,
                     height: 56,
-                    color: colors.textColor.neutralColor,
                   }}
-                  // placeholder="Password"
+                  placeholder="Enter your password"
                   secureTextEntry={!isShow}
-                  // placeholderTextColor={colors.textColor.gray}
+                  // placeholderTextColor={colors.textColor.palaceHolderColor}
                   onChangeText={handleChange('password')}
                   onBlur={handleBlur('password')}
                 />
@@ -181,9 +182,17 @@ const LoginScreen = ({navigation}: NavigProps<null>) => {
                     padding: 10,
                   }}>
                   {isShow ? (
-                    <Feather name="eye" size={24} />
+                    <Feather
+                      name="eye"
+                      color={colors.textColor.normal}
+                      size={24}
+                    />
                   ) : (
-                    <Feather name="eye-off" size={24} />
+                    <Feather
+                      name="eye-off"
+                      color={colors.textColor.normal}
+                      size={24}
+                    />
                   )}
                 </TouchableOpacity>
               </View>

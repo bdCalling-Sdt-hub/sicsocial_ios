@@ -1,17 +1,16 @@
 import {
-  ScrollView,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
-import React from 'react';
-import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
 
-import {NavigProps} from '../../interfaces/NaviProps';
-import {Formik} from 'formik';
+import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
 import Feather from 'react-native-vector-icons/Feather';
+import {Formik} from 'formik';
+import {NavigProps} from '../../interfaces/NaviProps';
+import React from 'react';
 import {useStyles} from '../../context/ContextApi';
 
 const ResetPasswordScreen = ({navigation}: NavigProps<null>) => {
@@ -93,17 +92,17 @@ const ResetPasswordScreen = ({navigation}: NavigProps<null>) => {
                   Password
                 </Text>
                 <TextInput
-                  value="Gabrail10"
+                  placeholderTextColor={colors.textColor.palaceHolderColor}
                   style={{
+                    color: colors.textColor.normal,
                     fontFamily: font.Poppins,
                     backgroundColor: colors.secondaryColor,
                     borderRadius: 100,
                     fontSize: 14,
                     paddingHorizontal: 20,
                     height: 56,
-                    color: colors.textColor.neutralColor,
                   }}
-                  placeholder="type "
+                  placeholder="Enter you password"
                   secureTextEntry={!isShow}
                   onChangeText={handleChange('password')}
                   onBlur={handleBlur('password')}
@@ -118,9 +117,17 @@ const ResetPasswordScreen = ({navigation}: NavigProps<null>) => {
                     padding: 10,
                   }}>
                   {isShow ? (
-                    <Feather name="eye" size={24} />
+                    <Feather
+                      name="eye"
+                      color={colors.textColor.normal}
+                      size={24}
+                    />
                   ) : (
-                    <Feather name="eye-off" size={24} />
+                    <Feather
+                      name="eye-off"
+                      color={colors.textColor.normal}
+                      size={24}
+                    />
                   )}
                 </TouchableOpacity>
               </View>
@@ -137,17 +144,17 @@ const ResetPasswordScreen = ({navigation}: NavigProps<null>) => {
                   Confirm Password
                 </Text>
                 <TextInput
-                  value="Gabrail10"
+                  placeholderTextColor={colors.textColor.palaceHolderColor}
                   style={{
+                    color: colors.textColor.normal,
                     fontFamily: font.Poppins,
                     backgroundColor: colors.secondaryColor,
                     borderRadius: 100,
                     fontSize: 14,
                     paddingHorizontal: 20,
                     height: 56,
-                    color: colors.textColor.neutralColor,
                   }}
-                  placeholder="type "
+                  placeholder="Enter your confirm password"
                   secureTextEntry={!isShow}
                 />
                 <TouchableOpacity
@@ -159,9 +166,17 @@ const ResetPasswordScreen = ({navigation}: NavigProps<null>) => {
                     padding: 10,
                   }}>
                   {isShow ? (
-                    <Feather name="eye" size={24} />
+                    <Feather
+                      name="eye"
+                      color={colors.textColor.normal}
+                      size={24}
+                    />
                   ) : (
-                    <Feather name="eye-off" size={24} />
+                    <Feather
+                      name="eye-off"
+                      color={colors.textColor.normal}
+                      size={24}
+                    />
                   )}
                 </TouchableOpacity>
               </View>

@@ -585,8 +585,12 @@ const ConversationCarousal = ({
                 setTextInputModal(false);
               }}
               onChangeText={text => setTextMessage(text)}
+              placeholderTextColor={colors.textColor.palaceHolderColor}
               style={{
-                backgroundColor: '#F1F1F1',
+                color: colors.textColor.normal,
+                backgroundColor: colors.bg,
+                borderColor: colors.primaryColor,
+                borderWidth: 1,
                 borderRadius: 100,
                 paddingHorizontal: 15,
                 paddingVertical: 10,
@@ -648,9 +652,12 @@ const ConversationCarousal = ({
 `}
               />
               <TextInput
-                style={{flex: 1}}
+                style={{
+                  color: colors.textColor.normal,
+                  flex: 1,
+                }}
                 placeholder="Search your books"
-                placeholderTextColor={colors.textColor.neutralColor}
+                placeholderTextColor={colors.textColor.palaceHolderColor}
               />
             </View>
           </View>

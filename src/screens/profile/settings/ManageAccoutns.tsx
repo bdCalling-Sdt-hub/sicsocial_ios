@@ -1,11 +1,10 @@
 import {FlatList, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import React from 'react';
-
-import {SvgXml} from 'react-native-svg';
-import {Icon} from 'react-native-vector-icons/Icon';
-import {NavigProps} from '../../../interfaces/NaviProps';
 import {useContextApi, useStyles} from '../../../context/ContextApi';
+
 import BackButtonWithTitle from '../../../components/common/BackButtonWithTitle';
+import {NavigProps} from '../../../interfaces/NaviProps';
+import React from 'react';
+import {SvgXml} from 'react-native-svg';
 
 const settingsData = [
   {
@@ -13,11 +12,11 @@ const settingsData = [
     name: 'Change Password',
     option: 'change_password',
   },
-  {
-    id: 12,
-    name: 'Delete Account',
-    option: 'delete_account',
-  },
+  // {
+  //   id: 12,
+  //   name: 'Delete Account',
+  //   option: 'delete_account',
+  // },
 ];
 
 const ManageAccounts = ({navigation}: NavigProps<null>) => {

@@ -1,8 +1,4 @@
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
-} from 'react-native-reanimated';
+import React, {useEffect} from 'react';
 import {
   Image,
   RefreshControl,
@@ -12,27 +8,31 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useEffect} from 'react';
-import {height, isTablet} from '../../utils/utils';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
 import {useContextApi, useStyles} from '../../context/ContextApi';
+import {height, isTablet} from '../../utils/utils';
 
+import {FlashList} from '@shopify/flash-list';
+import {format} from 'date-fns';
+import LinearGradient from 'react-native-linear-gradient';
+import {SvgXml} from 'react-native-svg';
+import {useDispatch} from 'react-redux';
 import ConversationalCard from '../../components/common/ConversationalCard';
 import ConversationalModal from '../../components/common/ConversationalModal/ConversationalModal';
-import {FlashList} from '@shopify/flash-list';
 import {IConversationProps} from '../../interfaces/Interface';
-import LinearGradient from 'react-native-linear-gradient';
 import {NavigProps} from '../../interfaces/NaviProps';
-import {SvgXml} from 'react-native-svg';
-import {format} from 'date-fns';
-import {getSocket} from '../../redux/services/socket';
 import {imageUrl} from '../../redux/api/baseApi';
-import {setUser} from '../../redux/services/userSlice';
-import {useAddMemberMutation} from '../../redux/apiSlices/chatSlices';
-import {useDispatch} from 'react-redux';
 import {useGetDonationQuery} from '../../redux/apiSlices/additionalSlices';
-import {useGetNewsFeetQuery} from '../../redux/apiSlices/homeSlices';
 import {useGetUserProfileQuery} from '../../redux/apiSlices/authSlice';
+import {useAddMemberMutation} from '../../redux/apiSlices/chatSlices';
+import {useGetNewsFeetQuery} from '../../redux/apiSlices/homeSlices';
 import {useJoinLiveMutation} from '../../redux/apiSlices/liveSlice';
+import {getSocket} from '../../redux/services/socket';
+import {setUser} from '../../redux/services/userSlice';
 import {useShearLink} from '../../utils/conentShare';
 
 const HomeScreen = ({navigation}: NavigProps<null>) => {
@@ -44,7 +44,7 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
     refetch: newFeetReFetching,
   } = useGetNewsFeetQuery({});
   const {data: userProfile} = useGetUserProfileQuery({});
-  const {data: donations} = useGetDonationQuery({});
+  const {data: donations, refetch: donationRefetch} = useGetDonationQuery({});
   const dispatch = useDispatch();
   // console.log(userProfile);
   const {colors, font} = useStyles();
@@ -245,7 +245,10 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
         refreshControl={
           <RefreshControl
             refreshing={newFeetLoading}
-            onRefresh={newFeetReFetching}
+            onRefresh={() => {
+              donationRefetch();
+              newFeetReFetching();
+            }}
             colors={[colors.primaryColor]}
           />
         }

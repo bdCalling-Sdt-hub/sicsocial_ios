@@ -1,6 +1,6 @@
 import {
   FlatList,
-  Image,
+  RefreshControl,
   StyleSheet,
   Text,
   TextInput,
@@ -25,7 +25,11 @@ import {makeImage} from '../../utils/utils';
 
 const MakeGroupScreen = ({navigation, route}: NavigProps<any>) => {
   const [createChat, createChartResults] = useCreateChatMutation({});
-  const {data: friends} = useGetFriendQuery({});
+  const {
+    data: friends,
+    refetch: refetchFriend,
+    isLoading,
+  } = useGetFriendQuery({});
   const [addMember, results] = useAddMemberMutation();
   // console.log(friends);
   const {colors, font} = useStyles();
@@ -90,9 +94,9 @@ const MakeGroupScreen = ({navigation, route}: NavigProps<any>) => {
         style={{
           paddingHorizontal: '4%',
           marginTop: 10,
-          borderBottomWidth: 1,
+          // borderBottomWidth: 1,
           paddingBottom: 15,
-          borderBottomColor: 'rgba(217, 217, 217, 1)',
+          // borderBottomColor: 'rgba(217, 217, 217, 1)',
         }}>
         <View
           style={{
@@ -113,80 +117,10 @@ const MakeGroupScreen = ({navigation, route}: NavigProps<any>) => {
           <TextInput
             style={{flex: 1}}
             placeholder="Search your friends"
-            placeholderTextColor={colors.textColor.neutralColor}
+            placeholderTextColor={colors.textColor.palaceHolderColor}
           />
         </View>
       </View>
-      {selectedUser?.length !== 0 && (
-        <View
-          style={{
-            borderBottomWidth: 1,
-            borderBottomColor: 'rgba(217, 217, 217, 1)',
-
-            paddingVertical: 10,
-          }}>
-          <FlatList
-            showsHorizontalScrollIndicator={false}
-            keyboardShouldPersistTaps="always"
-            horizontal
-            contentContainerStyle={{
-              gap: 16,
-              paddingHorizontal: 20,
-            }}
-            data={selectedUser}
-            renderItem={item => (
-              <View style={{gap: 6}}>
-                <TouchableOpacity
-                  onPress={() => {
-                    // setModalVisible(!modalVisible);
-                  }}
-                  style={{
-                    backgroundColor: colors.secondaryColor,
-                    // paddingVertical: 5,
-                    width: 68,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    elevation: 2,
-                    borderRadius: 50,
-                    padding: 2,
-                    position: 'relative',
-                  }}>
-                  <View
-                    style={{
-                      width: 12,
-                      height: 12,
-                      borderRadius: 50,
-                      backgroundColor: colors.green['#00B047'],
-                      position: 'absolute',
-                      right: 0,
-                      zIndex: +1,
-                      bottom: 5,
-                    }}
-                  />
-                  <Image
-                    style={{
-                      width: 65,
-                      height: 65,
-                      borderRadius: 28,
-                      resizeMode: 'contain',
-                    }}
-                    source={{uri: makeImage(item.item.avatar)}}
-                  />
-                </TouchableOpacity>
-                <Text
-                  style={{
-                    fontSize: 12,
-                    fontFamily: font.Poppins,
-                    color: colors.textColor.neutralColor,
-                    textAlign: 'center',
-                  }}>
-                  {item.item?.fullName}
-                </Text>
-              </View>
-            )}
-          />
-        </View>
-      )}
 
       <FlatList
         showsVerticalScrollIndicator={false}
@@ -195,6 +129,16 @@ const MakeGroupScreen = ({navigation, route}: NavigProps<any>) => {
           paddingHorizontal: 8,
           paddingBottom: 100,
         }}
+        refreshControl={
+          <RefreshControl
+            refreshing={isLoading}
+            tintColor={colors.primaryColor}
+            colors={[colors.primaryColor]}
+            onRefresh={() => {
+              refetchFriend();
+            }}
+          />
+        }
         data={friends?.data}
         renderItem={item => (
           <>
@@ -226,6 +170,21 @@ const MakeGroupScreen = ({navigation, route}: NavigProps<any>) => {
               // lastMessage={item.item?.lastMessage}
               // lastTime="9:51 am"
               name={item.item.fullName}
+              component={
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                  <>
+                    {!!selectedUser?.find(i => i._id === item.item?._id) && (
+                      <SvgXml
+                        xml={`<svg width="24" height="18" viewBox="0 0 24 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M8.4464 17.1472C8.10313 17.1472 7.75998 17.0163 7.49803 16.7544L0.992449 10.2488C0.468663 9.725 0.468663 8.87585 0.992449 8.35206C1.51613 7.82839 2.36549 7.82839 2.88917 8.35206L8.4464 13.9093L21.11 1.24575C21.6338 0.721959 22.483 0.721959 23.0068 1.24575C23.5306 1.76953 23.5306 2.61868 23.0068 3.14247L9.39476 16.7544C9.13292 17.0162 8.78955 17.1472 8.4464 17.1472Z" fill="#00B047"/>
+</svg>
+
+                      `}
+                      />
+                    )}
+                  </>
+                </View>
+              }
             />
           </>
         )}

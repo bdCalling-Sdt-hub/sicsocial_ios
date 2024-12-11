@@ -139,7 +139,7 @@ const FriendsScreen = ({navigation}: NavigProps<null>) => {
             style={{
               fontFamily: font.PoppinsSemiBold,
               fontSize: 14,
-              color: colors.textColor.light,
+              color: colors.textColor.normal,
               textAlign: 'center',
             }}>
             People you know
@@ -165,7 +165,7 @@ const FriendsScreen = ({navigation}: NavigProps<null>) => {
             style={{
               fontFamily: font.PoppinsSemiBold,
               fontSize: 14,
-              color: colors.textColor.light,
+              color: colors.textColor.normal,
               textAlign: 'center',
             }}>
             Friend request

@@ -160,16 +160,16 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
                 </Text>
                 <TextInput
                   style={{
+                    color: colors.textColor.normal,
                     fontFamily: font.Poppins,
                     backgroundColor: colors.secondaryColor,
                     borderRadius: 100,
                     fontSize: 14,
                     paddingHorizontal: 20,
                     height: 56,
-                    color: colors.textColor.neutralColor,
                   }}
-                  placeholder="John Doe"
-                  placeholderTextColor={colors.textColor.gray}
+                  placeholder="Enter your full name"
+                  placeholderTextColor={colors.textColor.palaceHolderColor}
                   onChangeText={handleChange('fullName')}
                   onBlur={handleBlur('fullName')}
                   value={values?.fullName}
@@ -189,16 +189,16 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
                 </Text>
                 <TextInput
                   style={{
+                    color: colors.textColor.normal,
                     fontFamily: font.Poppins,
                     backgroundColor: colors.secondaryColor,
                     borderRadius: 100,
                     fontSize: 14,
                     paddingHorizontal: 20,
                     height: 56,
-                    color: colors.textColor.neutralColor,
                   }}
-                  placeholder="johndoe@gmail.com"
-                  placeholderTextColor={colors.textColor.gray}
+                  placeholder="Enter your email"
+                  placeholderTextColor={colors.textColor.palaceHolderColor}
                   onChangeText={handleChange('email')}
                   onBlur={handleBlur('email')}
                   value={values?.email}
@@ -218,16 +218,16 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
                 </Text>
                 <TextInput
                   style={{
+                    color: colors.textColor.normal,
                     fontFamily: font.Poppins,
                     backgroundColor: colors.secondaryColor,
                     borderRadius: 100,
                     fontSize: 14,
                     paddingHorizontal: 20,
                     height: 56,
-                    color: colors.textColor.neutralColor,
                   }}
-                  placeholderTextColor={colors.textColor.gray}
-                  placeholder="+000000000000"
+                  placeholderTextColor={colors.textColor.palaceHolderColor}
+                  placeholder="Enter your contact no"
                   onChangeText={handleChange('phoneNumber')}
                   onBlur={handleBlur('phoneNumber')}
                   value={values?.phoneNumber}
@@ -247,16 +247,16 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
                 </Text>
                 <TextInput
                   style={{
+                    color: colors.textColor.normal,
                     fontFamily: font.Poppins,
                     backgroundColor: colors.secondaryColor,
                     borderRadius: 100,
                     fontSize: 14,
                     paddingHorizontal: 20,
                     height: 56,
-                    color: colors.textColor.neutralColor,
                   }}
-                  placeholderTextColor={colors.textColor.gray}
-                  // placeholder="********"
+                  placeholderTextColor={colors.textColor.palaceHolderColor}
+                  placeholder="Enter your password"
                   secureTextEntry={!isShow}
                   onChangeText={handleChange('password')}
                   onBlur={handleBlur('password')}
@@ -299,18 +299,18 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
                 </Text>
                 <TextInput
                   style={{
+                    color: colors.textColor.normal,
                     fontFamily: font.Poppins,
                     backgroundColor: colors.secondaryColor,
                     borderRadius: 100,
                     fontSize: 14,
                     paddingHorizontal: 20,
                     height: 56,
-                    color: colors.textColor.neutralColor,
                   }}
                   onChangeText={handleChange('confirm_password')}
                   onBlur={handleBlur('confirm_password')}
-                  placeholderTextColor={colors.textColor.gray}
-                  // placeholder="********"
+                  placeholderTextColor={colors.textColor.palaceHolderColor}
+                  placeholder="Enter your confirm password"
                   secureTextEntry={!isShow}
                 />
                 <TouchableOpacity
