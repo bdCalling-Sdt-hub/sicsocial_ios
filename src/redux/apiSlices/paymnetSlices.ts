@@ -8,7 +8,6 @@ export const paymentSlices = api.injectEndpoints({
         method: 'POST',
         body: data,
       }),
-      invalidatesTags: ['payment'],
     }),
     paymentIntent: builder.mutation({
       query: data => ({
@@ -16,7 +15,6 @@ export const paymentSlices = api.injectEndpoints({
         method: 'POST',
         body: data,
       }),
-      invalidatesTags: ['payment'],
     }),
   }),
 });

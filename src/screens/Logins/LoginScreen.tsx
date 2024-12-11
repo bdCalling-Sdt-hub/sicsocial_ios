@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import {getStorageToken, lStorage} from '../../utils/utils';
 
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
 import {Checkbox} from 'react-native-ui-lib';
@@ -16,7 +17,6 @@ import Feather from 'react-native-vector-icons/Feather';
 import {Formik} from 'formik';
 import {NavigProps} from '../../interfaces/NaviProps';
 import React from 'react';
-import {lStorage} from '../../utils/utils';
 import {setToken} from '../../redux/apiSlices/tokenSlice';
 import {useDispatch} from 'react-redux';
 import {useLoginUserMutation} from '../../redux/apiSlices/authSlice';
@@ -25,6 +25,9 @@ import {useStyles} from '../../context/ContextApi';
 const LoginScreen = ({navigation}: NavigProps<null>) => {
   const modalRef = React.useRef<PopUpModalRef>();
   const {colors, font} = useStyles();
+
+  console.log(getStorageToken());
+
   const [rememberItems, setRememberItems] = React.useState({
     check: lStorage.getBool('check') || false,
     email: lStorage.getString('email') || '',

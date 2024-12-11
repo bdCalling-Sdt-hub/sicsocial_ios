@@ -39,7 +39,7 @@ const DonationScreen = ({navigation, route}: NavigProps<IDonation>) => {
 
   const Item = donations?.data![0];
 
-  console.log(route?.params);
+  // console.log(route?.params);
 
   return (
     <View

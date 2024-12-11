@@ -1,9 +1,9 @@
-import React, {createContext, useContext, useState} from 'react';
 import {Appearance, Dimensions} from 'react-native';
+import React, {createContext, useContext, useState} from 'react';
 
-import {useDispatch} from 'react-redux';
-import {setToken} from '../redux/apiSlices/tokenSlice';
 import {getStorageToken} from '../utils/utils';
+import {setToken} from '../redux/apiSlices/tokenSlice';
+import {useDispatch} from 'react-redux';
 
 interface ProviderProps {
   isDark?: boolean;
@@ -59,7 +59,7 @@ export const useStyles = () => {
     },
     colors: {
       // bg: isDark ? '#222222' : '#FFFFFF',
-      bg: isDark ? '#222222' : 'rgba(253, 253, 253, 1)',
+      bg: isDark ? '#222222' : '#fdfdfd',
       gradient: {
         variantOne: isDark
           ? [
@@ -111,7 +111,7 @@ export const useStyles = () => {
         primaryColor: isDark ? '#FFFFFF' : '#151515',
         secondaryColor: isDark ? '#E6E6E6' : '#333333',
         neutralColor: isDark ? '#A5A5A5' : '#767676',
-        palaceHolderColor: isDark ? '#A5A5A5' : 'rgba(161, 161, 161, 1)',
+        palaceHolderColor: isDark ? '#A5A5A5' : '#a1a1a1',
         white: isDark ? 'white' : 'white',
         light: isDark ? '#767676' : '#5C5C5C',
         rare: isDark ? '#D29E3B' : '#720B24',
@@ -139,7 +139,7 @@ export const useStyles = () => {
       redisExtraLight: isDark ? '#333333' : '#FFF5F7',
       gray: {
         variant: isDark ? 'rgba(144, 144, 144, 1)' : 'rgba(244, 244, 244, 1)',
-        variantTwo: isDark ? 'rgba(144, 144, 144, 1)' : '#D9D9D9',
+        variantTwo: isDark ? '#909090' : '#D9D9D9',
       },
     },
   };

@@ -48,6 +48,14 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
 
   const handlePayPress = async () => {
     try {
+      // min 50
+      if (Number(amount) < 50) {
+        modalRef.current?.open({
+          title: 'Warning',
+          content: 'Amount should be greater than 50',
+        });
+        return;
+      }
       setExtraLoading(true);
       // Gather the customer's billing information
       const billingDetails = {
@@ -75,15 +83,17 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
           },
         );
 
+        // console.log(paymentIntent);
+
         if (error) {
           setExtraLoading(false);
-          // console.log('Payment confirmation error', error);
+          console.log('Payment confirmation error', error);
           modalRef.current?.open({
             title: 'Warning',
             content: error.message,
           });
           setPaymentModal(false);
-        } else if (paymentIntent?.status === 'succeeded') {
+        } else if (paymentIntent?.status === 'Succeeded') {
           setPaymentModal(false);
 
           await paymentRecord({
@@ -543,7 +553,7 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
               cardStyle={{
                 backgroundColor: colors.bg,
                 textColor: colors.textColor.normal,
-                borderColor: colors.textColor.secondaryColor,
+                borderColor: colors.gray.variantTwo,
                 borderWidth: 1,
                 borderRadius: 8,
                 placeholderColor: colors.textColor.palaceHolderColor,
@@ -586,7 +596,7 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
         containerColor={colors.bg}
         Radius={15}
         width={'80%'}
-        height={'40%'}
+        // height={'40%'}
         backButton
         appearance>
         <View
@@ -704,7 +714,8 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
             style={{
               flexDirection: 'row',
               gap: 24,
-              marginTop: 5,
+              marginVertical: 5,
+              marginBottom: 10,
             }}>
             <NormalButton
               title="Donate again"

@@ -7,13 +7,14 @@ import {
   View,
 } from 'react-native';
 
-import React from 'react';
-import {SvgXml} from 'react-native-svg';
-import {useStyles} from '../../context/ContextApi';
-import {NavigProps} from '../../interfaces/NaviProps';
+import {AnimatedImage} from 'react-native-ui-lib';
 import {INewFeed} from '../../redux/interface/new_feed';
 import {IParticipants} from '../../redux/interface/participants';
+import {NavigProps} from '../../interfaces/NaviProps';
+import React from 'react';
+import {SvgXml} from 'react-native-svg';
 import {makeImage} from '../../utils/utils';
+import {useStyles} from '../../context/ContextApi';
 
 interface ConversationalCardProps extends NavigProps<null>, IParticipants {
   conversationTitle?: string;
@@ -299,7 +300,7 @@ const ConversationalCard = ({
                       alignItems: 'center',
                       padding: 1,
                     }}>
-                    <Image
+                    <AnimatedImage
                       resizeMode="cover"
                       style={{
                         height: 85,
@@ -330,7 +331,7 @@ const ConversationalCard = ({
                         },
                       ],
                     }}>
-                    <Image
+                    <AnimatedImage
                       resizeMode="cover"
                       style={{
                         height: 85,
@@ -367,7 +368,7 @@ const ConversationalCard = ({
                         },
                       ],
                     }}>
-                    <Image
+                    <AnimatedImage
                       resizeMode="cover"
                       style={{
                         height: 70,
@@ -400,7 +401,7 @@ const ConversationalCard = ({
                         },
                       ],
                     }}>
-                    <Image
+                    <AnimatedImage
                       resizeMode="cover"
                       style={{
                         height: 85,
@@ -437,7 +438,7 @@ const ConversationalCard = ({
                         },
                       ],
                     }}>
-                    <Image
+                    <AnimatedImage
                       resizeMode="cover"
                       style={{
                         height: 70,
@@ -467,7 +468,7 @@ const ConversationalCard = ({
                         padding: 1,
                       }}>
                       {participants && (
-                        <Image
+                        <AnimatedImage
                           resizeMode="cover"
                           style={{
                             height: 80,
@@ -511,7 +512,7 @@ const ConversationalCard = ({
                           ],
                         }}>
                         {participants && (
-                          <Image
+                          <AnimatedImage
                             resizeMode="cover"
                             style={{
                               height: 80,
@@ -547,7 +548,7 @@ const ConversationalCard = ({
                           ],
                         }}>
                         {participants && (
-                          <Image
+                          <AnimatedImage
                             resizeMode="cover"
                             style={{
                               height: 80,
@@ -582,7 +583,7 @@ const ConversationalCard = ({
                           ],
                         }}>
                         {participants && (
-                          <Image
+                          <AnimatedImage
                             resizeMode="cover"
                             style={{
                               height: 65,
@@ -615,7 +616,7 @@ const ConversationalCard = ({
                           ],
                         }}>
                         {participants && (
-                          <Image
+                          <AnimatedImage
                             resizeMode="cover"
                             style={{
                               height: 65,
@@ -649,7 +650,7 @@ const ConversationalCard = ({
                           ],
                         }}>
                         {participants && (
-                          <Image
+                          <AnimatedImage
                             resizeMode="cover"
                             style={{
                               height: 65,
@@ -696,7 +697,7 @@ const ConversationalCard = ({
                           ],
                         }}>
                         {participants && (
-                          <Image
+                          <AnimatedImage
                             resizeMode="cover"
                             style={{
                               height: 80,
@@ -734,7 +735,7 @@ const ConversationalCard = ({
                           ],
                         }}>
                         {participants && (
-                          <Image
+                          <AnimatedImage
                             resizeMode="cover"
                             style={{
                               height: 80,
@@ -770,7 +771,7 @@ const ConversationalCard = ({
                           ],
                         }}>
                         {participants && (
-                          <Image
+                          <AnimatedImage
                             resizeMode="cover"
                             style={{
                               height: 80,
@@ -808,7 +809,7 @@ const ConversationalCard = ({
                           ],
                         }}>
                         {participants && (
-                          <Image
+                          <AnimatedImage
                             resizeMode="cover"
                             style={{
                               height: 80,
