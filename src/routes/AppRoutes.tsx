@@ -39,6 +39,7 @@ import NormalConversationScreen from '../screens/message/NormalConversationScree
 import UpdateNewFaceDown from '../screens/message/UpdateNewFaceDown';
 import NotificationsScreen from '../screens/notification/NotificationsScreen';
 import OfflineScreen from '../screens/offline/OfflineScreen';
+import PDFViewerOffline from '../screens/offline/PDFViewerOffline';
 import PaymentsScreen from '../screens/payments/PaymentsScreen';
 import MyAllFriends from '../screens/profile/MyAllFriends';
 import ProfileEditScreen from '../screens/profile/ProfileEditScreen';
@@ -429,6 +430,13 @@ const Routes = () => {
               <Stack.Screen
                 name="Offline"
                 component={OfflineScreen}
+                options={{
+                  animation: 'slide_from_right',
+                }}
+              />
+              <Stack.Screen
+                name="PdfViewerOffline"
+                component={PDFViewerOffline}
                 options={{
                   animation: 'slide_from_right',
                 }}

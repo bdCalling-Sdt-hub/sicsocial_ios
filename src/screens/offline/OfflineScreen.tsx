@@ -121,7 +121,7 @@ const OfflineScreen = ({route, navigation}: NavigProps<null>) => {
           <TouchableOpacity
             onPress={() => {
               //   handleCreateNewChat({book: item.item._id});
-              navigation?.navigate('PdfViewer', {data: item.item});
+              navigation?.navigate('PdfViewerOffline', {data: item.item});
             }}
             style={{
               // elevation: 2,
