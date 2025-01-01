@@ -3,6 +3,7 @@ import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React from 'react';
 import {SvgXml} from 'react-native-svg';
 import Feather from 'react-native-vector-icons/Feather';
+import {useStyles} from '../../context/ContextApi';
 import {NavigProps} from '../../interfaces/NaviProps';
 
 interface BackButtonWithTitleProps extends NavigProps<null> {
@@ -37,6 +38,7 @@ const BackButtonWithTitle = ({
   buttonComponent,
   height = 80,
 }: BackButtonWithTitleProps) => {
+  const {colors} = useStyles();
   return (
     <View
       style={[
@@ -62,7 +64,11 @@ const BackButtonWithTitle = ({
               navigation && navigation.navigate('HomeRoutes');
             }
           }}>
-          <Feather name="arrow-left" color="#636363" size={24} />
+          <Feather
+            name="arrow-left"
+            color={colors.textColor.normal}
+            size={24}
+          />
         </TouchableOpacity>
       )}
 

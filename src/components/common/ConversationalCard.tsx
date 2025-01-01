@@ -7,14 +7,14 @@ import {
   View,
 } from 'react-native';
 
-import {AnimatedImage} from 'react-native-ui-lib';
-import {INewFeed} from '../../redux/interface/new_feed';
-import {IParticipants} from '../../redux/interface/participants';
-import {NavigProps} from '../../interfaces/NaviProps';
 import React from 'react';
 import {SvgXml} from 'react-native-svg';
-import {makeImage} from '../../utils/utils';
+import {AnimatedImage} from 'react-native-ui-lib';
 import {useStyles} from '../../context/ContextApi';
+import {NavigProps} from '../../interfaces/NaviProps';
+import {INewFeed} from '../../redux/interface/new_feed';
+import {IParticipants} from '../../redux/interface/participants';
+import {makeImage} from '../../utils/utils';
 
 interface ConversationalCardProps extends NavigProps<null>, IParticipants {
   conversationTitle?: string;
@@ -97,7 +97,7 @@ const ConversationalCard = ({
                       maxWidth: '90%',
                       fontFamily: font.PoppinsSemiBold,
                       fontSize: 17,
-                      color: colors.textColor.secondaryColor,
+                      color: colors.textColor.neutralColor,
                     }}>
                     {conversationTitle}
                   </Text>
@@ -109,7 +109,7 @@ const ConversationalCard = ({
                       fontFamily: font.Poppins,
                       fontSize: 12,
                       color: colors.textColor.secondaryColor,
-                      opacity: 0.5,
+                      opacity: 0.8,
                       maxWidth: '80%',
                     }}>
                     {conversationSubtitle}
@@ -225,10 +225,12 @@ const ConversationalCard = ({
                     }}>
                     {conversationTitle && (
                       <Text
+                        numberOfLines={1}
                         style={{
                           fontFamily: font.PoppinsMedium,
                           fontSize: 12,
                           color: colors.textColor.secondaryColor,
+                          maxWidth: '80%',
                         }}>
                         {conversationTitle}
                       </Text>
@@ -237,6 +239,7 @@ const ConversationalCard = ({
                       <>
                         {conversationSubtitle && (
                           <Text
+                            numberOfLines={1}
                             style={{
                               fontFamily: font.PoppinsMedium,
                               fontSize: 13,
@@ -250,10 +253,13 @@ const ConversationalCard = ({
                       <>
                         {conversationSubtitle && (
                           <Text
+                            numberOfLines={1}
                             style={{
                               fontFamily: font.PoppinsMedium,
                               fontSize: 13,
                               color: colors.textColor.neutralColor,
+                              maxWidth:
+                                participants?.length > 1 ? '40%' : '80%',
                             }}>
                             {conversationSubtitle}
                           </Text>
@@ -263,6 +269,7 @@ const ConversationalCard = ({
                   </View>
                   {lastMessageTime && (
                     <Text
+                      numberOfLines={1}
                       style={{
                         fontFamily: font.PoppinsMedium,
                         fontSize: 13,
@@ -281,6 +288,7 @@ const ConversationalCard = ({
                         color: isReply
                           ? colors.textColor.neutralColor
                           : colors.textColor.neutralColor,
+                        maxWidth: '90%',
                       }}
                       numberOfLines={2}>
                       {lastMessage}

@@ -764,9 +764,9 @@ const CreateNewFaceDown = ({navigation, route}: NavigProps<any>) => {
                   setBooksModal(false);
                 }}
                 style={{
-                  // elevation: 2,
-                  // backgroundColor: colors.bg,
-                  // padding: 2,
+                  elevation: 2,
+                  backgroundColor: colors.secondaryColor,
+                  padding: 2,
                   borderRadius: 24,
                   // height: height * 0.243,
                   // alignItems : "center",
@@ -781,7 +781,7 @@ const CreateNewFaceDown = ({navigation, route}: NavigProps<any>) => {
                     resizeMode="stretch"
                     style={{
                       height: height * 0.24,
-                      width: width * 0.41,
+                      width: '100%',
                       borderRadius: 24,
                       borderWidth: 2,
                       borderColor: colors.bg,

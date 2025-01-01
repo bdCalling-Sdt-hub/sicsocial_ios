@@ -6,16 +6,15 @@ import {
   StyleSheet,
   View,
 } from 'react-native';
+import {useStyles} from '../context/ContextApi';
 
 import LottieView from 'lottie-react-native';
-import {useStyles} from '../context/ContextApi';
 import {NavigProps} from '../interfaces/NaviProps';
 
 interface SplashProps extends NavigProps<null> {
   setIsSplash: React.Dispatch<SetStateAction<boolean>>;
   isSplash?: boolean;
 }
-
 const SplashScreen = ({navigation, setIsSplash}: SplashProps) => {
   const {colors} = useStyles();
 

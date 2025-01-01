@@ -1,6 +1,3 @@
-import PopUpModal, {
-  PopUpModalRef,
-} from '../../components/common/modals/PopUpModal';
 import {
   ScrollView,
   StyleSheet,
@@ -9,18 +6,21 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import PopUpModal, {
+  PopUpModalRef,
+} from '../../components/common/modals/PopUpModal';
 import {getStorageToken, lStorage} from '../../utils/utils';
 
-import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
+import {Formik} from 'formik';
+import React from 'react';
 import {Checkbox} from 'react-native-ui-lib';
 import Feather from 'react-native-vector-icons/Feather';
-import {Formik} from 'formik';
-import {NavigProps} from '../../interfaces/NaviProps';
-import React from 'react';
-import {setToken} from '../../redux/apiSlices/tokenSlice';
 import {useDispatch} from 'react-redux';
-import {useLoginUserMutation} from '../../redux/apiSlices/authSlice';
+import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
 import {useStyles} from '../../context/ContextApi';
+import {NavigProps} from '../../interfaces/NaviProps';
+import {useLoginUserMutation} from '../../redux/apiSlices/authSlice';
+import {setToken} from '../../redux/apiSlices/tokenSlice';
 
 const LoginScreen = ({navigation}: NavigProps<null>) => {
   const modalRef = React.useRef<PopUpModalRef>();
@@ -39,33 +39,21 @@ const LoginScreen = ({navigation}: NavigProps<null>) => {
   const [loginUser] = useLoginUserMutation();
 
   const OnSubmit = values => {
-    if (!values?.email) {
-      modalRef.current?.open({
-        // title : "Error",
-        content: 'Please enter your email',
-      });
-    } else if (!values?.password) {
-      modalRef.current?.open({
-        // title : "Error",
-        content: 'Please enter your password',
-      });
-    } else {
-      loginUser(values).then(res => {
-        if (res.error) {
-          // console.log(res.error);
-          modalRef.current?.open({
-            // title : "Error",
-            content: res?.error?.data?.message,
-          });
-        }
-        if (res?.data) {
-          // console.log(res.data?.data?.accessToken);
-          dispatch(setToken(res.data?.data?.accessToken));
-          lStorage.setString('token', res.data?.data?.accessToken);
-          navigation?.navigate('Loading');
-        }
-      });
-    }
+    loginUser(values).then(res => {
+      if (res.error) {
+        // console.log(res.error);
+        modalRef.current?.open({
+          title: 'Warning',
+          content: res?.error?.data?.message,
+        });
+      }
+      if (res?.data) {
+        // console.log(res.data?.data?.accessToken);
+        dispatch(setToken(res.data?.data?.accessToken));
+        lStorage.setString('token', res.data?.data?.accessToken);
+        navigation?.navigate('Loading');
+      }
+    });
   };
 
   return (
@@ -109,8 +97,35 @@ const LoginScreen = ({navigation}: NavigProps<null>) => {
             email: rememberItems.email,
             password: rememberItems.password,
           }}
+          validate={values => {
+            const errors: any = {};
+            if (!values.email) {
+              errors.email = 'Required';
+            }
+            if (
+              !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
+            ) {
+              errors.email = 'valid email is required';
+            }
+            if (!values.password) {
+              errors.password = 'Required';
+            }
+            // passowrd mast be 8 char long
+            if (values.password.length < 8) {
+              errors.password = 'password must be 8 char long';
+            }
+            return errors;
+          }}
           onSubmit={values => OnSubmit(values)}>
-          {({handleChange, handleBlur, handleSubmit, values, resetForm}) => (
+          {({
+            handleChange,
+            handleBlur,
+            handleSubmit,
+            values,
+            resetForm,
+            errors,
+            touched,
+          }) => (
             <View
               style={{
                 marginTop: 105,
@@ -146,6 +161,11 @@ const LoginScreen = ({navigation}: NavigProps<null>) => {
                   value={values?.email}
                 />
               </View>
+
+              {errors.email && touched.email && (
+                <Text style={{color: 'red', fontSize: 12}}>{errors.email}</Text>
+              )}
+
               <View
                 style={{
                   gap: 8,
@@ -176,6 +196,11 @@ const LoginScreen = ({navigation}: NavigProps<null>) => {
                   onChangeText={handleChange('password')}
                   onBlur={handleBlur('password')}
                 />
+                {errors.password && touched.password && (
+                  <Text style={{color: 'red', fontSize: 12}}>
+                    {errors.password}
+                  </Text>
+                )}
                 <TouchableOpacity
                   onPress={() => setIsShow(!isShow)}
                   style={{

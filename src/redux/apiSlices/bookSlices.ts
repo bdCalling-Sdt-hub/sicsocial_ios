@@ -1,5 +1,6 @@
 import {IBooks, ISingleBook} from '../interface/book';
 
+import {lStorage} from '../../utils/utils';
 import {api} from '../api/baseApi';
 
 export const bookSlices = api.injectEndpoints({
@@ -14,6 +15,7 @@ export const bookSlices = api.injectEndpoints({
       query: ({id, page, limit}) => ({
         url: `/books`,
       }),
+
       providesTags: ['book'],
     }),
     getAllBooks: builder.query<IBooks, unknown>({
@@ -21,6 +23,10 @@ export const bookSlices = api.injectEndpoints({
         url: `/books/all`,
       }),
       providesTags: ['book'],
+      transformResponse: (response: any) => {
+        lStorage.setString('books', JSON.stringify(response));
+        return response;
+      },
     }),
     getBookById: builder.query<ISingleBook, unknown>({
       query: ({id, page, limit}) => ({

@@ -6,16 +6,16 @@ import {
   View,
 } from 'react-native';
 
+import React from 'react';
+import {FlatList} from 'react-native-gesture-handler';
 import {AnimatedImage} from 'react-native-ui-lib';
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
-import {FlatList} from 'react-native-gesture-handler';
-import {IDonation} from '../../redux/interface/donation';
-import {NavigProps} from '../../interfaces/NaviProps';
 import NormalButton from '../../components/common/NormalButton';
-import React from 'react';
-import {makeImageUrl} from '../../utils/utils';
-import {useGetDonationQuery} from '../../redux/apiSlices/additionalSlices';
 import {useStyles} from '../../context/ContextApi';
+import {NavigProps} from '../../interfaces/NaviProps';
+import {useGetDonationQuery} from '../../redux/apiSlices/additionalSlices';
+import {IDonation} from '../../redux/interface/donation';
+import {makeImageUrl} from '../../utils/utils';
 
 const data = [
   {
@@ -85,7 +85,10 @@ const DonationScreen = ({navigation, route}: NavigProps<IDonation>) => {
               <Text
                 style={{
                   fontSize: 14,
-                  color: item.index === selectItem ? 'white' : '#767676',
+                  color:
+                    item.index === selectItem
+                      ? 'white'
+                      : colors.textColor.neutralColor,
                   fontFamily: font.Poppins,
                 }}>
                 {item.item.text}

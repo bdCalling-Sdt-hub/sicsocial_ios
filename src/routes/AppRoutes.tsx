@@ -3,60 +3,63 @@
 import * as React from 'react';
 
 import {Alert, Linking} from 'react-native';
-import ContextApi, {useContextApi, useStyles} from '../context/ContextApi';
-import {Provider, useSelector} from 'react-redux';
 import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
+import {useContextApi, useStyles} from '../context/ContextApi';
 import {getSocket, initiateSocket} from '../redux/services/socket';
 
-import AboutSicScreen from '../screens/profile/settings/AboutSicScreen';
-import AddParticipants from '../screens/message/AddParticipants';
-import BookShareScreen from '../screens/sharebooks/BookShareScreen';
-import BookShareWithCategory from '../screens/sharebooks/BookShareWithCategory';
-import BooksScreen from '../screens/sharebooks/BooksScreen';
-import BottomBarRoutes from './BottomBarRoutes';
-import ChangePassword from '../screens/Logins/ChnagePassword';
-import CreateNewFaceDown from '../screens/message/CreateNewFaceDown';
-import DeleteAccount from '../screens/Logins/DeleteAccount';
-import DonationScreen from '../screens/donation/DonationScreen';
-import EmailConfirmationScreen from '../screens/Logins/EmailConfirmationScreen';
-import FAQScreen from '../screens/profile/settings/FAQScreen';
-import FaceDownConversation from '../screens/message/FaceDownConversation';
-import FeedBackScreen from '../screens/profile/settings/FeedBackScreen';
-import FriendsProfile from '../screens/friends/FriendsProfile';
+import {useNetInfo} from '@react-native-community/netinfo';
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
-import GroupConversationScreen from '../screens/message/GroupConversationScreen';
+import {useSelector} from 'react-redux';
+import LoadingSplash from '../screens/LoadingSplash';
+import ChangePassword from '../screens/Logins/ChnagePassword';
+import DeleteAccount from '../screens/Logins/DeleteAccount';
+import EmailConfirmationScreen from '../screens/Logins/EmailConfirmationScreen';
 import InterestScreen from '../screens/Logins/InterestScreen';
+import LoginScreen from '../screens/Logins/LoginScreen';
+import ResetPasswordScreen from '../screens/Logins/ResetPasswordScreen';
+import SignUpScreen from '../screens/Logins/SignUpScreen';
+import VerifyEmailScreen from '../screens/Logins/VerifyEmailScreen';
+import VerifySuccessfulScreen from '../screens/Logins/VerifySuccessfulScreen';
+import SplashScreen from '../screens/SplashScreen';
+import DonationScreen from '../screens/donation/DonationScreen';
+import FriendsProfile from '../screens/friends/FriendsProfile';
+import AddParticipants from '../screens/message/AddParticipants';
+import CreateNewFaceDown from '../screens/message/CreateNewFaceDown';
+import FaceDownConversation from '../screens/message/FaceDownConversation';
+import GroupConversationScreen from '../screens/message/GroupConversationScreen';
 import LiveAddFriendsScreen from '../screens/message/LiveAddFriendsScreen';
 import LiveConversationScreen from '../screens/message/LiveConversationScreen';
 import LiveMessageScreen from '../screens/message/LiveMessageScreen';
-import LoadingSplash from '../screens/LoadingSplash';
-import LoginScreen from '../screens/Logins/LoginScreen';
 import MakeGroupScreen from '../screens/message/MakeGroupScreen';
-import ManageAccounts from '../screens/profile/settings/ManageAccoutns';
 import MassageScreen from '../screens/message/MassageScreen';
 import MembersManage from '../screens/message/MembersMange';
-import MyAllFriends from '../screens/profile/MyAllFriends';
-import {NavigationContainer} from '@react-navigation/native';
 import NormalConversationScreen from '../screens/message/NormalConversationScreen';
+import UpdateNewFaceDown from '../screens/message/UpdateNewFaceDown';
 import NotificationsScreen from '../screens/notification/NotificationsScreen';
-import PDFViewer from '../screens/sharebooks/PDFViewer';
+import OfflineScreen from '../screens/offline/OfflineScreen';
 import PaymentsScreen from '../screens/payments/PaymentsScreen';
-import PrivacyPolicyScreen from '../screens/profile/settings/PrivacyPolicyScreen';
+import MyAllFriends from '../screens/profile/MyAllFriends';
 import ProfileEditScreen from '../screens/profile/ProfileEditScreen';
 import ProfileScreen from '../screens/profile/ProfileScreen';
-import ResetPasswordScreen from '../screens/Logins/ResetPasswordScreen';
-import SearchScreen from '../screens/search/SearchScreen';
 import SettingScreen from '../screens/profile/SettingScreen';
-import SicGuidelinesScreen from '../screens/profile/settings/SicGuidelinesScreen';
-import SignUpScreen from '../screens/Logins/SignUpScreen';
-import SplashScreen from '../screens/SplashScreen';
-import TermsAndConditions from '../screens/profile/settings/TermsAndConditions';
-import UpdateNewFaceDown from '../screens/message/UpdateNewFaceDown';
-import VerifyEmailScreen from '../screens/Logins/VerifyEmailScreen';
-import VerifySuccessfulScreen from '../screens/Logins/VerifySuccessfulScreen';
 import ViewAllFaceDown from '../screens/profile/ViewAllFaceDown';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import store from '../redux/store';
+import AboutSicScreen from '../screens/profile/settings/AboutSicScreen';
+import FAQScreen from '../screens/profile/settings/FAQScreen';
+import FeedBackScreen from '../screens/profile/settings/FeedBackScreen';
+import ManageAccounts from '../screens/profile/settings/ManageAccoutns';
+import PrivacyPolicyScreen from '../screens/profile/settings/PrivacyPolicyScreen';
+import SicGuidelinesScreen from '../screens/profile/settings/SicGuidelinesScreen';
+import TermsAndConditions from '../screens/profile/settings/TermsAndConditions';
+import SearchScreen from '../screens/search/SearchScreen';
+import BookShareScreen from '../screens/sharebooks/BookShareScreen';
+import BookShareWithCategory from '../screens/sharebooks/BookShareWithCategory';
+import BooksScreen from '../screens/sharebooks/BooksScreen';
+import PDFViewer from '../screens/sharebooks/PDFViewer';
+import BottomBarRoutes from './BottomBarRoutes';
+
+// console.log(hostUrl);
 
 const Stack = createNativeStackNavigator();
 const linking = {
@@ -83,7 +86,7 @@ const linking = {
 };
 const Routes = () => {
   const {colors} = useStyles();
-  const {isDark} = useContextApi();
+  const {isDark, IsNet} = useContextApi();
 
   const {token} = useSelector((state: any) => state?.token);
 
@@ -135,7 +138,7 @@ const Routes = () => {
     <NavigationContainer linking={token && linking}>
       <SafeAreaView style={{flex: 1}}>
         <Stack.Navigator
-          initialRouteName={token ? 'HomeRoutes' : 'Login'}
+          initialRouteName={!IsNet ? 'Offline' : token ? 'HomeRoutes' : 'Login'}
           // initialRouteName={'test'}
           screenOptions={{
             headerShown: false,
@@ -422,6 +425,14 @@ const Routes = () => {
                   animation: 'slide_from_right',
                 }}
               />
+
+              <Stack.Screen
+                name="Offline"
+                component={OfflineScreen}
+                options={{
+                  animation: 'slide_from_right',
+                }}
+              />
               {/*======================== Profile end ============================ */}
             </>
           )}
@@ -430,26 +441,26 @@ const Routes = () => {
     </NavigationContainer>
   );
 };
-// console.log(hostUrl);
-
 function AppRoutes() {
   const [isSplash, setIsSplash] = React.useState(true);
-
+  const {setIsNet} = useContextApi();
+  const {type, isConnected} = useNetInfo();
+  React.useEffect(() => {
+    setIsNet(isConnected);
+  }, [isConnected]);
   return (
-    <Provider store={store}>
-      <ContextApi>
-        {isSplash ? (
-          <SplashScreen setIsSplash={setIsSplash} />
-        ) : (
-          <SafeAreaProvider>
-            <GestureHandlerRootView>
-              <Routes />
-            </GestureHandlerRootView>
-          </SafeAreaProvider>
-        )}
-        {/* <Routes /> */}
-      </ContextApi>
-    </Provider>
+    <>
+      {isSplash ? (
+        <SplashScreen setIsSplash={setIsSplash} />
+      ) : (
+        <SafeAreaProvider>
+          <GestureHandlerRootView>
+            <Routes />
+          </GestureHandlerRootView>
+        </SafeAreaProvider>
+      )}
+      {/* <Routes /> */}
+    </>
   );
 }
 

@@ -27,71 +27,29 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
   const [check, setCheck] = React.useState(false);
   const OnSubmitHandler = values => {
     // console.log(values);
-    if (!values?.fullName) {
-      modalRef.current?.open({
-        // title : "Error",
-        content: 'Please enter your name',
-      });
-    } else if (!values?.email) {
-      modalRef.current?.open({
-        // title : "Error",
-        content: 'Please enter your email',
-      });
-    } else if (!values?.password) {
-      modalRef.current?.open({
-        // title : "Error",
-        content: 'Please enter your password',
-      });
-    }
-    // password maust be at least 8 characters
-    else if (values?.password?.length < 8) {
-      modalRef.current?.open({
-        // title : "Error",
-        content: 'Password must be at least 8 characters',
-      });
-    }
-    // password or confirm password not match
-    else if (values?.password !== values?.confirm_password) {
-      modalRef.current?.open({
-        // title : "Error",
-        content: 'Password or confirm password not match',
-      });
-    }
-    // email not valid
-    else if (!values?.email?.match(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/)) {
-      modalRef.current?.open({
-        // title : "Error",
-        content: 'Email not valid',
-      });
-    } else if (!values?.confirm_password) {
-      modalRef.current?.open({
-        // title : "Error",
-        content: 'Please enter your confirm password',
-      });
-    } else {
-      createUser(values).then(res => {
-        // console.log(res);
-        if (res.error) {
-          modalRef.current?.open({
-            // title : "Error",
-            content: res?.error?.data?.message,
+
+    createUser(values).then(res => {
+      // console.log(res);
+      if (res.error) {
+        modalRef.current?.open({
+          title: 'Warning',
+          content: res?.error?.data?.message,
+        });
+      }
+      if (res?.data) {
+        // console.log(res.data);
+        if (res.data?.success) {
+          navigation?.navigate('VerifyEmail', {
+            data: {
+              email: values?.email,
+              otp: '',
+              verificationType: 'emailVerification',
+            },
           });
         }
-        if (res?.data) {
-          // console.log(res.data);
-          if (res.data?.success) {
-            navigation?.navigate('VerifyEmail', {
-              data: {
-                email: values?.email,
-                otp: '',
-                verificationType: 'emailVerification',
-              },
-            });
-          }
-          // lStorage.setString("token", res.data?.data?.accessToken);
-        }
-      });
-    }
+        // lStorage.setString("token", res.data?.data?.accessToken);
+      }
+    });
   };
   return (
     <View
@@ -119,6 +77,7 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
       <ScrollView
         keyboardShouldPersistTaps="always"
         showsVerticalScrollIndicator={false}
+        contentContainerStyle={{paddingBottom: 20}}
         showsHorizontalScrollIndicator={false}>
         <View>
           <Text
@@ -138,8 +97,47 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
             password: '',
             confirm_password: '',
           }}
+          validate={values => {
+            const errors: any = {};
+            if (!values.fullName) {
+              errors.fullName = 'Required';
+            }
+            if (!values.email) {
+              errors.email = 'Required';
+            }
+            // email validate
+            else if (!values.email.match(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/)) {
+              errors.email = 'Email not valid';
+            }
+            if (!values.password) {
+              errors.password = 'Required';
+            }
+            // password must be at least 8 characters
+            else if (values.password.length < 8) {
+              errors.password = 'Password must be at least 8 characters';
+            }
+            // password or confirm password not match
+            else if (
+              values.confirm_password &&
+              values.password !== values.confirm_password
+            ) {
+              errors.confirm_password =
+                'Password or confirm password not match';
+            }
+            if (!values.confirm_password) {
+              errors.confirm_password = 'Required';
+            }
+            return errors;
+          }}
           onSubmit={values => OnSubmitHandler(values)}>
-          {({handleChange, handleBlur, handleSubmit, values}) => (
+          {({
+            handleChange,
+            handleBlur,
+            handleSubmit,
+            values,
+            errors,
+            touched,
+          }) => (
             <View
               style={{
                 marginTop: 24,
@@ -175,6 +173,11 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
                   value={values?.fullName}
                 />
               </View>
+              {errors.fullName && touched.fullName && (
+                <Text style={{color: 'red', fontSize: 12}}>
+                  {errors.fullName}
+                </Text>
+              )}
               <View
                 style={{
                   gap: 8,
@@ -204,6 +207,9 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
                   value={values?.email}
                 />
               </View>
+              {errors.email && touched.email && (
+                <Text style={{color: 'red', fontSize: 12}}>{errors.email}</Text>
+              )}
               <View
                 style={{
                   gap: 8,
@@ -262,6 +268,7 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
                   onBlur={handleBlur('password')}
                   value={values?.password}
                 />
+
                 <TouchableOpacity
                   onPress={() => setIsShow(!isShow)}
                   style={{
@@ -285,6 +292,11 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
                   )}
                 </TouchableOpacity>
               </View>
+              {errors.password && touched.password && (
+                <Text style={{color: 'red', fontSize: 12}}>
+                  {errors.password}
+                </Text>
+              )}
               <View
                 style={{
                   gap: 8,
@@ -313,6 +325,7 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
                   placeholder="Enter your confirm password"
                   secureTextEntry={!isShow}
                 />
+
                 <TouchableOpacity
                   onPress={() => setIsShow(!isShow)}
                   style={{
@@ -336,7 +349,11 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
                   )}
                 </TouchableOpacity>
               </View>
-
+              {errors.confirm_password && touched.confirm_password && (
+                <Text style={{color: 'red', fontSize: 12}}>
+                  {errors.confirm_password}
+                </Text>
+              )}
               <View style={{marginTop: 20}}>
                 <NormalButton
                   isLoading={results?.isLoading}

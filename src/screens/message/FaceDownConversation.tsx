@@ -349,10 +349,13 @@ const FaceDownConversation = ({
                     {FaceDownData?.book?.publisher}
                   </Text>
                   <Text
+                    onPress={() => {
+                      Linking.openURL(FaceDownData?.book?.bookUrl);
+                    }}
                     numberOfLines={1}
                     style={{
                       fontSize: 12,
-                      color: colors.blueColor,
+                      color: colors.blue,
                       fontFamily: font.Poppins,
                     }}>
                     {FaceDownData?.book?.bookUrl}

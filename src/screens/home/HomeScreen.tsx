@@ -28,6 +28,7 @@ import {NavigProps} from '../../interfaces/NaviProps';
 import {imageUrl} from '../../redux/api/baseApi';
 import {useGetDonationQuery} from '../../redux/apiSlices/additionalSlices';
 import {useGetUserProfileQuery} from '../../redux/apiSlices/authSlice';
+import {useGetAllBooksQuery} from '../../redux/apiSlices/bookSlices';
 import {useAddMemberMutation} from '../../redux/apiSlices/chatSlices';
 import {useGetNewsFeetQuery} from '../../redux/apiSlices/homeSlices';
 import {useJoinLiveMutation} from '../../redux/apiSlices/liveSlice';
@@ -36,6 +37,9 @@ import {setUser} from '../../redux/services/userSlice';
 import {useShearLink} from '../../utils/conentShare';
 
 const HomeScreen = ({navigation}: NavigProps<null>) => {
+  // =============================  loading Books for offline start =============================
+  useGetAllBooksQuery({});
+  // =============================  loading Books for offline end =============================
   const {isLive, setIsLive, isDark} = useContextApi();
 
   const {
@@ -185,7 +189,7 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
               style={{
                 fontFamily: font.Poppins,
                 fontSize: 12,
-                color: '#720B24',
+                color: colors.textColor.redis,
               }}>
               Welcome to SIC
             </Text>
