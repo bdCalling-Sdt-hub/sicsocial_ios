@@ -17,6 +17,7 @@ import {Checkbox} from 'react-native-ui-lib';
 import Feather from 'react-native-vector-icons/Feather';
 import {useDispatch} from 'react-redux';
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
+import NormalButton from '../../components/common/NormalButton';
 import {useStyles} from '../../context/ContextApi';
 import {NavigProps} from '../../interfaces/NaviProps';
 import {useLoginUserMutation} from '../../redux/apiSlices/authSlice';
@@ -36,7 +37,7 @@ const LoginScreen = ({navigation}: NavigProps<null>) => {
   const [isShow, setIsShow] = React.useState(false);
   const [check, setCheck] = React.useState(lStorage.getBool('check') || false);
   const dispatch = useDispatch();
-  const [loginUser] = useLoginUserMutation();
+  const [loginUser, results] = useLoginUserMutation();
 
   const OnSubmit = values => {
     loginUser(values).then(res => {
@@ -324,28 +325,15 @@ const LoginScreen = ({navigation}: NavigProps<null>) => {
                 </TouchableOpacity>
               </View>
               <View>
-                <TouchableOpacity
+                <NormalButton
                   onPress={() => {
                     handleSubmit();
                     // navigation?.navigate('HomeRoutes');
                   }}
-                  style={{
-                    backgroundColor: colors.primaryColor,
-                    borderRadius: 100,
-                    height: 56,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    marginVertical: 24,
-                  }}>
-                  <Text
-                    style={{
-                      fontFamily: font.PoppinsSemiBold,
-                      fontSize: 16,
-                      color: 'white',
-                    }}>
-                    Log In
-                  </Text>
-                </TouchableOpacity>
+                  title="Log In"
+                  isLoading={results.isLoading}
+                  disabled={results.isLoading}
+                />
               </View>
               <View
                 style={{
