@@ -300,11 +300,11 @@ const InterestScreen = ({navigation, route}: NavigProps<{info: any}>) => {
     const result = await userUpdate(formData);
     // console.log(result);
     if (result && route?.params?.data?.info === 'signup') {
-      navigation?.navigate('HomeRoutes');
+      (navigation as any)?.replace('HomeRoutes');
     } else if (navigation?.canGoBack()) {
       navigation.goBack();
     } else {
-      navigation?.navigate('Login');
+      (navigation as any)?.replace('Login');
     }
   }, [selectSubsItems]);
 

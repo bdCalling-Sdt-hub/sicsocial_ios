@@ -1,6 +1,3 @@
-import PopUpModal, {
-  PopUpModalRef,
-} from '../../components/common/modals/PopUpModal';
 import {
   ScrollView,
   StyleSheet,
@@ -9,18 +6,21 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import PopUpModal, {
+  PopUpModalRef,
+} from '../../components/common/modals/PopUpModal';
 import {
   useChangePasswordMutation,
   useGetUserProfileQuery,
 } from '../../redux/apiSlices/authSlice';
 
-import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
-import Feather from 'react-native-vector-icons/Feather';
 import {Formik} from 'formik';
-import {NavigProps} from '../../interfaces/NaviProps';
-import NormalButton from '../../components/common/NormalButton';
 import React from 'react';
+import Feather from 'react-native-vector-icons/Feather';
+import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
+import NormalButton from '../../components/common/NormalButton';
 import {useStyles} from '../../context/ContextApi';
+import {NavigProps} from '../../interfaces/NaviProps';
 
 const ChangePassword = ({navigation, route}: NavigProps<null>) => {
   const modalRef = React.useRef<PopUpModalRef>();
@@ -112,8 +112,28 @@ const ChangePassword = ({navigation, route}: NavigProps<null>) => {
             confirmPassword: '',
             newPassword: '',
           }}
+          validate={values => {
+            const errors: any = {};
+            if (!values.newPassword) {
+              errors.newPassword = 'Required';
+            }
+            if (!values.confirmPassword) {
+              errors.confirmPassword = 'Required';
+            }
+            if (values && values.newPassword !== values.confirmPassword) {
+              errors.confirmPassword = 'Password does not match';
+            }
+            return errors;
+          }}
           onSubmit={values => handleShowPass(values)}>
-          {({handleChange, handleBlur, handleSubmit, values}) => (
+          {({
+            handleChange,
+            handleBlur,
+            handleSubmit,
+            values,
+            errors,
+            touched,
+          }) => (
             <View
               style={{
                 marginTop: 15,
@@ -174,6 +194,17 @@ const ChangePassword = ({navigation, route}: NavigProps<null>) => {
                   )}
                 </TouchableOpacity>
               </View>
+              {/* valid */}
+              {errors.newPassword && touched.newPassword && (
+                <Text
+                  style={{
+                    color: 'red',
+                    fontFamily: font.Poppins,
+                    fontSize: 12,
+                  }}>
+                  {errors.newPassword}
+                </Text>
+              )}
               <View
                 style={{
                   gap: 8,
@@ -232,8 +263,20 @@ const ChangePassword = ({navigation, route}: NavigProps<null>) => {
                 </TouchableOpacity>
               </View>
 
+              {errors.confirmPassword && touched.confirmPassword && (
+                <Text
+                  style={{
+                    color: 'red',
+                    fontFamily: font.Poppins,
+                    fontSize: 12,
+                  }}>
+                  {errors.confirmPassword}
+                </Text>
+              )}
+
               <View>
                 <NormalButton
+                  disabled={!values.confirmPassword || !values.newPassword}
                   onPress={handleSubmit}
                   title="Update Password"
                   isLoading={results.isLoading}

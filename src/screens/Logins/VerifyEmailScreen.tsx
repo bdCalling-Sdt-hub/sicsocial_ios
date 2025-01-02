@@ -66,13 +66,16 @@ const VerifyEmailScreen = ({
           route?.params?.data?.verificationType === 'passwordReset'
         ) {
           lStorage.setString('token', res.data?.data?.accessToken);
-          navigation?.navigate('ChangePassword', {
+          dispatch(setToken(res.data?.data?.accessToken));
+          (navigation as any)?.replace('ChangePassword', {
             email: route?.params?.data?.email,
           });
         } else if (res?.data) {
           lStorage.setString('token', res.data?.data?.accessToken);
           dispatch(setToken(res.data?.data?.accessToken));
-          navigation?.navigate('VerifySuccessful', {data: {info: 'signup'}});
+          (navigation as any)?.replace('VerifySuccessful', {
+            data: {info: 'signup'},
+          });
         } else if (res.error) {
           modalRef.current?.open({
             title: 'Warning',

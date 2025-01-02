@@ -51,7 +51,7 @@ const LoginScreen = ({navigation}: NavigProps<null>) => {
         // console.log(res.data?.data?.accessToken);
         dispatch(setToken(res.data?.data?.accessToken));
         lStorage.setString('token', res.data?.data?.accessToken);
-        navigation?.navigate('Loading');
+        (navigation as any)?.replace('Loading');
       }
     });
   };
