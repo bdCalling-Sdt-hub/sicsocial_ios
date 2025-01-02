@@ -23,7 +23,10 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
   const modalRef = React.useRef<PopUpModalRef>();
   const [createUser, results] = useCreateUserMutation();
   const {colors, font} = useStyles();
-  const [isShow, setIsShow] = React.useState(false);
+  const [isShow, setIsShow] = React.useState({
+    password: false,
+    confirm_password: false,
+  });
   const [check, setCheck] = React.useState(false);
   const OnSubmitHandler = values => {
     // console.log(values);
@@ -263,14 +266,16 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
                   }}
                   placeholderTextColor={colors.textColor.palaceHolderColor}
                   placeholder="Enter your password"
-                  secureTextEntry={!isShow}
+                  secureTextEntry={!isShow.password}
                   onChangeText={handleChange('password')}
                   onBlur={handleBlur('password')}
                   value={values?.password}
                 />
 
                 <TouchableOpacity
-                  onPress={() => setIsShow(!isShow)}
+                  onPress={() =>
+                    setIsShow({...isShow, password: !isShow.password})
+                  }
                   style={{
                     position: 'absolute',
                     right: 10,
@@ -323,11 +328,16 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
                   onBlur={handleBlur('confirm_password')}
                   placeholderTextColor={colors.textColor.palaceHolderColor}
                   placeholder="Enter your confirm password"
-                  secureTextEntry={!isShow}
+                  secureTextEntry={!isShow.confirm_password}
                 />
 
                 <TouchableOpacity
-                  onPress={() => setIsShow(!isShow)}
+                  onPress={() =>
+                    setIsShow({
+                      ...isShow,
+                      confirm_password: !isShow.confirm_password,
+                    })
+                  }
                   style={{
                     position: 'absolute',
                     right: 10,

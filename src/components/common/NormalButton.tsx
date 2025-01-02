@@ -55,6 +55,7 @@ const NormalButton = ({
           : colors.gray.variantTwo,
         borderRadius: radius ? radius : 100,
         borderWidth: outLine ? 1 : 0,
+        opacity: disabled ? 0.5 : 1,
         borderColor: outLine ? colors.primaryColor : 'white',
         height: hight ? hight : 56,
         justifyContent: 'center',

@@ -7,7 +7,7 @@ import {NavigProps} from '../../interfaces/NaviProps';
 const VerifySuccessfulScreen = ({navigation}: NavigProps<null>) => {
   const {colors, font} = useStyles();
   setTimeout(() => {
-    navigation?.navigate('Loading'); // Navigate to Home Screen when 2 seconds are passed.
+    navigation?.navigate('Interest', {data: {info: 'signup'}}); // Navigate to Home Screen when 2 seconds are passed.
   }, 2000);
 
   return (

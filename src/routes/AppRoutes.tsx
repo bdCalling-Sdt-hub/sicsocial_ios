@@ -11,7 +11,6 @@ import {useNetInfo} from '@react-native-community/netinfo';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
-import {useSelector} from 'react-redux';
 import LoadingSplash from '../screens/LoadingSplash';
 import ChangePassword from '../screens/Logins/ChnagePassword';
 import DeleteAccount from '../screens/Logins/DeleteAccount';
@@ -58,6 +57,7 @@ import BookShareScreen from '../screens/sharebooks/BookShareScreen';
 import BookShareWithCategory from '../screens/sharebooks/BookShareWithCategory';
 import BooksScreen from '../screens/sharebooks/BooksScreen';
 import PDFViewer from '../screens/sharebooks/PDFViewer';
+import {lStorage} from '../utils/utils';
 import BottomBarRoutes from './BottomBarRoutes';
 
 // console.log(hostUrl);
@@ -89,7 +89,7 @@ const Routes = () => {
   const {colors} = useStyles();
   const {isDark, IsNet} = useContextApi();
 
-  const {token} = useSelector((state: any) => state?.token);
+  const token = lStorage.getString('token');
 
   const socket = getSocket();
 

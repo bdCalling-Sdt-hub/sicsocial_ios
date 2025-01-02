@@ -14,8 +14,8 @@ import {FontSize} from '../../../utils/utils';
 
 // Define the ref object type
 export interface PopUpModalRef {
-  open?: (data: PopUpModalProps) => void | undefined;
-  close?: () => void;
+  open?: (data: PopUpModalProps) => any;
+  close?: () => any;
 }
 
 // Define the component's props type
@@ -24,7 +24,7 @@ interface PopUpModalProps {
   icon?: JSX.Element;
   lottify?: string;
   lottifyColor?: string;
-  button: boolean;
+  button?: boolean;
   onPress?: () => void;
   content?: string;
   buttonColor?: string;
