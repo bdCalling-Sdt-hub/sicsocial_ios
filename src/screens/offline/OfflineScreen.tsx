@@ -1,6 +1,6 @@
 import {Image, Text, TextInput, View} from 'react-native';
 import {GridList, TouchableOpacity} from 'react-native-ui-lib';
-import {height, lStorage, makeImage, width} from '../../utils/utils';
+import {height, lStorage, width} from '../../utils/utils';
 
 import React from 'react';
 import {SvgXml} from 'react-native-svg';
@@ -17,12 +17,12 @@ const OfflineScreen = ({route, navigation}: NavigProps<null>) => {
   const [booksModal, setBooksModal] = React.useState(false);
   const [selectBook, setSelectBook] = React.useState<IBook>();
   const [searchText, setSelectText] = React.useState<string>('');
-  //   console.log(BooksData);
 
   React.useEffect(() => {
-    lStorage.getStringAsync('books').then(res => {
+    lStorage.getArrayAsync('books').then(res => {
       if (res) {
-        setBooksData(JSON.parse(res));
+        console.log(res);
+        setBooksData(res);
       }
     });
   }, []);
@@ -96,15 +96,18 @@ const OfflineScreen = ({route, navigation}: NavigProps<null>) => {
             No Books Found
           </Text>
         )}
-        data={BooksData?.data?.filter(item => {
-          if (searchText) {
-            return item?.name
-              ?.toLowerCase()
-              .includes(searchText?.toLowerCase());
-          } else {
-            return item;
-          }
-        })}
+        data={
+          BooksData &&
+          BooksData?.filter(item => {
+            if (searchText) {
+              return item?.name
+                ?.toLowerCase()
+                .includes(searchText?.toLowerCase());
+            } else {
+              return item;
+            }
+          })
+        }
         columnWrapperStyle={{
           gap: 20,
           alignSelf: 'center',
@@ -147,7 +150,7 @@ const OfflineScreen = ({route, navigation}: NavigProps<null>) => {
                   borderColor: colors.bg,
                 }}
                 source={{
-                  uri: makeImage(item.item.bookImage),
+                  uri: 'file://' + item.item.bookImage,
                 }}
               />
             </View>

@@ -1,8 +1,8 @@
-import {IBooks, ISingleBook} from '../interface/book';
+import {lStorage, makeImage} from '../../utils/utils';
 
 import RNFetchBlob from 'react-native-blob-util';
-import {lStorage} from '../../utils/utils';
 import {api} from '../api/baseApi';
+import {ISingleBook} from '../interface/book';
 
 export const bookSlices = api.injectEndpoints({
   endpoints: builder => ({
@@ -19,49 +19,65 @@ export const bookSlices = api.injectEndpoints({
 
       providesTags: ['book'],
     }),
-    getAllBooks: builder.query<IBooks, unknown>({
-      query: ({id, page, limit}) => ({
+    getAllBooks: builder.query<any, unknown>({
+      query: () => ({
         url: `/books/all`,
       }),
       providesTags: ['book'],
       transformResponse(response: any) {
-        // Save the raw response to local storage (for fallback purposes)
+        // Save raw response to local storage (as a fallback)
         lStorage.setString('books', JSON.stringify(response));
-        // console.log(response);
-        return response; // Return the raw response for now
+        return response; // Return unmodified response
       },
       async onQueryStarted(arg, {queryFulfilled, dispatch}) {
         try {
-          // Wait for the original query to complete
           const {data} = await queryFulfilled;
 
-          // Process the response and download PDFs
+          // Process the response to download or replace media files
           const updatedBooks = await Promise.all(
-            data?.data.map(async (book: any) => {
-              if (book.pdfUrl) {
-                try {
-                  const res = await RNFetchBlob.config({fileCache: true}).fetch(
-                    'GET',
-                    book.pdfUrl,
-                  );
-                  const localPath = res.path();
-                  return {...book, pdfUrl: localPath}; // Replace with local path
-                } catch (error) {
-                  console.error('Error downloading PDF:', error);
-                  return book; // Return the original book if download fails
+            data?.data?.map(async (book: any) => {
+              const updatedBook = {...book};
+
+              // Process each media type
+              const mediaKeys = ['pdf', 'bookImage']; // Keys to process
+              for (const key of mediaKeys) {
+                if (book[key]) {
+                  try {
+                    // Generate local path for the file
+                    const fileName = book[key].split('/').pop(); // Extract file name from URL
+                    const localPath = `${RNFetchBlob.fs.dirs.DocumentDir}/${fileName}`;
+
+                    // Check if the file exists locally
+                    const fileExists = await RNFetchBlob.fs.exists(localPath);
+                    if (fileExists) {
+                      // Delete the existing file
+                      await RNFetchBlob.fs.unlink(localPath);
+                    }
+
+                    // Download the new file
+                    const res = await RNFetchBlob.config({
+                      path: localPath,
+                    }).fetch('GET', makeImage(book[key]));
+
+                    // Replace the backend path with the local path
+                    updatedBook[key] = res.path();
+                  } catch (error) {
+                    console.log(`Error processing ${key}:`, error);
+                  }
                 }
               }
-              return book;
+
+              return updatedBook;
             }),
           );
 
-          // Save updated books with local paths to local storage
-          lStorage.setString('books', JSON.stringify(updatedBooks));
+          // Save the updated books with local paths into lStorage
+          lStorage.setArray('books', updatedBooks);
 
-          // Optionally, update the cache manually (if needed)
+          // Optionally, update RTK Query cache
           // dispatch(api.util.updateQueryData('getAllBooks', arg, () => updatedBooks));
         } catch (error) {
-          console.error('Error in onQueryStarted:', error);
+          console.log('Error in onQueryStarted:', error);
         }
       },
     }),

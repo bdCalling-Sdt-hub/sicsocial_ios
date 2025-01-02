@@ -138,313 +138,334 @@ const Routes = () => {
   return (
     <NavigationContainer linking={token && linking}>
       <SafeAreaView style={{flex: 1}}>
-        <Stack.Navigator
-          initialRouteName={!IsNet ? 'Offline' : token ? 'HomeRoutes' : 'Login'}
-          // initialRouteName={'test'}
-          screenOptions={{
-            headerShown: false,
-            statusBarAnimation: 'slide',
-            animation: 'slide_from_right',
-            statusBarColor: colors.bg,
-            statusBarStyle: isDark ? 'light' : 'dark',
-          }}>
-          {/* <Stack.Screen name="Test" component={TestScreen} /> */}
+        <>
+          <Stack.Navigator
+            initialRouteName={token ? 'HomeRoutes' : 'Login'}
+            // initialRouteName={'test'}
+            screenOptions={{
+              headerShown: false,
+              statusBarAnimation: 'slide',
+              animation: 'slide_from_right',
+              statusBarColor: colors.bg,
+              statusBarStyle: isDark ? 'light' : 'dark',
+            }}>
+            {!IsNet ? (
+              <>
+                <Stack.Screen
+                  name="Offline"
+                  component={OfflineScreen}
+                  options={{
+                    animation: 'slide_from_right',
+                  }}
+                />
+                <Stack.Screen
+                  name="PdfViewerOffline"
+                  component={PDFViewerOffline}
+                  options={{
+                    animation: 'slide_from_right',
+                  }}
+                />
+              </>
+            ) : (
+              <>
+                {/* <Stack.Screen name="Test" component={TestScreen} /> */}
 
-          {/* <Stack.Screen name="TEsting" component={TestScreen} /> */}
-          {/* <Stack.Screen name="Splash" component={SplashScreen} /> */}
-          {/* <Stack.Screen name="Test" component={TextScreen} /> */}
-          <Stack.Screen name="Login" component={LoginScreen} />
-          <Stack.Screen name="Loading" component={LoadingSplash} />
-          <Stack.Screen name="SignUp" component={SignUpScreen} />
-          <Stack.Screen
-            name="EmailConfirmation"
-            component={EmailConfirmationScreen}
-          />
-          <Stack.Screen name="VerifyEmail" component={VerifyEmailScreen} />
-          <Stack.Screen name="ResetPassword" component={ResetPasswordScreen} />
-          <Stack.Screen name="ChangePassword" component={ChangePassword} />
-          <Stack.Screen
-            name="VerifySuccessful"
-            component={VerifySuccessfulScreen}
-          />
-          <Stack.Screen name="DeleteAccount" component={DeleteAccount} />
+                {/* <Stack.Screen name="TEsting" component={TestScreen} /> */}
+                {/* <Stack.Screen name="Splash" component={SplashScreen} /> */}
+                {/* <Stack.Screen name="Test" component={TextScreen} /> */}
+                <Stack.Screen name="Login" component={LoginScreen} />
+                <Stack.Screen name="Loading" component={LoadingSplash} />
+                <Stack.Screen name="SignUp" component={SignUpScreen} />
+                <Stack.Screen
+                  name="EmailConfirmation"
+                  component={EmailConfirmationScreen}
+                />
+                <Stack.Screen
+                  name="VerifyEmail"
+                  component={VerifyEmailScreen}
+                />
+                <Stack.Screen
+                  name="ResetPassword"
+                  component={ResetPasswordScreen}
+                />
+                <Stack.Screen
+                  name="ChangePassword"
+                  component={ChangePassword}
+                />
+                <Stack.Screen
+                  name="VerifySuccessful"
+                  component={VerifySuccessfulScreen}
+                />
+                <Stack.Screen name="DeleteAccount" component={DeleteAccount} />
 
-          {token && (
-            <>
-              {/*=================== under the home ====================== */}
-              <Stack.Screen name="HomeRoutes" component={BottomBarRoutes} />
-              <Stack.Screen
-                name="donation"
-                component={DonationScreen}
-                options={{
-                  animation: 'slide_from_right',
-                }}
-              />
-              <Stack.Screen
-                name="Notifications"
-                component={NotificationsScreen}
-                options={{
-                  animation: 'slide_from_right',
-                }}
-              />
-              <Stack.Screen
-                name="Payments"
-                component={PaymentsScreen}
-                options={{
-                  animation: 'slide_from_right',
-                }}
-              />
-              <Stack.Screen
-                name="Search"
-                component={SearchScreen}
-                options={{
-                  animation: 'slide_from_right',
-                }}
-              />
-              <Stack.Screen
-                name="ShareBooks"
-                component={BooksScreen}
-                options={{
-                  animation: 'slide_from_right',
-                }}
-              />
-              <Stack.Screen
-                name="BookShare"
-                component={BookShareScreen}
-                options={{
-                  animation: 'slide_from_right',
-                }}
-              />
-              <Stack.Screen
-                name="BookShareWithCategory"
-                component={BookShareWithCategory}
-                options={{
-                  animation: 'slide_from_right',
-                }}
-              />
-              <Stack.Screen
-                name="Interest"
-                component={InterestScreen}
-                options={{
-                  animation: 'slide_from_right',
-                }}
-              />
-              <Stack.Screen
-                name="MembersManage"
-                component={MembersManage}
-                options={{
-                  animation: 'slide_from_right',
-                }}
-              />
-              {/*======================== Home end ============================ */}
+                {token && (
+                  <>
+                    {/*=================== under the home ====================== */}
+                    <Stack.Screen
+                      name="HomeRoutes"
+                      component={BottomBarRoutes}
+                    />
+                    <Stack.Screen
+                      name="donation"
+                      component={DonationScreen}
+                      options={{
+                        animation: 'slide_from_right',
+                      }}
+                    />
+                    <Stack.Screen
+                      name="Notifications"
+                      component={NotificationsScreen}
+                      options={{
+                        animation: 'slide_from_right',
+                      }}
+                    />
+                    <Stack.Screen
+                      name="Payments"
+                      component={PaymentsScreen}
+                      options={{
+                        animation: 'slide_from_right',
+                      }}
+                    />
+                    <Stack.Screen
+                      name="Search"
+                      component={SearchScreen}
+                      options={{
+                        animation: 'slide_from_right',
+                      }}
+                    />
+                    <Stack.Screen
+                      name="ShareBooks"
+                      component={BooksScreen}
+                      options={{
+                        animation: 'slide_from_right',
+                      }}
+                    />
+                    <Stack.Screen
+                      name="BookShare"
+                      component={BookShareScreen}
+                      options={{
+                        animation: 'slide_from_right',
+                      }}
+                    />
+                    <Stack.Screen
+                      name="BookShareWithCategory"
+                      component={BookShareWithCategory}
+                      options={{
+                        animation: 'slide_from_right',
+                      }}
+                    />
+                    <Stack.Screen
+                      name="Interest"
+                      component={InterestScreen}
+                      options={{
+                        animation: 'slide_from_right',
+                      }}
+                    />
+                    <Stack.Screen
+                      name="MembersManage"
+                      component={MembersManage}
+                      options={{
+                        animation: 'slide_from_right',
+                      }}
+                    />
+                    {/*======================== Home end ============================ */}
 
-              {/*======================== Friend start ============================ */}
+                    {/*======================== Friend start ============================ */}
 
-              <Stack.Screen
-                name="FriendsProfile"
-                component={FriendsProfile}
-                options={{
-                  animation: 'slide_from_right',
-                }}
-              />
+                    <Stack.Screen
+                      name="FriendsProfile"
+                      component={FriendsProfile}
+                      options={{
+                        animation: 'slide_from_right',
+                      }}
+                    />
 
-              {/*======================== Friend end ============================ */}
+                    {/*======================== Friend end ============================ */}
 
-              {/*============================ message screens start ====================*/}
-              <Stack.Screen
-                name="Messages"
-                component={MassageScreen}
-                options={{
-                  animation: 'slide_from_right',
-                }}
-              />
+                    {/*============================ message screens start ====================*/}
+                    <Stack.Screen
+                      name="Messages"
+                      component={MassageScreen}
+                      options={{
+                        animation: 'slide_from_right',
+                      }}
+                    />
 
-              <Stack.Screen
-                name="MakeGroup"
-                component={MakeGroupScreen}
-                options={{
-                  animation: 'slide_from_right',
-                }}
-              />
-              <Stack.Screen
-                name="AddParticipants"
-                component={AddParticipants}
-                options={{
-                  animation: 'slide_from_right',
-                }}
-              />
+                    <Stack.Screen
+                      name="MakeGroup"
+                      component={MakeGroupScreen}
+                      options={{
+                        animation: 'slide_from_right',
+                      }}
+                    />
+                    <Stack.Screen
+                      name="AddParticipants"
+                      component={AddParticipants}
+                      options={{
+                        animation: 'slide_from_right',
+                      }}
+                    />
 
-              <Stack.Screen
-                name="GroupConversation"
-                component={GroupConversationScreen}
-                options={{
-                  animation: 'slide_from_right',
-                }}
-              />
-              <Stack.Screen
-                name="NormalConversation"
-                component={NormalConversationScreen}
-                options={{
-                  animation: 'slide_from_right',
-                }}
-              />
-              <Stack.Screen
-                name="LiveConversation"
-                component={LiveConversationScreen}
-                options={{
-                  animation: 'slide_from_right',
-                }}
-              />
-              <Stack.Screen
-                name="LiveMessage"
-                component={LiveMessageScreen}
-                options={{
-                  animation: 'slide_from_right',
-                }}
-              />
-              <Stack.Screen
-                name="LiveAddFriends"
-                component={LiveAddFriendsScreen}
-                options={{
-                  animation: 'slide_from_right',
-                }}
-              />
-              <Stack.Screen
-                name="UpdateNewFaceDown"
-                component={UpdateNewFaceDown}
-                options={{
-                  animation: 'slide_from_right',
-                }}
-              />
-              <Stack.Screen
-                name="CreateFaceDown"
-                component={CreateNewFaceDown}
-                options={{
-                  animation: 'slide_from_right',
-                }}
-              />
-              <Stack.Screen
-                name="FaceDownConversation"
-                component={FaceDownConversation}
-                options={{
-                  animation: 'slide_from_right',
-                }}
-              />
+                    <Stack.Screen
+                      name="GroupConversation"
+                      component={GroupConversationScreen}
+                      options={{
+                        animation: 'slide_from_right',
+                      }}
+                    />
+                    <Stack.Screen
+                      name="NormalConversation"
+                      component={NormalConversationScreen}
+                      options={{
+                        animation: 'slide_from_right',
+                      }}
+                    />
+                    <Stack.Screen
+                      name="LiveConversation"
+                      component={LiveConversationScreen}
+                      options={{
+                        animation: 'slide_from_right',
+                      }}
+                    />
+                    <Stack.Screen
+                      name="LiveMessage"
+                      component={LiveMessageScreen}
+                      options={{
+                        animation: 'slide_from_right',
+                      }}
+                    />
+                    <Stack.Screen
+                      name="LiveAddFriends"
+                      component={LiveAddFriendsScreen}
+                      options={{
+                        animation: 'slide_from_right',
+                      }}
+                    />
+                    <Stack.Screen
+                      name="UpdateNewFaceDown"
+                      component={UpdateNewFaceDown}
+                      options={{
+                        animation: 'slide_from_right',
+                      }}
+                    />
+                    <Stack.Screen
+                      name="CreateFaceDown"
+                      component={CreateNewFaceDown}
+                      options={{
+                        animation: 'slide_from_right',
+                      }}
+                    />
+                    <Stack.Screen
+                      name="FaceDownConversation"
+                      component={FaceDownConversation}
+                      options={{
+                        animation: 'slide_from_right',
+                      }}
+                    />
 
-              {/*============================ message screens end ====================*/}
+                    {/*============================ message screens end ====================*/}
 
-              {/*======================== Profile start ============================ */}
-              <Stack.Screen
-                name="Profile"
-                component={ProfileScreen}
-                options={{
-                  animation: 'slide_from_right',
-                }}
-              />
-              <Stack.Screen
-                name="Settings"
-                component={SettingScreen}
-                options={{
-                  animation: 'slide_from_right',
-                }}
-              />
-              <Stack.Screen
-                name="ProfileEdit"
-                component={ProfileEditScreen}
-                options={{
-                  animation: 'slide_from_right',
-                }}
-              />
-              <Stack.Screen
-                name="ManageAccounts"
-                component={ManageAccounts}
-                options={{
-                  animation: 'slide_from_right',
-                }}
-              />
-              <Stack.Screen
-                name="FAQ"
-                component={FAQScreen}
-                options={{
-                  animation: 'slide_from_right',
-                }}
-              />
-              <Stack.Screen
-                name="TermsAndConditions"
-                component={TermsAndConditions}
-                options={{
-                  animation: 'slide_from_right',
-                }}
-              />
-              <Stack.Screen
-                name="PrivacyPolicy"
-                component={PrivacyPolicyScreen}
-                options={{
-                  animation: 'slide_from_right',
-                }}
-              />
-              <Stack.Screen
-                name="SicGuidelines"
-                component={SicGuidelinesScreen}
-                options={{
-                  animation: 'slide_from_right',
-                }}
-              />
-              <Stack.Screen
-                name="AboutSic"
-                component={AboutSicScreen}
-                options={{
-                  animation: 'slide_from_right',
-                }}
-              />
+                    {/*======================== Profile start ============================ */}
+                    <Stack.Screen
+                      name="Profile"
+                      component={ProfileScreen}
+                      options={{
+                        animation: 'slide_from_right',
+                      }}
+                    />
+                    <Stack.Screen
+                      name="Settings"
+                      component={SettingScreen}
+                      options={{
+                        animation: 'slide_from_right',
+                      }}
+                    />
+                    <Stack.Screen
+                      name="ProfileEdit"
+                      component={ProfileEditScreen}
+                      options={{
+                        animation: 'slide_from_right',
+                      }}
+                    />
+                    <Stack.Screen
+                      name="ManageAccounts"
+                      component={ManageAccounts}
+                      options={{
+                        animation: 'slide_from_right',
+                      }}
+                    />
+                    <Stack.Screen
+                      name="FAQ"
+                      component={FAQScreen}
+                      options={{
+                        animation: 'slide_from_right',
+                      }}
+                    />
+                    <Stack.Screen
+                      name="TermsAndConditions"
+                      component={TermsAndConditions}
+                      options={{
+                        animation: 'slide_from_right',
+                      }}
+                    />
+                    <Stack.Screen
+                      name="PrivacyPolicy"
+                      component={PrivacyPolicyScreen}
+                      options={{
+                        animation: 'slide_from_right',
+                      }}
+                    />
+                    <Stack.Screen
+                      name="SicGuidelines"
+                      component={SicGuidelinesScreen}
+                      options={{
+                        animation: 'slide_from_right',
+                      }}
+                    />
+                    <Stack.Screen
+                      name="AboutSic"
+                      component={AboutSicScreen}
+                      options={{
+                        animation: 'slide_from_right',
+                      }}
+                    />
 
-              <Stack.Screen
-                name="Feedback"
-                component={FeedBackScreen}
-                options={{
-                  animation: 'slide_from_right',
-                }}
-              />
-              <Stack.Screen
-                name="MyAllFriends"
-                component={MyAllFriends}
-                options={{
-                  animation: 'slide_from_right',
-                }}
-              />
-              <Stack.Screen
-                name="ViewAllFaceDown"
-                component={ViewAllFaceDown}
-                options={{
-                  animation: 'slide_from_right',
-                }}
-              />
-              <Stack.Screen
-                name="PdfViewer"
-                component={PDFViewer}
-                options={{
-                  animation: 'slide_from_right',
-                }}
-              />
+                    <Stack.Screen
+                      name="Feedback"
+                      component={FeedBackScreen}
+                      options={{
+                        animation: 'slide_from_right',
+                      }}
+                    />
+                    <Stack.Screen
+                      name="MyAllFriends"
+                      component={MyAllFriends}
+                      options={{
+                        animation: 'slide_from_right',
+                      }}
+                    />
+                    <Stack.Screen
+                      name="ViewAllFaceDown"
+                      component={ViewAllFaceDown}
+                      options={{
+                        animation: 'slide_from_right',
+                      }}
+                    />
+                    <Stack.Screen
+                      name="PdfViewer"
+                      component={PDFViewer}
+                      options={{
+                        animation: 'slide_from_right',
+                      }}
+                    />
 
-              <Stack.Screen
-                name="Offline"
-                component={OfflineScreen}
-                options={{
-                  animation: 'slide_from_right',
-                }}
-              />
-              <Stack.Screen
-                name="PdfViewerOffline"
-                component={PDFViewerOffline}
-                options={{
-                  animation: 'slide_from_right',
-                }}
-              />
-              {/*======================== Profile end ============================ */}
-            </>
-          )}
-        </Stack.Navigator>
+                    {/*======================== Profile end ============================ */}
+                  </>
+                )}
+              </>
+            )}
+          </Stack.Navigator>
+        </>
       </SafeAreaView>
     </NavigationContainer>
   );
