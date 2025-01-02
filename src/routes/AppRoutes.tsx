@@ -24,6 +24,7 @@ import VerifyEmailScreen from '../screens/Logins/VerifyEmailScreen';
 import VerifySuccessfulScreen from '../screens/Logins/VerifySuccessfulScreen';
 import SplashScreen from '../screens/SplashScreen';
 import DonationScreen from '../screens/donation/DonationScreen';
+import FavoriteBooks from '../screens/favorite/FavoriteBooks';
 import FriendsProfile from '../screens/friends/FriendsProfile';
 import AddParticipants from '../screens/message/AddParticipants';
 import CreateNewFaceDown from '../screens/message/CreateNewFaceDown';
@@ -458,7 +459,27 @@ const Routes = () => {
                         animation: 'slide_from_right',
                       }}
                     />
-
+                    <Stack.Screen
+                      name="Offline"
+                      component={OfflineScreen}
+                      options={{
+                        animation: 'slide_from_right',
+                      }}
+                    />
+                    <Stack.Screen
+                      name="PdfViewerOffline"
+                      component={PDFViewerOffline}
+                      options={{
+                        animation: 'slide_from_right',
+                      }}
+                    />
+                    <Stack.Screen
+                      name="Favorite"
+                      component={FavoriteBooks}
+                      options={{
+                        animation: 'slide_from_right',
+                      }}
+                    />
                     {/*======================== Profile end ============================ */}
                   </>
                 )}

@@ -332,7 +332,6 @@ const LoginScreen = ({navigation}: NavigProps<null>) => {
                   }}
                   title="Log In"
                   isLoading={results.isLoading}
-                  disabled={results.isLoading}
                 />
               </View>
               <View

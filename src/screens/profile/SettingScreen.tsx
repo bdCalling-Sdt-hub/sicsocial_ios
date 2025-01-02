@@ -26,6 +26,16 @@ const settingsData = [
     option: 'manage_account',
   },
   {
+    id: 12,
+    name: 'Favorite',
+    option: 'favorite',
+  },
+  {
+    id: 13,
+    name: 'Offline Books',
+    option: 'offline_books',
+  },
+  {
     id: 2,
     name: 'FAQ',
     option: 'faq',
@@ -133,6 +143,12 @@ const SettingScreen = ({navigation}: NavigProps<null>) => {
                 }
                 if (item.item.option === 'terms_and_conditions') {
                   navigation?.navigate('TermsAndConditions');
+                }
+                if (item.item.option === 'offline_books') {
+                  navigation?.navigate('Offline');
+                }
+                if (item.item.option === 'favorite') {
+                  navigation?.navigate('Favorite');
                 }
                 if (item.item.option === 'privacy_policy') {
                   navigation?.navigate('PrivacyPolicy');

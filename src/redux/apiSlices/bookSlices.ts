@@ -1,5 +1,3 @@
-import {lStorage} from '../../utils/utils';
-
 import {api} from '../api/baseApi';
 import {ISingleBook} from '../interface/book';
 
@@ -23,11 +21,7 @@ export const bookSlices = api.injectEndpoints({
         url: `/books/all`,
       }),
       providesTags: ['book'],
-      transformResponse(response: any) {
-        // Save raw response to local storage (as a fallback)
-        lStorage.setString('books', JSON.stringify(response));
-        return response; // Return unmodified response
-      },
+
       // async onQueryStarted(arg, {queryFulfilled, dispatch}) {
       //   try {
       //     const {data} = await queryFulfilled;
@@ -72,6 +66,8 @@ export const bookSlices = api.injectEndpoints({
 
       //     // Save the updated books with local paths into lStorage
       //     lStorage.setArray('books', updatedBooks);
+
+      //     // console.log(updatedBooks);
 
       //     // Optionally, update RTK Query cache
       //     // dispatch(api.util.updateQueryData('getAllBooks', arg, () => updatedBooks));

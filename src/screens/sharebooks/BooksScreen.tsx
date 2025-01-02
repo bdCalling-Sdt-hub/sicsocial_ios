@@ -1,6 +1,5 @@
 import {
   FlatList,
-  Image,
   RefreshControl,
   ScrollView,
   StyleSheet,
@@ -19,6 +18,7 @@ import {useStyles} from '../../context/ContextApi';
 import {NavigProps} from '../../interfaces/NaviProps';
 import {useGetBooksQuery} from '../../redux/apiSlices/bookSlices';
 import {makeImage} from '../../utils/utils';
+import BookCard from './components/BookCard';
 
 export interface Books {
   id: number;
@@ -179,63 +179,16 @@ const BooksScreen = ({navigation}: NavigProps<null>) => {
                 paddingHorizontal: '5%',
               }}
               renderItem={item => (
-                <TouchableOpacity
+                <BookCard
                   onPress={() => {
-                    navigation?.navigate('BookShare', {data: item.item});
+                    navigation?.navigate('BookShare', {data: item?.item});
                   }}
-                  style={{
-                    // elevation: 2,
-                    // backgroundColor: colors.bg,
-                    // padding: 2,
-                    borderRadius: 24,
-                    // height: height * 0.243,
-                    // alignItems : "center",
-                    // justifyContent : "center",
-                  }}>
-                  <View
-                    style={{
-                      elevation: 1,
-                      padding: 3,
-                    }}>
-                    <Image
-                      resizeMode="stretch"
-                      style={{
-                        height: height * 0.24,
-                        width: width * 0.41,
-                        borderRadius: 24,
-                        borderWidth: 2,
-                        borderColor: colors.bg,
-                      }}
-                      source={{
-                        uri: makeImage(item?.item?.bookImage),
-                      }}
-                    />
-                  </View>
-                  <View
-                    style={{
-                      marginTop: 10,
-                      alignItems: 'center',
-                      gap: 5,
-                      maxWidth: width * 0.41,
-                    }}>
-                    <Text
-                      style={{
-                        color: colors.textColor.light,
-                        fontSize: 14,
-                        fontFamily: font.PoppinsMedium,
-                      }}>
-                      {item.item.name}
-                    </Text>
-                    <Text
-                      style={{
-                        color: colors.textColor.neutralColor,
-                        fontSize: 12,
-                        fontFamily: font.Poppins,
-                      }}>
-                      {item.item.publisher}
-                    </Text>
-                  </View>
-                </TouchableOpacity>
+                  item={{
+                    bookImage: makeImage(item?.item?.bookImage),
+                    name: item?.item?.name,
+                    publisher: item?.item?.publisher,
+                  }}
+                />
               )}
             />
           </View>

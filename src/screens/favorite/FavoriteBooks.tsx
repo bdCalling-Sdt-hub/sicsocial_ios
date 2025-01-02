@@ -1,17 +1,17 @@
 import {Text, TextInput, View} from 'react-native';
-import {GridList} from 'react-native-ui-lib';
 import {useContextApi, useStyles} from '../../context/ContextApi';
-import {lStorage, width} from '../../utils/utils';
+import {lStorage, makeImage, width} from '../../utils/utils';
 
 import React from 'react';
 import {SvgXml} from 'react-native-svg';
+import {GridList} from 'react-native-ui-lib';
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
 import {NavigProps} from '../../interfaces/NaviProps';
 import tw from '../../lib/tailwind';
 import {IBook} from '../../redux/interface/book';
 import BookCard from '../sharebooks/components/BookCard';
 
-const OfflineScreen = ({route, navigation}: NavigProps<null>) => {
+const FavoriteBooks = ({route, navigation}: NavigProps<null>) => {
   const {colors, font} = useStyles();
   const {IsNet} = useContextApi();
 
@@ -22,7 +22,7 @@ const OfflineScreen = ({route, navigation}: NavigProps<null>) => {
 
   React.useEffect(() => {
     // lStorage.getArrayAsync('books').then(res => {
-    lStorage.getArrayAsync('offlineBooks').then(res => {
+    lStorage.getArrayAsync('favoriteBooks').then(res => {
       if (res) {
         console.log(res);
         setBooksData(res);
@@ -36,7 +36,7 @@ const OfflineScreen = ({route, navigation}: NavigProps<null>) => {
       <BackButtonWithTitle
         height={60}
         navigation={navigation}
-        title="Offline Books"
+        title="Favorite Books"
         offBack={!IsNet}
         containerStyle={{
           justifyContent: 'flex-start',
@@ -126,10 +126,10 @@ const OfflineScreen = ({route, navigation}: NavigProps<null>) => {
         renderItem={item => (
           <BookCard
             onPress={() => {
-              navigation?.navigate('PdfViewerOffline', {data: item?.item});
+              navigation?.navigate('BookShare', {data: item?.item});
             }}
             item={{
-              bookImage: 'file://' + item?.item?.bookImage,
+              bookImage: makeImage(item?.item?.bookImage),
               name: item?.item?.name,
               publisher: item?.item?.publisher,
             }}
@@ -140,4 +140,4 @@ const OfflineScreen = ({route, navigation}: NavigProps<null>) => {
   );
 };
 
-export default OfflineScreen;
+export default FavoriteBooks;
