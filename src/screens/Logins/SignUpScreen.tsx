@@ -239,6 +239,7 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
                   placeholder="Enter your contact no"
                   onChangeText={handleChange('phoneNumber')}
                   onBlur={handleBlur('phoneNumber')}
+                  keyboardType="decimal-pad"
                   value={values?.phoneNumber}
                 />
               </View>

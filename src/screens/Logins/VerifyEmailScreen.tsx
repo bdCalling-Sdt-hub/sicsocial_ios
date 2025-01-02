@@ -16,11 +16,13 @@ import {
   useVerifyUserMutation,
 } from '../../redux/apiSlices/authSlice';
 
+import {useDispatch} from 'react-redux';
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
 import NormalButton from '../../components/common/NormalButton';
 import {useStyles} from '../../context/ContextApi';
 import {IVerifyUserRoute} from '../../interfaces/Interface';
 import {NavigProps} from '../../interfaces/NaviProps';
+import {setToken} from '../../redux/apiSlices/tokenSlice';
 import {lStorage} from '../../utils/utils';
 
 const VerifyEmailScreen = ({
@@ -33,6 +35,8 @@ const VerifyEmailScreen = ({
   const modalRef = useRef<PopUpModalRef>();
   const textInputRef = useRef<TextInput>(null);
   const {colors, font} = useStyles();
+
+  const dispatch = useDispatch();
 
   const [pin, setPin] = useState('');
 
@@ -67,6 +71,7 @@ const VerifyEmailScreen = ({
           });
         } else if (res?.data) {
           lStorage.setString('token', res.data?.data?.accessToken);
+          dispatch(setToken(res.data?.data?.accessToken));
           navigation?.navigate('VerifySuccessful', {data: {info: 'signup'}});
         } else if (res.error) {
           modalRef.current?.open({

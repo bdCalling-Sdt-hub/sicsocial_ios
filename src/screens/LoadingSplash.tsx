@@ -1,7 +1,7 @@
-import React from 'react';
 import {ImageBackground, StyleSheet, View} from 'react-native';
 
 import LottieView from 'lottie-react-native';
+import React from 'react';
 import {useSelector} from 'react-redux';
 import {NavigProps} from '../interfaces/NaviProps';
 
