@@ -42,10 +42,10 @@ const LoginScreen = ({navigation}: NavigProps<null>) => {
   const OnSubmit = values => {
     loginUser(values).then(res => {
       if (res.error) {
-        // console.log(res.error);
+        console.log(res.error);
         modalRef.current?.open({
           title: 'Warning',
-          content: res?.error?.data?.message,
+          content: res?.error?.data?.message || res?.error?.error,
         });
       }
       if (res?.data) {
