@@ -3,23 +3,31 @@ import {
   StripeProvider,
   useConfirmPayment,
 } from '@stripe/stripe-react-native';
+import {
+  Alert,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
 import PopUpModal, {
   PopUpModalRef,
 } from '../../components/common/modals/PopUpModal';
-import {ScrollView, StyleSheet, Text, TextInput, View} from 'react-native';
 import {
   usePaymentIntentMutation,
   usePaymentRecordMutation,
 } from '../../redux/apiSlices/paymnetSlices';
 
+import React from 'react';
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
 import CustomModal from '../../components/common/customModal/CustomModal';
 import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
-import {NavigProps} from '../../interfaces/NaviProps';
 import NormalButton from '../../components/common/NormalButton';
-import React from 'react';
-import {useGetUserProfileQuery} from '../../redux/apiSlices/authSlice';
 import {useStyles} from '../../context/ContextApi';
+import {NavigProps} from '../../interfaces/NaviProps';
+import {useGetUserProfileQuery} from '../../redux/apiSlices/authSlice';
 
 const PaymentsScreen = ({navigation}: NavigProps<null>) => {
   const {confirmPayment, loading} = useConfirmPayment();
@@ -31,6 +39,7 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
   const [paymentSSModal, setPaymentSSModal] = React.useState(false);
 
   const [amount, setAmount] = React.useState('');
+  const [error, setError] = React.useState('');
   const [personalInfo, setPersonalInfo] = React.useState({
     customerName: '',
     customerEmail: '',
@@ -49,13 +58,7 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
   const handlePayPress = async () => {
     try {
       // min 50
-      if (Number(amount) < 50) {
-        modalRef.current?.open({
-          title: 'Warning',
-          content: 'Amount should be greater than 50',
-        });
-        return;
-      }
+
       setExtraLoading(true);
       // Gather the customer's billing information
       const billingDetails = {
@@ -87,12 +90,15 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
 
         if (error) {
           setExtraLoading(false);
-          console.log('Payment confirmation error', error);
-          modalRef.current?.open({
-            title: 'Warning',
-            content: error.message,
-          });
           setPaymentModal(false);
+          if (Platform?.OS === 'ios') {
+            Alert.alert('Payment Failed', error?.message);
+          } else {
+            modalRef.current?.open({
+              title: 'Payment Failed',
+              content: error.message,
+            });
+          }
         } else if (paymentIntent?.status === 'Succeeded') {
           setPaymentModal(false);
 
@@ -117,6 +123,20 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
     }
   };
 
+  // Function to handle validation of amount
+  const validateAmount = text => {
+    // Check if the value is a number and at least 50
+    const value = parseFloat(text);
+
+    if (isNaN(value) || value < 50) {
+      setError('Amount must be at least $50');
+    } else {
+      setError('');
+    }
+
+    setAmount(text);
+  };
+
   return (
     <View
       style={{
@@ -125,7 +145,7 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
       }}>
       <BackButtonWithTitle
         navigation={navigation}
-        thirdColl
+        thirdRoll
         title="Donation informations"
         titleStyle={{
           fontSize: 20,
@@ -279,27 +299,31 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
             </Text>
             <TextInput
               style={{
-                color: colors.textColor.normal,
-                fontFamily: font.Poppins,
-                backgroundColor: colors.secondaryColor,
+                color: 'black', // Use your color here
+                fontFamily: 'Poppins', // Use your font here
+                backgroundColor: '#f0f0f0', // Use your color here
                 borderRadius: 100,
                 fontSize: 14,
                 paddingHorizontal: 20,
                 height: 56,
               }}
               value={amount}
-              onChangeText={text => setAmount(text)}
+              onChangeText={validateAmount}
               placeholder="min-$50"
-              placeholderTextColor={colors.textColor.palaceHolderColor}
+              placeholderTextColor="#aaa" // Use your color here
               keyboardType="decimal-pad"
             />
+
+            {error ? (
+              <Text style={{color: 'red', fontSize: 12}}>{error}</Text>
+            ) : null}
           </View>
           <View
             style={{
               marginVertical: 10,
             }}>
             <NormalButton
-              disabled={!amount}
+              disabled={Number(amount) <= 49}
               onPress={() => {
                 setModalVisible(!modalVisible);
               }}

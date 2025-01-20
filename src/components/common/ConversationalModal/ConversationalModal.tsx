@@ -229,7 +229,7 @@ const ConversationalModal = ({navigation}: ConversationalModalProps) => {
       isLive ? (isTablet() ? '16.8%' : '10.5%') : isSmall() ? '0%' : '0.4%',
       {duration: 200},
     );
-    marginBottom.value = withTiming(65, {duration: 200});
+    // marginBottom.value = withTiming(65, {duration: 200});
     borderRadius.value = withTiming(100, {duration: 200});
     backgroundColor.value = withTiming('rgba(219, 177, 98, 1)', {
       duration: 200,
@@ -955,7 +955,7 @@ const ConversationalModal = ({navigation}: ConversationalModalProps) => {
                   onPress={async () => {
                     if (item.name === 'Share photo') {
                       // handleImagePick('camera');
-                      setImageModal(!imageModal);
+                      setImageModal(true);
                       setConversationalModal(false);
                     }
                     if (item.name === 'Share Books') {
@@ -976,8 +976,10 @@ const ConversationalModal = ({navigation}: ConversationalModalProps) => {
                       setConversationalModal(false);
                     }
                     if (item.name === 'Join your room') {
+                      // setLiveModal(true);
                       setConversationalModal(false);
-                      setLiveModal(!liveModal);
+                      // setBooksModal(true);
+                      navigation?.navigate('CreateNewRoom');
                     }
                     if (item.name === 'New Face Dwn') {
                       navigation?.navigate('CreateFaceDown');
@@ -1302,101 +1304,103 @@ const ConversationalModal = ({navigation}: ConversationalModalProps) => {
         </View>
       </ModalOfBottom>
       {/*======================== live setup modal =================== */}
-      <ModalOfBottom
-        modalVisible={liveModal}
-        setModalVisible={setLiveModal}
-        // backButton
-        containerColor={colors.bg}>
-        <View
-          style={{
-            gap: 25,
-          }}>
-          <Text
+      {liveModal && (
+        <ModalOfBottom
+          modalVisible={liveModal}
+          setModalVisible={setLiveModal}
+          // backButton
+          // ios-
+          containerColor={colors.bg}>
+          <View
             style={{
-              fontFamily: font.PoppinsSemiBold,
-              fontSize: 20,
-              color: colors.textColor.secondaryColor,
-              // marginBottom: 10,
+              gap: 25,
             }}>
-            Room setup
-          </Text>
+            <Text
+              style={{
+                fontFamily: font.PoppinsSemiBold,
+                fontSize: 20,
+                color: colors.textColor.secondaryColor,
+                // marginBottom: 10,
+              }}>
+              Room setup
+            </Text>
 
-          <View>
+            <View>
+              <View
+                style={{
+                  gap: 15,
+                }}>
+                <Text
+                  style={{
+                    fontFamily: font.Poppins,
+                    fontSize: 14,
+                    color: '#A1A1A1',
+                  }}>
+                  Add title
+                </Text>
+                <TextInput
+                  value={liveInfo?.name}
+                  placeholderTextColor={colors.textColor.palaceHolderColor}
+                  style={{
+                    color: colors.textColor.normal,
+                    fontFamily: font.Poppins,
+                    backgroundColor: colors.secondaryColor,
+                    borderRadius: 100,
+                    fontSize: 14,
+                    paddingHorizontal: 20,
+                    height: 56,
+                  }}
+                  onChangeText={text =>
+                    setLiveInfo({
+                      name: text,
+                    })
+                  }
+                  placeholder="title"
+                />
+              </View>
+            </View>
             <View
               style={{
                 gap: 15,
+                // marginHorizontal: '4%',
+                // marginVertical: 10,
               }}>
               <Text
                 style={{
                   fontFamily: font.Poppins,
                   fontSize: 14,
                   color: '#A1A1A1',
+                  paddingLeft: 10,
                 }}>
-                Add title
+                Share content
               </Text>
-              <TextInput
-                value={liveInfo?.name}
-                placeholderTextColor={colors.textColor.palaceHolderColor}
+
+              <TouchableOpacity activeOpacity={0.8}>
+                {selectBook && (
+                  <Image
+                    resizeMode="stretch"
+                    style={{
+                      borderRadius: 24,
+
+                      height: 150,
+                      width: 120,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}
+                    source={{
+                      uri: makeImage(selectBook?.bookImage),
+                    }}
+                  />
+                )}
+              </TouchableOpacity>
+
+              <View
                 style={{
-                  color: colors.textColor.normal,
-                  fontFamily: font.Poppins,
-                  backgroundColor: colors.secondaryColor,
-                  borderRadius: 100,
-                  fontSize: 14,
-                  paddingHorizontal: 20,
-                  height: 56,
-                }}
-                onChangeText={text =>
-                  setLiveInfo({
-                    name: text,
-                  })
-                }
-                placeholder="title"
-              />
-            </View>
-          </View>
-          <View
-            style={{
-              gap: 15,
-              // marginHorizontal: '4%',
-              // marginVertical: 10,
-            }}>
-            <Text
-              style={{
-                fontFamily: font.Poppins,
-                fontSize: 14,
-                color: '#A1A1A1',
-                paddingLeft: 10,
-              }}>
-              Share content
-            </Text>
-
-            <TouchableOpacity activeOpacity={0.8}>
-              {selectBook && (
-                <Image
-                  resizeMode="stretch"
-                  style={{
-                    borderRadius: 24,
-
-                    height: 150,
-                    width: 120,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}
-                  source={{
-                    uri: makeImage(selectBook?.bookImage),
-                  }}
-                />
-              )}
-            </TouchableOpacity>
-
-            <View
-              style={{
-                flexDirection: 'row',
-                gap: 10,
-                paddingHorizontal: 10,
-              }}>
-              {/* <TextInput
+                  flexDirection: 'row',
+                  gap: 10,
+                  paddingHorizontal: 10,
+                }}>
+                {/* <TextInput
                 placeholder="shear url/link"
                 onChangeText={text => setLinkUrl(text)}
                 style={{
@@ -1411,21 +1415,23 @@ const ConversationalModal = ({navigation}: ConversationalModalProps) => {
                 }}
                 // defaultValue="write image /book/url link"
               /> */}
-              <TouchableOpacity
-                onPress={() => {
-                  setBooksModal(true);
-                }}
-                activeOpacity={0.9}
-                style={{
-                  height: 50,
-                  width: 50,
-                  backgroundColor: colors.secondaryColor,
-                  borderRadius: 100,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
-                <SvgXml
-                  xml={`<svg width="32" height="28" viewBox="0 0 32 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <TouchableOpacity
+                  onPress={() => {
+                    setBooksModal(true);
+                    setLiveModal(false);
+                    setConversationalModal(false);
+                  }}
+                  activeOpacity={0.9}
+                  style={{
+                    height: 50,
+                    width: 50,
+                    backgroundColor: colors.secondaryColor,
+                    borderRadius: 100,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}>
+                  <SvgXml
+                    xml={`<svg width="32" height="28" viewBox="0 0 32 28" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g clip-path="url(#clip0_771_5364)">
 <path d="M19.7831 9H16.4974H13.0289C12.1944 9.00141 11.5172 9.61924 11.5117 10.3842V18.6158C11.5172 19.3807 12.1944 19.9985 13.0289 19.9999H19.7874C19.973 20.0025 20.1519 19.9369 20.2845 19.8179C20.4111 19.6987 20.4818 19.539 20.4817 19.3727V9.64035C20.4809 9.28698 20.1686 9.00072 19.7831 9ZM16.786 9.52381H18.4645V11.9805L17.8688 11.1096C17.8447 11.0728 17.811 11.0419 17.7708 11.0198C17.6355 10.9454 17.46 10.9856 17.3788 11.1096L16.786 11.9765V9.52381ZM12.0903 10.3842C12.0926 9.90988 12.5115 9.52597 13.0289 9.52381H16.2145V12.1952C16.2038 12.4079 16.3494 12.6008 16.5703 12.6666C16.8217 12.736 17.0474 12.5868 17.1817 12.3903L17.626 11.7356L18.0703 12.3903C18.2031 12.5841 18.4288 12.7334 18.6874 12.6666C18.9072 12.6011 19.0525 12.4095 19.0431 12.1978V9.53035H19.7874C19.8533 9.53107 19.9066 9.57989 19.9074 9.64035V17.2354C19.8677 17.2292 19.8276 17.2262 19.7874 17.2264H13.0289C12.688 17.2263 12.3572 17.332 12.0903 17.5263V10.3842ZM19.9074 18.3565L13.3203 18.363C13.1625 18.363 13.0346 18.4803 13.0346 18.6249C13.0346 18.7696 13.1625 18.8868 13.3203 18.8868L19.9074 18.8803V19.3674C19.9077 19.3967 19.8954 19.425 19.8731 19.446C19.8502 19.4664 19.8193 19.4777 19.7874 19.4774H13.0289C12.5101 19.4774 12.0896 19.0919 12.0896 18.6164C12.0896 18.1409 12.5101 17.7554 13.0289 17.7554H19.7874C19.8533 17.7561 19.9066 17.805 19.9074 17.8654V18.3565Z" fill="${colors.textColor.normal}"/>
 </g>
@@ -1460,9 +1466,9 @@ const ConversationalModal = ({navigation}: ConversationalModalProps) => {
 </defs>
 </svg>
 `}
-                />
-              </TouchableOpacity>
-              {/* <TouchableOpacity
+                  />
+                </TouchableOpacity>
+                {/* <TouchableOpacity
               activeOpacity={0.9}
               style={{
                 height: 50,
@@ -1484,137 +1490,142 @@ const ConversationalModal = ({navigation}: ConversationalModalProps) => {
 `}
               />
             </TouchableOpacity> */}
+              </View>
             </View>
+            <NormalButton
+              onPress={() => {
+                handleCreateLive();
+                // setLiveModal(false);
+                // navigation?.navigate('LiveConversation');
+              }}
+              title="Start Room"
+            />
           </View>
-          <NormalButton
-            onPress={() => {
-              handleCreateLive();
-              // setLiveModal(false);
-              // navigation?.navigate('LiveConversation');
-            }}
-            title="Start Room"
-          />
-        </View>
-      </ModalOfBottom>
+        </ModalOfBottom>
+      )}
 
       {/* book selection modal  */}
-      <CustomModal
-        modalVisible={booksModal}
-        setModalVisible={setBooksModal}
-        height={'85%'}
-        containerColor={colors.bg}
-        Radius={20}
-        appearance
-        backButton>
-        <>
-          <View
-            style={{
-              paddingHorizontal: '4%',
-              marginTop: 25,
-            }}>
+      {booksModal && (
+        <CustomModal
+          modalVisible={booksModal}
+          setModalVisible={setBooksModal}
+          height={'85%'}
+          containerColor={colors.bg}
+          Radius={20}
+          // slide="slide"
+          appearance
+          backButton>
+          <>
             <View
               style={{
-                backgroundColor: colors.search,
-                flexDirection: 'row',
-                alignItems: 'center',
-                gap: 10,
-                height: 48,
-                paddingHorizontal: 20,
-                borderRadius: 50,
+                paddingHorizontal: '4%',
+                marginTop: 25,
               }}>
-              <SvgXml
-                xml={`<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <View
+                style={{
+                  backgroundColor: colors.search,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  gap: 10,
+                  height: 48,
+                  paddingHorizontal: 20,
+                  borderRadius: 50,
+                }}>
+                <SvgXml
+                  xml={`<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M12.6267 11.5129L16 14.8861L14.8861 16L11.5129 12.6267C10.3 13.5971 8.76177 14.1776 7.08881 14.1776C3.17579 14.1776 0 11.0018 0 7.08881C0 3.17579 3.17579 0 7.08881 0C11.0018 0 14.1776 3.17579 14.1776 7.08881C14.1776 8.76177 13.5971 10.3 12.6267 11.5129ZM11.0465 10.9284C12.0096 9.93584 12.6023 8.58187 12.6023 7.08881C12.6023 4.04259 10.135 1.57529 7.08881 1.57529C4.04259 1.57529 1.57529 4.04259 1.57529 7.08881C1.57529 10.135 4.04259 12.6023 7.08881 12.6023C8.58187 12.6023 9.93584 12.0096 10.9284 11.0465L11.0465 10.9284Z" fill="${colors.textColor.neutralColor}"/>
 </svg>
 `}
-              />
-              <TextInput
-                style={{
-                  color: colors.textColor.normal,
-                  flex: 1,
-                }}
-                placeholder="Search your books"
-                placeholderTextColor={colors.textColor.palaceHolderColor}
-              />
+                />
+                <TextInput
+                  style={{
+                    color: colors.textColor.normal,
+                    flex: 1,
+                  }}
+                  placeholder="Search your books"
+                  placeholderTextColor={colors.textColor.palaceHolderColor}
+                />
+              </View>
             </View>
-          </View>
 
-          <GridList
-            showsVerticalScrollIndicator={false}
-            containerWidth={width * 0.82}
-            numColumns={2}
-            data={BooksData?.data}
-            columnWrapperStyle={{
-              gap: 20,
-              alignSelf: 'center',
-            }}
-            contentContainerStyle={{
-              gap: 20,
-              paddingVertical: 20,
-            }}
-            renderItem={item => (
-              <TouchableOpacity
-                onPress={() => {
-                  setSelectBook(item?.item);
-                  setBooksModal(false);
-                }}
-                style={{
-                  // elevation: 2,
-                  // backgroundColor: colors.bg,
-                  // padding: 2,
-                  borderRadius: 24,
-                  // height: height * 0.243,
-                  // alignItems : "center",
-                  // justifyContent : "center",
-                }}>
-                <View
+            <GridList
+              showsVerticalScrollIndicator={false}
+              containerWidth={width * 0.82}
+              numColumns={2}
+              data={BooksData?.data}
+              columnWrapperStyle={{
+                gap: 20,
+                alignSelf: 'center',
+              }}
+              contentContainerStyle={{
+                gap: 20,
+                paddingVertical: 20,
+              }}
+              renderItem={item => (
+                <TouchableOpacity
+                  onPress={() => {
+                    setBooksModal(false);
+                    setSelectBook(item?.item);
+                    setLiveModal(true);
+                  }}
                   style={{
-                    elevation: 1,
-                    padding: 3,
+                    // elevation: 2,
+                    // backgroundColor: colors.bg,
+                    // padding: 2,
+                    borderRadius: 24,
+                    // height: height * 0.243,
+                    // alignItems : "center",
+                    // justifyContent : "center",
                   }}>
-                  <Image
-                    resizeMode="stretch"
+                  <View
                     style={{
-                      height: height * 0.24,
-                      width: width * 0.41,
-                      borderRadius: 24,
-                      borderWidth: 2,
-                      borderColor: colors.bg,
-                    }}
-                    source={{
-                      uri: makeImage(item.item.bookImage),
-                    }}
-                  />
-                </View>
-                <View
-                  style={{
-                    marginTop: 10,
-                    alignItems: 'center',
-                    gap: 5,
-                    maxWidth: width * 0.41,
-                  }}>
-                  <Text
-                    style={{
-                      color: colors.textColor.light,
-                      fontSize: 14,
-                      fontFamily: font.PoppinsMedium,
+                      elevation: 1,
+                      padding: 3,
                     }}>
-                    {item.item.name}
-                  </Text>
-                  <Text
+                    <Image
+                      resizeMode="stretch"
+                      style={{
+                        height: height * 0.24,
+                        width: width * 0.41,
+                        borderRadius: 24,
+                        borderWidth: 2,
+                        borderColor: colors.bg,
+                      }}
+                      source={{
+                        uri: makeImage(item.item.bookImage),
+                      }}
+                    />
+                  </View>
+                  <View
                     style={{
-                      color: colors.textColor.neutralColor,
-                      fontSize: 12,
-                      fontFamily: font.Poppins,
+                      marginTop: 10,
+                      alignItems: 'center',
+                      gap: 5,
+                      maxWidth: width * 0.41,
                     }}>
-                    {item.item.publisher}
-                  </Text>
-                </View>
-              </TouchableOpacity>
-            )}
-          />
-        </>
-      </CustomModal>
+                    <Text
+                      style={{
+                        color: colors.textColor.light,
+                        fontSize: 14,
+                        fontFamily: font.PoppinsMedium,
+                      }}>
+                      {item.item.name}
+                    </Text>
+                    <Text
+                      style={{
+                        color: colors.textColor.neutralColor,
+                        fontSize: 12,
+                        fontFamily: font.Poppins,
+                      }}>
+                      {item.item.publisher}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              )}
+            />
+          </>
+        </CustomModal>
+      )}
     </>
   );
 };

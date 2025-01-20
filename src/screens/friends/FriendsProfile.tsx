@@ -17,10 +17,10 @@ import {
 
 import {format} from 'date-fns';
 import React from 'react';
+import {ActionSheet} from 'react-native-ui-lib';
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
 import ConversationalCard from '../../components/common/ConversationalCard';
 import CustomModal from '../../components/common/customModal/CustomModal';
-import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
 import {useStyles} from '../../context/ContextApi';
 import {NavigProps} from '../../interfaces/NaviProps';
 import {useGetUserProfileQuery} from '../../redux/apiSlices/authSlice';
@@ -98,7 +98,8 @@ const FriendsProfile = ({navigation, route}: NavigProps<null>) => {
         // console.log(res);
       });
     } else if (isFriend) {
-      setModalVisible(!modalVisible);
+      setModalVisible(true);
+      // setConfirmationModal(true);
     } else {
       sendFriendRequest({
         recipientId: friendProfile?.data?._id,
@@ -122,7 +123,7 @@ const FriendsProfile = ({navigation, route}: NavigProps<null>) => {
         onOptions={isFriend}
         offTitle
         navigation={navigation}
-        onOptionPress={() => setModalVisible(!modalVisible)}
+        onOptionPress={() => setModalVisible(true)}
       />
 
       <ScrollView
@@ -368,117 +369,121 @@ const FriendsProfile = ({navigation, route}: NavigProps<null>) => {
       </ScrollView>
 
       {/* Friend Action Modal */}
-      <ModalOfBottom
-        onlyTopRadius={15}
-        modalVisible={modalVisible}
-        setModalVisible={setModalVisible}>
-        <TouchableOpacity
-          style={{
+      {modalVisible && (
+        <ActionSheet
+          visible={modalVisible}
+          onDismiss={() => setModalVisible(false)}
+          containerStyle={{
             gap: 5,
+            paddingBottom: 10,
+            borderTopRightRadius: 10,
+            borderTopLeftRadius: 10,
           }}
-          onPress={() => {
-            setModalVisible(false);
-            setConfirmationModal(true);
-          }}>
-          <Text
-            style={{
-              fontFamily: font.Poppins,
-              fontSize: 15,
-              color: colors.textColor.neutralColor,
-
-              paddingVertical: 6,
-            }}>
-            Unfriend
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => setModalVisible(false)}>
-          <Text
-            style={{
-              fontFamily: font.Poppins,
-              fontSize: 15,
-              color: colors.textColor.neutralColor,
-              paddingVertical: 6,
-            }}>
-            Report
-          </Text>
-        </TouchableOpacity>
-      </ModalOfBottom>
+          cancelButtonIndex={2}
+          showCancelButton
+          dialogStyle={{
+            borderTopLeftRadius: 10,
+            borderTopRightRadius: 10,
+          }}
+          options={[
+            {
+              label: 'Unfriend',
+              onPress: () => {
+                setModalVisible(false);
+                setConfirmationModal(true);
+              },
+            },
+            {
+              label: 'Report',
+            },
+            {
+              label: 'Cancel',
+            },
+          ]}
+        />
+      )}
 
       {/* Confirmation Modal */}
-      <CustomModal
-        modalVisible={confirmationModal}
-        setModalVisible={setConfirmationModal}
-        height={'14%'}
-        containerColor={colors.bg}
-        Radius={20}>
-        <View
-          style={{padding: 20, justifyContent: 'center', alignItems: 'center'}}>
-          <Text
-            style={{
-              fontFamily: font.Poppins,
-              fontSize: 12,
-              color: colors.textColor.neutralColor,
-            }}>
-            Are you sure you want to remove your friend!
-          </Text>
+      {confirmationModal && (
+        <CustomModal
+          modalVisible={confirmationModal}
+          setModalVisible={setConfirmationModal}
+          height={'14%'}
+          containerColor={colors.bg}
+          Radius={20}>
           <View
             style={{
-              marginTop: 20,
-              flexDirection: 'row',
-              justifyContent: 'space-around',
-              width: '100%',
+              padding: 20,
+              justifyContent: 'center',
+              alignItems: 'center',
             }}>
-            <TouchableOpacity
-              onPress={() => setConfirmationModal(false)}
+            <Text
               style={{
-                borderRadius: 100,
-                borderColor: colors.green['#00B047'],
-                borderWidth: 1,
-                paddingHorizontal: 10,
-                height: 24,
-                justifyContent: 'center',
-                alignItems: 'center',
+                fontFamily: font.Poppins,
+                fontSize: 12,
+                color: colors.textColor.neutralColor,
               }}>
-              <Text
-                style={{
-                  fontFamily: font.PoppinsSemiBold,
-                  fontSize: 12,
-                  color: colors.green['#00B047'],
-                }}>
-                Cancel
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => {
-                setIsFriend(false);
-                setModalVisible(false);
-                setConfirmationModal(false);
-                removeFriendRequest({
-                  senderId: friendProfile?.data?._id,
-                }).then(res => {
-                  // console.log(res);
-                });
-              }}
+              Are you sure you want to remove your friend!
+            </Text>
+            <View
               style={{
-                borderRadius: 100,
-                backgroundColor: 'rgba(241, 99, 101, 1)',
-                paddingHorizontal: 10,
-                height: 24,
-                justifyContent: 'center',
-                alignItems: 'center',
+                marginTop: 20,
+                flexDirection: 'row',
+                justifyContent: 'space-around',
+                width: '100%',
               }}>
-              <Text
+              <TouchableOpacity
+                onPress={() => setConfirmationModal(false)}
                 style={{
-                  fontFamily: font.PoppinsSemiBold,
-                  fontSize: 12,
-                  color: colors.white,
+                  borderRadius: 100,
+                  borderColor: colors.green['#00B047'],
+                  borderWidth: 1,
+                  paddingHorizontal: 10,
+                  height: 24,
+                  justifyContent: 'center',
+                  alignItems: 'center',
                 }}>
-                Confirm
-              </Text>
-            </TouchableOpacity>
+                <Text
+                  style={{
+                    fontFamily: font.PoppinsSemiBold,
+                    fontSize: 12,
+                    color: colors.green['#00B047'],
+                  }}>
+                  Cancel
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  setIsFriend(false);
+                  setModalVisible(false);
+                  setConfirmationModal(false);
+                  removeFriendRequest({
+                    senderId: friendProfile?.data?._id,
+                  }).then(res => {
+                    // console.log(res);
+                  });
+                }}
+                style={{
+                  borderRadius: 100,
+                  backgroundColor: 'rgba(241, 99, 101, 1)',
+                  paddingHorizontal: 10,
+                  height: 24,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <Text
+                  style={{
+                    fontFamily: font.PoppinsSemiBold,
+                    fontSize: 12,
+                    color: colors.white,
+                  }}>
+                  Confirm
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
-      </CustomModal>
+        </CustomModal>
+      )}
     </View>
   );
 };

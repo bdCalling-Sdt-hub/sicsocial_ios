@@ -262,6 +262,13 @@ const ConversationCarousal = ({
           PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
         ]);
       }
+      if (Platform.OS === 'ios') {
+        audioRecorderPlayer.addRecordBackListener(e => {
+          // console.log('Recording progress:', e);
+        });
+      }
+      // for ios permission
+      // await Audio.requestPermissionsAsync();
 
       setRecordOn(true);
       setRecordOnDone(false);
@@ -278,26 +285,30 @@ const ConversationCarousal = ({
     } else {
       // stopListening(); // Stop listening
       setRecordOn(false);
+      audioRecorderPlayer.removeRecordBackListener();
       setRecordOnDone(true);
       letsBorderAnimationValue.value = 20;
       const audioPath = await audioRecorderPlayer.stopRecorder();
-      // console.log(audioPath);
-      const audio = {
-        uri: audioPath, // The path of the recorded audio file
-        type: 'audio/mp4', // Initial format is MP4
-        name: 'voice.mp4', // Use .mp4 extension
-      };
-      console.log(audio);
+      console.log(audioPath);
+      //  play this audio
+
+      // const audio = {
+      //   uri: audioPath, // The path of the recorded audio file
+      //   type: 'audio/mp4', // Initial format is MP4
+      //   name: 'voice.mp4', // Use .mp4 extension
+      // };
+      // console.log(audio);
       // try {
       //   speechToText(audio);
       // } catch (error) {
       //   console.log(error);
       // }
+      // await audioRecorderPlayer.startPlayer(audioPath);
       handleCreateNewChat({
         audio: {
           uri: audioPath, // The path of the recorded audio file
-          type: 'audio/wav', // Initial format is MP4
-          name: 'voice.wav', // Use .mp4 extension
+          type: 'audio/m4a', // Initial format is MP4
+          name: 'voice.m4a', // Use .mp4 extension
         },
       });
       // createMessage(formData).then(res => console.log(res));
@@ -325,14 +336,15 @@ const ConversationCarousal = ({
   }, []);
 
   useEffect(() => {
+    // Add listener for the 'rn-recordback' event
     const listener = DeviceEventEmitter.addListener('rn-recordback', event => {
-      // Handle the event here
       console.log('Received rn-recordback event:', event);
     });
 
+    // Cleanup listener on component unmount
     return () => {
-      // Clean up the listener on component unmount
-      listener.remove();
+      // Remove the listener when the component is unmounted
+      listener.remove(); // Correctly remove the event listener
     };
   }, []);
 
@@ -364,16 +376,16 @@ const ConversationCarousal = ({
             key={item.name} // Ensure unique key
             onPress={() => {
               if (item.name === 'Share photo') {
-                setImageModal(!imageModal);
+                setImageModal(true);
               }
               if (item.name === 'Share Books') {
-                setBooksModal(!booksModal);
+                setBooksModal(true);
               }
               if (item.name === 'Let’s talk') {
                 recodingOn();
               }
               if (item.name === 'Type a message') {
-                setTextInputModal(!textInputModal);
+                setTextInputModal(true);
               }
               if (item.name === 'Join your room') {
                 onPressLive && onPressLive();

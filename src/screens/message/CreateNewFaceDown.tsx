@@ -500,7 +500,7 @@ const CreateNewFaceDown = ({navigation, route}: NavigProps<any>) => {
       <View
         style={{
           paddingHorizontal: '4%',
-          paddingVertical: '3%',
+          paddingVertical: '5%',
         }}>
         <NormalButton
           title="Create Face Dwn"

@@ -40,12 +40,19 @@ const LoginScreen = ({navigation}: NavigProps<null>) => {
   const [loginUser, results] = useLoginUserMutation();
 
   const OnSubmit = values => {
+    // fetch('https://jsonplaceholder.typicode.com/posts')
+    //   .then(res => res.json())
+    //   .then(res => console.log(res));
+
     loginUser(values).then(res => {
       if (res.error) {
         console.log(res.error);
         modalRef.current?.open({
           title: 'Warning',
-          content: res?.error?.data?.message || res?.error?.error,
+          content:
+            res?.error?.error === 'TypeError: Network request failed'
+              ? 'Internet Connection Failed'
+              : res?.error?.data?.message || res?.error?.error,
         });
       }
       if (res?.data) {

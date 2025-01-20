@@ -259,7 +259,11 @@ const ConversationalCard = ({
                               fontSize: 13,
                               color: colors.textColor.neutralColor,
                               maxWidth:
-                                participants?.length > 1 ? '40%' : '80%',
+                                conversationTitle?.length > 20
+                                  ? '30%'
+                                  : participants?.length > 1
+                                  ? '40%'
+                                  : '80%',
                             }}>
                             {conversationSubtitle}
                           </Text>
@@ -678,9 +682,14 @@ const ConversationalCard = ({
                   {participants?.length >= 4 && (
                     <View
                       style={{
+                        // paddingVertical: 20,
+                        minHeight: 80,
                         transform: [
                           {
-                            scale: 0.8,
+                            scale: 0.76,
+                          },
+                          {
+                            translateY: -25,
                           },
                         ],
                       }}>

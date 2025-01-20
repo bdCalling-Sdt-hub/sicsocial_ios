@@ -27,6 +27,7 @@ import DonationScreen from '../screens/donation/DonationScreen';
 import FavoriteBooks from '../screens/favorite/FavoriteBooks';
 import FriendsProfile from '../screens/friends/FriendsProfile';
 import AddParticipants from '../screens/message/AddParticipants';
+import CreateNewRoom from '../screens/message/CreateLiveScreen';
 import CreateNewFaceDown from '../screens/message/CreateNewFaceDown';
 import FaceDownConversation from '../screens/message/FaceDownConversation';
 import GroupConversationScreen from '../screens/message/GroupConversationScreen';
@@ -138,7 +139,7 @@ const Routes = () => {
 
   return (
     <NavigationContainer linking={token && linking}>
-      <SafeAreaView style={{flex: 1}}>
+      <SafeAreaView style={{flex: 1, backgroundColor: colors.bg}}>
         <>
           <Stack.Navigator
             initialRouteName={token ? 'HomeRoutes' : 'Login'}
@@ -353,7 +354,7 @@ const Routes = () => {
                       name="CreateFaceDown"
                       component={CreateNewFaceDown}
                       options={{
-                        animation: 'slide_from_right',
+                        presentation: 'modal',
                       }}
                     />
                     <Stack.Screen
@@ -478,6 +479,13 @@ const Routes = () => {
                       component={FavoriteBooks}
                       options={{
                         animation: 'slide_from_right',
+                      }}
+                    />
+                    <Stack.Screen
+                      name="CreateNewRoom"
+                      component={CreateNewRoom}
+                      options={{
+                        presentation: 'modal',
                       }}
                     />
                     {/*======================== Profile end ============================ */}

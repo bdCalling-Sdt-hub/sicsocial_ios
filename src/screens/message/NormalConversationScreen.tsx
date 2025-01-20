@@ -623,8 +623,8 @@ const NormalConversationScreen = ({
       <CustomModal
         width={'100%'}
         height={'100%'}
-        modalVisible={showImage}
         containerColor="rgba(0, 0, 0, 0.8)"
+        modalVisible={showImage}
         setModalVisible={setShowImage}>
         <ImageViewer
           imageUrls={showImages}
@@ -634,7 +634,6 @@ const NormalConversationScreen = ({
           onSwipeDown={() => {
             setShowImage(false);
           }}
-          useNativeDriver
           style={{
             width: '100%',
             height: '100%',
@@ -666,7 +665,9 @@ const NormalConversationScreen = ({
                 }}
                 style={{
                   padding: 10,
-                  alignItems: 'flex-end',
+                  right: 10,
+                  position: 'absolute',
+                  zIndex: +1,
                 }}>
                 <AntDesign name="close" size={24} color={'white'} />
               </TouchableOpacity>
