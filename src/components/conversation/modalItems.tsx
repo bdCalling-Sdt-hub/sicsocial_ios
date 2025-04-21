@@ -1,20 +1,12 @@
-import {
-  Dimensions,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  useWindowDimensions,
-  View,
-} from 'react-native';
-import React from 'react';
-import {useStyles} from '../../context/ContextApi';
+import {Dimensions, StyleSheet} from 'react-native';
 import Animated, {
   Extrapolate,
   interpolate,
   useAnimatedStyle,
 } from 'react-native-reanimated';
-import {SvgXml} from 'react-native-svg';
-import * as Animatable from 'react-native-animatable';
+
+import React from 'react';
+import {useStyles} from '../../context/ContextApi';
 
 interface modalItemsProps {
   item: any;
@@ -27,7 +19,7 @@ export const ListItemWidth = windowWidth / 4;
 
 const ModalItems = ({item, contentOffset, index}: modalItemsProps) => {
   const {colors, font} = useStyles();
-  console.log((index - 1) * ListItemWidth);
+  // console.log((index - 1) * ListItemWidth);
   const rStyle = useAnimatedStyle(() => {
     const inputRange = [
       (index - 2) * ListItemWidth,

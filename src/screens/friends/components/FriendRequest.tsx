@@ -3,14 +3,11 @@ import {
   FlatList,
   NativeScrollEvent,
   NativeSyntheticEvent,
+  RefreshControl,
   TouchableOpacity,
   View,
   useWindowDimensions,
 } from 'react-native';
-import {
-  useGetFriendReceivedRequestsQuery,
-  useGetSuggestionsQuery,
-} from '../../../redux/apiSlices/friendsSlices';
 import {isSmall, isTablet} from '../../../utils/utils';
 
 import {useSharedValue} from 'react-native-reanimated';
@@ -18,10 +15,14 @@ import {SvgXml} from 'react-native-svg';
 import FriendCard from '../../../components/friend/FriendCard';
 import {useStyles} from '../../../context/ContextApi';
 import {NavigProps} from '../../../interfaces/NaviProps';
+import {useGetFriendReceivedRequestsQuery} from '../../../redux/apiSlices/friendsSlices';
 
 const FriendRequest = ({navigation}: NavigProps<null>) => {
-  const {data: suggestedFriends} = useGetSuggestionsQuery({});
-  const {data: receivedRequestFriend} = useGetFriendReceivedRequestsQuery({});
+  const {
+    data: receivedRequestFriend,
+    refetch: receivedRequestRefetch,
+    isLoading: receivedRequestIsLoading,
+  } = useGetFriendReceivedRequestsQuery({});
   // console.log(suggestedFriends);
   const {colors, font} = useStyles();
   const [isRequest, setIsRequest] = React.useState<boolean>(false);
@@ -76,10 +77,32 @@ const FriendRequest = ({navigation}: NavigProps<null>) => {
             position: 'absolute',
             zIndex: 100,
             alignItems: 'center',
-            justifyContent: 'space-between',
-            flexDirection: 'row',
+            right: 0,
 
-            width: '100%',
+            top: '45%',
+            // height: '100%',
+            paddingHorizontal: '6%',
+            // backgroundColor: 'red',
+          }}>
+          <TouchableOpacity onPress={() => onSwipeRight()}>
+            <SvgXml
+              xml={`<svg width="12" height="24" viewBox="0 0 12 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M1.36029 24.0041C1.22868 24.0049 1.09822 23.9796 0.976384 23.9299C0.854547 23.8801 0.743731 23.8068 0.65029 23.7141C0.556562 23.6211 0.482168 23.5105 0.431399 23.3887C0.380631 23.2668 0.354492 23.1361 0.354492 23.0041C0.354492 22.8721 0.380631 22.7414 0.431399 22.6195C0.482168 22.4977 0.556562 22.3871 0.65029 22.2941L8.82029 14.1241C9.38209 13.5616 9.69765 12.7991 9.69765 12.0041C9.69765 11.2091 9.38209 10.4466 8.82029 9.88409L0.65029 1.71409C0.461987 1.52579 0.356199 1.27039 0.356199 1.00409C0.356199 0.73779 0.461987 0.482395 0.65029 0.294092C0.838594 0.105788 1.09399 0 1.36029 0C1.62659 0 1.88199 0.105788 2.07029 0.294092L10.2403 8.46409C10.7059 8.92855 11.0754 9.4803 11.3274 10.0878C11.5795 10.6952 11.7092 11.3464 11.7092 12.0041C11.7092 12.6618 11.5795 13.313 11.3274 13.9204C11.0754 14.5279 10.7059 15.0796 10.2403 15.5441L2.07029 23.7141C1.97685 23.8068 1.86603 23.8801 1.7442 23.9299C1.62236 23.9796 1.4919 24.0049 1.36029 24.0041Z" fill="#A1A1A1"/>
+  </svg>
+  
+  `}
+            />
+          </TouchableOpacity>
+        </View>
+      )}
+      {receivedRequestFriend?.data?.length > 1 && (
+        <View
+          style={{
+            position: 'absolute',
+            zIndex: 100,
+            alignItems: 'center',
+            left: 0,
+
             top: '45%',
             // height: '100%',
             paddingHorizontal: '6%',
@@ -93,21 +116,19 @@ const FriendRequest = ({navigation}: NavigProps<null>) => {
         `}
             />
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => onSwipeRight()}>
-            <SvgXml
-              xml={`<svg width="12" height="24" viewBox="0 0 12 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <path d="M1.36029 24.0041C1.22868 24.0049 1.09822 23.9796 0.976384 23.9299C0.854547 23.8801 0.743731 23.8068 0.65029 23.7141C0.556562 23.6211 0.482168 23.5105 0.431399 23.3887C0.380631 23.2668 0.354492 23.1361 0.354492 23.0041C0.354492 22.8721 0.380631 22.7414 0.431399 22.6195C0.482168 22.4977 0.556562 22.3871 0.65029 22.2941L8.82029 14.1241C9.38209 13.5616 9.69765 12.7991 9.69765 12.0041C9.69765 11.2091 9.38209 10.4466 8.82029 9.88409L0.65029 1.71409C0.461987 1.52579 0.356199 1.27039 0.356199 1.00409C0.356199 0.73779 0.461987 0.482395 0.65029 0.294092C0.838594 0.105788 1.09399 0 1.36029 0C1.62659 0 1.88199 0.105788 2.07029 0.294092L10.2403 8.46409C10.7059 8.92855 11.0754 9.4803 11.3274 10.0878C11.5795 10.6952 11.7092 11.3464 11.7092 12.0041C11.7092 12.6618 11.5795 13.313 11.3274 13.9204C11.0754 14.5279 10.7059 15.0796 10.2403 15.5441L2.07029 23.7141C1.97685 23.8068 1.86603 23.8801 1.7442 23.9299C1.62236 23.9796 1.4919 24.0049 1.36029 24.0041Z" fill="#A1A1A1"/>
-  </svg>
-  
-  `}
-            />
-          </TouchableOpacity>
         </View>
       )}
 
       <FlatList
         ref={listRef} // Assign the ref to FlatList
         // keyExtractor={item => item.id}
+        refreshControl={
+          <RefreshControl
+            refreshing={receivedRequestIsLoading}
+            onRefresh={receivedRequestRefetch}
+            colors={[colors.primaryColor]}
+          />
+        }
         horizontal // Assuming the list is horizontal
         showsHorizontalScrollIndicator={false}
         snapToInterval={itemWidth} // Ensure it snaps to the item width
@@ -123,11 +144,11 @@ const FriendRequest = ({navigation}: NavigProps<null>) => {
         renderItem={({item}) => {
           return (
             <FriendCard
-              isFriendRequest={isRequest}
+              isFriendRequest={true}
               item={item}
               onPress={() => {
                 navigation?.navigate('FriendsProfile', {
-                  data: {isFriendRequest: true},
+                  data: {id: item?._id},
                 });
               }}
             />

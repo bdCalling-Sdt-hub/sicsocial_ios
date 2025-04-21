@@ -21,7 +21,7 @@ export const useAudioPlayer = () => {
         }
       });
     } catch (error) {
-      console.log('Error starting audio playback:', error);
+      // console.log('Error starting audio playback:', error);
     }
   };
 
@@ -33,7 +33,7 @@ export const useAudioPlayer = () => {
       isPlayingRef.current = false;
       currentLinkRef.current = null; // Clear the current link after stopping
     } catch (error) {
-      console.log('Error stopping audio:', error);
+      // console.log('Error stopping audio:', error);
     }
   };
 

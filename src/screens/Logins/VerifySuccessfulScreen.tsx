@@ -1,12 +1,13 @@
 import {Image, StyleSheet, Text, View} from 'react-native';
+
 import React from 'react';
-import {NavigProps} from '../../interfaces/NaviProps';
 import {useStyles} from '../../context/ContextApi';
+import {NavigProps} from '../../interfaces/NaviProps';
 
 const VerifySuccessfulScreen = ({navigation}: NavigProps<null>) => {
   const {colors, font} = useStyles();
   setTimeout(() => {
-    navigation?.navigate('HomeRoutes'); // Navigate to Home Screen when 2 seconds are passed.
+    navigation?.navigate('Interest', {data: {info: 'signup'}}); // Navigate to Home Screen when 2 seconds are passed.
   }, 2000);
 
   return (

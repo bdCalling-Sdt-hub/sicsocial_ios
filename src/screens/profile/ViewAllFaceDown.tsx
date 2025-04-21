@@ -6,36 +6,30 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import {
+  useGetFaceDownOthersQuery,
+  useGetFaceDownQuery,
+} from '../../redux/apiSlices/facedwonSlice';
 
+import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
+import {NavigProps} from '../../interfaces/NaviProps';
 import React from 'react';
 import {SvgXml} from 'react-native-svg';
-import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
-import {useStyles} from '../../context/ContextApi';
-import {NavigProps} from '../../interfaces/NaviProps';
-import {useGetFaceDownQuery} from '../../redux/apiSlices/facedwonSlice';
 import {makeImage} from '../../utils/utils';
+import {useStyles} from '../../context/ContextApi';
 
-const MyFaceDown = [
-  {
-    id: 1,
-    name: 'Asad Face',
-    img: require('../../assets/tempAssets/face1.jpg'),
-  },
-];
-const FaceDown = [
-  {
-    id: 2,
-    name: 'Cricket club',
-    img: require('../../assets/tempAssets/face2.png'),
-  },
-  {
-    id: 3,
-    name: 'T20 2024',
-    img: require('../../assets/tempAssets/face3.png'),
-  },
-];
 const ViewAllFaceDown = ({navigation}: NavigProps<null>) => {
-  const {data: myFaceDowns} = useGetFaceDownQuery({});
+  const {
+    data: facedowns,
+    refetch: facedownsRefetch,
+    isLoading: facedownsLoading,
+  } = useGetFaceDownQuery({});
+
+  const {
+    data: otherFacedowns,
+    refetch: otherFacedownsRefetch,
+    isLoading: otherFacedownsLoading,
+  } = useGetFaceDownOthersQuery({});
   const {colors, font} = useStyles();
   return (
     <View
@@ -82,7 +76,7 @@ const ViewAllFaceDown = ({navigation}: NavigProps<null>) => {
               paddingRight: 20,
               paddingHorizontal: '5%',
             }}
-            data={myFaceDowns?.data}
+            data={facedowns?.data}
             ListFooterComponent={() => {
               return (
                 <View style={{gap: 6}}>
@@ -123,7 +117,12 @@ const ViewAllFaceDown = ({navigation}: NavigProps<null>) => {
               <View style={{gap: 6}}>
                 <TouchableOpacity
                   onPress={() => {
-                    navigation?.navigate('FaceDownConversation');
+                    navigation?.navigate('FaceDownConversation', {
+                      data: {
+                        id: item.item.chatId,
+                        facedown: item.item,
+                      },
+                    });
                   }}
                   style={{
                     backgroundColor: colors.secondaryColor,
@@ -184,12 +183,19 @@ const ViewAllFaceDown = ({navigation}: NavigProps<null>) => {
               paddingRight: 20,
               paddingHorizontal: '5%',
             }}
-            data={myFaceDowns?.data}
+            data={otherFacedowns?.data}
             renderItem={item => (
               <View style={{gap: 6}}>
                 <TouchableOpacity
                   onPress={() => {
-                    navigation?.navigate('FaceDownConversation');
+                    // console.log(item);
+
+                    navigation?.navigate('FaceDownConversation', {
+                      data: {
+                        id: item.item.chatId,
+                        facedown: item.item,
+                      },
+                    });
                   }}
                   style={{
                     backgroundColor: colors.secondaryColor,

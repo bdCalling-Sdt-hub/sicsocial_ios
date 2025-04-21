@@ -1,5 +1,4 @@
 import {
-  Image,
   ScrollView,
   StyleSheet,
   Text,
@@ -8,13 +7,15 @@ import {
 } from 'react-native';
 
 import React from 'react';
-import { FlatList } from 'react-native-gesture-handler';
+import {FlatList} from 'react-native-gesture-handler';
+import {AnimatedImage} from 'react-native-ui-lib';
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
 import NormalButton from '../../components/common/NormalButton';
-import { useStyles } from '../../context/ContextApi';
-import { NavigProps } from '../../interfaces/NaviProps';
-import { IDonation } from '../../redux/interface/donation';
-import { makeImageUrl } from '../../utils/utils';
+import {useStyles} from '../../context/ContextApi';
+import {NavigProps} from '../../interfaces/NaviProps';
+import {useGetDonationQuery} from '../../redux/apiSlices/additionalSlices';
+import {IDonation} from '../../redux/interface/donation';
+import {makeImageUrl} from '../../utils/utils';
 
 const data = [
   {
@@ -31,14 +32,14 @@ const data = [
   },
 ];
 
-const DonationScreen = ({navigation,route}: NavigProps<IDonation>) => {
-
-  const Item = route?.params?.data
-
+const DonationScreen = ({navigation, route}: NavigProps<IDonation>) => {
   const {colors, font} = useStyles();
   const [selectItem, setSelectItem] = React.useState<number>(0);
+  const {data: donations} = useGetDonationQuery({});
 
+  const Item = donations?.data![0];
 
+  // console.log(route?.params);
 
   return (
     <View
@@ -58,46 +59,48 @@ const DonationScreen = ({navigation,route}: NavigProps<IDonation>) => {
         }}
       />
 
-     <View>
-     <FlatList
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{
-          paddingHorizontal: 20,
-          paddingBottom: 15,
-    
-        }}
-        data={data}
-        renderItem={item => (
-          <TouchableOpacity
-            onPress={() => setSelectItem(item.index)}
-            style={{
-              backgroundColor:
-                item.index === selectItem
-                  ? colors.primaryColor
-                  : colors.secondaryColor,
-              paddingHorizontal: 15,
-              paddingVertical: 10,
-              borderRadius: 10,
-              height: 40,
-              marginHorizontal: 10,
-            }}>
-            <Text
+      <View>
+        <FlatList
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{
+            paddingHorizontal: 20,
+            paddingBottom: 15,
+          }}
+          data={data}
+          renderItem={item => (
+            <TouchableOpacity
+              onPress={() => setSelectItem(item.index)}
               style={{
-                fontSize: 14,
-                color: item.index === selectItem ? 'white' : '#767676',
-                fontFamily: font.Poppins,
+                backgroundColor:
+                  item.index === selectItem
+                    ? colors.primaryColor
+                    : colors.secondaryColor,
+                paddingHorizontal: 15,
+                paddingVertical: 10,
+                borderRadius: 10,
+                height: 40,
+                marginHorizontal: 10,
               }}>
-              {item.item.text}
-            </Text>
-          </TouchableOpacity>
-        )}
-      />
-     </View>
-       
-     <ScrollView
-       showsVerticalScrollIndicator={false}
-       showsHorizontalScrollIndicator={false}
+              <Text
+                style={{
+                  fontSize: 14,
+                  color:
+                    item.index === selectItem
+                      ? 'white'
+                      : colors.textColor.neutralColor,
+                  fontFamily: font.Poppins,
+                }}>
+                {item.item.text}
+              </Text>
+            </TouchableOpacity>
+          )}
+        />
+      </View>
+
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        showsHorizontalScrollIndicator={false}
         contentContainerStyle={{
           paddingVertical: 20,
         }}>
@@ -106,19 +109,21 @@ const DonationScreen = ({navigation,route}: NavigProps<IDonation>) => {
             style={{
               paddingHorizontal: 20,
             }}>
-            <Image
-              resizeMode="cover"
-              style={{
-                width: '100%',
-                height: 200,
-                borderRadius: 16,
-                marginBottom: 20,
-                
-              }}
-              source={{
-                uri : makeImageUrl(Item?.details?.image || '')
-              }}
-            />
+            {Item?.details?.image && (
+              <AnimatedImage
+                resizeMode="cover"
+                style={{
+                  width: '100%',
+                  height: 200,
+                  borderRadius: 16,
+                  marginBottom: 20,
+                }}
+                source={{
+                  uri: makeImageUrl(Item?.details?.image),
+                }}
+              />
+            )}
+
             <View>
               <Text
                 style={{
@@ -127,7 +132,7 @@ const DonationScreen = ({navigation,route}: NavigProps<IDonation>) => {
                   color: colors.textColor.light,
                   marginBottom: 16,
                 }}>
-               {Item?.details?.title}
+                {Item?.details?.title}
               </Text>
               <Text
                 style={{
@@ -166,7 +171,7 @@ const DonationScreen = ({navigation,route}: NavigProps<IDonation>) => {
                 fontFamily: font.Poppins,
                 color: colors.textColor.light,
               }}>
-                {Item?.rulesAndRegulations.content}
+              {Item?.rulesAndRegulations.content}
             </Text>
           </View>
         )}
@@ -192,7 +197,7 @@ const DonationScreen = ({navigation,route}: NavigProps<IDonation>) => {
                 fontFamily: font.Poppins,
                 color: colors.textColor.light,
               }}>
-               {Item?.termsAndConditions.content}
+              {Item?.termsAndConditions.content}
             </Text>
           </View>
         )}

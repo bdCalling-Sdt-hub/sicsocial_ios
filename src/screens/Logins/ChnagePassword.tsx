@@ -6,22 +6,54 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import PopUpModal, {
+  PopUpModalRef,
+} from '../../components/common/modals/PopUpModal';
+import {
+  useChangePasswordMutation,
+  useGetUserProfileQuery,
+} from '../../redux/apiSlices/authSlice';
 
-import { Formik } from 'formik';
+import {Formik} from 'formik';
 import React from 'react';
 import Feather from 'react-native-vector-icons/Feather';
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
-import { useStyles } from '../../context/ContextApi';
-import { NavigProps } from '../../interfaces/NaviProps';
+import NormalButton from '../../components/common/NormalButton';
+import {useStyles} from '../../context/ContextApi';
+import {NavigProps} from '../../interfaces/NaviProps';
 
-const ChangePassword = ({navigation}: NavigProps<null>) => {
+const ChangePassword = ({navigation, route}: NavigProps<null>) => {
+  const modalRef = React.useRef<PopUpModalRef>();
   const {colors, font} = useStyles();
   const [isShow, setIsShow] = React.useState({
-    oldPassword: false,
+    currentPassword: false,
     newPassword: false,
-    confirmPassword: false,
   });
-  const [check, setCheck] = React.useState(false);
+
+  const [updatePassword, results] = useChangePasswordMutation();
+
+  const {data: userInfo} = useGetUserProfileQuery({});
+  const handleShowPass = (value: string) => {
+    value.email = route?.params?.email || userInfo?.data.email;
+    updatePassword(value).then(res => {
+      // console.log(res);
+
+      if (res.data) {
+        modalRef.current?.open({
+          title: 'Success',
+          content: res.data.message,
+        });
+        (navigation as any).replace('Login');
+      }
+
+      if (res.error) {
+        modalRef.current?.open({
+          title: 'Warning',
+          content: res.error.data.message,
+        });
+      }
+    });
+  };
 
   return (
     <View
@@ -39,12 +71,10 @@ const ChangePassword = ({navigation}: NavigProps<null>) => {
         }}
       />
 
-       
-     <ScrollView
-       showsVerticalScrollIndicator={false}
-       showsHorizontalScrollIndicator={false}
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        showsHorizontalScrollIndicator={false}
         keyboardShouldPersistTaps="always"
-    
         contentContainerStyle={{
           //   flex: 1,
           justifyContent: 'center',
@@ -79,11 +109,31 @@ const ChangePassword = ({navigation}: NavigProps<null>) => {
         </View>
         <Formik
           initialValues={{
-            password: 'asdfsadf',
-            confirm_password: 'asdfsadf',
+            confirmPassword: '',
+            newPassword: '',
           }}
-          onSubmit={values => console.log(values)}>
-          {({handleChange, handleBlur, handleSubmit, values}) => (
+          validate={values => {
+            const errors: any = {};
+            if (!values.newPassword) {
+              errors.newPassword = 'Required';
+            }
+            if (!values.confirmPassword) {
+              errors.confirmPassword = 'Required';
+            }
+            if (values && values.newPassword !== values.confirmPassword) {
+              errors.confirmPassword = 'Password does not match';
+            }
+            return errors;
+          }}
+          onSubmit={values => handleShowPass(values)}>
+          {({
+            handleChange,
+            handleBlur,
+            handleSubmit,
+            values,
+            errors,
+            touched,
+          }) => (
             <View
               style={{
                 marginTop: 15,
@@ -100,66 +150,23 @@ const ChangePassword = ({navigation}: NavigProps<null>) => {
                     fontSize: 14,
                     color: '#A1A1A1',
                   }}>
-                  Password
-                </Text>
-                <TextInput
-                  value="Gabrail10"
-                  style={{
-                    fontFamily: font.Poppins,
-                    backgroundColor: colors.secondaryColor,
-                    borderRadius: 100,
-                    fontSize: 14,
-                    paddingHorizontal: 20,
-                    height: 56,
-                    color: colors.textColor.neutralColor,
-                  }}
-                  placeholder="type "
-                  secureTextEntry={!isShow}
-                  onChangeText={handleChange('password')}
-                  onBlur={handleBlur('password')}
-                  value={isShow.oldPassword}
-                />
-                <TouchableOpacity
-                  onPress={() =>
-                    setIsShow({...isShow, oldPassword: !isShow.oldPassword})
-                  }
-                  style={{
-                    position: 'absolute',
-                    right: 10,
-                    bottom: 7,
-                    padding: 10,
-                  }}>
-                  {isShow ? (
-                    <Feather name="eye" size={24} />
-                  ) : (
-                    <Feather name="eye-off" size={24} />
-                  )}
-                </TouchableOpacity>
-              </View>
-              <View
-                style={{
-                  gap: 8,
-                }}>
-                <Text
-                  style={{
-                    fontFamily: font.Poppins,
-                    fontSize: 14,
-                    color: '#A1A1A1',
-                  }}>
                   New Password
                 </Text>
                 <TextInput
-                  value="Gabrail10"
+                  value={values?.newPassword}
                   style={{
+                    color: colors.textColor.normal,
                     fontFamily: font.Poppins,
                     backgroundColor: colors.secondaryColor,
                     borderRadius: 100,
                     fontSize: 14,
                     paddingHorizontal: 20,
                     height: 56,
-                    color: colors.textColor.neutralColor,
                   }}
-                  placeholder="type "
+                  placeholderTextColor={colors.textColor.palaceHolderColor}
+                  onChangeText={handleChange('newPassword')}
+                  onBlur={handleBlur('newPassword')}
+                  placeholder="Enter new password "
                   secureTextEntry={!isShow.newPassword}
                 />
                 <TouchableOpacity
@@ -173,12 +180,31 @@ const ChangePassword = ({navigation}: NavigProps<null>) => {
                     padding: 10,
                   }}>
                   {isShow ? (
-                    <Feather name="eye" size={24} />
+                    <Feather
+                      name="eye"
+                      color={colors.textColor.normal}
+                      size={24}
+                    />
                   ) : (
-                    <Feather name="eye-off" size={24} />
+                    <Feather
+                      name="eye-off"
+                      color={colors.textColor.normal}
+                      size={24}
+                    />
                   )}
                 </TouchableOpacity>
               </View>
+              {/* valid */}
+              {errors.newPassword && touched.newPassword && (
+                <Text
+                  style={{
+                    color: 'red',
+                    fontFamily: font.Poppins,
+                    fontSize: 12,
+                  }}>
+                  {errors.newPassword}
+                </Text>
+              )}
               <View
                 style={{
                   gap: 8,
@@ -192,24 +218,27 @@ const ChangePassword = ({navigation}: NavigProps<null>) => {
                   Confirm Password
                 </Text>
                 <TextInput
-                  value="Gabrail10"
+                  value={values?.confirmPassword}
+                  placeholderTextColor={colors.textColor.palaceHolderColor}
                   style={{
+                    color: colors.textColor.normal,
                     fontFamily: font.Poppins,
                     backgroundColor: colors.secondaryColor,
                     borderRadius: 100,
                     fontSize: 14,
                     paddingHorizontal: 20,
                     height: 56,
-                    color: colors.textColor.neutralColor,
                   }}
-                  placeholder="type "
-                  secureTextEntry={!isShow.confirmPassword}
+                  onChangeText={handleChange('confirmPassword')}
+                  onBlur={handleBlur('confirmPassword')}
+                  placeholder="Confirm Password"
+                  secureTextEntry={!isShow.currentPassword}
                 />
                 <TouchableOpacity
                   onPress={() =>
                     setIsShow({
                       ...isShow,
-                      confirmPassword: !isShow.confirmPassword,
+                      currentPassword: !isShow.currentPassword,
                     })
                   }
                   style={{
@@ -219,41 +248,45 @@ const ChangePassword = ({navigation}: NavigProps<null>) => {
                     padding: 10,
                   }}>
                   {isShow ? (
-                    <Feather name="eye" size={24} />
+                    <Feather
+                      name="eye"
+                      color={colors.textColor.normal}
+                      size={24}
+                    />
                   ) : (
-                    <Feather name="eye-off" size={24} />
+                    <Feather
+                      name="eye-off"
+                      color={colors.textColor.normal}
+                      size={24}
+                    />
                   )}
                 </TouchableOpacity>
               </View>
 
-              <View>
-                <TouchableOpacity
-                  onPress={() => {
-                    navigation?.navigate('VerifySuccessful');
-                    // handleSubmit();
-                  }}
+              {errors.confirmPassword && touched.confirmPassword && (
+                <Text
                   style={{
-                    backgroundColor: colors.primaryColor,
-                    borderRadius: 100,
-                    height: 56,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    marginVertical: 24,
+                    color: 'red',
+                    fontFamily: font.Poppins,
+                    fontSize: 12,
                   }}>
-                  <Text
-                    style={{
-                      fontFamily: font.PoppinsSemiBold,
-                      fontSize: 16,
-                      color: 'white',
-                    }}>
-                    Update password
-                  </Text>
-                </TouchableOpacity>
+                  {errors.confirmPassword}
+                </Text>
+              )}
+
+              <View>
+                <NormalButton
+                  disabled={!values.confirmPassword || !values.newPassword}
+                  onPress={handleSubmit}
+                  title="Update Password"
+                  isLoading={results.isLoading}
+                />
               </View>
             </View>
           )}
         </Formik>
       </ScrollView>
+      <PopUpModal ref={modalRef} />
     </View>
   );
 };

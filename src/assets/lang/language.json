@@ -3,54 +3,54 @@
     "country": "United States",
     "country_code": "US",
     "language": "English",
-    "language_code": "en"
+    "language_code": "en-US"
   },
   {
     "country": "Spain",
     "country_code": "ES",
     "language": "Spanish",
-    "language_code": "es"
+    "language_code": "es-ES"
   },
   {
     "country": "China",
     "country_code": "CN",
     "language": "Chinese",
-    "language_code": "zh"
+    "language_code": "zh-CN"
   },
   {
     "country": "South Korea",
     "country_code": "KR",
     "language": "Korean",
-    "language_code": "ko"
+    "language_code": "ko-KR"
   },
   {
     "country": "Vietnam",
     "country_code": "VN",
     "language": "Vietnamese",
-    "language_code": "vi"
+    "language_code": "vi-VN"
   },
   {
     "country": "Saudi Arabia",
     "country_code": "SA",
     "language": "Arabic",
-    "language_code": "ar"
+    "language_code": "ar-SA"
   },
   {
     "country": "France",
     "country_code": "FR",
     "language": "French",
-    "language_code": "fr"
+    "language_code": "fr-FR"
   },
   {
     "country": "Russia",
     "country_code": "RU",
     "language": "Russian",
-    "language_code": "ru"
+    "language_code": "ru-RU"
   },
   {
     "country": "Bangladesh",
     "country_code": "BD",
     "language": "Bangla",
-    "language_code": "bn"
+    "language_code": "bn-BD"
   }
 ]

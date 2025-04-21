@@ -1,6 +1,7 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
-  ActivityIndicator,
+  Alert,
+  DeviceEventEmitter,
   Image,
   Modal,
   PermissionsAndroid,
@@ -21,10 +22,8 @@ import Animated, {
 } from 'react-native-reanimated';
 import Carousel, {TAnimationStyle} from 'react-native-reanimated-carousel';
 import {useContextApi, useStyles} from '../../../context/ContextApi';
-import {isSmall, isTablet} from '../../../utils/utils';
+import {isSmall, isTablet, makeImage} from '../../../utils/utils';
 
-import {LinkPreview} from '@flyerhq/react-native-link-preview';
-import {DeviceEventEmitter} from 'react-native';
 import AudioRecorderPlayer from 'react-native-audio-recorder-player';
 import {AnimatedCircularProgress} from 'react-native-circular-progress';
 import {TextInput} from 'react-native-gesture-handler';
@@ -34,11 +33,14 @@ import CustomModal from '../../../components/common/customModal/CustomModal';
 import ModalOfBottom from '../../../components/common/customModal/ModalOfButtom';
 import NormalButton from '../../../components/common/NormalButton';
 import {NavigProps} from '../../../interfaces/NaviProps';
+import {useGetAllBooksQuery} from '../../../redux/apiSlices/bookSlices';
 import {useCreateChatMutation} from '../../../redux/apiSlices/chatSlices';
+import {useGetFaceDownQuery} from '../../../redux/apiSlices/facedwonSlice';
+import {useCreateLiveMutation} from '../../../redux/apiSlices/liveSlice';
 import {useCreateMessageMutation} from '../../../redux/apiSlices/messageSlies';
+import {IBook} from '../../../redux/interface/book';
 import {ICreateMessage} from '../../../redux/interface/interface';
 import {IConversationProps} from '../../../screens/home/HomeScreen';
-import {TemBooks} from '../../../utils/GetRandomColor';
 
 const data = [
   {
@@ -48,12 +50,12 @@ const data = [
     activeImage: require('../../../assets/icons/modalIcons/microphoneWhite.png'),
     unActive: require('../../../assets/icons/modalIcons/microphoneGray.png'),
   },
-  {
-    id: 2,
-    name: 'Share Books',
-    activeImage: require('../../../assets/icons/modalIcons/boogWhite.png'),
-    unActive: require('../../../assets/icons/modalIcons/bookgray.png'),
-  },
+  // {
+  //   id: 2,
+  //   name: 'Share Books',
+  //   activeImage: require('../../../assets/icons/modalIcons/boogWhite.png'),
+  //   unActive: require('../../../assets/icons/modalIcons/bookgray.png'),
+  // },
   {
     id: 3,
     name: 'Share photo',
@@ -80,7 +82,7 @@ const data = [
   },
 ];
 
-const items = [
+const smallItems = [
   {
     id: 1,
     title: 'Public',
@@ -95,19 +97,19 @@ const items = [
     activeImg: require('../../../assets/icons/modalIcons/shearFriendBlack.png'),
     unActive: require('../../../assets/icons/modalIcons/shearFriendGray.png'),
   },
-  {
-    id: 3,
-    title: 'Chosen buddies',
-    type: 'private',
-    activeImg: require('../../../assets/icons/modalIcons/shearFriendBlack.png'),
-    unActive: require('../../../assets/icons/modalIcons/shearFriendGray.png'),
-  },
-  {
-    id: 3,
-    title: 'Asadullah face',
-    type: 'public',
-    house: true,
-  },
+  // {
+  //   id: 3,
+  //   title: 'Chosen buddies',
+  //   type: 'private',
+  //   activeImg: require('../../../assets/icons/modalIcons/shearFriendBlack.png'),
+  //   unActive: require('../../../assets/icons/modalIcons/shearFriendGray.png'),
+  // },
+  // {
+  //   id: 3,
+  //   title: 'Asadullah face',
+  //   type: 'public',
+  //   house: true,
+  // },
 ];
 const options = {
   sampleRate: 16000, // default 44100
@@ -127,12 +129,31 @@ interface ConversationalModalProps extends NavigProps<null> {
 
 const ConversationalModal = ({navigation}: ConversationalModalProps) => {
   const [createChat, createChartResults] = useCreateChatMutation({});
+  const [items, setItems] = useState([
+    {
+      id: 1,
+      title: 'Public',
+      type: 'public',
+      activeImg: require('../../../assets/icons/modalIcons/earthyGray.png'),
+      unActive: require('../../../assets/icons/modalIcons/earthBlack.png'),
+    },
+    {
+      id: 2,
+      title: 'Friends',
+      type: 'private',
+      activeImg: require('../../../assets/icons/modalIcons/shearFriendBlack.png'),
+      unActive: require('../../../assets/icons/modalIcons/shearFriendGray.png'),
+    },
+  ]);
   const [createMessage, createMessageResult] = useCreateMessageMutation({});
   const {
     colors,
     font,
     window: {height, width},
   } = useStyles();
+  const {data: BooksData} = useGetAllBooksQuery({});
+  const [booksModal, setBooksModal] = React.useState(false);
+  const [selectBook, setSelectBook] = React.useState<IBook>();
 
   const {isLive, setIsLive, isDark} = useContextApi();
   const [modalVisible, setModalVisible] = React.useState(false);
@@ -147,10 +168,8 @@ const ConversationalModal = ({navigation}: ConversationalModalProps) => {
   const [imageAssets, setImageAssets] = React.useState<any>({});
   const textInputRef = React.useRef<TextInput>(null);
   const [selectOptionItem, setSelectOptionItem] = React.useState<number>();
-  const [booksModal, setBooksModal] = React.useState(false);
-  const [selectBook, setSelectBook] = React.useState<number>();
   const [liveModal, setLiveModal] = React.useState(false);
-  const [linkUrl, setLinkUrl] = React.useState('');
+  const [liveInfo, setLiveInfo] = React.useState<any>();
 
   const [createChartInfo, setCreateChatInfo] = React.useState();
   const [createMessageInfo, setCreateMessageInfo] =
@@ -167,6 +186,9 @@ const ConversationalModal = ({navigation}: ConversationalModalProps) => {
   const backgroundColor = useSharedValue('rgba(219, 177, 98, 1)');
   const opacityDown = useSharedValue(0.2);
   const letsBorderAnimationValue = useSharedValue(23);
+
+  const {data: userFaceDown} = useGetFaceDownQuery({});
+  // console.log(userFaceDown?.data, 'userFaceDown');
 
   const handleOpen = () => {
     setConversationalModal(true);
@@ -207,7 +229,7 @@ const ConversationalModal = ({navigation}: ConversationalModalProps) => {
       isLive ? (isTablet() ? '16.8%' : '10.5%') : isSmall() ? '0%' : '0.4%',
       {duration: 200},
     );
-    marginBottom.value = withTiming(65, {duration: 200});
+    // marginBottom.value = withTiming(65, {duration: 200});
     borderRadius.value = withTiming(100, {duration: 200});
     backgroundColor.value = withTiming('rgba(219, 177, 98, 1)', {
       duration: 200,
@@ -494,6 +516,34 @@ const ConversationalModal = ({navigation}: ConversationalModalProps) => {
   const handleCreateNewChat = React.useCallback(
     (data: any) => {
       const formData = new FormData();
+      if (createChartInfo?.chatId) {
+        formData.append('chatId', createChartInfo?.chatId);
+        if (data?.image) {
+          formData.append('image', data?.image);
+        }
+        if (data?.audio) {
+          formData.append('audio', data.audio);
+        }
+        if (data?.text) {
+          formData.append('text', data?.text);
+        }
+        if (data?.path) {
+          formData.append('path', data?.path);
+        }
+        // console.log(formData);
+        createMessage(formData).then(ms => {
+          handleClose();
+          console.log(ms);
+          navigation?.navigate('FaceDownConversation', {
+            data: {
+              id: createChartInfo?.chatId,
+              facedown: userFaceDown?.data?.find(
+                i => i.chatId == createChartInfo?.chatId,
+              ),
+            },
+          });
+        });
+      }
       createChat({type: createChartInfo?.type || 'public'}).then(res => {
         // console.log(res);
         if (res?.data?.data?._id) {
@@ -542,6 +592,49 @@ const ConversationalModal = ({navigation}: ConversationalModalProps) => {
     [createChartInfo, createMessageInfo],
   );
 
+  const [createLive] = useCreateLiveMutation();
+
+  const handleCreateLive = React.useCallback(async () => {
+    // console.log(liveInfo?.name);
+    if (!selectBook?._id) return Alert.alert('Please Select the book');
+    if (!liveInfo?.name) return Alert.alert('Please give a live name');
+    const chatRes = await createChat({type: 'public'});
+    // console.log(selectBook);
+
+    if (chatRes?.data?.data?._id) {
+      const createdLive = await createLive({
+        chatId: chatRes?.data?.data?._id,
+        role: 'host',
+        name: liveInfo?.name,
+        book: selectBook?._id,
+      });
+      if (createdLive?.data) {
+        setLiveInfo(null);
+        setSelectBook(null);
+        setLiveModal(false);
+
+        navigation?.navigate('LiveConversation', {
+          live: createdLive?.data?.data?._id,
+        });
+      }
+      if (createdLive?.error) {
+        Alert.alert(
+          'Warring',
+          'You have already live please end th previous session',
+        );
+
+        console.log('Warring', createdLive?.error?.data?.message);
+      }
+    } else {
+      console.log(chatRes?.error?.data?.message);
+    }
+  }, [selectBook, liveInfo]);
+
+  useEffect(() => {
+    setItems(smallItems?.concat(userFaceDown?.data));
+  }, [userFaceDown?.data]);
+  // console.log(createChartInfo);
+  // console.log(selectBook);
   return (
     <>
       <Animated.View
@@ -785,7 +878,7 @@ const ConversationalModal = ({navigation}: ConversationalModalProps) => {
                       opacityStyle,
                     ]}>
                     <View>
-                      {item?.house ? (
+                      {item?.chatId ? (
                         <View
                           style={{
                             width: 50,
@@ -801,7 +894,7 @@ const ConversationalModal = ({navigation}: ConversationalModalProps) => {
                               color: '#FFD40E',
                               textAlign: 'center',
                             }}>
-                            {item.title.slice(0, 1)}
+                            {item?.name?.slice(0, 1)}
                           </Text>
                         </View>
                       ) : (
@@ -814,7 +907,7 @@ const ConversationalModal = ({navigation}: ConversationalModalProps) => {
                             },
                             opacityStyle,
                           ]}
-                          source={item.activeImg}
+                          source={item?.activeImg}
                         />
                       )}
                     </View>
@@ -831,7 +924,7 @@ const ConversationalModal = ({navigation}: ConversationalModalProps) => {
                         },
                         opacityStyle,
                       ]}>
-                      {item.title}
+                      {item?.title || item?.name}
                     </Animated.Text>
                   )}
                 </TouchableOpacity>
@@ -839,7 +932,7 @@ const ConversationalModal = ({navigation}: ConversationalModalProps) => {
               customAnimation={animationStyle1}
             />
             <Carousel
-              // loop={false}
+              loop={false}
               width={itemSize}
               height={itemSize}
               style={{
@@ -862,7 +955,7 @@ const ConversationalModal = ({navigation}: ConversationalModalProps) => {
                   onPress={async () => {
                     if (item.name === 'Share photo') {
                       // handleImagePick('camera');
-                      setImageModal(!imageModal);
+                      setImageModal(true);
                       setConversationalModal(false);
                     }
                     if (item.name === 'Share Books') {
@@ -883,8 +976,10 @@ const ConversationalModal = ({navigation}: ConversationalModalProps) => {
                       setConversationalModal(false);
                     }
                     if (item.name === 'Join your room') {
+                      // setLiveModal(true);
                       setConversationalModal(false);
-                      setLiveModal(!liveModal);
+                      // setBooksModal(true);
+                      navigation?.navigate('CreateNewRoom');
                     }
                     if (item.name === 'New Face Dwn') {
                       navigation?.navigate('CreateFaceDown');
@@ -1171,12 +1266,15 @@ const ConversationalModal = ({navigation}: ConversationalModalProps) => {
               onChangeText={text => {
                 setCreateMessageInfo({text});
               }}
-              placeholderTextColor={colors.textColor.neutralColor}
+              placeholderTextColor={colors.textColor.palaceHolderColor}
               style={{
-                backgroundColor: isDark ? colors.whiteDark : '#F1F1F1',
+                color: colors.textColor.normal,
+                backgroundColor: colors.bg,
                 // backgroundColor : colors.whiteDark,
                 borderRadius: 100,
                 paddingHorizontal: 15,
+                borderWidth: 1,
+                borderColor: colors.secondaryColor,
                 paddingVertical: 10,
                 flex: 1,
               }}
@@ -1206,216 +1304,103 @@ const ConversationalModal = ({navigation}: ConversationalModalProps) => {
         </View>
       </ModalOfBottom>
       {/*======================== live setup modal =================== */}
-      <ModalOfBottom
-        modalVisible={liveModal}
-        setModalVisible={setLiveModal}
-        // backButton
-        containerColor={colors.bg}>
-        <View
-          // showsVerticalScrollIndicator={false}
-          // keyboardShouldPersistTaps="always"
-          style={{
-            gap: 25,
-          }}>
-          <Text
-            style={{
-              fontFamily: font.PoppinsSemiBold,
-              fontSize: 20,
-              color: colors.textColor.secondaryColor,
-              // marginBottom: 10,
-            }}>
-            Live setup
-          </Text>
+      {liveModal && (
+        <ModalOfBottom
+          modalVisible={liveModal}
+          setModalVisible={setLiveModal}
+          // backButton
+          // ios-
+          containerColor={colors.bg}>
           <View
             style={{
-              backgroundColor: isDark
-                ? colors.neutralColor
-                : colors.gray.variant,
-              paddingHorizontal: 20,
-              paddingVertical: 10,
-              borderRadius: 50,
-              flexDirection: 'row',
-              gap: 15,
+              gap: 25,
             }}>
-            <Image
+            <Text
               style={{
-                width: 24,
-                height: 24,
-                resizeMode: 'contain',
-              }}
-              source={
-                isDark
-                  ? require('../../../assets/icons/modalIcons/earthBlack.png')
-                  : require('../../../assets/icons/modalIcons/earthyGray.png')
-              }
-            />
+                fontFamily: font.PoppinsSemiBold,
+                fontSize: 20,
+                color: colors.textColor.secondaryColor,
+                // marginBottom: 10,
+              }}>
+              Room setup
+            </Text>
+
             <View>
-              <Text
+              <View
                 style={{
-                  fontFamily: font.PoppinsSemiBold,
-                  fontSize: 14,
-                  color: colors.textColor.neutralColor,
+                  gap: 15,
                 }}>
-                Public
-              </Text>
-              <Text
-                style={{
-                  fontFamily: font.Poppins,
-                  fontSize: 12,
-                  color: colors.textColor.neutralColor,
-                }}>
-                Everyone can join this room
-              </Text>
+                <Text
+                  style={{
+                    fontFamily: font.Poppins,
+                    fontSize: 14,
+                    color: '#A1A1A1',
+                  }}>
+                  Add title
+                </Text>
+                <TextInput
+                  value={liveInfo?.name}
+                  placeholderTextColor={colors.textColor.palaceHolderColor}
+                  style={{
+                    color: colors.textColor.normal,
+                    fontFamily: font.Poppins,
+                    backgroundColor: colors.secondaryColor,
+                    borderRadius: 100,
+                    fontSize: 14,
+                    paddingHorizontal: 20,
+                    height: 56,
+                  }}
+                  onChangeText={text =>
+                    setLiveInfo({
+                      name: text,
+                    })
+                  }
+                  placeholder="title"
+                />
+              </View>
             </View>
-          </View>
-          <View>
             <View
               style={{
                 gap: 15,
+                // marginHorizontal: '4%',
+                // marginVertical: 10,
               }}>
               <Text
                 style={{
                   fontFamily: font.Poppins,
                   fontSize: 14,
                   color: '#A1A1A1',
+                  paddingLeft: 10,
                 }}>
-                Add title
+                Share content
               </Text>
-              <TextInput
-                value="Asadullah calling live"
-                placeholderTextColor={colors.textColor.light}
-                style={{
-                  fontFamily: font.Poppins,
-                  backgroundColor: colors.secondaryColor,
-                  borderRadius: 100,
-                  fontSize: 14,
-                  paddingHorizontal: 20,
-                  height: 56,
-                  color: colors.textColor.neutralColor,
-                }}
-                placeholder="type "
-              />
-            </View>
-          </View>
-          <View
-            style={{
-              gap: 15,
-              // marginHorizontal: '4%',
-              // marginVertical: 10,
-            }}>
-            <Text
-              style={{
-                fontFamily: font.Poppins,
-                fontSize: 14,
-                color: '#A1A1A1',
-                paddingLeft: 10,
-              }}>
-              Share content
-            </Text>
 
-            {linkUrl ? (
-              <LinkPreview
-                text={linkUrl}
-                enableAnimation
-                renderLinkPreview={({
-                  aspectRatio,
-                  containerWidth,
-                  previewData,
-                }) => {
-                  // console.log(previewData);
-                  return (
-                    <>
-                      {previewData?.image ? (
-                        <View
-                          style={{
-                            width: '90%',
-                            height: height * 0.1,
-                            backgroundColor: previewData?.title
-                              ? colors.secondaryColor
-                              : colors.white,
-                            borderRadius: 15,
-
-                            flexDirection: 'row',
-                            // paddingHorizontal: '4%',
-                            gap: 10,
-                            alignSelf: 'center',
-                          }}>
-                          {previewData?.image && (
-                            <Image
-                              source={{uri: previewData?.image?.url}}
-                              style={{
-                                width: width * 0.27,
-                                height: height * 0.1,
-                                borderRadius: 15,
-                              }}
-                            />
-                          )}
-                          <View
-                            style={{
-                              width: width * 0.45,
-                              height: '100%',
-                              // alignItems: 'center',
-                              justifyContent: 'center',
-                            }}>
-                            <Text
-                              style={{
-                                fontFamily: font.PoppinsSemiBold,
-                                fontSize: 14,
-                                color: colors.textColor.primaryColor,
-                                marginTop: -15,
-                              }}
-                              numberOfLines={1}>
-                              {previewData?.title}
-                            </Text>
-
-                            <Text
-                              numberOfLines={1}
-                              style={{
-                                marginTop: 10,
-                                fontFamily: font.Poppins,
-                                fontSize: 10,
-                                color: colors.textColor.primaryColor,
-                              }}>
-                              {previewData?.link}
-                            </Text>
-                          </View>
-                          {/* <Text>{previewData?.link}</Text> */}
-                          {/* {!previewData?.link && <Text>None</Text>} */}
-                        </View>
-                      ) : (
-                        <ActivityIndicator />
-                      )}
-                    </>
-                  );
-                }}
-              />
-            ) : (
               <TouchableOpacity activeOpacity={0.8}>
-                <Image
-                  resizeMode="stretch"
-                  style={{
-                    borderRadius: 24,
+                {selectBook && (
+                  <Image
+                    resizeMode="stretch"
+                    style={{
+                      borderRadius: 24,
 
-                    height: 150,
-                    width: 120,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}
-                  source={
-                    selectBook
-                      ? selectBook
-                      : require('../../../assets/tempAssets/book.jpg')
-                  }
-                />
+                      height: 150,
+                      width: 120,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}
+                    source={{
+                      uri: makeImage(selectBook?.bookImage),
+                    }}
+                  />
+                )}
               </TouchableOpacity>
-            )}
 
-            <View
-              style={{
-                flexDirection: 'row',
-                gap: 10,
-              }}>
-              <TextInput
+              <View
+                style={{
+                  flexDirection: 'row',
+                  gap: 10,
+                  paddingHorizontal: 10,
+                }}>
+                {/* <TextInput
                 placeholder="shear url/link"
                 onChangeText={text => setLinkUrl(text)}
                 style={{
@@ -1429,22 +1414,24 @@ const ConversationalModal = ({navigation}: ConversationalModalProps) => {
                   color: colors.textColor.neutralColor,
                 }}
                 // defaultValue="write image /book/url link"
-              />
-              <TouchableOpacity
-                onPress={() => {
-                  setBooksModal(true);
-                }}
-                activeOpacity={0.9}
-                style={{
-                  height: 50,
-                  width: 50,
-                  backgroundColor: colors.secondaryColor,
-                  borderRadius: 100,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
-                <SvgXml
-                  xml={`<svg width="32" height="28" viewBox="0 0 32 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+              /> */}
+                <TouchableOpacity
+                  onPress={() => {
+                    setBooksModal(true);
+                    setLiveModal(false);
+                    setConversationalModal(false);
+                  }}
+                  activeOpacity={0.9}
+                  style={{
+                    height: 50,
+                    width: 50,
+                    backgroundColor: colors.secondaryColor,
+                    borderRadius: 100,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}>
+                  <SvgXml
+                    xml={`<svg width="32" height="28" viewBox="0 0 32 28" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g clip-path="url(#clip0_771_5364)">
 <path d="M19.7831 9H16.4974H13.0289C12.1944 9.00141 11.5172 9.61924 11.5117 10.3842V18.6158C11.5172 19.3807 12.1944 19.9985 13.0289 19.9999H19.7874C19.973 20.0025 20.1519 19.9369 20.2845 19.8179C20.4111 19.6987 20.4818 19.539 20.4817 19.3727V9.64035C20.4809 9.28698 20.1686 9.00072 19.7831 9ZM16.786 9.52381H18.4645V11.9805L17.8688 11.1096C17.8447 11.0728 17.811 11.0419 17.7708 11.0198C17.6355 10.9454 17.46 10.9856 17.3788 11.1096L16.786 11.9765V9.52381ZM12.0903 10.3842C12.0926 9.90988 12.5115 9.52597 13.0289 9.52381H16.2145V12.1952C16.2038 12.4079 16.3494 12.6008 16.5703 12.6666C16.8217 12.736 17.0474 12.5868 17.1817 12.3903L17.626 11.7356L18.0703 12.3903C18.2031 12.5841 18.4288 12.7334 18.6874 12.6666C18.9072 12.6011 19.0525 12.4095 19.0431 12.1978V9.53035H19.7874C19.8533 9.53107 19.9066 9.57989 19.9074 9.64035V17.2354C19.8677 17.2292 19.8276 17.2262 19.7874 17.2264H13.0289C12.688 17.2263 12.3572 17.332 12.0903 17.5263V10.3842ZM19.9074 18.3565L13.3203 18.363C13.1625 18.363 13.0346 18.4803 13.0346 18.6249C13.0346 18.7696 13.1625 18.8868 13.3203 18.8868L19.9074 18.8803V19.3674C19.9077 19.3967 19.8954 19.425 19.8731 19.446C19.8502 19.4664 19.8193 19.4777 19.7874 19.4774H13.0289C12.5101 19.4774 12.0896 19.0919 12.0896 18.6164C12.0896 18.1409 12.5101 17.7554 13.0289 17.7554H19.7874C19.8533 17.7561 19.9066 17.805 19.9074 17.8654V18.3565Z" fill="${colors.textColor.normal}"/>
 </g>
@@ -1479,9 +1466,9 @@ const ConversationalModal = ({navigation}: ConversationalModalProps) => {
 </defs>
 </svg>
 `}
-                />
-              </TouchableOpacity>
-              {/* <TouchableOpacity
+                  />
+                </TouchableOpacity>
+                {/* <TouchableOpacity
               activeOpacity={0.9}
               style={{
                 height: 50,
@@ -1503,183 +1490,142 @@ const ConversationalModal = ({navigation}: ConversationalModalProps) => {
 `}
               />
             </TouchableOpacity> */}
+              </View>
             </View>
+            <NormalButton
+              onPress={() => {
+                handleCreateLive();
+                // setLiveModal(false);
+                // navigation?.navigate('LiveConversation');
+              }}
+              title="Start Room"
+            />
           </View>
-          <NormalButton
-            onPress={() => {
-              setLiveModal(false);
-              navigation?.navigate('LiveConversation');
-            }}
-            title="Start Live"
-          />
-        </View>
-      </ModalOfBottom>
+        </ModalOfBottom>
+      )}
 
-      {/*===================== book selection modal  =====================================*/}
-      <CustomModal
-        modalVisible={booksModal}
-        setModalVisible={setBooksModal}
-        height={'85%'}
-        containerColor={colors.bg}
-        Radius={20}
-        appearance
-        backButton>
-        <>
-          <View
-            style={{
-              paddingHorizontal: '4%',
-              marginTop: 25,
-            }}>
+      {/* book selection modal  */}
+      {booksModal && (
+        <CustomModal
+          modalVisible={booksModal}
+          setModalVisible={setBooksModal}
+          height={'85%'}
+          containerColor={colors.bg}
+          Radius={20}
+          // slide="slide"
+          appearance
+          backButton>
+          <>
             <View
               style={{
-                backgroundColor: colors.search,
-                flexDirection: 'row',
-                alignItems: 'center',
-                gap: 10,
-                height: 48,
-                paddingHorizontal: 20,
-                borderRadius: 50,
+                paddingHorizontal: '4%',
+                marginTop: 25,
               }}>
-              <SvgXml
-                xml={`<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <View
+                style={{
+                  backgroundColor: colors.search,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  gap: 10,
+                  height: 48,
+                  paddingHorizontal: 20,
+                  borderRadius: 50,
+                }}>
+                <SvgXml
+                  xml={`<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M12.6267 11.5129L16 14.8861L14.8861 16L11.5129 12.6267C10.3 13.5971 8.76177 14.1776 7.08881 14.1776C3.17579 14.1776 0 11.0018 0 7.08881C0 3.17579 3.17579 0 7.08881 0C11.0018 0 14.1776 3.17579 14.1776 7.08881C14.1776 8.76177 13.5971 10.3 12.6267 11.5129ZM11.0465 10.9284C12.0096 9.93584 12.6023 8.58187 12.6023 7.08881C12.6023 4.04259 10.135 1.57529 7.08881 1.57529C4.04259 1.57529 1.57529 4.04259 1.57529 7.08881C1.57529 10.135 4.04259 12.6023 7.08881 12.6023C8.58187 12.6023 9.93584 12.0096 10.9284 11.0465L11.0465 10.9284Z" fill="${colors.textColor.neutralColor}"/>
 </svg>
 `}
-              />
-              <TextInput
-                style={{flex: 1}}
-                placeholder="Search your books"
-                placeholderTextColor={colors.textColor.neutralColor}
-              />
+                />
+                <TextInput
+                  style={{
+                    color: colors.textColor.normal,
+                    flex: 1,
+                  }}
+                  placeholder="Search your books"
+                  placeholderTextColor={colors.textColor.palaceHolderColor}
+                />
+              </View>
             </View>
-          </View>
-          {/* <View
-            style={{
-              borderBottomWidth: 1,
-              borderBlockColor: 'rgba(217, 217, 217, 1)',
-            }}>
-            <FlatList
-              showsHorizontalScrollIndicator={false}
-              keyboardShouldPersistTaps="always"
-              horizontal
-              contentContainerStyle={{
-                gap: 16,
-                paddingHorizontal: 20,
-                paddingTop: 20,
-                paddingBottom: 15,
+
+            <GridList
+              showsVerticalScrollIndicator={false}
+              containerWidth={width * 0.82}
+              numColumns={2}
+              data={BooksData?.data}
+              columnWrapperStyle={{
+                gap: 20,
+                alignSelf: 'center',
               }}
-              data={TemBooks}
+              contentContainerStyle={{
+                gap: 20,
+                paddingVertical: 20,
+              }}
               renderItem={item => (
-                <>
-                  <TouchableOpacity
-                    onPress={() => {
-                      setSelectOptionItem(item.index);
-                    }}
+                <TouchableOpacity
+                  onPress={() => {
+                    setBooksModal(false);
+                    setSelectBook(item?.item);
+                    setLiveModal(true);
+                  }}
+                  style={{
+                    // elevation: 2,
+                    // backgroundColor: colors.bg,
+                    // padding: 2,
+                    borderRadius: 24,
+                    // height: height * 0.243,
+                    // alignItems : "center",
+                    // justifyContent : "center",
+                  }}>
+                  <View
                     style={{
-                      backgroundColor:
-                        selectOptionItem === item.index
-                          ? colors.primaryColor
-                          : colors.secondaryColor,
-                      height: 35,
-                      paddingHorizontal: 20,
-                      // paddingVertical: 5,
+                      elevation: 1,
+                      padding: 3,
+                    }}>
+                    <Image
+                      resizeMode="stretch"
+                      style={{
+                        height: height * 0.24,
+                        width: width * 0.41,
+                        borderRadius: 24,
+                        borderWidth: 2,
+                        borderColor: colors.bg,
+                      }}
+                      source={{
+                        uri: makeImage(item.item.bookImage),
+                      }}
+                    />
+                  </View>
+                  <View
+                    style={{
+                      marginTop: 10,
                       alignItems: 'center',
-                      justifyContent: 'center',
-                      borderRadius: 50,
+                      gap: 5,
+                      maxWidth: width * 0.41,
                     }}>
                     <Text
                       style={{
-                        color:
-                          selectOptionItem === item.index
-                            ? colors.textColor.white
-                            : colors.textColor.light,
-                        fontSize: 12,
+                        color: colors.textColor.light,
+                        fontSize: 14,
                         fontFamily: font.PoppinsMedium,
-                        textAlign: 'center',
                       }}>
-                      {item.item.content}
+                      {item.item.name}
                     </Text>
-                  </TouchableOpacity>
-                </>
+                    <Text
+                      style={{
+                        color: colors.textColor.neutralColor,
+                        fontSize: 12,
+                        fontFamily: font.Poppins,
+                      }}>
+                      {item.item.publisher}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
               )}
             />
-          </View> */}
-
-          <GridList
-            showsVerticalScrollIndicator={false}
-            containerWidth={width * 0.82}
-            numColumns={2}
-            data={TemBooks}
-            columnWrapperStyle={{
-              gap: 20,
-              alignSelf: 'center',
-            }}
-            contentContainerStyle={{
-              gap: 20,
-              paddingVertical: 20,
-            }}
-            renderItem={item => (
-              <TouchableOpacity
-                onPress={() => {
-                  setBooksModal(false);
-                  setSelectBook(item?.item.image);
-                  // navigation?.navigate('BookShare', {data: item.item});
-                }}
-                style={{
-                  // elevation: 2,
-                  // backgroundColor: colors.bg,
-                  // padding: 2,
-                  borderRadius: 24,
-                  // height: height * 0.243,
-                  // alignItems : "center",
-                  // justifyContent : "center",
-                }}>
-                <View
-                  style={{
-                    elevation: 1,
-                    padding: 3,
-                  }}>
-                  <Image
-                    resizeMode="stretch"
-                    style={{
-                      height: height * 0.24,
-                      width: width * 0.41,
-                      borderRadius: 24,
-                      borderWidth: 2,
-                      borderColor: colors.bg,
-                    }}
-                    source={item.item.image}
-                  />
-                </View>
-                <View
-                  style={{
-                    marginTop: 10,
-                    alignItems: 'center',
-                    gap: 5,
-                    maxWidth: width * 0.41,
-                  }}>
-                  <Text
-                    style={{
-                      color: colors.textColor.light,
-                      fontSize: 14,
-                      fontFamily: font.PoppinsMedium,
-                    }}>
-                    {item.item.title}
-                  </Text>
-                  <Text
-                    style={{
-                      color: colors.textColor.neutralColor,
-                      fontSize: 12,
-                      fontFamily: font.Poppins,
-                    }}>
-                    {item.item.publisher}
-                  </Text>
-                </View>
-              </TouchableOpacity>
-            )}
-          />
-        </>
-      </CustomModal>
+          </>
+        </CustomModal>
+      )}
     </>
   );
 };

@@ -1,0 +1,23 @@
+{
+  "book": {
+    "_id": "672f052d093190bf94d7a03c",
+    "bookImage": "images/bookImage-1731134765502-95795838.jpg",
+    "bookUrl": "this is url",
+    "category": "integrate",
+    "name": "this is name",
+    "pdf": "pdfs/pdf-1731134765504-545516550.pdf",
+    "publisher": "this is publisher"
+  },
+  "description": "asdfasdf",
+  "image": {
+    "lastModified": 1731243653655,
+    "lastModifiedDate": "2024-11-10T13:00:53.655Z",
+    "name": "1000000031.jpg",
+    "size": 10339,
+    "type": "image/jpeg",
+    "uri": "file:///data/user/0/com.sicsocial/cache/rn_image_picker_lib_temp_dce050b9-2064-4d8f-8abd-b868d73013f8.jpg",
+    "webkitRelativePath": ""
+  },
+  "name": "New asdf",
+  "schedule": "weekly"
+}

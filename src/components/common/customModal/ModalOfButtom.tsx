@@ -18,6 +18,7 @@ type CustomModalProps = {
   backButton?: boolean;
   containerColor?: string;
   backButtonColor?: string;
+  ios?: boolean;
 };
 
 const ModalOfBottom = ({
@@ -27,81 +28,82 @@ const ModalOfBottom = ({
   backButton = false,
   backButtonColor = '',
   containerColor = '',
+  ios,
 }: CustomModalProps) => {
   const {colors, window, font} = useStyles();
 
   return (
     <>
-      <KeyboardAvoidingView>
-        <Dialog
-          visible={modalVisible}
-          bottom={true}
-          width={window.width}
-          containerStyle={{
-            //   paddingBottom: 10,
-            // borderRadius: 10,
-            borderTopLeftRadius: 10,
-            borderTopRightRadius: 10,
-          }}
-          onDismiss={() => setModalVisible(false)}
-          // panDirection={Dialog.directions.DOWN}
-        >
-          <View
-            style={{
-              backgroundColor: containerColor ? containerColor : colors.bg,
+      {modalVisible && (
+        <KeyboardAvoidingView>
+          <Dialog
+            // useSafeArea
+            overlayBackgroundColor="rgba(0,0,0,0.3)"
+            visible={modalVisible}
+            bottom={true}
+            width={window.width}
+            containerStyle={{
+              //   paddingBottom: 10,
               // borderRadius: 10,
-              padding: 20,
-              // justifyContent: 'flex-start',
-              // alignItems: 'center',
-            }}>
-            {backButton && (
-              <TouchableOpacity
-                onPressOut={() => {
-                  setTimeout(() => {
-                    setModalVisible(false);
-                  }, 50);
-                }}
-                style={{
-                  position: 'absolute',
-                  right: 8,
-                  top: 8,
-                  zIndex: 999,
-                }}>
-                <View
-                  style={{
-                    width: 30,
-                    height: 30,
-                    // backgroundColor: globalStyle.primary,
-                    //   backgroundColor: 'gray',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    borderRadius: 100,
-                  }}>
-                  <AntDesign
-                    name="close"
-                    size={24}
-                    color={
-                      backButtonColor
-                        ? backButtonColor
-                        : colors.textColor.normal
-                    }
-                  />
-                </View>
-              </TouchableOpacity>
-            )}
-
-            <ScrollView
-              showsVerticalScrollIndicator={false}
-              showsHorizontalScrollIndicator={false}
-              keyboardShouldPersistTaps="always"
-              contentContainerStyle={{
-                paddingVertical: Platform.OS === 'ios' ? 10 : 0,
+              borderTopLeftRadius: 10,
+              borderTopRightRadius: 10,
+            }}
+            onDismiss={() => setModalVisible(false)}
+            // panDirection={Dialog.directions.DOWN}
+          >
+            <View
+              style={{
+                backgroundColor: containerColor ? containerColor : colors.bg,
+                // borderRadius: 10,
+                padding: 20,
+                // justifyContent: 'flex-start',
+                // alignItems: 'center',
               }}>
-              {children}
-            </ScrollView>
-          </View>
-        </Dialog>
-      </KeyboardAvoidingView>
+              {backButton && (
+                <TouchableOpacity
+                  onPressOut={() => {
+                    setTimeout(() => {
+                      setModalVisible(false);
+                    }, 50);
+                  }}
+                  style={{
+                    position: 'absolute',
+                    right: 8,
+                    top: 8,
+                    zIndex: 999,
+                  }}>
+                  <View
+                    style={{
+                      width: 30,
+                      height: 30,
+                      // backgroundColor: globalStyle.primary,
+                      //   backgroundColor: 'gray',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      borderRadius: 100,
+                    }}>
+                    <AntDesign
+                      name="close"
+                      size={24}
+                      color={colors.btn.variantOne}
+                    />
+                  </View>
+                </TouchableOpacity>
+              )}
+
+              <ScrollView
+                showsVerticalScrollIndicator={false}
+                showsHorizontalScrollIndicator={false}
+                keyboardShouldPersistTaps="always"
+                contentContainerStyle={{
+                  paddingVertical: Platform.OS === 'ios' ? 10 : 0,
+                }}>
+                {children}
+              </ScrollView>
+            </View>
+          </Dialog>
+        </KeyboardAvoidingView>
+      )}
     </>
   );
 };

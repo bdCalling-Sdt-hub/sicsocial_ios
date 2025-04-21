@@ -10,6 +10,7 @@ export const homeSlices = api.injectEndpoints({
       providesTags: [
         'news_feed',
         'chat',
+        'live',
         'message',
         'facedown',
         'friend',
@@ -21,4 +22,5 @@ export const homeSlices = api.injectEndpoints({
   }),
 });
 
-export const {useGetNewsFeetQuery} = homeSlices;
+export const {useGetNewsFeetQuery, usePrefetch: useNewsFeetPrefetch} =
+  homeSlices;

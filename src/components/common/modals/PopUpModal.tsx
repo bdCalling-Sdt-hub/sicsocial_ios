@@ -1,14 +1,21 @@
-import React, { forwardRef, useImperativeHandle, useState } from 'react';
-import { Dimensions, Pressable, StyleSheet, Text, View } from 'react-native';
+import React, {forwardRef, useImperativeHandle, useState} from 'react';
+import {
+  Dimensions,
+  Pressable,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
 import LottieView from 'lottie-react-native';
-import { Modal } from 'react-native-ui-lib';
-import { FontSize } from '../../../utils/utils';
+import {Modal} from 'react-native-ui-lib';
+import {FontSize} from '../../../utils/utils';
 
 // Define the ref object type
 export interface PopUpModalRef {
-  open: (data: PopUpModalProps) => void;
-  close: () => void;
+  open?: (data: PopUpModalProps) => any;
+  close?: () => any;
 }
 
 // Define the component's props type
@@ -16,11 +23,17 @@ interface PopUpModalProps {
   title?: string;
   icon?: JSX.Element;
   lottify?: string;
+  lottifyColor?: string;
+  button?: boolean;
+  onPress?: () => void;
   content?: string;
   buttonColor?: string;
   buttonText?: string;
+  buttonTextColor?: string;
+  buttonStyle?: any;
   fullWidth?: boolean;
   fullHeight?: boolean;
+  disable?: boolean;
   direction?: 'down' | 'up' | 'left' | 'right';
 }
 
@@ -47,12 +60,12 @@ const PopUpModal = forwardRef<PopUpModalRef, PopUpModalProps>(
         animationType="fade"
         overlayBackgroundColor="rgba(0, 0, 0, 0.2)" // Semi-transparent background
         visible={visible}
-        onDismiss={() => setVisible(false)}
-        onBackgroundPress={() => setVisible(false)} // Close modal on background press
+        onDismiss={() => !modalContent?.disable && setVisible(false)}
+        onBackgroundPress={() => !modalContent?.disable && setVisible(false)} // Close modal on background press
       >
         <Pressable
           onPress={() => {
-            setVisible(false);
+            !modalContent?.disable && setVisible(false);
           }}
           style={styles.modalContainer}>
           <View style={styles.modalContent}>
@@ -76,19 +89,22 @@ const PopUpModal = forwardRef<PopUpModalRef, PopUpModalProps>(
             {modalContent?.content && (
               <Text style={styles.modalText}>{modalContent.content}</Text>
             )}
-            {/* <View style={styles.buttonContainer}>
-              <TouchableOpacity
-                onPress={() => setVisible(false)}
-                style={[
-                  styles.button,
-                  { backgroundColor: modalContent?.buttonColor  },
-                ]}
-              >
-                <Text style={styles.buttonText}>
-                  {modalContent?.buttonText || 'Okay'}
-                </Text>
-              </TouchableOpacity>
-            </View> */}
+            {modalContent?.button && (
+              <View style={styles.buttonContainer}>
+                <TouchableOpacity
+                  onPress={() =>
+                    modalContent?.onPress && modalContent?.onPress()
+                  }
+                  style={[
+                    styles.button,
+                    {backgroundColor: modalContent?.buttonColor},
+                  ]}>
+                  <Text style={styles.buttonText}>
+                    {modalContent?.buttonText || 'Okay'}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            )}
           </View>
         </Pressable>
       </Modal>

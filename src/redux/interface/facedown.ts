@@ -1,4 +1,4 @@
-import { IFetchStatus } from "./main";
+import {IFetchStatus} from './main';
 
 export interface IFacedown {
   _id: string;
@@ -10,11 +10,14 @@ export interface IFacedown {
   description: string;
   schedule: string;
   createdAt: Date;
+  chatId: string;
   updatedAt: Date;
   __v: 0;
 }
 
-
 export interface IFacedowns extends IFetchStatus {
-  data: IFacedown[]
+  data: IFacedown[];
+}
+export interface IFacedownSingle extends IFetchStatus {
+  data: IFacedown;
 }

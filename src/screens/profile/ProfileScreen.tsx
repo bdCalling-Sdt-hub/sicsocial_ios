@@ -3,38 +3,90 @@ import {
   FlatList,
   Image,
   Linking,
+  RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
-  ToastAndroid,
   TouchableOpacity,
   View,
 } from 'react-native';
+import {height, isSmall, makeImage} from '../../utils/utils';
 import {useContextApi, useStyles} from '../../context/ContextApi';
-import {isSmall, makeImage} from '../../utils/utils';
+import {
+  useGetFaceDownOthersQuery,
+  useGetFaceDownQuery,
+} from '../../redux/apiSlices/facedwonSlice';
 
-import Clipboard from '@react-native-clipboard/clipboard';
-import {format} from 'date-fns';
+import ConversationalCard from '../../components/common/ConversationalCard';
+import {FlashList} from '@shopify/flash-list';
+import {NavigProps} from '../../interfaces/NaviProps';
 import React from 'react';
 import {SvgXml} from 'react-native-svg';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import ConversationalCard from '../../components/common/ConversationalCard';
-import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
-import {NavigProps} from '../../interfaces/NaviProps';
-import {useGetUserProfileQuery} from '../../redux/apiSlices/authSlice';
-import {useGetFaceDownQuery} from '../../redux/apiSlices/facedwonSlice';
+import {format} from 'date-fns';
+import {useAddMemberMutation} from '../../redux/apiSlices/chatSlices';
+import {useGetDonationQuery} from '../../redux/apiSlices/additionalSlices';
 import {useGetFriendQuery} from '../../redux/apiSlices/friendsSlices';
 import {useGetNewsFeetQuery} from '../../redux/apiSlices/homeSlices';
+import {useGetUserProfileQuery} from '../../redux/apiSlices/authSlice';
+import {useJoinLiveMutation} from '../../redux/apiSlices/liveSlice';
+import {useShearLink} from '../../utils/conentShare';
 
 const ProfileScreen = ({navigation}: NavigProps<null>) => {
-  const {data: newsFeet} = useGetNewsFeetQuery({});
-  const {data: friends} = useGetFriendQuery({});
-  const {data: facedowns} = useGetFaceDownQuery({});
+  const {
+    data: friends,
+    refetch: friendsRefetch,
+    isLoading: friendsLoading,
+  } = useGetFriendQuery({});
+  const {
+    data: facedowns,
+    refetch: facedownsRefetch,
+    isLoading: facedownsLoading,
+  } = useGetFaceDownQuery({});
+
+  const {
+    data: otherFacedowns,
+    refetch: otherFacedownsRefetch,
+    isLoading: otherFacedownsLoading,
+  } = useGetFaceDownOthersQuery({});
+
+  const {
+    data: newsFeet,
+    isLoading: newFeetLoading,
+    refetch: newFeetReFetching,
+  } = useGetNewsFeetQuery({});
+  const {data: donations} = useGetDonationQuery({});
 
   const {data: userProfile} = useGetUserProfileQuery({});
   const [modalVisible, setModalVisible] = React.useState(false);
   const {isLive, setIsLive} = useContextApi();
   const {colors, font} = useStyles();
+  const [createMember, memberResult] = useAddMemberMutation();
+  const [joinLive] = useJoinLiveMutation();
+
+  const renderDonations = () => {
+    if (!donations?.data) return null;
+    return donations.data.map((item, index) => (
+      <ConversationalCard
+        disabled
+        key={index}
+        participants={[]}
+        conversationStyle="donation"
+        conversationTitle={item?.details?.title}
+        conversationSubtitle={item?.details?.content}
+        onDonationShearPress={() =>
+          useShearLink({
+            title: 'Share Donation Link',
+            message: 'Share Donation Link',
+            url: `https://sic.org/donation/`,
+          })
+        }
+        onDonationViewDetailsPress={() =>
+          navigation?.navigate('donation', {data: item})
+        }
+      />
+    ));
+  };
+
   return (
     <View
       style={{
@@ -42,6 +94,18 @@ const ProfileScreen = ({navigation}: NavigProps<null>) => {
         backgroundColor: colors.bg,
       }}>
       <ScrollView
+        refreshControl={
+          <RefreshControl
+            refreshing={newFeetLoading || friendsLoading || facedownsLoading}
+            colors={[colors.primaryColor]}
+            onRefresh={async () => {
+              await newFeetReFetching();
+              await friendsRefetch();
+              await facedownsRefetch();
+              await otherFacedownsRefetch();
+            }}
+          />
+        }
         showsVerticalScrollIndicator={false}
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={{
@@ -194,7 +258,13 @@ const ProfileScreen = ({navigation}: NavigProps<null>) => {
             gap: isSmall() ? 8 : 24,
           }}>
           <TouchableOpacity
-            onPress={() => setModalVisible(!modalVisible)}
+            onPress={() =>
+              useShearLink({
+                title: 'Share',
+                message: 'Share your profile with your friends',
+                url: `https://sic.org/profile/${userProfile?.data?._id}`,
+              })
+            }
             style={{
               backgroundColor: colors.secondaryColor,
               height: 35,
@@ -384,7 +454,9 @@ const ProfileScreen = ({navigation}: NavigProps<null>) => {
               <View style={{gap: 6}}>
                 <TouchableOpacity
                   onPress={() => {
-                    navigation?.navigate('FriendsProfile');
+                    navigation?.navigate('FriendsProfile', {
+                      data: {id: item.item._id},
+                    });
                   }}
                   style={{
                     backgroundColor: colors.secondaryColor,
@@ -395,6 +467,8 @@ const ProfileScreen = ({navigation}: NavigProps<null>) => {
                     borderRadius: 50,
                     padding: 2,
                     position: 'relative',
+                    width: 65,
+                    height: 65,
                   }}>
                   {/* <View
                     style={{
@@ -429,7 +503,7 @@ const ProfileScreen = ({navigation}: NavigProps<null>) => {
                     color: colors.textColor.neutralColor,
                     textAlign: 'center',
                   }}>
-                  {item.item.fullName}{' '}
+                  {item.item.fullName?.slice(0, 8) + '...'}
                 </Text>
               </View>
             )}
@@ -484,7 +558,11 @@ const ProfileScreen = ({navigation}: NavigProps<null>) => {
               paddingRight: 20,
               paddingHorizontal: '5%',
             }}
-            data={facedowns?.data}
+            data={
+              facedowns?.data && otherFacedowns
+                ? [...facedowns?.data, ...otherFacedowns?.data]
+                : facedowns?.data || otherFacedowns?.data || []
+            }
             ListFooterComponent={() => {
               return (
                 <View style={{gap: 6}}>
@@ -526,7 +604,12 @@ const ProfileScreen = ({navigation}: NavigProps<null>) => {
                 {/* {console.log(makeImage(item.item.image))} */}
                 <TouchableOpacity
                   onPress={() => {
-                    navigation?.navigate('FaceDownConversation');
+                    navigation?.navigate('FaceDownConversation', {
+                      data: {
+                        id: item.item.chatId,
+                        facedown: item.item,
+                      },
+                    });
                   }}
                   style={{
                     backgroundColor: colors.secondaryColor,
@@ -577,146 +660,284 @@ const ProfileScreen = ({navigation}: NavigProps<null>) => {
               fontSize: 17,
               color: colors.textColor.primaryColor,
             }}>
-            Chat
+            Room's
           </Text>
-          {/* <TouchableOpacity
+
+          <FlashList
+            showsVerticalScrollIndicator={false}
+            showsHorizontalScrollIndicator={false}
+            estimatedItemSize={height * 0.3}
+            ListEmptyComponent={() => {
+              return (
+                <TouchableOpacity
+                  style={{
+                    marginTop: 40,
+                    padding: 16,
+                    backgroundColor: colors.normal,
+                    borderRadius: 50,
+                    borderWidth: 0.3,
+                    borderColor: colors.textColor.neutralColor,
+                    alignSelf: 'center',
+                    width: '85%',
+                    elevation: 1,
+                  }}>
+                  <Text
+                    style={{
+                      textAlign: 'center',
+                      fontFamily: font.PoppinsSemiBold,
+                      fontSize: 14,
+                      color: colors.textColor.neutralColor,
+                    }}>
+                    No room's record here
+                  </Text>
+                </TouchableOpacity>
+              );
+            }}
+            contentContainerStyle={{
+              paddingBottom: 50,
+            }}
+            data={newsFeet?.data
+              ?.filter(item => item.live)
+              .filter(item => {
+                const alreadyExits = item.participants.filter(
+                  id => id === userProfile?.data?._id,
+                );
+                return alreadyExits;
+              })}
+            renderItem={({item}) => {
+              // console.log(item);
+              return (
+                <ConversationalCard
+                  key={item._id}
+                  conversationStyle="normal"
+                  onPress={() => {
+                    if (item?.facedown?._id) {
+                      if (item?.participants) {
+                        const alreadyExits = item.participants.filter(
+                          id => id === userProfile?.data?._id,
+                        );
+                        if (!alreadyExits) {
+                          createMember({
+                            id: item?._id,
+                            participants: userProfile?.data?._id,
+                          });
+                        }
+                      }
+                      navigation?.navigate('FaceDownConversation', {
+                        data: {id: item?._id, facedown: item?.facedown},
+                      });
+                    } else if (item?.live) {
+                      joinLive({
+                        chatId: item?._id,
+                      }).then(res => {
+                        // console.log(res);
+                        navigation?.navigate('LiveConversation', {
+                          data: {live: item.live?._id},
+                        });
+                      });
+                    } else {
+                      navigation?.navigate('NormalConversation', {
+                        data: {id: item?._id},
+                      });
+                    }
+                  }}
+                  participants={item.participants}
+                  cardStyle={
+                    item?.lastMessage?.book
+                      ? 'shear_book'
+                      : item?.lastMessage?.image
+                      ? 'image'
+                      : 'normal'
+                  }
+                  manyPeople={item.participants.length > 4}
+                  conversationTitle={
+                    item.live
+                      ? 'Room Chat' + item.live.name
+                      : item?.lastMessage?.sender?._id ===
+                        userProfile?.data?._id
+                      ? item?.facedown
+                        ? item?.facedown?.name +
+                          `${
+                            item.lastMessage?.sender?._id ===
+                            userProfile?.data?._id
+                              ? ' You'
+                              : item.lastMessage?.sender?.fullName
+                          }`
+                        : 'You'
+                      : item?.lastMessage?.sender?.fullName
+                  }
+                  conversationSubtitle={
+                    !item?.live
+                      ? item?.lastMessage?.sender?._id ===
+                        userProfile?.data?._id
+                        ? 'send a message'
+                        : ' replied in chat'
+                      : ''
+                  }
+                  item={item}
+                  lastMessageTime={format(new Date(item.updatedAt), 'hh :mm a')}
+                  lastMessage={
+                    item?.lastMessage?.audio
+                      ? 'send an audio message'
+                      : item?.lastMessage?.image
+                      ? 'send an image message'
+                      : item?.lastMessage?.text
+                      ? item?.lastMessage?.text
+                      : item?.lastMessage?.book
+                      ? 'Shear a book'
+                      : 'Start a chat'
+                  }
+                />
+              );
+            }}
+            // estimatedItemSize={600}
+          />
+        </View>
+        <View
           style={{
-            marginTop: 40,
-            padding: 16,
-            backgroundColor: colors.normal,
-            borderRadius: 50,
-            borderWidth: 0.3,
-            borderColor: colors.textColor.neutralColor,
-            alignSelf: 'center',
-            width: '85%',
-            elevation: 1,
+            marginTop: 20,
           }}>
           <Text
             style={{
-              textAlign: 'center',
-              fontFamily: font.PoppinsSemiBold,
-              fontSize: 14,
-              color: colors.textColor.neutralColor,
+              marginHorizontal: '5%',
+              fontFamily: font.PoppinsMedium,
+              fontSize: 17,
+              color: colors.textColor.primaryColor,
             }}>
-            No chat record here
+            Chat
           </Text>
-        </TouchableOpacity> */}
 
-          {newsFeet?.data?.map((item, index) => (
-            <ConversationalCard
-              key={index}
-              conversationStyle="normal"
-              onPress={() => {
-                navigation?.navigate('NormalConversation');
-              }}
-              participants={item.participants}
-              cardStyle={
-                item.participants.length > 4
-                  ? 'three'
-                  : item?.participants.length === 4
-                  ? 'four'
-                  : item?.participants.length === 3
-                  ? 'three'
-                  : item?.participants.length === 2
-                  ? 'two'
-                  : 'single'
-              }
-              manyPeople={item.participants.length > 4 ? true : false}
-              conversationTitle={
-                item.lastMessage.sender._id === userProfile?.data?._id
-                  ? 'You'
-                  : userProfile?.data?.fullName
-              }
-              conversationSubtitle={
-                item.lastMessage.sender._id === userProfile?.data?._id
-                  ? 'send a message'
-                  : 'Reply to the message'
-              }
-              lastMessageTime={format(new Date(item.updatedAt), 'hh :mm a')}
-              lastMessage={
-                item.lastMessage.audio
-                  ? 'send a audio message'
-                  : item.lastMessage.image
-                  ? 'send an image message'
-                  : item.lastMessage.text
-                  ? item.lastMessage.text
-                  : item.lastMessage.path
-                  ? 'send a book'
-                  : 'Start a chat'
-              }
-            />
-          ))}
+          <FlashList
+            showsVerticalScrollIndicator={false}
+            showsHorizontalScrollIndicator={false}
+            estimatedItemSize={height * 0.3}
+            ListEmptyComponent={() => {
+              return (
+                <TouchableOpacity
+                  style={{
+                    marginTop: 40,
+                    padding: 16,
+                    backgroundColor: colors.normal,
+                    borderRadius: 50,
+                    borderWidth: 0.3,
+                    borderColor: colors.textColor.neutralColor,
+                    alignSelf: 'center',
+                    width: '85%',
+                    elevation: 1,
+                  }}>
+                  <Text
+                    style={{
+                      textAlign: 'center',
+                      fontFamily: font.PoppinsSemiBold,
+                      fontSize: 14,
+                      color: colors.textColor.neutralColor,
+                    }}>
+                    No chat's record here
+                  </Text>
+                </TouchableOpacity>
+              );
+            }}
+            contentContainerStyle={{
+              paddingBottom: 50,
+            }}
+            data={newsFeet?.data
+              ?.filter(item => !item.live)
+              .filter(item => {
+                const alreadyExits = item.participants.filter(
+                  id => id === userProfile?.data?._id,
+                );
+                return alreadyExits;
+              })}
+            renderItem={({item}) => {
+              // console.log(item);
+              return (
+                <ConversationalCard
+                  key={item._id}
+                  conversationStyle="normal"
+                  onPress={() => {
+                    if (item?.facedown?._id) {
+                      if (item?.participants) {
+                        const alreadyExits = item.participants.filter(
+                          id => id === userProfile?.data?._id,
+                        );
+                        if (!alreadyExits) {
+                          createMember({
+                            id: item?._id,
+                            participants: userProfile?.data?._id,
+                          });
+                        }
+                      }
+                      navigation?.navigate('FaceDownConversation', {
+                        data: {id: item?._id, facedown: item?.facedown},
+                      });
+                    } else if (item?.live) {
+                      joinLive({
+                        chatId: item?._id,
+                      }).then(res => {
+                        // console.log(res);
+                        navigation?.navigate('LiveConversation', {
+                          data: {live: item.live},
+                        });
+                      });
+                    } else {
+                      navigation?.navigate('NormalConversation', {
+                        data: {id: item?._id},
+                      });
+                    }
+                  }}
+                  participants={item.participants}
+                  cardStyle={
+                    item?.lastMessage?.book
+                      ? 'shear_book'
+                      : item?.lastMessage?.image
+                      ? 'image'
+                      : 'normal'
+                  }
+                  manyPeople={item.participants.length > 4}
+                  conversationTitle={
+                    item.live
+                      ? 'Live Chat'
+                      : item?.lastMessage?.sender?._id ===
+                        userProfile?.data?._id
+                      ? item?.facedown
+                        ? item?.facedown?.name +
+                          `${
+                            item.lastMessage?.sender?._id ===
+                            userProfile?.data?._id
+                              ? ' You'
+                              : item.lastMessage?.sender?.fullName
+                          }`
+                        : 'You'
+                      : item?.lastMessage?.sender?.fullName
+                  }
+                  conversationSubtitle={
+                    !item?.live
+                      ? item?.lastMessage?.sender?._id ===
+                        userProfile?.data?._id
+                        ? 'send a message'
+                        : ' replied in chat'
+                      : ''
+                  }
+                  item={item}
+                  lastMessageTime={format(new Date(item.updatedAt), 'hh :mm a')}
+                  lastMessage={
+                    item?.lastMessage?.audio
+                      ? 'send an audio message'
+                      : item?.lastMessage?.image
+                      ? 'send an image message'
+                      : item?.lastMessage?.text
+                      ? item?.lastMessage?.text
+                      : item?.lastMessage?.book
+                      ? 'Shear a book'
+                      : 'Start a chat'
+                  }
+                />
+              );
+            }}
+            // estimatedItemSize={600}
+          />
         </View>
       </ScrollView>
-
-      <ModalOfBottom
-        key={'modal'}
-        modalVisible={modalVisible}
-        setModalVisible={setModalVisible}
-        backButton
-        containerColor={colors.bg}>
-        <View>
-          <Text
-            style={{
-              textAlign: 'center',
-              fontSize: 20,
-              fontFamily: font.PoppinsSemiBold,
-              color: colors.textColor.neutralColor,
-            }}>
-            Share
-          </Text>
-          <TouchableOpacity
-            style={{}}
-            onPress={() => {
-              Linking.openURL(
-                `https://192.168.12.202:5000/profile/672886329f6598ff131b1960`,
-              );
-            }}>
-            <Text
-              style={{
-                fontFamily: font.Poppins,
-                fontSize: 12,
-                color: colors.blue,
-                marginTop: '10%',
-              }}>
-              9dc7-103-174-189-193.ngrok-free.app
-            </Text>
-          </TouchableOpacity>
-          <View
-            style={{
-              justifyContent: 'center',
-              alignItems: 'center',
-              marginTop: '10%',
-            }}>
-            <TouchableOpacity
-              onPress={() => {
-                Clipboard.setString(
-                  `http://192.168.12.202:5000/profile/672886329f6598ff131b1960`,
-                );
-                ToastAndroid.showWithGravity(
-                  `link copy to http://192.168.12.202:5000/profile/672886329f6598ff131b1960`,
-                  ToastAndroid.SHORT,
-                  ToastAndroid.CENTER,
-                );
-              }}
-              style={{
-                flexDirection: 'row',
-                gap: 8,
-                width: 84,
-                justifyContent: 'center',
-                alignItems: 'center',
-                padding: 8,
-                elevation: 2,
-                backgroundColor: colors.white,
-                borderRadius: 100,
-                marginBottom: 10,
-              }}>
-              <MaterialCommunityIcons name="content-copy" size={15} />
-              <Text>Copy</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </ModalOfBottom>
 
       <View
         style={{

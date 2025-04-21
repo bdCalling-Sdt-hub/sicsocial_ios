@@ -6,24 +6,34 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {lStorage, removeStorageToken} from '../../utils/utils';
 import {useContextApi, useStyles} from '../../context/ContextApi';
+import {lStorage, removeStorageToken} from '../../utils/utils';
 
+import React from 'react';
+import {SvgXml} from 'react-native-svg';
+import {useDispatch} from 'react-redux';
+import language from '../../assets/lang/language.json';
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
 import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
 import {NavigProps} from '../../interfaces/NaviProps';
-import React from 'react';
-import {SvgXml} from 'react-native-svg';
-import {clearToken} from '../../redux/apiSlices/tokenSlice';
-import language from '../../assets/lang/language.json';
-import {useDispatch} from 'react-redux';
 import {useGetDonationQuery} from '../../redux/apiSlices/additionalSlices';
+import {clearToken} from '../../redux/apiSlices/tokenSlice';
 
 const settingsData = [
   {
     id: 1,
     name: 'Manage Account',
     option: 'manage_account',
+  },
+  {
+    id: 12,
+    name: 'Favorite',
+    option: 'favorite',
+  },
+  {
+    id: 13,
+    name: 'Offline Books',
+    option: 'offline_books',
   },
   {
     id: 2,
@@ -134,6 +144,12 @@ const SettingScreen = ({navigation}: NavigProps<null>) => {
                 if (item.item.option === 'terms_and_conditions') {
                   navigation?.navigate('TermsAndConditions');
                 }
+                if (item.item.option === 'offline_books') {
+                  navigation?.navigate('Offline');
+                }
+                if (item.item.option === 'favorite') {
+                  navigation?.navigate('Favorite');
+                }
                 if (item.item.option === 'privacy_policy') {
                   navigation?.navigate('PrivacyPolicy');
                 }
@@ -200,7 +216,7 @@ const SettingScreen = ({navigation}: NavigProps<null>) => {
               ) : (
                 <SvgXml
                   xml={`<svg width="11" height="11" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M8.41203 2.22158L0.788908 9.8447L1.73172 10.7875L9.35484 3.16439L9.35481 8.22156L10.6881 8.22156L10.6882 0.888246L3.35481 0.888236L3.35481 2.22156L8.41203 2.22158Z" fill="#8E3C50"/>
+<path d="M8.41203 2.22158L0.788908 9.8447L1.73172 10.7875L9.35484 3.16439L9.35481 8.22156L10.6881 8.22156L10.6882 0.888246L3.35481 0.888236L3.35481 2.22156L8.41203 2.22158Z" fill="${colors.textColor.redis}"/>
 </svg>
 `}
                 />
@@ -241,8 +257,9 @@ const SettingScreen = ({navigation}: NavigProps<null>) => {
                 key={lang.country_code}
                 onPress={() => {
                   // change language
+                  console.log(lang.language_code);
                   // navigation?.navigate('Home');
-                  // setLanguageModal(false);
+                  setLanguageModal(false);
                   lStorage.setString('language', lang.language_code);
                   setSelectedLanguage(lang.language_code);
                 }}

@@ -1,75 +1,79 @@
-import {
-    FlatList,
-    Image,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    useWindowDimensions,
-    View,
-  } from 'react-native';
-  import React, {useState} from 'react';
-  import {useStyles} from '../../context/ContextApi';
-  import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
-  import {SvgXml} from 'react-native-svg';
-  import {NavigProps} from '../../interfaces/NaviProps';
-  import {books, TemBooks} from '../../utils/GetRandomColor';
-  import {GridList} from 'react-native-ui-lib';
-  
-  export interface Books {
-    id: number;
-    content: string;
-    image: string;
-  }
-  
-  const data = [
-    {
-      id: 1,
-      content: 'All',
-    },
-    {
-      id: 2,
-      content: 'Way of Life',
-    },
-    {
-      id: 3,
-      content: 'Business',
-    },
-    {
-      id: 4,
-      content: 'Human Family',
-    },
-    {
-      id: 5,
-      content: 'Worldview',
-    },
-  ];
-  
-  const BookShareWithCategory = ({navigation,route}: NavigProps<{data : string}>) => {
-    const {colors, font} = useStyles();
-    const [selectItem, setSelectIItem] = React.useState<number>(1);
-    const {height, width} = useWindowDimensions();
-  
-    return (
+import {StyleSheet, TextInput, View, useWindowDimensions} from 'react-native';
+
+import React from 'react';
+import {SvgXml} from 'react-native-svg';
+import {GridList} from 'react-native-ui-lib';
+import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
+import {useStyles} from '../../context/ContextApi';
+import {NavigProps} from '../../interfaces/NaviProps';
+import {useGetCategoryBooksQuery} from '../../redux/apiSlices/bookSlices';
+import {makeImage} from '../../utils/utils';
+import BookCard from './components/BookCard';
+
+export interface Books {
+  id: number;
+  content: string;
+  image: string;
+}
+
+const data = [
+  {
+    id: 1,
+    content: 'All',
+  },
+  {
+    id: 2,
+    content: 'Way of Life',
+  },
+  {
+    id: 3,
+    content: 'Business',
+  },
+  {
+    id: 4,
+    content: 'Human Family',
+  },
+  {
+    id: 5,
+    content: 'Worldview',
+  },
+];
+
+const BookShareWithCategory = ({
+  navigation,
+  route,
+}: NavigProps<{data: string}>) => {
+  const {colors, font} = useStyles();
+  // console.log(route?.params?.data);
+  const Item = route?.params?.data;
+  const [selectItem, setSelectIItem] = React.useState<number>(1);
+  const {data: allBooks} = useGetCategoryBooksQuery({
+    category: Item?.name,
+  });
+
+  // console.log(allBooks);
+  const {height, width} = useWindowDimensions();
+
+  return (
+    <View
+      style={{
+        height: '100%',
+        backgroundColor: colors.bg,
+      }}>
+      <BackButtonWithTitle
+        navigation={navigation}
+        title={`${Item?.name}`}
+        containerStyle={{
+          justifyContent: 'flex-start',
+          gap: 20,
+        }}
+        titleStyle={{
+          fontSize: 20,
+          color: colors.textColor.light,
+          fontFamily: font.PoppinsSemiBold,
+        }}
+      />
       <View
-        style={{
-          height: '100%',
-          backgroundColor: colors.bg,
-        }}>
-        <BackButtonWithTitle
-          navigation={navigation}
-          title={`${route?.params?.data}`}
-          containerStyle={{
-            justifyContent: 'flex-start',
-            gap: 20,
-          }}
-          titleStyle={{
-            fontSize: 20,
-            color: colors.textColor.light,
-            fontFamily: font.PoppinsSemiBold,
-          }}
-        />
-       <View
         style={{
           paddingHorizontal: '4%',
           // marginTop: 5,
@@ -82,7 +86,7 @@ import {
             gap: 10,
             height: 48,
             paddingHorizontal: 20,
-            marginVertical : 10,
+            marginVertical: 10,
             borderRadius: 50,
           }}>
           <SvgXml
@@ -92,13 +96,16 @@ import {
 `}
           />
           <TextInput
-            style={{flex: 1}}
+            style={{
+              flex: 1,
+              color: colors.textColor.neutralColor,
+            }}
             placeholder="Search your books"
-            placeholderTextColor={colors.textColor.neutralColor}
+            placeholderTextColor={colors.textColor.palaceHolderColor}
           />
         </View>
       </View>
-        {/* <View
+      {/* <View
           style={{
             borderBottomWidth: 1,
             borderBlockColor: 'rgba(217, 217, 217, 1)',
@@ -149,78 +156,37 @@ import {
             )}
           />
         </View> */}
-        <GridList
-          showsVerticalScrollIndicator={false}
-          containerWidth={width * 0.9}
-          numColumns={2}
-          data={TemBooks}
-          columnWrapperStyle={{
-            gap: 20,
-            alignSelf: 'center',
-          }}
-          contentContainerStyle={{
-            gap: 20,
-            paddingVertical: 20,
-            paddingHorizontal: '5%',
-          }}
-          renderItem={item => (
-            <TouchableOpacity
+      <GridList
+        showsVerticalScrollIndicator={false}
+        containerWidth={width * 0.9}
+        numColumns={2}
+        data={allBooks?.data}
+        columnWrapperStyle={{
+          gap: 20,
+          alignSelf: 'center',
+        }}
+        contentContainerStyle={{
+          gap: 20,
+          paddingVertical: 20,
+          paddingHorizontal: '5%',
+        }}
+        renderItem={item => (
+          <BookCard
             onPress={() => {
-              navigation?.navigate('BookShare', {data: item.item});
+              navigation?.navigate('BookShare', {data: item?.item});
             }}
-            style={{
-              // elevation: 2,
-              // backgroundColor: colors.bg,
-              // padding: 2,
-              borderRadius: 24,
-              // height: height * 0.243,
-            
-            }}>
-         <View style={{
-          elevation : 1,
-          padding : 3,
-       
-       
-         }}>
-         <Image
-            resizeMode='stretch'
-              style={{
-                height: height * 0.24,
-                width: width * 0.41,
-                borderRadius: 24,
-                borderWidth : 2,
-                borderColor : colors.bg
-              }}
-              source={item.item.image}
-            />
-         </View>
-            <View style={{
-              marginTop : 10,
-              alignItems : "center",
-              gap : 5,
-              maxWidth : width * 0.41,
-            }}>
-            <Text style={{
-              color: colors.textColor.light,
-              fontSize: 14,
-              fontFamily: font.PoppinsMedium,
-              
-            }}>{item.item.title}</Text>
-            <Text style={{
-              color: colors.textColor.neutralColor,
-              fontSize: 12,
-              fontFamily: font.Poppins,
-              
-            }}>{item.item.publisher}</Text>
-            </View>
-          </TouchableOpacity>
-          )}
-        />
-      </View>
-    );
-  };
-  
-  export default BookShareWithCategory;
-  
-  const styles = StyleSheet.create({});
-  
+            item={{
+              bookImage: makeImage(item?.item?.bookImage),
+              name: item?.item?.name,
+              publisher: item?.item?.publisher,
+            }}
+          />
+        )}
+      />
+    </View>
+  );
+};
+
+export default BookShareWithCategory;
+
+const styles = StyleSheet.create({});

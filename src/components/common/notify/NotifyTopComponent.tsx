@@ -1,14 +1,11 @@
+import React, {Dispatch, SetStateAction, useEffect} from 'react';
 import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  useWindowDimensions,
   View,
+  useWindowDimensions,
 } from 'react-native';
-import React, {Dispatch, SetStateAction, useEffect} from 'react';
-import {Toast} from 'react-native-ui-lib';
-import {SvgXml} from 'react-native-svg';
-import {useStyles} from '../../../context/ContextApi';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -16,18 +13,27 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
+import {SvgXml} from 'react-native-svg';
+import {useStyles} from '../../../context/ContextApi';
+
 interface NotifyTopComponentProps {
   onDismiss?: Dispatch<SetStateAction<boolean>>;
   open: boolean;
   variant?: 'success' | 'error' | 'normal';
-  context: string;
+  normalOnPress?: () => void;
+
+  onRejectOnPress?: () => void;
+  name?: string;
 }
 
 const NotifyTopComponent = ({
   onDismiss,
   variant,
   open,
-  context,
+
+  normalOnPress,
+  onRejectOnPress,
+  name,
 }: NotifyTopComponentProps) => {
   const {height, width} = useWindowDimensions();
   const {colors, font} = useStyles();
@@ -133,7 +139,7 @@ const NotifyTopComponent = ({
             {variant === 'error'
               ? 'knock for join this live conversations'
               : variant === 'normal'
-              ? 'Shapla knocked for join this live conversations'
+              ? `${name} knocked for join this live conversations`
               : 'knock is accepted for this live conversations'}
           </Text>
         </View>
@@ -153,6 +159,10 @@ const NotifyTopComponent = ({
                 gap: 10,
               }}>
               <TouchableOpacity
+                onPress={() => {
+                  onRejectOnPress && onRejectOnPress();
+                  onDismiss && onDismiss(false);
+                }}
                 style={{
                   width: 48,
                   height: 48,
@@ -172,6 +182,9 @@ const NotifyTopComponent = ({
                 />
               </TouchableOpacity>
               <TouchableOpacity
+                onPress={() => {
+                  normalOnPress && normalOnPress();
+                }}
                 style={{
                   width: 48,
                   height: 48,

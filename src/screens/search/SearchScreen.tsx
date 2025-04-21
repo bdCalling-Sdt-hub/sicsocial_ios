@@ -7,13 +7,13 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useContext} from 'react';
-import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
 
-import {NavigProps} from '../../interfaces/NaviProps';
-import {ContextProvider, useStyles} from '../../context/ContextApi';
+import React from 'react';
 import {SvgXml} from 'react-native-svg';
+import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
 import NotificationCard from '../../components/notificaiton/NotificationCard';
+import {useStyles} from '../../context/ContextApi';
+import {NavigProps} from '../../interfaces/NaviProps';
 
 const data = [
   {
@@ -78,9 +78,12 @@ const SearchScreen = ({navigation}: NavigProps<null>) => {
 `}
           />
           <TextInput
-            style={{flex: 1}}
+            style={{
+              color: colors.textColor.normal,
+              flex: 1,
+            }}
             placeholder="Search your friends"
-            placeholderTextColor={colors.textColor.neutralColor}
+            placeholderTextColor={colors.textColor.palaceHolderColor}
           />
         </View>
       </View>

@@ -11,6 +11,12 @@ export const friendSlices = api.injectEndpoints({
       }),
       providesTags: ['friend'],
     }),
+    getFriendProfile: builder.query({
+      query: ({id, page, limit}) => ({
+        url: `/friends/profile/${id}`,
+      }),
+      providesTags: ['friend'],
+    }),
     getSuggestions: builder.query<IFriends, IInputPagination>({
       query: ({id, page, limit}) => ({
         url: `/friends/suggestions`,
@@ -76,4 +82,5 @@ export const {
   useRemoveFriendRequestMutation,
   useSendFriendRequestMutation,
   useGetSuggestionsQuery,
+  useGetFriendProfileQuery,
 } = friendSlices;

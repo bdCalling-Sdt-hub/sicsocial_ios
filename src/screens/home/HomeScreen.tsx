@@ -1,12 +1,10 @@
 import React, {useEffect} from 'react';
 import {
   Image,
-  Linking,
   RefreshControl,
   SafeAreaView,
   StyleSheet,
   Text,
-  ToastAndroid,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -18,23 +16,30 @@ import Animated, {
 import {useContextApi, useStyles} from '../../context/ContextApi';
 import {height, isTablet} from '../../utils/utils';
 
-import Clipboard from '@react-native-clipboard/clipboard';
 import {FlashList} from '@shopify/flash-list';
 import {format} from 'date-fns';
 import LinearGradient from 'react-native-linear-gradient';
 import {SvgXml} from 'react-native-svg';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import {useDispatch} from 'react-redux';
 import ConversationalCard from '../../components/common/ConversationalCard';
 import ConversationalModal from '../../components/common/ConversationalModal/ConversationalModal';
-import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
 import {IConversationProps} from '../../interfaces/Interface';
 import {NavigProps} from '../../interfaces/NaviProps';
 import {imageUrl} from '../../redux/api/baseApi';
 import {useGetDonationQuery} from '../../redux/apiSlices/additionalSlices';
 import {useGetUserProfileQuery} from '../../redux/apiSlices/authSlice';
+import {useGetAllBooksQuery} from '../../redux/apiSlices/bookSlices';
+import {useAddMemberMutation} from '../../redux/apiSlices/chatSlices';
 import {useGetNewsFeetQuery} from '../../redux/apiSlices/homeSlices';
+import {useJoinLiveMutation} from '../../redux/apiSlices/liveSlice';
+import {getSocket} from '../../redux/services/socket';
+import {setUser} from '../../redux/services/userSlice';
+import {useShearLink} from '../../utils/conentShare';
 
 const HomeScreen = ({navigation}: NavigProps<null>) => {
+  // =============================  loading Books for offline start =============================
+  useGetAllBooksQuery({});
+  // =============================  loading Books for offline end =============================
   const {isLive, setIsLive, isDark} = useContextApi();
 
   const {
@@ -43,7 +48,8 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
     refetch: newFeetReFetching,
   } = useGetNewsFeetQuery({});
   const {data: userProfile} = useGetUserProfileQuery({});
-  const {data: donations} = useGetDonationQuery({});
+  const {data: donations, refetch: donationRefetch} = useGetDonationQuery({});
+  const dispatch = useDispatch();
   // console.log(userProfile);
   const {colors, font} = useStyles();
   const [modalVisible, setModalVisible] = React.useState(false);
@@ -60,6 +66,26 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
       paddingBottom: scrollViewGapHight.value,
     };
   });
+
+  const socket = getSocket();
+
+  useEffect(() => {
+    if (userProfile?.data?._id) {
+      dispatch(setUser(userProfile.data));
+      socket?.emit('active', JSON.stringify({userId: userProfile.data._id}));
+
+      socket?.emit(
+        'activeUsers',
+        JSON.stringify({userId: userProfile.data._id}),
+      );
+    }
+
+    // Optional: Add a cleanup to handle when the component unmounts, if needed
+    return () => {
+      // For example, you could emit a "inactive" event here if needed
+      // socket?.emit('inactive', JSON.stringify({ userId: userProfile.data._id }));
+    };
+  }, [socket, userProfile?.data?._id]);
 
   useEffect(() => {
     if (isLive) {
@@ -85,13 +111,22 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
         conversationStyle="donation"
         conversationTitle={item?.details?.title}
         conversationSubtitle={item?.details?.content}
-        onDonationShearPress={() => setModalVisible(true)}
+        onDonationShearPress={() =>
+          useShearLink({
+            title: 'Share Donation Link',
+            message: 'Share Donation Link',
+            url: `https://sic.org/donation/`,
+          })
+        }
         onDonationViewDetailsPress={() =>
           navigation?.navigate('donation', {data: item})
         }
       />
     ));
   };
+
+  const [createMember, memberResult] = useAddMemberMutation();
+  const [joinLive] = useJoinLiveMutation();
 
   // is live  card have checker and create animation asaa
   const profileImage = userProfile?.data?.avatar.startsWith('https')
@@ -154,7 +189,7 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
               style={{
                 fontFamily: font.Poppins,
                 fontSize: 12,
-                color: '#720B24',
+                color: colors.textColor.redis,
               }}>
               Welcome to SIC
             </Text>
@@ -214,7 +249,10 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
         refreshControl={
           <RefreshControl
             refreshing={newFeetLoading}
-            onRefresh={newFeetReFetching}
+            onRefresh={() => {
+              donationRefetch();
+              newFeetReFetching();
+            }}
             colors={[colors.primaryColor]}
           />
         }
@@ -232,64 +270,89 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
             : []
         }
         ListHeaderComponent={renderDonations}
-        renderItem={({item}) => (
-          <ConversationalCard
-            conversationStyle="normal"
-            onPress={() => {
-              if (item?.facedown?._id) {
-                navigation?.navigate('FaceDownConversation', {
-                  data: {id: item?._id, facedown: item?.facedown},
-                });
-              } else {
-                navigation?.navigate('NormalConversation', {
-                  data: {id: item._id},
-                });
+        renderItem={({item}) => {
+          // console.log(item);
+          return (
+            <ConversationalCard
+              key={item._id}
+              conversationStyle="normal"
+              onPress={() => {
+                if (item?.facedown?._id) {
+                  if (item?.participants) {
+                    const alreadyExits = item.participants.includes(
+                      userProfile?.data?._id,
+                    );
+                    if (!alreadyExits) {
+                      createMember({
+                        id: item?._id,
+                        participants: userProfile?.data?._id,
+                      });
+                    }
+                  }
+                  navigation?.navigate('FaceDownConversation', {
+                    data: {id: item?._id, facedown: item?.facedown},
+                  });
+                } else if (item?.live) {
+                  joinLive({
+                    chatId: item?._id,
+                  }).then(res => {
+                    // console.log(res);
+                    navigation?.navigate('LiveConversation', {
+                      data: {live: item.live?._id},
+                    });
+                  });
+                } else {
+                  navigation?.navigate('NormalConversation', {
+                    data: {id: item?._id},
+                  });
+                }
+              }}
+              participants={item.participants}
+              cardStyle={
+                item?.lastMessage?.book
+                  ? 'shear_book'
+                  : item?.lastMessage?.image
+                  ? 'image'
+                  : 'normal'
               }
-            }}
-            participants={item.participants}
-            cardStyle={
-              item.participants.length > 4
-                ? 'three'
-                : item?.participants.length === 4
-                ? 'four'
-                : item?.participants.length === 3
-                ? 'three'
-                : item?.participants.length === 2
-                ? 'two'
-                : 'single'
-            }
-            manyPeople={item.participants.length > 4}
-            conversationTitle={
-              item.lastMessage.sender._id === userProfile?.data?._id
-                ? item?.facedown
-                  ? item.facedown.name +
-                    `${
-                      item.lastMessage.sender._id === userProfile?.data?._id
-                        ? ' You'
-                        : item.lastMessage.sender.fullName
-                    }`
-                  : 'You'
-                : item.lastMessage.sender.fullName
-            }
-            conversationSubtitle={
-              item.lastMessage.sender._id === userProfile?.data?._id
-                ? 'send a message'
-                : ' replied in chat'
-            }
-            lastMessageTime={format(new Date(item.updatedAt), 'hh :mm a')}
-            lastMessage={
-              item.lastMessage.audio
-                ? 'send an audio message'
-                : item.lastMessage.image
-                ? 'send an image message'
-                : item.lastMessage.text
-                ? item.lastMessage.text
-                : item.lastMessage.path
-                ? 'send a book'
-                : 'Start a chat'
-            }
-          />
-        )}
+              manyPeople={item.participants.length > 4}
+              conversationTitle={
+                item.live
+                  ? 'Room Chat' + item.live.name
+                  : item?.lastMessage?.sender?._id === userProfile?.data?._id
+                  ? item?.facedown
+                    ? item?.facedown?.name +
+                      `${
+                        item.lastMessage?.sender?._id === userProfile?.data?._id
+                          ? ' You'
+                          : item.lastMessage?.sender?.fullName
+                      }`
+                    : 'You'
+                  : item?.lastMessage?.sender?.fullName
+              }
+              conversationSubtitle={
+                !item?.live
+                  ? item?.lastMessage?.sender?._id === userProfile?.data?._id
+                    ? 'send a message'
+                    : ' replied in chat'
+                  : ''
+              }
+              item={item}
+              lastMessageTime={format(new Date(item.updatedAt), 'hh :mm a')}
+              lastMessage={
+                item?.lastMessage?.audio
+                  ? 'send an audio message'
+                  : item?.lastMessage?.image
+                  ? 'send an image message'
+                  : item?.lastMessage?.text
+                  ? item?.lastMessage?.text
+                  : item?.lastMessage?.book
+                  ? 'Shear a book'
+                  : 'Start a chat'
+              }
+            />
+          );
+        }}
         // estimatedItemSize={600}
       />
 
@@ -298,80 +361,6 @@ const HomeScreen = ({navigation}: NavigProps<null>) => {
       {/*==================== Body part Start ===================  */}
 
       <ConversationalModal navigation={navigation} />
-
-      {/* donation modal  */}
-      <ModalOfBottom
-        modalVisible={modalVisible}
-        setModalVisible={setModalVisible}>
-        <View>
-          <Text
-            style={{
-              textAlign: 'center',
-              fontSize: 20,
-              fontFamily: font.PoppinsSemiBold,
-              color: colors.textColor.neutralColor,
-            }}>
-            Share Integrity Donation
-          </Text>
-          <TouchableOpacity
-            style={{}}
-            onPress={() => {
-              Linking.openURL('https://www.sic.com/donation');
-            }}>
-            <Text
-              style={{
-                fontFamily: font.Poppins,
-                fontSize: 12,
-                color: colors.blue,
-                marginTop: '10%',
-              }}>
-              https://www.sic.com/donation
-            </Text>
-          </TouchableOpacity>
-          <View
-            style={{
-              justifyContent: 'center',
-              alignItems: 'center',
-              marginTop: '10%',
-            }}>
-            <TouchableOpacity
-              onPress={() => {
-                Clipboard.setString('https://www.sic.com/donation');
-                ToastAndroid.showWithGravity(
-                  'link copy to https://www.sic.com/donation',
-                  ToastAndroid.SHORT,
-                  ToastAndroid.CENTER,
-                );
-              }}
-              style={{
-                flexDirection: 'row',
-                gap: 8,
-                width: 84,
-                justifyContent: 'center',
-                alignItems: 'center',
-                padding: 8,
-                elevation: 2,
-                backgroundColor: colors.white,
-                borderRadius: 100,
-                marginBottom: 10,
-              }}>
-              <MaterialCommunityIcons
-                name="content-copy"
-                size={15}
-                color={'rgba(0,0,0,.5)'}
-              />
-              <Text
-                style={{
-                  fontFamily: font.Poppins,
-                  // fontSize: 12,
-                  color: 'rgba(0,0,0,.5)',
-                }}>
-                Copy
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </ModalOfBottom>
 
       <View
         style={{

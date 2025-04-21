@@ -10,88 +10,49 @@ import PopUpModal, {
   PopUpModalRef,
 } from '../../components/common/modals/PopUpModal';
 
-import { Formik } from 'formik';
+import {Formik} from 'formik';
 import React from 'react';
 import Feather from 'react-native-vector-icons/Feather';
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
 import NormalButton from '../../components/common/NormalButton';
-import { useStyles } from '../../context/ContextApi';
-import { NavigProps } from '../../interfaces/NaviProps';
-import { useCreateUserMutation } from '../../redux/apiSlices/authSlice';
+import {useStyles} from '../../context/ContextApi';
+import {NavigProps} from '../../interfaces/NaviProps';
+import {useCreateUserMutation} from '../../redux/apiSlices/authSlice';
 
 const SignUpScreen = ({navigation}: NavigProps<null>) => {
   const modalRef = React.useRef<PopUpModalRef>();
   const [createUser, results] = useCreateUserMutation();
   const {colors, font} = useStyles();
-  const [isShow, setIsShow] = React.useState(false);
+  const [isShow, setIsShow] = React.useState({
+    password: false,
+    confirm_password: false,
+  });
   const [check, setCheck] = React.useState(false);
   const OnSubmitHandler = values => {
-    console.log(values);
-    if (!values?.fullName) {
-      modalRef.current?.open({
-        // title : "Error",
-        content: 'Please enter your name',
-      });
-    } else if (!values?.email) {
-      modalRef.current?.open({
-        // title : "Error",
-        content: 'Please enter your email',
-      });
-    } else if (!values?.password) {
-      modalRef.current?.open({
-        // title : "Error",
-        content: 'Please enter your password',
-      });
-    }
-    // password maust be at least 8 characters
-    else if (values?.password?.length < 8) {
-      modalRef.current?.open({
-        // title : "Error",
-        content: 'Password must be at least 8 characters',
-      });
-    }
-    // password or confirm password not match
-    else if (values?.password !== values?.confirm_password) {
-      modalRef.current?.open({
-        // title : "Error",
-        content: 'Password or confirm password not match',
-      });
-    }
-    // email not valid
-    else if (!values?.email?.match(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/)) {
-      modalRef.current?.open({
-        // title : "Error",
-        content: 'Email not valid',
-      });
-    } else if (!values?.confirm_password) {
-      modalRef.current?.open({
-        // title : "Error",
-        content: 'Please enter your confirm password',
-      });
-    } else {
-      createUser(values).then(res => {
-        console.log(res);
-        if (res.error) {
-          modalRef.current?.open({
-            // title : "Error",
-            content: res?.error?.data?.message,
+    // console.log(values);
+
+    createUser(values).then(res => {
+      // console.log(res);
+      if (res.error) {
+        modalRef.current?.open({
+          title: 'Warning',
+          content: res?.error?.data?.message,
+        });
+      }
+      if (res?.data) {
+        // console.log(res.data);
+        if (res.data?.success) {
+          navigation?.navigate('VerifyEmail', {
+            data: {
+              email: values?.email,
+              otp: '',
+              verificationType: 'emailVerification',
+            },
           });
         }
-        if (res?.data) {
-          // console.log(res.data);
-          if (res.data?.success) {
-            navigation?.navigate('VerifyEmail', {
-              data: {
-                email: values?.email,
-                otp : "",
-                verificationType: 'emailVerification',
-              },
-            });
-          }
-          // lStorage.setString("token", res.data?.data?.accessToken);
-        }
-      });
-    }
+        // lStorage.setString("token", res.data?.data?.accessToken);
+      }
+    });
   };
   return (
     <View
@@ -119,6 +80,7 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
       <ScrollView
         keyboardShouldPersistTaps="always"
         showsVerticalScrollIndicator={false}
+        contentContainerStyle={{paddingBottom: 20}}
         showsHorizontalScrollIndicator={false}>
         <View>
           <Text
@@ -138,8 +100,47 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
             password: '',
             confirm_password: '',
           }}
+          validate={values => {
+            const errors: any = {};
+            if (!values.fullName) {
+              errors.fullName = 'Required';
+            }
+            if (!values.email) {
+              errors.email = 'Required';
+            }
+            // email validate
+            else if (!values.email.match(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/)) {
+              errors.email = 'Email not valid';
+            }
+            if (!values.password) {
+              errors.password = 'Required';
+            }
+            // password must be at least 8 characters
+            else if (values.password.length < 8) {
+              errors.password = 'Password must be at least 8 characters';
+            }
+            // password or confirm password not match
+            else if (
+              values.confirm_password &&
+              values.password !== values.confirm_password
+            ) {
+              errors.confirm_password =
+                'Password or confirm password not match';
+            }
+            if (!values.confirm_password) {
+              errors.confirm_password = 'Required';
+            }
+            return errors;
+          }}
           onSubmit={values => OnSubmitHandler(values)}>
-          {({handleChange, handleBlur, handleSubmit, values}) => (
+          {({
+            handleChange,
+            handleBlur,
+            handleSubmit,
+            values,
+            errors,
+            touched,
+          }) => (
             <View
               style={{
                 marginTop: 24,
@@ -160,21 +161,26 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
                 </Text>
                 <TextInput
                   style={{
+                    color: colors.textColor.normal,
                     fontFamily: font.Poppins,
                     backgroundColor: colors.secondaryColor,
                     borderRadius: 100,
                     fontSize: 14,
                     paddingHorizontal: 20,
                     height: 56,
-                    color: colors.textColor.neutralColor,
                   }}
-                  placeholder="John Doe"
-                  placeholderTextColor={colors.textColor.gray}
+                  placeholder="Enter your full name"
+                  placeholderTextColor={colors.textColor.palaceHolderColor}
                   onChangeText={handleChange('fullName')}
                   onBlur={handleBlur('fullName')}
                   value={values?.fullName}
                 />
               </View>
+              {errors.fullName && touched.fullName && (
+                <Text style={{color: 'red', fontSize: 12}}>
+                  {errors.fullName}
+                </Text>
+              )}
               <View
                 style={{
                   gap: 8,
@@ -189,21 +195,24 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
                 </Text>
                 <TextInput
                   style={{
+                    color: colors.textColor.normal,
                     fontFamily: font.Poppins,
                     backgroundColor: colors.secondaryColor,
                     borderRadius: 100,
                     fontSize: 14,
                     paddingHorizontal: 20,
                     height: 56,
-                    color: colors.textColor.neutralColor,
                   }}
-                  placeholder="johndoe@gmail.com"
-                  placeholderTextColor={colors.textColor.gray}
+                  placeholder="Enter your email"
+                  placeholderTextColor={colors.textColor.palaceHolderColor}
                   onChangeText={handleChange('email')}
                   onBlur={handleBlur('email')}
                   value={values?.email}
                 />
               </View>
+              {errors.email && touched.email && (
+                <Text style={{color: 'red', fontSize: 12}}>{errors.email}</Text>
+              )}
               <View
                 style={{
                   gap: 8,
@@ -218,18 +227,19 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
                 </Text>
                 <TextInput
                   style={{
+                    color: colors.textColor.normal,
                     fontFamily: font.Poppins,
                     backgroundColor: colors.secondaryColor,
                     borderRadius: 100,
                     fontSize: 14,
                     paddingHorizontal: 20,
                     height: 56,
-                    color: colors.textColor.neutralColor,
                   }}
-                  placeholderTextColor={colors.textColor.gray}
-                  placeholder="+000000000000"
+                  placeholderTextColor={colors.textColor.palaceHolderColor}
+                  placeholder="Enter your contact no"
                   onChangeText={handleChange('phoneNumber')}
                   onBlur={handleBlur('phoneNumber')}
+                  keyboardType="decimal-pad"
                   value={values?.phoneNumber}
                 />
               </View>
@@ -247,23 +257,26 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
                 </Text>
                 <TextInput
                   style={{
+                    color: colors.textColor.normal,
                     fontFamily: font.Poppins,
                     backgroundColor: colors.secondaryColor,
                     borderRadius: 100,
                     fontSize: 14,
                     paddingHorizontal: 20,
                     height: 56,
-                    color: colors.textColor.neutralColor,
                   }}
-                  placeholderTextColor={colors.textColor.gray}
-                  // placeholder="********"
-                  secureTextEntry={!isShow}
+                  placeholderTextColor={colors.textColor.palaceHolderColor}
+                  placeholder="Enter your password"
+                  secureTextEntry={!isShow.password}
                   onChangeText={handleChange('password')}
                   onBlur={handleBlur('password')}
                   value={values?.password}
                 />
+
                 <TouchableOpacity
-                  onPress={() => setIsShow(!isShow)}
+                  onPress={() =>
+                    setIsShow({...isShow, password: !isShow.password})
+                  }
                   style={{
                     position: 'absolute',
                     right: 10,
@@ -285,6 +298,11 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
                   )}
                 </TouchableOpacity>
               </View>
+              {errors.password && touched.password && (
+                <Text style={{color: 'red', fontSize: 12}}>
+                  {errors.password}
+                </Text>
+              )}
               <View
                 style={{
                   gap: 8,
@@ -299,22 +317,28 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
                 </Text>
                 <TextInput
                   style={{
+                    color: colors.textColor.normal,
                     fontFamily: font.Poppins,
                     backgroundColor: colors.secondaryColor,
                     borderRadius: 100,
                     fontSize: 14,
                     paddingHorizontal: 20,
                     height: 56,
-                    color: colors.textColor.neutralColor,
                   }}
                   onChangeText={handleChange('confirm_password')}
                   onBlur={handleBlur('confirm_password')}
-                  placeholderTextColor={colors.textColor.gray}
-                  // placeholder="********"
-                  secureTextEntry={!isShow}
+                  placeholderTextColor={colors.textColor.palaceHolderColor}
+                  placeholder="Enter your confirm password"
+                  secureTextEntry={!isShow.confirm_password}
                 />
+
                 <TouchableOpacity
-                  onPress={() => setIsShow(!isShow)}
+                  onPress={() =>
+                    setIsShow({
+                      ...isShow,
+                      confirm_password: !isShow.confirm_password,
+                    })
+                  }
                   style={{
                     position: 'absolute',
                     right: 10,
@@ -336,7 +360,11 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
                   )}
                 </TouchableOpacity>
               </View>
-
+              {errors.confirm_password && touched.confirm_password && (
+                <Text style={{color: 'red', fontSize: 12}}>
+                  {errors.confirm_password}
+                </Text>
+              )}
               <View style={{marginTop: 20}}>
                 <NormalButton
                   isLoading={results?.isLoading}

@@ -1,6 +1,6 @@
 import {
   FlatList,
-  Image,
+  RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
@@ -11,12 +11,14 @@ import {
 } from 'react-native';
 
 import React from 'react';
-import { SvgXml } from 'react-native-svg';
-import AntDesign from "react-native-vector-icons/AntDesign";
+import {SvgXml} from 'react-native-svg';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
-import { useStyles } from '../../context/ContextApi';
-import { NavigProps } from '../../interfaces/NaviProps';
-import { TemBooks } from '../../utils/GetRandomColor';
+import {useStyles} from '../../context/ContextApi';
+import {NavigProps} from '../../interfaces/NaviProps';
+import {useGetBooksQuery} from '../../redux/apiSlices/bookSlices';
+import {makeImage} from '../../utils/utils';
+import BookCard from './components/BookCard';
 
 export interface Books {
   id: number;
@@ -49,6 +51,12 @@ const data = [
 
 const BooksScreen = ({navigation}: NavigProps<null>) => {
   const {colors, font} = useStyles();
+  const {
+    data: books,
+    isLoading: isBookLoading,
+    refetch: refetchBook,
+  } = useGetBooksQuery({});
+  // console.log(books);
   const [selectItem, setSelectIItem] = React.useState<number>(1);
   const {height, width} = useWindowDimensions();
 
@@ -59,6 +67,7 @@ const BooksScreen = ({navigation}: NavigProps<null>) => {
         backgroundColor: colors.bg,
       }}>
       <BackButtonWithTitle
+        offBack
         navigation={navigation}
         title="Books Library"
         containerStyle={{
@@ -84,7 +93,7 @@ const BooksScreen = ({navigation}: NavigProps<null>) => {
             gap: 10,
             height: 48,
             paddingHorizontal: 20,
-            marginVertical : 10,
+            marginVertical: 10,
             borderRadius: 50,
           }}>
           <SvgXml
@@ -94,118 +103,96 @@ const BooksScreen = ({navigation}: NavigProps<null>) => {
 `}
           />
           <TextInput
-            style={{flex: 1}}
+            style={{
+              color: colors.textColor.normal,
+              flex: 1,
+            }}
             placeholder="Search your books"
-            placeholderTextColor={colors.textColor.neutralColor}
+            placeholderTextColor={colors.textColor.palaceHolderColor}
           />
         </View>
       </View>
-   
-       
-     <ScrollView
-       showsVerticalScrollIndicator={false}
-       showsHorizontalScrollIndicator={false} >
-        {
-          TemBooks.map((book,index) =>
-          (
-            <View key={book.id}>
-         <TouchableOpacity onPress={()=> navigation?.navigate("BookShareWithCategory" ,{data : TemBooks[index].category })} style={{
-          flexDirection :"row",
-          justifyContent : "space-between",
-          width : width,
-          paddingHorizontal : '5%',
-        paddingVertical : 10
-         }}>
-         <Text style={{
-          color : colors.textColor.rare,
-          fontSize : 15,
-          fontFamily : font.PoppinsSemiBold,
-         }}>
-             {TemBooks[index].category}
-          </Text>
-        <View style={{
-          flexDirection : "row",
-          alignItems : "center",
-          justifyContent : "center",
-          gap : 10
- 
-        }}>
-        <Text style={{
-            color : colors.textColor.rare
-         }}>
-             {data.length}
-          </Text>
-          <AntDesign name='right' size={15}  color={colors.textColor.rare}/>
-        </View>
-         </TouchableOpacity>
-        <FlatList
-       horizontal
-       showsHorizontalScrollIndicator={false}
-        data={TemBooks}
-        contentContainerStyle={{
-          gap: 20,
-          paddingBottom: 20,
-          paddingHorizontal: '5%',
-        }}
-        renderItem={item => (
-          <TouchableOpacity
-            onPress={() => {
-              navigation?.navigate('BookShare', {data: item.item});
-            }}
-            style={{
-              // elevation: 2,
-              // backgroundColor: colors.bg,
-              // padding: 2,
-              borderRadius: 24,
-              // height: height * 0.243,
-              // alignItems : "center",
-              // justifyContent : "center",
-            }}>
-         <View style={{
-          elevation : 1,
-          padding : 3,
-       
-       
-         }}>
-         <Image
-            resizeMode='stretch'
-              style={{
-                height: height * 0.24,
-                width: width * 0.41,
-                borderRadius: 24,
-                borderWidth : 2,
-                borderColor : colors.bg
-              }}
-              source={item.item.image}
-            />
-         </View>
-            <View style={{
-              marginTop : 10,
-              alignItems : "center",
-              gap : 5,
-              maxWidth : width * 0.41,
-            }}>
-            <Text style={{
-              color: colors.textColor.light,
-              fontSize: 14,
-              fontFamily: font.PoppinsMedium,
-              
-            }}>{item.item.title}</Text>
-            <Text style={{
-              color: colors.textColor.neutralColor,
-              fontSize: 12,
-              fontFamily: font.Poppins,
-              
-            }}>{item.item.publisher}</Text>
-            </View>
-          </TouchableOpacity>
-        )}
-      />
-        </View>
-          )
-          )
+
+      <ScrollView
+        refreshControl={
+          <RefreshControl
+            refreshing={isBookLoading}
+            onRefresh={refetchBook}
+            colors={[colors.primaryColor]}
+          />
         }
-       
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+          paddingBottom: 100,
+        }}
+        showsHorizontalScrollIndicator={false}>
+        {books?.data?.map((book, index) => (
+          <View key={index}>
+            <TouchableOpacity
+              onPress={() =>
+                navigation?.navigate('BookShareWithCategory', {
+                  data: book,
+                })
+              }
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                width: width,
+                paddingHorizontal: '5%',
+                paddingVertical: 10,
+              }}>
+              <Text
+                style={{
+                  color: colors.textColor.rare,
+                  fontSize: 15,
+                  fontFamily: font.PoppinsSemiBold,
+                }}>
+                {book?.name}
+              </Text>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 10,
+                }}>
+                <Text
+                  style={{
+                    color: colors.textColor.rare,
+                  }}>
+                  {book?.count}
+                </Text>
+                <AntDesign
+                  name="right"
+                  size={15}
+                  color={colors.textColor.rare}
+                />
+              </View>
+            </TouchableOpacity>
+            <FlatList
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              data={book?.booksList}
+              contentContainerStyle={{
+                gap: 20,
+                paddingBottom: 20,
+                paddingHorizontal: '5%',
+              }}
+              renderItem={item => (
+                <BookCard
+                  onPress={() => {
+                    navigation?.navigate('BookShare', {data: item?.item});
+                  }}
+                  item={{
+                    bookImage: makeImage(item?.item?.bookImage),
+                    name: item?.item?.name,
+                    publisher: item?.item?.publisher,
+                  }}
+                />
+              )}
+            />
+          </View>
+        ))}
       </ScrollView>
     </View>
   );

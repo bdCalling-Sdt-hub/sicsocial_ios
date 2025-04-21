@@ -1,6 +1,7 @@
-import { io, Socket } from 'socket.io-client';
+import {Socket, io} from 'socket.io-client';
 
-const SOCKET_URL = 'http://192.168.10.185:5001'; // Replace with your server URL
+// const SOCKET_URL = 'http://192.168.12.202:5000'; // Replace with your server URL
+const SOCKET_URL = 'https://api.sic.org/'; // Replace with your server URL
 
 let socket: Socket | null = null;
 
@@ -22,7 +23,7 @@ export const initiateSocket = () => {
     console.log('Disconnected from Socket.IO server');
   });
 
-  socket.on('connect_error', (error) => {
+  socket.on('connect_error', error => {
     console.warn('Connection Error:', error.message);
     // Optionally retry connection, show a UI alert, etc.
   });
@@ -37,8 +38,8 @@ export const initiateSocket = () => {
     // Handle reconnection failure, notify the user, etc.
   });
 
-  socket.on('error', (error) => {
-    console.warn('Socket Error:', error.message);
+  socket.on('error', error => {
+    console.warn('Socket Error:', error);
     // Handle general socket errors
   });
 };

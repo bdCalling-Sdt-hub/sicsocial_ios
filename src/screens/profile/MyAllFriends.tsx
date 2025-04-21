@@ -1,23 +1,16 @@
-import React, { useState } from 'react';
-import {
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View
-} from 'react-native';
-import { isTablet, makeImage } from '../../utils/utils';
+import React, {useState} from 'react';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {isTablet, makeImage} from '../../utils/utils';
 
-import { Image } from 'react-native';
-import {
-  GridList
-} from 'react-native-ui-lib';
+import {Image} from 'react-native';
+import {GridList} from 'react-native-ui-lib';
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
-import { useStyles } from '../../context/ContextApi';
-import { NavigProps } from '../../interfaces/NaviProps';
-import { useGetFriendQuery } from '../../redux/apiSlices/friendsSlices';
+import {useStyles} from '../../context/ContextApi';
+import {NavigProps} from '../../interfaces/NaviProps';
+import {useGetFriendQuery} from '../../redux/apiSlices/friendsSlices';
 
-const MyAllFriends = ({navigation,route}: NavigProps<null>) => {
-  const {data : friends} = useGetFriendQuery({})  
+const MyAllFriends = ({navigation, route}: NavigProps<null>) => {
+  const {data: friends} = useGetFriendQuery({});
   const {colors, font, window} = useStyles();
   const [test, setTest] = useState(false);
   return (
@@ -49,21 +42,25 @@ const MyAllFriends = ({navigation,route}: NavigProps<null>) => {
 
       <GridList
         showsHorizontalScrollIndicator={false}
-        numColumns={isTablet() ? 8: 4}
+        numColumns={isTablet() ? 8 : 4}
         containerWidth={window.width * 0.9}
         contentContainerStyle={{
           marginTop: 15,
           // alignSelf: 'center',
-          paddingHorizontal : "2%"
+          paddingHorizontal: '2%',
         }}
         data={friends?.data}
         renderItem={item => (
-          <View style={{gap: 6 , alignItems: 'center',
-            justifyContent: 'center',}}>
+          <View
+            style={{gap: 6, alignItems: 'center', justifyContent: 'center'}}>
             <TouchableOpacity
               onPress={() => {
                 // setTest(!test);
-                navigation?.navigate('FriendsProfile');
+                navigation?.navigate('FriendsProfile', {
+                  data: {
+                    id: item.item._id,
+                  },
+                });
               }}
               style={{
                 alignItems: 'center',
@@ -96,12 +93,9 @@ const MyAllFriends = ({navigation,route}: NavigProps<null>) => {
                   borderColor: 'white',
                   borderWidth: 2,
                 }}
-                source={
-                {
-                  uri : makeImage(item.item.avatar)
-                }
-                  
-                }
+                source={{
+                  uri: makeImage(item.item.avatar),
+                }}
               />
             </TouchableOpacity>
             <Text

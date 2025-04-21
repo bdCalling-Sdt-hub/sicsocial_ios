@@ -1,8 +1,4 @@
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {
-  useGetFriendReceivedRequestsQuery,
-  useGetSuggestionsQuery,
-} from '../../redux/apiSlices/friendsSlices';
 
 import React from 'react';
 import LinearGradient from 'react-native-linear-gradient';
@@ -12,34 +8,7 @@ import {NavigProps} from '../../interfaces/NaviProps';
 import FriendRequest from './components/FriendRequest';
 import PeopleYouKnow from './components/PeopleYouKnow';
 
-const data = [
-  {
-    id: 1,
-    name: 'Mithila',
-    image: require('../../assets/tempAssets/3a906b3de8eaa53e14582edf5c918b5d.jpg'),
-    status: 'active',
-    distance: '2.5 km away',
-    lastSeen: '5 minutes ago',
-  },
-  {
-    id: 2,
-    name: 'Jane Smith',
-    image: require('../../assets/tempAssets/4005b22a3c1c23d7c04f6c9fdbd85468.jpg'),
-    status: 'active',
-    distance: '3.2 km away',
-  },
-  {
-    id: 3,
-    name: 'Mike Johnson',
-    image: require('../../assets/tempAssets/691af02d3a7ca8be2811716f82d9212b.jpg'),
-    status: 'active',
-    distance: '4.5 km away',
-  },
-];
-
 const FriendsScreen = ({navigation}: NavigProps<null>) => {
-  const {data: suggestedFriends} = useGetSuggestionsQuery({});
-  const {data: receivedRequestFriend} = useGetFriendReceivedRequestsQuery({});
   // console.log(suggestedFriends);
   const {colors, font} = useStyles();
   const [isRequest, setIsRequest] = React.useState<boolean>(false);
@@ -170,7 +139,7 @@ const FriendsScreen = ({navigation}: NavigProps<null>) => {
             style={{
               fontFamily: font.PoppinsSemiBold,
               fontSize: 14,
-              color: colors.textColor.light,
+              color: colors.textColor.normal,
               textAlign: 'center',
             }}>
             People you know
@@ -196,7 +165,7 @@ const FriendsScreen = ({navigation}: NavigProps<null>) => {
             style={{
               fontFamily: font.PoppinsSemiBold,
               fontSize: 14,
-              color: colors.textColor.light,
+              color: colors.textColor.normal,
               textAlign: 'center',
             }}>
             Friend request

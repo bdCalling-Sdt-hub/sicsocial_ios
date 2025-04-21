@@ -26,7 +26,7 @@ import {makeImage} from '../../utils/utils';
 const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
   const {data: userProfile} = useGetUserProfileQuery({});
 
-  // console.log(userProfile?.data.);
+  console.log(userProfile?.data);
   const [userUpdate] = useUserUpdateMutation();
   const {colors, font} = useStyles();
   const [imageModal, setImageModal] = React.useState(false);
@@ -332,13 +332,13 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
               numberOfLines={4}
               value={userInfo?.bio}
               style={{
+                color: colors.textColor.normal,
                 height: 80,
                 padding: 12,
                 backgroundColor: colors.rareInput,
                 borderRadius: 16,
-                color: colors.textColor.neutralColor,
               }}
-              placeholderTextColor={colors.textColor.neutralColor}
+              placeholderTextColor={colors.textColor.palaceHolderColor}
               placeholder={edit.bio ? 'Describe yourself...' : userInfo?.bio}
             />
           </View>
@@ -441,9 +441,10 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
                     Name
                   </Text>
                   <TextInput
-                    placeholder="name"
-                    placeholderTextColor={'rgba(200, 200, 200, 1)'}
+                    placeholder="Enter your name"
+                    placeholderTextColor={colors.textColor.palaceHolderColor}
                     style={{
+                      color: colors.textColor.normal,
                       // borderWidth: 1,
                       backgroundColor: colors.secondaryColor,
                       paddingHorizontal: 20,
@@ -452,7 +453,6 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
                       borderRadius: 100,
                       fontFamily: font.Poppins,
                       height: 45,
-                      color: colors.textColor.neutralColor,
                       fontSize: 14,
                     }}
                     value={userInfo?.fullName}
@@ -475,9 +475,10 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
                     Contact no
                   </Text>
                   <TextInput
-                    placeholder="contact no"
-                    placeholderTextColor={'rgba(200, 200, 200, 1)'}
+                    placeholder="Enter your contact no"
+                    placeholderTextColor={colors.textColor.palaceHolderColor}
                     style={{
+                      color: colors.textColor.neutralColor,
                       // borderWidth: 1,
                       backgroundColor: colors.secondaryColor,
                       paddingHorizontal: 20,
@@ -486,7 +487,6 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
                       borderRadius: 100,
                       fontFamily: font.Poppins,
                       height: 45,
-                      color: colors.textColor.neutralColor,
                       fontSize: 14,
                     }}
                     value={userInfo?.phoneNumber}
@@ -511,9 +511,10 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
                     Lives in
                   </Text>
                   <TextInput
-                    placeholder="lives"
-                    placeholderTextColor={'rgba(200, 200, 200, 1)'}
+                    placeholder="Enter your address"
+                    placeholderTextColor={colors.textColor.palaceHolderColor}
                     style={{
+                      color: colors.textColor.normal,
                       // borderWidth: 1,
                       backgroundColor: colors.secondaryColor,
                       paddingHorizontal: 20,
@@ -522,7 +523,6 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
                       borderRadius: 100,
                       fontFamily: font.Poppins,
                       height: 45,
-                      color: colors.textColor.neutralColor,
                       fontSize: 14,
                     }}
                     value={userInfo?.address}
@@ -545,9 +545,10 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
                     Occupations
                   </Text>
                   <TextInput
-                    placeholder="occupations "
-                    placeholderTextColor={'rgba(200, 200, 200, 1)'}
+                    placeholder="Enter your occupations"
+                    placeholderTextColor={colors.textColor.palaceHolderColor}
                     style={{
+                      color: colors.textColor.normal,
                       // borderWidth: 1,
                       backgroundColor: colors.secondaryColor,
                       paddingHorizontal: 20,
@@ -556,7 +557,6 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
                       borderRadius: 100,
                       fontFamily: font.Poppins,
                       height: 45,
-                      color: colors.textColor.neutralColor,
                       fontSize: 14,
                     }}
                     value={userInfo?.occupations}
@@ -580,8 +580,9 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
                   </Text>
                   <TextInput
                     placeholder="organization/company "
-                    placeholderTextColor={'rgba(200, 200, 200, 1)'}
+                    placeholderTextColor={colors.textColor.palaceHolderColor}
                     style={{
+                      color: colors.textColor.normal,
                       // borderWidth: 1,
                       backgroundColor: colors.secondaryColor,
                       paddingHorizontal: 20,
@@ -590,7 +591,6 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
                       borderRadius: 100,
                       fontFamily: font.Poppins,
                       height: 45,
-                      color: colors.textColor.neutralColor,
                       fontSize: 14,
                     }}
                     value={userInfo?.worksAt}
@@ -614,8 +614,9 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
                   </Text>
                   <TextInput
                     placeholder="studied at"
-                    placeholderTextColor={'rgba(200, 200, 200, 1)'}
+                    placeholderTextColor={colors.textColor.palaceHolderColor}
                     style={{
+                      color: colors.textColor.normal,
                       // borderWidth: 1,
                       backgroundColor: colors.secondaryColor,
                       paddingHorizontal: 20,
@@ -624,7 +625,6 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
                       borderRadius: 100,
                       fontFamily: font.Poppins,
                       height: 45,
-                      color: colors.textColor.neutralColor,
                       fontSize: 14,
                     }}
                     value={userInfo?.studiedAt}
@@ -648,8 +648,9 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
                   </Text>
                   <TextInput
                     placeholder="relationship status"
-                    placeholderTextColor={'rgba(200, 200, 200, 1)'}
+                    placeholderTextColor={colors.textColor.palaceHolderColor}
                     style={{
+                      color: colors.textColor.normal,
                       // borderWidth: 1,
                       backgroundColor: colors.secondaryColor,
                       paddingHorizontal: 20,
@@ -658,7 +659,6 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
                       borderRadius: 100,
                       fontFamily: font.Poppins,
                       height: 45,
-                      color: colors.textColor.neutralColor,
                       fontSize: 14,
                     }}
                     value={userInfo?.relationshipStatus}
@@ -1030,12 +1030,15 @@ const ProfileEditScreen = ({navigation}: NavigProps<null>) => {
 
             <TextInput
               editable={edit.link}
-              placeholder="https://www.instagram.com/example"
+              placeholder={userInfo?.instagramUrl}
               value={userInfo?.instagramUrl}
-              style={{
-                color: colors.textColor.light,
+              onChangeText={text => {
+                setUserInfo({...userInfo, instagramUrl: text});
               }}
-              placeholderTextColor={colors.neutralColor}
+              style={{
+                color: colors.textColor.normal,
+              }}
+              placeholderTextColor={colors.textColor.palaceHolderColor}
             />
           </View>
         </View>

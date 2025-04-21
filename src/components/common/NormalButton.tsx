@@ -1,7 +1,12 @@
-import { ActivityIndicator, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import {
+  ActivityIndicator,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+} from 'react-native';
 
 import React from 'react';
-import { useStyles } from '../../context/ContextApi';
+import {useStyles} from '../../context/ContextApi';
 
 interface VerifyEmailProps {
   routeText?: string;
@@ -14,7 +19,9 @@ interface VerifyEmailProps {
   textSize?: number;
   outLine?: boolean;
   width?: string | number;
-  isLoading ?: boolean
+  isLoading?: boolean;
+  disabled?: boolean;
+  radius?: number;
 }
 
 const NormalButton = ({
@@ -28,35 +35,37 @@ const NormalButton = ({
   textSize,
   outLine,
   width,
-  isLoading
+  isLoading,
+  disabled,
+  radius,
 }: VerifyEmailProps) => {
   const {colors, font} = useStyles();
   return (
     <TouchableOpacity
-    disabled={isLoading}
+      disabled={isLoading || disabled}
       activeOpacity={0.8}
       onPress={onPress}
       style={{
-        backgroundColor: outLine
-          ? colors.secondaryColor
-          : backGroundColor
-          ? backGroundColor
-          : colors.primaryColor,
-        borderRadius: 100,
+        backgroundColor: !disabled
+          ? outLine
+            ? colors.secondaryColor
+            : backGroundColor
+            ? backGroundColor
+            : colors.primaryColor
+          : colors.gray.variantTwo,
+        borderRadius: radius ? radius : 100,
         borderWidth: outLine ? 1 : 0,
+        opacity: disabled ? 0.5 : 1,
         borderColor: outLine ? colors.primaryColor : 'white',
         height: hight ? hight : 56,
         justifyContent: 'center',
         alignItems: 'center',
         marginVertical: marginVertical ? marginVertical : 0,
         width: width ? width : '100%',
-        flexDirection : "row",
-        gap : 10,
-      
+        flexDirection: 'row',
+        gap: 10,
       }}>
-        {
-          isLoading && <ActivityIndicator size="small" color={colors.white} />
-        }
+      {isLoading && <ActivityIndicator size="small" color={colors.white} />}
       <Text
         style={{
           fontFamily: font.PoppinsSemiBold,

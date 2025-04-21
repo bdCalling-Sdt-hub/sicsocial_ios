@@ -1,15 +1,17 @@
-import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 
-import React from 'react';
-import {useStyles} from '../../context/ContextApi';
+import {AnimatedImage} from 'react-native-ui-lib';
 import {IParticipant} from '../../redux/interface/participants';
+import React from 'react';
 import {makeImage} from '../../utils/utils';
+import {useStyles} from '../../context/ContextApi';
 
 interface IMessageCardProps extends IParticipant {
   name: string;
   lastMessage: string;
   lastTime: string;
   active?: boolean;
+  secondImage: any;
   onPress?: () => void;
   people?: 'one' | 'two';
 }
@@ -24,6 +26,7 @@ const MessageCard = ({
   _id,
   avatar,
   fullName,
+  secondImage,
 }: IMessageCardProps) => {
   // console.log(avatar);
   const {colors, font} = useStyles();
@@ -45,18 +48,20 @@ const MessageCard = ({
         gap: 12,
       }}>
       <View>
-        <View
-          style={{
-            width: 12,
-            height: 12,
-            borderRadius: 50,
-            backgroundColor: colors.green['#00B047'],
-            position: 'absolute',
-            right: 2,
-            zIndex: +1,
-            bottom: 7,
-          }}
-        />
+        {active && (
+          <View
+            style={{
+              width: 12,
+              height: 12,
+              borderRadius: 50,
+              backgroundColor: colors.green['#00B047'],
+              position: 'absolute',
+              right: 2,
+              zIndex: +1,
+              bottom: 7,
+            }}
+          />
+        )}
         <View
           style={{
             // elevation: 2,
@@ -78,24 +83,55 @@ const MessageCard = ({
                 style={{
                   // padding: 2,
 
-                  backgroundColor: colors.white,
+                  // backgroundColor: colors.white,
                   elevation: 2,
                   width: 65,
+                  height: 65,
                   borderRadius: 28,
                 }}>
-                <Image
-                  style={{
-                    width: 65,
-                    height: 65,
-                    borderRadius: 28,
-                    resizeMode: 'cover',
-                    borderColor: 'rgba(255,255,255,1)',
-                    borderWidth: 2,
-                  }}
-                  source={{
-                    uri: makeImage(avatar || ''),
-                  }}
-                />
+                {avatar ? (
+                  <AnimatedImage
+                    style={{
+                      width: 65,
+                      height: 65,
+                      borderRadius: 28,
+                      resizeMode: 'cover',
+                      borderColor: 'rgba(255,255,255,1)',
+                      borderWidth: 2,
+                    }}
+                    source={{
+                      uri: makeImage(avatar || ''),
+                    }}
+                  />
+                ) : (
+                  <View
+                    style={{
+                      width: 65,
+                      height: 65,
+                      borderRadius: 28,
+                    }}>
+                    <View
+                      style={{
+                        borderWidth: 2,
+                        borderColor: 'rgba(255,255,255,1)',
+                        width: 65,
+                        height: 65,
+                        borderRadius: 28,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        backgroundColor: colors.primaryColor,
+                      }}>
+                      <Text
+                        style={{
+                          fontSize: 25,
+                          fontFamily: font.PoppinsBold,
+                          color: colors.textColor.white,
+                        }}>
+                        {name?.slice(0, 1)}
+                      </Text>
+                    </View>
+                  </View>
+                )}
               </View>
             </View>
           ) : (
@@ -116,24 +152,57 @@ const MessageCard = ({
                 }}>
                 <View
                   style={{
+                    // padding: 2,
+
+                    // backgroundColor: colors.white,
                     elevation: 2,
-                    width: 47,
+                    width: 65,
+                    height: 65,
                     borderRadius: 28,
-                    backgroundColor: colors.white,
                   }}>
-                  <Image
-                    style={{
-                      width: 47,
-                      height: 49,
-                      borderRadius: 28,
-                      resizeMode: 'contain',
-                      borderColor: 'rgba(255,255,255,1)',
-                      borderWidth: 2,
-                    }}
-                    source={{
-                      uri: makeImage(avatar || ''),
-                    }}
-                  />
+                  {secondImage ? (
+                    <AnimatedImage
+                      style={{
+                        width: 65,
+                        height: 65,
+                        borderRadius: 28,
+                        resizeMode: 'cover',
+                        borderColor: 'rgba(255,255,255,1)',
+                        borderWidth: 2,
+                      }}
+                      source={{
+                        uri: makeImage(secondImage || ''),
+                      }}
+                    />
+                  ) : (
+                    <View
+                      style={{
+                        width: 65,
+                        height: 65,
+                        borderRadius: 28,
+                      }}>
+                      <View
+                        style={{
+                          borderWidth: 2,
+                          borderColor: 'rgba(255,255,255,1)',
+                          width: 65,
+                          height: 65,
+                          borderRadius: 28,
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          backgroundColor: colors.primaryColor,
+                        }}>
+                        <Text
+                          style={{
+                            fontSize: 25,
+                            fontFamily: font.PoppinsBold,
+                            color: colors.textColor.white,
+                          }}>
+                          {name?.slice(0, 1)}
+                        </Text>
+                      </View>
+                    </View>
+                  )}
                 </View>
               </View>
               <View
@@ -144,24 +213,26 @@ const MessageCard = ({
 
                   transform: [
                     {
-                      translateX: 18,
+                      translateX: 30,
                     },
                     {
-                      translateY: 12,
+                      translateY: 35,
                     },
                   ],
                 }}>
                 <View
                   style={{
                     elevation: 2,
-                    width: 47,
+                    maxWidth: 30,
+                    width: 30,
                     borderRadius: 28,
                     backgroundColor: colors.white,
                   }}>
-                  <Image
+                  <AnimatedImage
                     style={{
-                      width: 47,
-                      height: 49,
+                      maxWidth: 30,
+                      width: 30,
+                      height: 30,
                       borderRadius: 28,
                       resizeMode: 'contain',
                       borderColor: 'rgba(255,255,255,1)',

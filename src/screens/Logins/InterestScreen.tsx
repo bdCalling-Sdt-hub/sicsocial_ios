@@ -1,4 +1,4 @@
-import {FlatList, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {FlatList, StyleSheet, Text, View} from 'react-native';
 import {
   useGetUserProfileQuery,
   useUserUpdateMutation,
@@ -10,6 +10,7 @@ import NormalButton from '../../components/common/NormalButton';
 import InterestCard from '../../components/interest/InterestCard';
 import {useStyles} from '../../context/ContextApi';
 import {NavigProps} from '../../interfaces/NaviProps';
+import tw from '../../lib/tailwind';
 
 const data = [
   {
@@ -278,7 +279,7 @@ const data = [
   },
 ];
 
-const InterestScreen = ({navigation}: NavigProps<null>) => {
+const InterestScreen = ({navigation, route}: NavigProps<{info: any}>) => {
   const {colors, font} = useStyles();
   // Your code here...
   const {data: userProfile} = useGetUserProfileQuery({});
@@ -295,11 +296,15 @@ const InterestScreen = ({navigation}: NavigProps<null>) => {
         interests: selectSubsItems,
       }),
     );
-
+    console.log(route?.params?.data?.info);
     const result = await userUpdate(formData);
-    console.log(result);
-    if (result) {
-      navigation?.goBack();
+    // console.log(result);
+    if (result && route?.params?.data?.info === 'signup') {
+      (navigation as any)?.replace('HomeRoutes');
+    } else if (navigation?.canGoBack()) {
+      navigation.goBack();
+    } else {
+      (navigation as any)?.replace('Login');
     }
   }, [selectSubsItems]);
 
@@ -334,6 +339,16 @@ const InterestScreen = ({navigation}: NavigProps<null>) => {
           return <InterestCard item={item.item} />;
         }}
       /> */}
+      {/* must be selected at least 3 */}
+      <View style={tw`flex-row justify-center items-center px-4 w-full`}>
+        <Text
+          style={[
+            tw`text-xs font-semibold text-gray-500  text-center`,
+            {fontFamily: font.Poppins},
+          ]}>
+          Must be selected at least 3
+        </Text>
+      </View>
       <FlatList
         showsVerticalScrollIndicator={false}
         data={data}
@@ -363,12 +378,17 @@ const InterestScreen = ({navigation}: NavigProps<null>) => {
         }}>
         <NormalButton
           title="Continue"
+          disabled={selectSubsItems.length < 3}
           onPress={() => {
+            // chack user have miximum on interest
+            if (selectSubsItems.length < 3) {
+              return;
+            }
             handleUserUpdated();
           }}
           isLoading={results.isLoading}
         />
-        <TouchableOpacity
+        {/* <TouchableOpacity
           onPress={() => {
             navigation?.navigate('HomeRoutes');
           }}
@@ -386,7 +406,7 @@ const InterestScreen = ({navigation}: NavigProps<null>) => {
             }}>
             Skip
           </Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
     </View>
   );

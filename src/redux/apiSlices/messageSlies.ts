@@ -1,3 +1,5 @@
+import {IParticipantsData} from '../interface/participants';
+
 import {api} from '../api/baseApi';
 import {IMessages} from '../interface/message';
 
@@ -9,14 +11,17 @@ export const chatSlices = api.injectEndpoints({
       }),
       providesTags: ['message'],
     }),
-
+    getParticipants: builder.query<IParticipantsData, unknown>({
+      query: id => ({
+        url: `/chat/participants/${id}`,
+      }),
+      providesTags: ['message'],
+    }),
     createMessage: builder.mutation({
       query: data => ({
         url: `/message/send-message`,
         headers: {
-          Connection: 'keep-alive',
-          Accept: '*/*',
-          'Cache-Control': 'no-cache',
+          'Content-Type': 'multipart/form-data',
         },
         method: 'POST',
         body: data,
@@ -26,4 +31,9 @@ export const chatSlices = api.injectEndpoints({
   }),
 });
 
-export const {useCreateMessageMutation, useGetMessageQuery} = chatSlices;
+export const {
+  useCreateMessageMutation,
+  useGetMessageQuery,
+  useLazyGetMessageQuery,
+  useGetParticipantsQuery,
+} = chatSlices;

@@ -1,5 +1,6 @@
 import React, {useEffect} from 'react';
 import {
+  ActivityIndicator,
   FlatList,
   Image,
   Linking,
@@ -22,8 +23,9 @@ import {useStyles} from '../../context/ContextApi';
 import {useAudioPlayer} from '../../hook/playMusic';
 import {NavigProps} from '../../interfaces/NaviProps';
 import {useGetUserProfileQuery} from '../../redux/apiSlices/authSlice';
-import {useGetMessageQuery} from '../../redux/apiSlices/messageSlies';
+import {useLazyGetMessageQuery} from '../../redux/apiSlices/messageSlies';
 import {IMessage} from '../../redux/interface/message';
+import {getSocket} from '../../redux/services/socket';
 import {makeImage} from '../../utils/utils';
 
 export interface messagePros {
@@ -44,13 +46,12 @@ const NormalConversationScreen = ({
   navigation,
   route,
 }: NavigProps<{id: string}>) => {
-  console.log(route?.params);
+  // console.log(route?.params);
   const {width, height} = useWindowDimensions();
   const {colors, font} = useStyles();
-  const {data: messages, refetch: messageRefetch} = useGetMessageQuery(
-    {id: route?.params?.data?.id || route?.params?.id},
-    {skip: !route?.params},
-  );
+
+  const [getAllMessage, messageResult] = useLazyGetMessageQuery();
+
   const {data: userInfo} = useGetUserProfileQuery({});
   const {toggleAudioPlayback} = useAudioPlayer();
   const [AllMessages, setAllMessages] = React.useState<IMessage[]>([]);
@@ -68,21 +69,6 @@ const NormalConversationScreen = ({
   const animatePosition = useSharedValue(height * 0.07);
   const animateOpacity = useSharedValue(1);
 
-  useEffect(() => {
-    if (messages) {
-      let imageFile: Array<{url: string}> = [];
-      setAllMessages([...messages?.data] || []);
-      messages.data?.forEach((item: any) => {
-        if (item?.image) {
-          imageFile.push({
-            url: makeImage(item?.image),
-          });
-        }
-      });
-      setShowImages(imageFile || []);
-    }
-  }, [messages]);
-
   const handleSelectIndex = (image: string) => {
     // setImageIndex(index);
     setImageIndex(
@@ -92,6 +78,39 @@ const NormalConversationScreen = ({
     );
     setShowImage(true);
   };
+
+  const handleLoadData = async () => {
+    const res = await getAllMessage({
+      id: route?.params?.data?.id || route?.params?.id,
+    });
+    // console.log(res?.data?.data);
+    setAllMessages(res?.data?.data);
+    res?.data?.data.map(item => {
+      if (item?.image) {
+        setShowImages(prev => {
+          return [
+            ...prev,
+            {
+              url: makeImage(item?.image),
+            },
+          ];
+        });
+      }
+    });
+  };
+
+  const socket = getSocket();
+  useEffect(() => {
+    if (AllMessages.length === 0) {
+      handleLoadData();
+    }
+    socket?.on(
+      `message::${route?.params?.data?.id || route?.params?.id}`,
+      (data: IMessage) => {
+        handleLoadData();
+      },
+    );
+  }, [socket]);
 
   return (
     <View
@@ -120,7 +139,7 @@ const NormalConversationScreen = ({
 </defs>
 </svg>
 `}
-        title="Voice Message"
+        title="Message"
         optionOnPress={() => {
           setModalVisible(true);
         }}
@@ -246,11 +265,16 @@ const NormalConversationScreen = ({
           }
         }}
         inverted
-        data={AllMessages?.sort((a, b) => {
+        data={AllMessages}
+        ListHeaderComponent={() => {
           return (
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+            <>
+              {messageResult?.isFetching && (
+                <ActivityIndicator size={'small'} color={colors.primaryColor} />
+              )}
+            </>
           );
-        })}
+        }}
         renderItem={item => {
           return (
             <View
@@ -263,7 +287,7 @@ const NormalConversationScreen = ({
               <View
                 style={{
                   alignItems:
-                    item.item?.sender._id === userInfo?.data?._id
+                    item.item?.sender?._id === userInfo?.data?._id
                       ? 'flex-end'
                       : 'flex-start',
                   marginTop: 20,
@@ -280,17 +304,17 @@ const NormalConversationScreen = ({
                     alignItems: 'center',
                     minHeight: item.item?.audio === playItem ? 60 : 40,
                     backgroundColor:
-                      item.item?.sender._id === userInfo?.data?._id
+                      item.item?.sender?._id === userInfo?.data?._id
                         ? item.item?.audio === playItem
                           ? colors?.secondaryDeeper1
                           : colors.secondaryColor
                         : colors.redisExtraLight,
                     flexDirection: 'row',
                   }}>
-                  {item.item?.sender._id !== userInfo?.data?._id && (
+                  {item.item?.sender?._id !== userInfo?.data?._id && (
                     <View>
                       <Image
-                        source={{uri: makeImage(item.item.sender.avatar)}}
+                        source={{uri: makeImage(item?.item?.sender?.avatar)}}
                         style={{
                           width: 45,
                           height: 45,
@@ -319,12 +343,12 @@ const NormalConversationScreen = ({
                         paddingVertical: 5,
 
                         alignItems:
-                          item.item?.sender._id === userInfo?.data?._id
+                          item.item?.sender?._id === userInfo?.data?._id
                             ? 'flex-end'
                             : 'flex-start',
                       }}>
                       <View style={{alignItems: 'flex-end', gap: 10}}>
-                        {item.item.image && (
+                        {item?.item?.image && (
                           <TouchableOpacity
                             onPress={() => {
                               handleSelectIndex(item.item.image);
@@ -354,36 +378,25 @@ const NormalConversationScreen = ({
                         <TouchableOpacity
                           style={{}}
                           onPress={async () => {
-                            if (item.item.path) {
-                              Linking.openURL(item.item.path);
+                            if (item?.item?.book?.bookUrl) {
+                              Linking.openURL(item.item.book.bookUrl);
                             } else if (item.item.audio) {
                               setPlayItem(item.item.audio);
                               toggleAudioPlayback(makeImage(item.item.audio));
                             }
                           }}>
-                          <Text
-                            style={{
-                              fontSize: 14,
-                              color: colors.textColor.secondaryColor,
-                              fontFamily: font.Poppins,
-                              maxWidth: width * 0.65,
-                              textAlign:
-                                item.item?.sender._id === userInfo?.data?._id
-                                  ? 'right'
-                                  : 'left',
-                            }}>
-                            Audio
-                          </Text>
-
-                          {item.item.text && (
+                          {item?.item?.text && (
                             <Text
                               style={{
                                 fontSize: 14,
                                 color: colors.textColor.secondaryColor,
-                                fontFamily: font.Poppins,
+                                fontFamily:
+                                  playItem === item?.item?.audio
+                                    ? font?.PoppinsSemiBold
+                                    : font?.Poppins,
                                 maxWidth: width * 0.65,
                                 textAlign:
-                                  item.item?.sender._id === userInfo?.data?._id
+                                  item.item?.sender?._id === userInfo?.data?._id
                                     ? 'right'
                                     : 'left',
                               }}>
@@ -392,31 +405,66 @@ const NormalConversationScreen = ({
                           )}
                         </TouchableOpacity>
 
-                        {item.item.path && (
-                          <View
+                        {item.item.book && (
+                          <TouchableOpacity
+                            onPress={() => {
+                              navigation?.navigate('BookShare', {
+                                data: item.item.book,
+                              });
+                            }}
                             style={{
-                              backgroundColor: colors.bg,
-                              elevation: 2,
-                              // height: 192,
-
-                              borderColor: colors.bg,
-
-                              borderRadius: 15,
+                              // elevation: 2,
+                              // backgroundColor: colors.bg,
+                              // padding: 2,
+                              borderRadius: 24,
+                              // height: height * 0.243,
+                              // alignItems : "center",
+                              // justifyContent : "center",
                             }}>
-                            <Image
-                              resizeMode="stretch"
-                              source={{uri: item.item.path}}
+                            <View
                               style={{
-                                // marginBottom: 20,
-                                // aspectRatio: 1,
-
-                                width: 150,
-
-                                height: 190,
-                                borderRadius: 15,
-                              }}
-                            />
-                          </View>
+                                elevation: 1,
+                                padding: 3,
+                              }}>
+                              <Image
+                                resizeMode="stretch"
+                                style={{
+                                  height: height * 0.24,
+                                  width: width * 0.41,
+                                  borderRadius: 24,
+                                  borderWidth: 2,
+                                  borderColor: colors.bg,
+                                }}
+                                source={{
+                                  uri: makeImage(item.item?.book?.bookImage),
+                                }}
+                              />
+                            </View>
+                            <View
+                              style={{
+                                marginTop: 10,
+                                alignItems: 'center',
+                                gap: 5,
+                                maxWidth: width * 0.41,
+                              }}>
+                              <Text
+                                style={{
+                                  color: colors.textColor.light,
+                                  fontSize: 14,
+                                  fontFamily: font.PoppinsMedium,
+                                }}>
+                                {item.item?.book?.name}
+                              </Text>
+                              <Text
+                                style={{
+                                  color: colors.textColor.neutralColor,
+                                  fontSize: 12,
+                                  fontFamily: font.Poppins,
+                                }}>
+                                {item.item?.book?.publisher}
+                              </Text>
+                            </View>
+                          </TouchableOpacity>
                         )}
                       </View>
                     </View>
@@ -575,8 +623,8 @@ const NormalConversationScreen = ({
       <CustomModal
         width={'100%'}
         height={'100%'}
-        modalVisible={showImage}
         containerColor="rgba(0, 0, 0, 0.8)"
+        modalVisible={showImage}
         setModalVisible={setShowImage}>
         <ImageViewer
           imageUrls={showImages}
@@ -586,7 +634,6 @@ const NormalConversationScreen = ({
           onSwipeDown={() => {
             setShowImage(false);
           }}
-          useNativeDriver
           style={{
             width: '100%',
             height: '100%',
@@ -618,7 +665,9 @@ const NormalConversationScreen = ({
                 }}
                 style={{
                   padding: 10,
-                  alignItems: 'flex-end',
+                  right: 10,
+                  position: 'absolute',
+                  zIndex: +1,
                 }}>
                 <AntDesign name="close" size={24} color={'white'} />
               </TouchableOpacity>

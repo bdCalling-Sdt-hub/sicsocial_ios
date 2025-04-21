@@ -4,7 +4,9 @@ import {getStorageToken, removeStorageToken} from '../../utils/utils';
 import {clearToken} from '../apiSlices/tokenSlice';
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: 'http://192.168.12.202:5000/api/v1',
+  // baseUrl: 'https://api.sic.org/api/v1',
+  baseUrl: 'http://146.190.126.8:5000/api/v1',
+  // baseUrl: 'http://192.168.12.202:5000/api/v1',
   timeout: 10000,
   prepareHeaders: async (headers, {getState}) => {
     const token = getStorageToken();
@@ -55,7 +57,11 @@ export const api = createApi({
     'additional',
     'book',
     'payment',
+    'live',
+    'members',
   ],
 });
 
-export const imageUrl = 'http://192.168.12.202:5000/';
+// export const imageUrl = 'http://192.168.12.202:5000/';
+// export const imageUrl = 'https://api.sic.org/'
+export const imageUrl = 'http://146.190.126.8:5000/';

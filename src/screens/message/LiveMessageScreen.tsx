@@ -1,25 +1,29 @@
-import React, { useRef } from 'react';
+import React, {useEffect} from 'react';
 import {
-    FlatList,
-    Image,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
-    useWindowDimensions
+  FlatList,
+  Image,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+  useWindowDimensions,
 } from 'react-native';
 import {
-    useAnimatedStyle,
-    useSharedValue
-} from 'react-native-reanimated';
+  useCreateMessageMutation,
+  useLazyGetMessageQuery,
+} from '../../redux/apiSlices/messageSlies';
 
-import { TextInput } from 'react-native-gesture-handler';
-import { SvgXml } from 'react-native-svg';
+import {SvgXml} from 'react-native-svg';
 import Feather from 'react-native-vector-icons/Feather';
 import CustomModal from '../../components/common/customModal/CustomModal';
 import ModalOfBottom from '../../components/common/customModal/ModalOfButtom';
-import { useStyles } from '../../context/ContextApi';
-import { NavigProps } from '../../interfaces/NaviProps';
+import {useStyles} from '../../context/ContextApi';
+import {NavigProps} from '../../interfaces/NaviProps';
+import {useGetUserProfileQuery} from '../../redux/apiSlices/authSlice';
+import {IMessage} from '../../redux/interface/message';
+import {getSocket} from '../../redux/services/socket';
+import {makeImage} from '../../utils/utils';
 
 export interface messagePros {
   id: number;
@@ -34,127 +38,62 @@ export interface messagePros {
   };
 }
 
-
-
-
-
-const LiveMessageScreen = ({navigation}: NavigProps<null>) => {
+const LiveMessageScreen = ({navigation, route}: NavigProps<{data: any}>) => {
+  // console.log();
   const {width, height} = useWindowDimensions();
   const {colors, font} = useStyles();
 
-  const [messages, setMessages] = React.useState<Array<messagePros>>([
-    {
-      id: 1,
+  // console.log(route?.params?.data);
 
-      text: 'Hello, how are you ?',
-      createdAt: new Date(),
-      image: null,
-      user: {
-        _id: 1,
-        name: 'Amina',
-        avatar: require('../../assets/tempAssets/3a906b3de8eaa53e14582edf5c918b5d.jpg'),
-      },
-    },
-    {
-      id: 2,
-
-      text: 'Hello Amina ?',
-      createdAt: new Date(),
-      image: null,
-      user: {
-        _id: 1,
-        name: 'Amina',
-        avatar: require('../../assets/tempAssets/3a906b3de8eaa53e14582edf5c918b5d.jpg'),
-      },
-    },
-    {
-      id: 3,
-
-      text: 'Hi, how are you?',
-      createdAt: new Date(),
-      image: null,
-      user: {
-        _id: 2,
-        name: 'Amina',
-        avatar: require('../../assets/tempAssets/4005b22a3c1c23d7c04f6c9fdbd85468.jpg'),
-      },
-    },
-    {
-      id: 4,
-
-      text: 'This view is so basinful asdfsa asdf a',
-      createdAt: new Date(),
-      image: null,
-      user: {
-        _id: 2,
-        name: 'Amina',
-        avatar: require('../../assets/tempAssets/4005b22a3c1c23d7c04f6c9fdbd85468.jpg'),
-      },
-    },
-    // {
-    //   id: 5,
-
-    //   text: 'This view is so basinful',
-    //   createdAt: new Date(),
-    //   image: require('../../assets/tempAssets/17056fa449ccef1fb1a124b63c0048d2.jpg'),
-    //   user: {
-    //     _id: 2,
-    //     name: 'Amina',
-    //     avatar: require('../../assets/tempAssets/3a906b3de8eaa53e14582edf5c918b5d.jpg'),
-    //   },
-    // },
-    // {
-    //   id: 6,
-
-    //   text: 'This view is so basinful',
-    //   createdAt: new Date(),
-    //   image: require('../../assets/tempAssets/17056fa449ccef1fb1a124b63c0048d2.jpg'),
-    //   user: {
-    //     _id: 1,
-    //     name: 'Amina',
-    //     avatar: require('../../assets/tempAssets/3a906b3de8eaa53e14582edf5c918b5d.jpg'),
-    //   },
-    // },
-    // {
-    //   id: 7,
-
-    //   text: 'I am agree is so basinful',
-    //   createdAt: new Date(),
-    //   image: require('../../assets/tempAssets/17056fa449ccef1fb1a124b63c0048d2.jpg'),
-    //   user: {
-    //     _id: 2,
-    //     name: 'Amina',
-    //     avatar: require('../../assets/tempAssets/3a906b3de8eaa53e14582edf5c918b5d.jpg'),
-    //   },
-    // },
-  ]);
-
+  const [getAllMessage, messageResult] = useLazyGetMessageQuery();
+  const [AllMessages, setAllMessages] = React.useState<any>([]);
   const [volume, setVolume] = React.useState<number>(1);
   const [newMessages, setNewMessages] = React.useState<string>('');
   const [newImage, setNewImage] = React.useState<string>('');
   const [modalVisible, setModalVisible] = React.useState(false);
   const [confirmationModal, setConfirmationModal] = React.useState(false);
+  const {data: userInfo} = useGetUserProfileQuery({});
+  const handleLoadData = async () => {
+    const res = await getAllMessage({
+      id: route?.params?.data?.chat,
+    });
+    setAllMessages(res?.data?.data);
+  };
 
-  const scrollRef = useRef();
+  const socket = getSocket();
+  const [createMessage, createMessageResult] = useCreateMessageMutation({});
 
-  const animatePosition = useSharedValue(height * 0.07);
-  const animateOpacity = useSharedValue(1);
+  const handleCreateNewChat = React.useCallback(async (data: any) => {
+    // console.log(chatIt, 'chatIt');
+    try {
+      // console.log(data, 'data');
+      const formData = new FormData();
+      formData.append('chatId', route?.params?.data?.chat);
+      data?.text && formData.append('text', data?.text);
+      const res = await createMessage(formData);
+      if (res.data?.id) {
+        setNewMessages('');
+        socket?.emit(`message::${route?.params?.data?.chat}`, res.data);
+      }
+      // console.log(res, 'res');
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
 
-  const animationStyleForUserConversation = useAnimatedStyle(() => {
-    return {
-      top: animatePosition.value,
-      opacity: animateOpacity.value,
-    };
-  });
-  console.log(messages);
-  console.log(messages.length);
-
-  const currentUser = messages.find(message => message.user._id === 1)?.user;
+  useEffect(() => {
+    if (AllMessages?.length === 0) {
+      handleLoadData();
+    }
+    socket?.on(`message::${route?.params?.data?.chat}`, (data: IMessage) => {
+      handleLoadData();
+    });
+  }, [socket]);
 
   return (
     <View
       style={{
-        height: '100%',
+        flex: 1,
         backgroundColor: colors.bg,
         width: width,
       }}>
@@ -198,7 +137,7 @@ const LiveMessageScreen = ({navigation}: NavigProps<null>) => {
                   fontSize: 12,
                   color: colors.textColor.neutralColor,
                 }}>
-                Asadullah created a group
+                {route?.params?.data?.name}
               </Text>
               <Text
                 style={{
@@ -206,9 +145,9 @@ const LiveMessageScreen = ({navigation}: NavigProps<null>) => {
                   fontSize: 14,
                   color: colors.textColor.secondaryColor,
                 }}>
-                Asadullah calling live{' '}
+                Room Conversations
               </Text>
-              <View
+              {/* <View
                 style={{
                   flexDirection: 'row',
                   alignItems: 'center',
@@ -229,20 +168,21 @@ const LiveMessageScreen = ({navigation}: NavigProps<null>) => {
                   }}>
                   Public
                 </Text>
-              </View>
+              </View> */}
             </View>
           </View>
         </View>
       </View>
       <FlatList
+        keyboardShouldPersistTaps="always"
+        keyExtractor={(item, index) => index.toString()}
         showsVerticalScrollIndicator={false}
         inverted
-        style={{
-          marginBottom: height * 0.09,
+        style={{flex: 1}}
+        contentContainerStyle={{
+          paddingTop: 20,
         }}
-        keyboardShouldPersistTaps="always"
-        automaticallyAdjustKeyboardInsets
-        data={messages.sort((a, b) => b.id - a.id)}
+        data={AllMessages}
         renderItem={item => {
           return (
             <View
@@ -255,7 +195,7 @@ const LiveMessageScreen = ({navigation}: NavigProps<null>) => {
               <View
                 style={{
                   alignItems:
-                    item.item.user._id === currentUser?._id
+                    item.item?.sender._id === userInfo?.data?._id
                       ? 'flex-end'
                       : 'flex-start',
                   marginTop: 20,
@@ -265,18 +205,20 @@ const LiveMessageScreen = ({navigation}: NavigProps<null>) => {
                     borderRadius: 10,
                     paddingHorizontal: 10,
                     paddingVertical: 10,
+
                     maxWidth: '90%',
                     minWidth: '50%',
-                    backgroundColor:
-                      item.item.user._id === currentUser?._id
-                        ? colors.secondaryColor
-                        : colors.redisExtraLight,
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    minHeight: 40,
+                    backgroundColor: colors.secondaryColor,
+
                     flexDirection: 'row',
                   }}>
-                  {item.item.user._id !== currentUser?._id && (
+                  {item.item?.sender._id !== userInfo?.data?._id && (
                     <View>
                       <Image
-                        source={item.item.user.avatar}
+                        source={{uri: makeImage(item.item.sender.avatar)}}
                         style={{
                           width: 45,
                           height: 45,
@@ -293,6 +235,7 @@ const LiveMessageScreen = ({navigation}: NavigProps<null>) => {
                       // paddingVertical: 2,
                       maxWidth: '90%',
                       minWidth: '50%',
+
                       // backgroundColor: colors.redisExtraLight,
                       gap: 15,
                     }}>
@@ -302,74 +245,30 @@ const LiveMessageScreen = ({navigation}: NavigProps<null>) => {
                         borderRadius: 10,
                         paddingHorizontal: 10,
                         paddingVertical: 5,
+
                         alignItems:
-                          item.item.user._id === currentUser?._id
+                          item.item?.sender._id === userInfo?.data?._id
                             ? 'flex-end'
                             : 'flex-start',
                       }}>
                       <View style={{alignItems: 'flex-end', gap: 10}}>
-                        {item.item.image && (
-                          <View
-                            style={{
-                              backgroundColor: colors.bg,
-                              elevation: 2,
-                              height: 150,
-                              borderRadius: 15,
-                            }}>
-                            <Image
-                              source={{uri: item.item.image}}
+                        <TouchableOpacity style={{}} onPress={async () => {}}>
+                          {item.item.text && (
+                            <Text
                               style={{
-                                marginBottom: 20,
-                                aspectRatio: 1,
-
-                                height: 150,
-                                borderRadius: 15,
-                              }}
-                            />
-                          </View>
-                        )}
-
-                        {item.item.text && (
-                          <Text
-                            style={{
-                              fontSize: 14,
-                              color: colors.textColor.secondaryColor,
-                              fontFamily: font.Poppins,
-                              maxWidth: width * 0.65,
-                              textAlign:
-                                item.item.user._id === currentUser?._id
-                                  ? 'right'
-                                  : 'left',
-                            }}>
-                            {item.item.text}
-                          </Text>
-                        )}
-
-                        {item.item.bookImage && (
-                          <View
-                            style={{
-                              backgroundColor: colors.bg,
-                              elevation: 2,
-                              // height: 192,
-                              borderColor: colors.bg,
-
-                              borderRadius: 15,
-                            }}>
-                            <Image
-                              resizeMode="stretch"
-                              source={{uri: item.item.bookImage}}
-                              style={{
-                                // marginBottom: 20,
-                                // aspectRatio: 1,
-
-                                width: 150,
-
-                                height: 190,
-                                borderRadius: 15,
-                              }}
-                            />
-                          </View>
-                        )}
+                                fontSize: 14,
+                                color: colors.textColor.secondaryColor,
+                                fontFamily: font?.Poppins,
+                                maxWidth: width * 0.65,
+                                textAlign:
+                                  item.item?.sender._id === userInfo?.data?._id
+                                    ? 'right'
+                                    : 'left',
+                              }}>
+                              {item.item.text}
+                            </Text>
+                          )}
+                        </TouchableOpacity>
                       </View>
                     </View>
                   </View>
@@ -379,10 +278,11 @@ const LiveMessageScreen = ({navigation}: NavigProps<null>) => {
           );
         }}
       />
-
       <View
         style={{
-          flex: 1,
+          // flex: 1,
+          paddingTop: 10,
+          paddingBottom: 15,
           flexDirection: 'row',
           // justifyContent: 'center',
           alignItems: 'center',
@@ -392,17 +292,18 @@ const LiveMessageScreen = ({navigation}: NavigProps<null>) => {
           alignSelf: 'center',
 
           gap: 10,
-          position: 'absolute',
-          bottom: 0,
-          height: height * 0.09,
-          backgroundColor: colors.bg,
+          // position: 'absolute',
         }}>
         <TextInput
           placeholder="Message"
           onChangeText={text => setNewMessages(text)}
+          placeholderTextColor={colors.textColor.palaceHolderColor}
           value={newMessages}
           style={{
-            backgroundColor: 'rgba(235, 235, 235, 1)',
+            color: colors.textColor.normal,
+            backgroundColor: colors.bg,
+            borderWidth: 1,
+            borderColor: colors.secondaryColor,
             flex: 1,
             borderRadius: 100,
             height: 50,
@@ -411,21 +312,9 @@ const LiveMessageScreen = ({navigation}: NavigProps<null>) => {
         />
         <TouchableOpacity
           onPress={() => {
-            setMessages([
-              ...messages,
-              {
-                id: messages.length + 1,
-
-                text: newMessages,
-                createdAt: new Date(),
-
-                user: {
-                  _id: 1,
-                  name: 'Amina',
-                  avatar: require('../../assets/tempAssets/3a906b3de8eaa53e14582edf5c918b5d.jpg'),
-                },
-              },
-            ]);
+            handleCreateNewChat({
+              text: newMessages,
+            });
             setNewMessages('');
           }}
           activeOpacity={0.9}
@@ -446,7 +335,6 @@ const LiveMessageScreen = ({navigation}: NavigProps<null>) => {
           />
         </TouchableOpacity>
       </View>
-
       <ModalOfBottom
         height={'18%'}
         onlyTopRadius={15}

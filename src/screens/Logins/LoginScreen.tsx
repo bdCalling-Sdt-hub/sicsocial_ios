@@ -9,6 +9,7 @@ import {
 import PopUpModal, {
   PopUpModalRef,
 } from '../../components/common/modals/PopUpModal';
+import {getStorageToken, lStorage} from '../../utils/utils';
 
 import {Formik} from 'formik';
 import React from 'react';
@@ -16,15 +17,18 @@ import {Checkbox} from 'react-native-ui-lib';
 import Feather from 'react-native-vector-icons/Feather';
 import {useDispatch} from 'react-redux';
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
+import NormalButton from '../../components/common/NormalButton';
 import {useStyles} from '../../context/ContextApi';
 import {NavigProps} from '../../interfaces/NaviProps';
 import {useLoginUserMutation} from '../../redux/apiSlices/authSlice';
 import {setToken} from '../../redux/apiSlices/tokenSlice';
-import {lStorage} from '../../utils/utils';
 
 const LoginScreen = ({navigation}: NavigProps<null>) => {
   const modalRef = React.useRef<PopUpModalRef>();
   const {colors, font} = useStyles();
+
+  console.log(getStorageToken());
+
   const [rememberItems, setRememberItems] = React.useState({
     check: lStorage.getBool('check') || false,
     email: lStorage.getString('email') || '',
@@ -33,36 +37,31 @@ const LoginScreen = ({navigation}: NavigProps<null>) => {
   const [isShow, setIsShow] = React.useState(false);
   const [check, setCheck] = React.useState(lStorage.getBool('check') || false);
   const dispatch = useDispatch();
-  const [loginUser] = useLoginUserMutation();
+  const [loginUser, results] = useLoginUserMutation();
 
   const OnSubmit = values => {
-    if (!values?.email) {
-      modalRef.current?.open({
-        // title : "Error",
-        content: 'Please enter your email',
-      });
-    } else if (!values?.password) {
-      modalRef.current?.open({
-        // title : "Error",
-        content: 'Please enter your password',
-      });
-    } else {
-      loginUser(values).then(res => {
-        if (res.error) {
-          console.log(res.error);
-          modalRef.current?.open({
-            // title : "Error",
-            content: res?.error?.data?.message,
-          });
-        }
-        if (res?.data) {
-          console.log(res.data?.data?.accessToken);
-          dispatch(setToken(res.data?.data?.accessToken));
-          lStorage.setString('token', res.data?.data?.accessToken);
-          navigation?.navigate('Loading');
-        }
-      });
-    }
+    // fetch('https://jsonplaceholder.typicode.com/posts')
+    //   .then(res => res.json())
+    //   .then(res => console.log(res));
+
+    loginUser(values).then(res => {
+      if (res.error) {
+        console.log(res.error);
+        modalRef.current?.open({
+          title: 'Warning',
+          content:
+            res?.error?.error === 'TypeError: Network request failed'
+              ? 'Internet Connection Failed'
+              : res?.error?.data?.message || res?.error?.error,
+        });
+      }
+      if (res?.data) {
+        // console.log(res.data?.data?.accessToken);
+        dispatch(setToken(res.data?.data?.accessToken));
+        lStorage.setString('token', res.data?.data?.accessToken);
+        (navigation as any)?.replace('Loading');
+      }
+    });
   };
 
   return (
@@ -106,8 +105,35 @@ const LoginScreen = ({navigation}: NavigProps<null>) => {
             email: rememberItems.email,
             password: rememberItems.password,
           }}
+          validate={values => {
+            const errors: any = {};
+            if (!values.email) {
+              errors.email = 'Required';
+            }
+            if (
+              !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
+            ) {
+              errors.email = 'valid email is required';
+            }
+            if (!values.password) {
+              errors.password = 'Required';
+            }
+            // passowrd mast be 8 char long
+            if (values.password.length < 8) {
+              errors.password = 'password must be 8 char long';
+            }
+            return errors;
+          }}
           onSubmit={values => OnSubmit(values)}>
-          {({handleChange, handleBlur, handleSubmit, values, resetForm}) => (
+          {({
+            handleChange,
+            handleBlur,
+            handleSubmit,
+            values,
+            resetForm,
+            errors,
+            touched,
+          }) => (
             <View
               style={{
                 marginTop: 105,
@@ -128,21 +154,26 @@ const LoginScreen = ({navigation}: NavigProps<null>) => {
                 </Text>
                 <TextInput
                   style={{
+                    color: colors.textColor.normal,
                     fontFamily: font.Poppins,
                     backgroundColor: colors.secondaryColor,
                     borderRadius: 100,
                     fontSize: 14,
                     paddingHorizontal: 20,
                     height: 56,
-                    color: colors.textColor.neutralColor,
                   }}
-                  placeholderTextColor={colors.textColor.gray}
-                  placeholder="example@email.com"
+                  placeholderTextColor={colors.textColor.palaceHolderColor}
+                  placeholder="Enter your email"
                   onChangeText={handleChange('email')}
                   onBlur={handleBlur('email')}
                   value={values?.email}
                 />
               </View>
+
+              {errors.email && touched.email && (
+                <Text style={{color: 'red', fontSize: 12}}>{errors.email}</Text>
+              )}
+
               <View
                 style={{
                   gap: 8,
@@ -157,21 +188,27 @@ const LoginScreen = ({navigation}: NavigProps<null>) => {
                 </Text>
                 <TextInput
                   value={values.password}
+                  placeholderTextColor={colors.textColor.palaceHolderColor}
                   style={{
+                    color: colors.textColor.normal,
                     fontFamily: font.Poppins,
                     backgroundColor: colors.secondaryColor,
                     borderRadius: 100,
                     fontSize: 14,
                     paddingHorizontal: 20,
                     height: 56,
-                    color: colors.textColor.neutralColor,
                   }}
-                  // placeholder="Password"
+                  placeholder="Enter your password"
                   secureTextEntry={!isShow}
-                  // placeholderTextColor={colors.textColor.gray}
+                  // placeholderTextColor={colors.textColor.palaceHolderColor}
                   onChangeText={handleChange('password')}
                   onBlur={handleBlur('password')}
                 />
+                {errors.password && touched.password && (
+                  <Text style={{color: 'red', fontSize: 12}}>
+                    {errors.password}
+                  </Text>
+                )}
                 <TouchableOpacity
                   onPress={() => setIsShow(!isShow)}
                   style={{
@@ -181,9 +218,17 @@ const LoginScreen = ({navigation}: NavigProps<null>) => {
                     padding: 10,
                   }}>
                   {isShow ? (
-                    <Feather name="eye" size={24} />
+                    <Feather
+                      name="eye"
+                      color={colors.textColor.normal}
+                      size={24}
+                    />
                   ) : (
-                    <Feather name="eye-off" size={24} />
+                    <Feather
+                      name="eye-off"
+                      color={colors.textColor.normal}
+                      size={24}
+                    />
                   )}
                 </TouchableOpacity>
               </View>
@@ -287,28 +332,14 @@ const LoginScreen = ({navigation}: NavigProps<null>) => {
                 </TouchableOpacity>
               </View>
               <View>
-                <TouchableOpacity
+                <NormalButton
                   onPress={() => {
                     handleSubmit();
                     // navigation?.navigate('HomeRoutes');
                   }}
-                  style={{
-                    backgroundColor: colors.primaryColor,
-                    borderRadius: 100,
-                    height: 56,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    marginVertical: 24,
-                  }}>
-                  <Text
-                    style={{
-                      fontFamily: font.PoppinsSemiBold,
-                      fontSize: 16,
-                      color: 'white',
-                    }}>
-                    Log In
-                  </Text>
-                </TouchableOpacity>
+                  title="Log In"
+                  isLoading={results.isLoading}
+                />
               </View>
               <View
                 style={{

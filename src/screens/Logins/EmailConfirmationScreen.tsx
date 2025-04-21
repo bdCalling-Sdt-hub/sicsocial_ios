@@ -1,18 +1,50 @@
-import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {StyleSheet, Text, TextInput, View} from 'react-native';
+import PopUpModal, {
+  PopUpModalRef,
+} from '../../components/common/modals/PopUpModal';
+
 import React from 'react';
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
-import {NavigProps} from '../../interfaces/NaviProps';
+import NormalButton from '../../components/common/NormalButton';
 import {useStyles} from '../../context/ContextApi';
+import {NavigProps} from '../../interfaces/NaviProps';
+import {useForgotPasswordMutation} from '../../redux/apiSlices/authSlice';
 
 const EmailConfirmationScreen = ({navigation}: NavigProps<null>) => {
   const {colors, font} = useStyles();
+  const modalRef = React.useRef<PopUpModalRef>();
+  const [email, setEmail] = React.useState('');
+
+  const [mailVerification, results] = useForgotPasswordMutation();
+
+  const handleEmailVerification = async () => {
+    try {
+      const response = await mailVerification({
+        email: email,
+      });
+      console.log('Email Verification Response:', response);
+
+      if (response?.data) {
+        navigation?.navigate('VerifyEmail', {
+          data: {
+            email: email,
+            otp: '',
+            verificationType: 'passwordReset',
+          },
+        });
+      }
+
+      if (response.error) {
+        modalRef.current?.open({
+          title: 'Warning',
+          content: response?.error?.data?.message,
+        });
+      }
+    } catch (error) {
+      console.error('Error sending email verification:', error);
+    }
+  };
+
   return (
     <View
       style={{
@@ -78,45 +110,32 @@ const EmailConfirmationScreen = ({navigation}: NavigProps<null>) => {
             Email
           </Text>
           <TextInput
-            value="Gabrail101@gmail.com"
+            value={email}
+            onChangeText={text => setEmail(text)}
+            placeholderTextColor={colors.textColor.palaceHolderColor}
             style={{
+              color: colors.textColor.normal,
               fontFamily: font.Poppins,
               backgroundColor: colors.secondaryColor,
               borderRadius: 100,
               fontSize: 14,
               paddingHorizontal: 20,
               height: 56,
-              color: colors.textColor.neutralColor,
             }}
-            placeholder="type "
+            placeholder="Enter your email"
           />
         </View>
 
         <View>
-          <TouchableOpacity
-            onPress={() => {
-              navigation?.navigate('VerifyEmail');
-              // handleSubmit();
-            }}
-            style={{
-              backgroundColor: colors.primaryColor,
-              borderRadius: 100,
-              height: 56,
-              justifyContent: 'center',
-              alignItems: 'center',
-              marginVertical: 24,
-            }}>
-            <Text
-              style={{
-                fontFamily: font.PoppinsSemiBold,
-                fontSize: 16,
-                color: 'white',
-              }}>
-              Send Verification Code
-            </Text>
-          </TouchableOpacity>
+          <NormalButton
+            title="Send Verification Code"
+            onPress={handleEmailVerification}
+            isLoading={results.isLoading}
+            disabled={!results.isLoading && email.length < 1}
+          />
         </View>
       </View>
+      <PopUpModal ref={modalRef} />
     </View>
   );
 };

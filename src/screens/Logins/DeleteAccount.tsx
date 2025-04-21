@@ -7,12 +7,12 @@ import {
   View,
 } from 'react-native';
 
-import { Formik } from 'formik';
-import React from 'react';
-import Feather from 'react-native-vector-icons/Feather';
 import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
-import { useStyles } from '../../context/ContextApi';
-import { NavigProps } from '../../interfaces/NaviProps';
+import Feather from 'react-native-vector-icons/Feather';
+import {Formik} from 'formik';
+import {NavigProps} from '../../interfaces/NaviProps';
+import React from 'react';
+import {useStyles} from '../../context/ContextApi';
 
 const DeleteAccount = ({navigation}: NavigProps<null>) => {
   const {colors, font} = useStyles();
@@ -27,7 +27,6 @@ const DeleteAccount = ({navigation}: NavigProps<null>) => {
       }}>
       <BackButtonWithTitle
         navigation={navigation}
-  
         // title="Sign Up !"
         titleStyle={{
           fontSize: 24,
@@ -36,12 +35,10 @@ const DeleteAccount = ({navigation}: NavigProps<null>) => {
         }}
       />
 
-       
-     <ScrollView
-       showsVerticalScrollIndicator={false}
-       showsHorizontalScrollIndicator={false}
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        showsHorizontalScrollIndicator={false}
         keyboardShouldPersistTaps="always"
-      
         contentContainerStyle={{
           //   flex: 1,
           justifyContent: 'center',
@@ -100,15 +97,15 @@ const DeleteAccount = ({navigation}: NavigProps<null>) => {
                   Password
                 </Text>
                 <TextInput
-                  value="Gabrail10"
+                  placeholderTextColor={colors.textColor.palaceHolderColor}
                   style={{
+                    color: colors.textColor.normal,
                     fontFamily: font.Poppins,
                     backgroundColor: colors.secondaryColor,
                     borderRadius: 100,
                     fontSize: 14,
                     paddingHorizontal: 20,
                     height: 56,
-                    color: colors.textColor.neutralColor,
                   }}
                   placeholder="type "
                   secureTextEntry={!isShow}
@@ -125,9 +122,17 @@ const DeleteAccount = ({navigation}: NavigProps<null>) => {
                     padding: 10,
                   }}>
                   {isShow ? (
-                    <Feather name="eye" size={24} />
+                    <Feather
+                      name="eye"
+                      color={colors.textColor.normal}
+                      size={24}
+                    />
                   ) : (
-                    <Feather name="eye-off" size={24} />
+                    <Feather
+                      name="eye-off"
+                      color={colors.textColor.normal}
+                      size={24}
+                    />
                   )}
                 </TouchableOpacity>
               </View>
