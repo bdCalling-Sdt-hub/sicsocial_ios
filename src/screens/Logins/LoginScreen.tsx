@@ -20,6 +20,7 @@ import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
 import NormalButton from '../../components/common/NormalButton';
 import {useStyles} from '../../context/ContextApi';
 import {NavigProps} from '../../interfaces/NaviProps';
+import tw from '../../lib/tailwind';
 import {useLoginUserMutation} from '../../redux/apiSlices/authSlice';
 import {setToken} from '../../redux/apiSlices/tokenSlice';
 
@@ -113,14 +114,14 @@ const LoginScreen = ({navigation}: NavigProps<null>) => {
             if (
               !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
             ) {
-              errors.email = 'valid email is required';
+              errors.email = 'Invalid email address';
             }
             if (!values.password) {
               errors.password = 'Required';
             }
             // passowrd mast be 8 char long
             if (values.password.length < 8) {
-              errors.password = 'password must be 8 char long';
+              errors.password = ' Password must be 8 char long';
             }
             return errors;
           }}
@@ -144,14 +145,21 @@ const LoginScreen = ({navigation}: NavigProps<null>) => {
                 style={{
                   gap: 8,
                 }}>
-                <Text
-                  style={{
-                    fontFamily: font.Poppins,
-                    fontSize: 14,
-                    color: '#A1A1A1',
-                  }}>
-                  Email
-                </Text>
+                <View style={tw`flex-row items-center justify-between`}>
+                  <Text
+                    style={{
+                      fontFamily: font.Poppins,
+                      fontSize: 14,
+                      color: '#A1A1A1',
+                    }}>
+                    Email{' '}
+                  </Text>
+                  {errors.email && touched.email && (
+                    <Text style={tw`text-red-400 font-PoppinsRegular text-xs`}>
+                      {errors.email}
+                    </Text>
+                  )}
+                </View>
                 <TextInput
                   style={{
                     color: colors.textColor.normal,
@@ -170,22 +178,25 @@ const LoginScreen = ({navigation}: NavigProps<null>) => {
                 />
               </View>
 
-              {errors.email && touched.email && (
-                <Text style={{color: 'red', fontSize: 12}}>{errors.email}</Text>
-              )}
-
               <View
                 style={{
                   gap: 8,
                 }}>
-                <Text
-                  style={{
-                    fontFamily: font.Poppins,
-                    fontSize: 14,
-                    color: '#A1A1A1',
-                  }}>
-                  Password
-                </Text>
+                <View style={tw`flex-row items-center justify-between`}>
+                  <Text
+                    style={{
+                      fontFamily: font.Poppins,
+                      fontSize: 14,
+                      color: '#A1A1A1',
+                    }}>
+                    Password{' '}
+                  </Text>
+                  {errors.password && touched.password && (
+                    <Text style={tw`text-red-400 font-PoppinsRegular text-xs`}>
+                      {errors.password}
+                    </Text>
+                  )}
+                </View>
                 <TextInput
                   value={values.password}
                   placeholderTextColor={colors.textColor.palaceHolderColor}
@@ -204,11 +215,7 @@ const LoginScreen = ({navigation}: NavigProps<null>) => {
                   onChangeText={handleChange('password')}
                   onBlur={handleBlur('password')}
                 />
-                {errors.password && touched.password && (
-                  <Text style={{color: 'red', fontSize: 12}}>
-                    {errors.password}
-                  </Text>
-                )}
+
                 <TouchableOpacity
                   onPress={() => setIsShow(!isShow)}
                   style={{

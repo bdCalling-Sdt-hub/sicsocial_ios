@@ -17,6 +17,7 @@ import BackButtonWithTitle from '../../components/common/BackButtonWithTitle';
 import NormalButton from '../../components/common/NormalButton';
 import {useStyles} from '../../context/ContextApi';
 import {NavigProps} from '../../interfaces/NaviProps';
+import tw from '../../lib/tailwind';
 import {useCreateUserMutation} from '../../redux/apiSlices/authSlice';
 
 const SignUpScreen = ({navigation}: NavigProps<null>) => {
@@ -151,14 +152,21 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
                 style={{
                   gap: 8,
                 }}>
-                <Text
-                  style={{
-                    fontFamily: font.Poppins,
-                    fontSize: 14,
-                    color: '#A1A1A1',
-                  }}>
-                  Full name
-                </Text>
+                <View style={tw`flex-row items-center justify-between`}>
+                  <Text
+                    style={{
+                      fontFamily: font.Poppins,
+                      fontSize: 14,
+                      color: '#A1A1A1',
+                    }}>
+                    Full name{' '}
+                  </Text>
+                  {errors.fullName && touched.fullName && (
+                    <Text style={tw`text-red-400 font-PoppinsRegular text-xs`}>
+                      {errors.fullName}
+                    </Text>
+                  )}
+                </View>
                 <TextInput
                   style={{
                     color: colors.textColor.normal,
@@ -176,23 +184,26 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
                   value={values?.fullName}
                 />
               </View>
-              {errors.fullName && touched.fullName && (
-                <Text style={{color: 'red', fontSize: 12}}>
-                  {errors.fullName}
-                </Text>
-              )}
+
               <View
                 style={{
                   gap: 8,
                 }}>
-                <Text
-                  style={{
-                    fontFamily: font.Poppins,
-                    fontSize: 14,
-                    color: '#A1A1A1',
-                  }}>
-                  Email
-                </Text>
+                <View style={tw`flex-row items-center justify-between `}>
+                  <Text
+                    style={{
+                      fontFamily: font.Poppins,
+                      fontSize: 14,
+                      color: '#A1A1A1',
+                    }}>
+                    Email{' '}
+                  </Text>
+                  {errors.email && touched.email && (
+                    <Text style={tw`text-red-400 font-PoppinsRegular text-xs`}>
+                      {errors.email}
+                    </Text>
+                  )}
+                </View>
                 <TextInput
                   style={{
                     color: colors.textColor.normal,
@@ -210,9 +221,7 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
                   value={values?.email}
                 />
               </View>
-              {errors.email && touched.email && (
-                <Text style={{color: 'red', fontSize: 12}}>{errors.email}</Text>
-              )}
+
               <View
                 style={{
                   gap: 8,
@@ -247,14 +256,22 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
                 style={{
                   gap: 8,
                 }}>
-                <Text
-                  style={{
-                    fontFamily: font.Poppins,
-                    fontSize: 14,
-                    color: '#A1A1A1',
-                  }}>
-                  Password
-                </Text>
+                <View style={tw`flex-row items-center justify-between`}>
+                  <Text
+                    style={{
+                      fontFamily: font.Poppins,
+                      fontSize: 14,
+                      color: '#A1A1A1',
+                    }}>
+                    Password{' '}
+                  </Text>
+                  {errors.password && touched.password && (
+                    <Text style={tw`text-red-400 font-PoppinsRegular text-xs`}>
+                      {errors.password}
+                    </Text>
+                  )}
+                </View>
+
                 <TextInput
                   style={{
                     color: colors.textColor.normal,
@@ -298,23 +315,27 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
                   )}
                 </TouchableOpacity>
               </View>
-              {errors.password && touched.password && (
-                <Text style={{color: 'red', fontSize: 12}}>
-                  {errors.password}
-                </Text>
-              )}
+
               <View
                 style={{
                   gap: 8,
                 }}>
-                <Text
-                  style={{
-                    fontFamily: font.Poppins,
-                    fontSize: 14,
-                    color: '#A1A1A1',
-                  }}>
-                  Confirm Password
-                </Text>
+                <View style={tw`flex-row items-center justify-between`}>
+                  <Text
+                    style={{
+                      fontFamily: font.Poppins,
+                      fontSize: 14,
+                      color: '#A1A1A1',
+                    }}>
+                    Confirm Password{' '}
+                  </Text>
+                  {errors.confirm_password && touched.confirm_password && (
+                    <Text style={tw`text-red-400 font-PoppinsRegular text-xs`}>
+                      {errors.confirm_password}
+                    </Text>
+                  )}
+                </View>
+
                 <TextInput
                   style={{
                     color: colors.textColor.normal,
@@ -360,11 +381,7 @@ const SignUpScreen = ({navigation}: NavigProps<null>) => {
                   )}
                 </TouchableOpacity>
               </View>
-              {errors.confirm_password && touched.confirm_password && (
-                <Text style={{color: 'red', fontSize: 12}}>
-                  {errors.confirm_password}
-                </Text>
-              )}
+
               <View style={{marginTop: 20}}>
                 <NormalButton
                   isLoading={results?.isLoading}
