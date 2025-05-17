@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "sicSocial.app"
-               BlueprintName = "sicSocial"
-               ReferencedContainer = "container:sicSocial.xcodeproj">
+               BuildableName = "sicsocial.app"
+               BlueprintName = "sicsocial"
+               ReferencedContainer = "container:sicsocial.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "sicSocialTests.xctest"
-               BlueprintName = "sicSocialTests"
-               ReferencedContainer = "container:sicSocial.xcodeproj">
+               BuildableName = "sicsocialTests.xctest"
+               BlueprintName = "sicsocialTests"
+               ReferencedContainer = "container:sicsocial.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,14 +55,14 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "sicSocial.app"
-            BlueprintName = "sicSocial"
-            ReferencedContainer = "container:sicSocial.xcodeproj">
+            BuildableName = "sicsocial.app"
+            BlueprintName = "sicsocial"
+            ReferencedContainer = "container:sicsocial.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
    <ProfileAction
-      buildConfiguration = "Debug"
+      buildConfiguration = "Release"
       shouldUseLaunchSchemeArgsEnv = "YES"
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "sicSocial.app"
-            BlueprintName = "sicSocial"
-            ReferencedContainer = "container:sicSocial.xcodeproj">
+            BuildableName = "sicsocial.app"
+            BlueprintName = "sicsocial"
+            ReferencedContainer = "container:sicsocial.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
@@ -82,7 +82,7 @@
       buildConfiguration = "Debug">
    </AnalyzeAction>
    <ArchiveAction
-      buildConfiguration = "Debug"
+      buildConfiguration = "Release"
       revealArchiveInOrganizer = "YES">
    </ArchiveAction>
 </Scheme>

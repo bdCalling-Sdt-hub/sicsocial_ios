@@ -7,164 +7,55 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		00E356F31AD99517003FC87E /* sicSocialTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* sicSocialTests.m */; };
-		0C80B921A6F3F58F76C31292 /* libPods-sicSocial.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCACB8F33CDC322A6C60F78 /* libPods-sicSocial.a */; };
-		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
+		0C80B921A6F3F58F76C31292 /* libPods-sicsocial.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCACB8F33CDC322A6C60F78 /* libPods-sicsocial.a */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
-		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		359AA82AABBC1E57CCF6E598 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = F5C765006EB636CCF3A4D1C9 /* PrivacyInfo.xcprivacy */; };
-		7699B88040F8A987B510C191 /* libPods-sicSocial-sicSocialTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F6CBCC0A4E27FBF8BF4A61 /* libPods-sicSocial-sicSocialTests.a */; };
+		761780ED2CA45674006654EE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761780EC2CA45674006654EE /* AppDelegate.swift */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
-		5639FD2A8EEC4E97B5EA9C40 /* BodoniModaSC-Italic-VariableFont.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CAFAD2AF2CDC45E2A8929C75 /* BodoniModaSC-Italic-VariableFont.ttf */; };
-		60E3DBC645DF4B7B86B3DA04 /* BodoniModaSC-VariableFont.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1D6C3609E29F48648428AB9F /* BodoniModaSC-VariableFont.ttf */; };
-		6FCCFC6633C84D3C87CF94FE /* Poppins-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9FE0EF1595BE444A95613AD7 /* Poppins-Black.ttf */; };
-		EAAA483492A44261BCF4E159 /* Poppins-BlackItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 87EC5319BC5044CE8BA542FD /* Poppins-BlackItalic.ttf */; };
-		D9FA16149CFE40F482063B47 /* Poppins-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 962D57332C1442DCB5925DEE /* Poppins-Bold.ttf */; };
-		38E5CA98164C4F6692D7CAE7 /* Poppins-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A53B18AC0F2D4ADAAC22A7E1 /* Poppins-BoldItalic.ttf */; };
-		909E3E7505004EA19DD8ED2A /* Poppins-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DCCC52ADD452474B8EC3BC85 /* Poppins-ExtraBold.ttf */; };
-		E73CDE42F5924D5A83F66E47 /* Poppins-ExtraBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DF0E1F9344794CBEA8D2B15C /* Poppins-ExtraBoldItalic.ttf */; };
-		A55CE47D006D450A95EF13A6 /* Poppins-ExtraLight.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E3DB0A707A0A455F920C29DE /* Poppins-ExtraLight.ttf */; };
-		1B674AFE31014D7EB8AB1D82 /* Poppins-ExtraLightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6CADE11C50764509BA056E01 /* Poppins-ExtraLightItalic.ttf */; };
-		C5977AB4A152431481D747AF /* Poppins-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 73AD22A4873642F783B2BEC2 /* Poppins-Italic.ttf */; };
-		B206F6212F0440D59DAA26AE /* Poppins-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7FF8ED6805484B239D560705 /* Poppins-Light.ttf */; };
-		B0F490438C284F2881C43B9C /* Poppins-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 51703CCDAAD249D2A73E21EB /* Poppins-LightItalic.ttf */; };
-		1852A26EC8A347BD85C6B3DC /* Poppins-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DE22F911B22147D5B00A2AEC /* Poppins-Medium.ttf */; };
-		8C2C969636E34DFBBDCDC978 /* Poppins-MediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D3120517E1A541D98138BDA5 /* Poppins-MediumItalic.ttf */; };
-		3AD57C659E1040BA85BD25B7 /* Poppins-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 143980F89FB645C2A3BF87EF /* Poppins-Regular.ttf */; };
-		073A56660633411A9F8ACBFA /* Poppins-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2DF37EDFA5154D3F8D625CA1 /* Poppins-SemiBold.ttf */; };
-		DC86060146524FB09A11D3B7 /* Poppins-SemiBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4177CAFA8C0A41AE98A16D1E /* Poppins-SemiBoldItalic.ttf */; };
-		0F132096C9E54E529BBDCA60 /* Poppins-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D00CDBDCFD444785AD4E798D /* Poppins-Thin.ttf */; };
-		B8CBB53C1F4040B8A5AAC51A /* Poppins-ThinItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A6A89482093949AA956289BC /* Poppins-ThinItalic.ttf */; };
-		2A1E464D18D74B90BC538515 /* ProstoOne-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6855EFB6D9794789B0C4C5E1 /* ProstoOne-Regular.ttf */; };
-		CE4529144AC94B148CE82163 /* Rowdies-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 375C87FFA6A64F1F89E9F862 /* Rowdies-Bold.ttf */; };
-		E11E2D8221B540DAA8F06ACE /* Rowdies-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 404C59CF27FC4D0AA3435E49 /* Rowdies-Light.ttf */; };
-		3DCF6208461A4D5082865E5E /* Rowdies-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4F14B53C2D234F5A8423E878 /* Rowdies-Regular.ttf */; };
-		BF86D49FAC6B454B9E4523DD /* RussoOne-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8B44D12CEBDC4CA18D593F28 /* RussoOne-Regular.ttf */; };
-		F883675D0E9748EEB6D5DAE5 /* Sarina-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 04A924F3FAF64B2C9CD61366 /* Sarina-Regular.ttf */; };
-		7ED8E40698594B7F8D90F7DD /* SuezOne-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3E00DC33E1D64BD1857BB474 /* SuezOne-Regular.ttf */; };
-		E52CD249093447DA88D23CC0 /* OFL.txt in Resources */ = {isa = PBXBuildFile; fileRef = 8EBFC99623E6475C9D037FFD /* OFL.txt */; };
-		1CB645AECE0B47A2803F38F1 /* README.txt in Resources */ = {isa = PBXBuildFile; fileRef = CCF5CA695D824CA8899E2185 /* README.txt */; };
+		FD1B66D6E948FC6FF4F2AB20 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		00E356F41AD99517003FC87E /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 13B07F861A680F5B00A75B9A;
-			remoteInfo = sicSocial;
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXFileReference section */
-		00E356EE1AD99517003FC87E /* sicSocialTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = sicSocialTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		00E356F21AD99517003FC87E /* sicSocialTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = sicSocialTests.m; sourceTree = "<group>"; };
-		13B07F961A680F5B00A75B9A /* sicSocial.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = sicSocial.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = sicSocial/AppDelegate.h; sourceTree = "<group>"; };
-		13B07FB01A68108700A75B9A /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = sicSocial/AppDelegate.mm; sourceTree = "<group>"; };
-		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = sicSocial/Images.xcassets; sourceTree = "<group>"; };
-		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = sicSocial/Info.plist; sourceTree = "<group>"; };
-		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = sicSocial/main.m; sourceTree = "<group>"; };
-		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = sicSocial/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		19F6CBCC0A4E27FBF8BF4A61 /* libPods-sicSocial-sicSocialTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-sicSocial-sicSocialTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		3B4392A12AC88292D35C810B /* Pods-sicSocial.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-sicSocial.debug.xcconfig"; path = "Target Support Files/Pods-sicSocial/Pods-sicSocial.debug.xcconfig"; sourceTree = "<group>"; };
-		5709B34CF0A7D63546082F79 /* Pods-sicSocial.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-sicSocial.release.xcconfig"; path = "Target Support Files/Pods-sicSocial/Pods-sicSocial.release.xcconfig"; sourceTree = "<group>"; };
-		5B7EB9410499542E8C5724F5 /* Pods-sicSocial-sicSocialTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-sicSocial-sicSocialTests.debug.xcconfig"; path = "Target Support Files/Pods-sicSocial-sicSocialTests/Pods-sicSocial-sicSocialTests.debug.xcconfig"; sourceTree = "<group>"; };
-		5DCACB8F33CDC322A6C60F78 /* libPods-sicSocial.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-sicSocial.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = sicSocial/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		89C6BE57DB24E9ADA2F236DE /* Pods-sicSocial-sicSocialTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-sicSocial-sicSocialTests.release.xcconfig"; path = "Target Support Files/Pods-sicSocial-sicSocialTests/Pods-sicSocial-sicSocialTests.release.xcconfig"; sourceTree = "<group>"; };
+		13B07F961A680F5B00A75B9A /* sicsocial.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = sicsocial.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = sicsocial/Images.xcassets; sourceTree = "<group>"; };
+		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = sicsocial/Info.plist; sourceTree = "<group>"; };
+		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = sicsocial/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		3B4392A12AC88292D35C810B /* Pods-sicsocial.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-sicsocial.debug.xcconfig"; path = "Target Support Files/Pods-sicsocial/Pods-sicsocial.debug.xcconfig"; sourceTree = "<group>"; };
+		5709B34CF0A7D63546082F79 /* Pods-sicsocial.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-sicsocial.release.xcconfig"; path = "Target Support Files/Pods-sicsocial/Pods-sicsocial.release.xcconfig"; sourceTree = "<group>"; };
+		5DCACB8F33CDC322A6C60F78 /* libPods-sicsocial.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-sicsocial.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		761780EC2CA45674006654EE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = sicsocial/AppDelegate.swift; sourceTree = "<group>"; };
+		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = sicsocial/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
-		F5C765006EB636CCF3A4D1C9 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = sicSocial/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		CAFAD2AF2CDC45E2A8929C75 /* BodoniModaSC-Italic-VariableFont.ttf */ = {isa = PBXFileReference; name = "BodoniModaSC-Italic-VariableFont.ttf"; path = "../src/assets/fonts/BodoniModaSC-Italic-VariableFont.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		1D6C3609E29F48648428AB9F /* BodoniModaSC-VariableFont.ttf */ = {isa = PBXFileReference; name = "BodoniModaSC-VariableFont.ttf"; path = "../src/assets/fonts/BodoniModaSC-VariableFont.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		9FE0EF1595BE444A95613AD7 /* Poppins-Black.ttf */ = {isa = PBXFileReference; name = "Poppins-Black.ttf"; path = "../src/assets/fonts/Poppins-Black.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		87EC5319BC5044CE8BA542FD /* Poppins-BlackItalic.ttf */ = {isa = PBXFileReference; name = "Poppins-BlackItalic.ttf"; path = "../src/assets/fonts/Poppins-BlackItalic.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		962D57332C1442DCB5925DEE /* Poppins-Bold.ttf */ = {isa = PBXFileReference; name = "Poppins-Bold.ttf"; path = "../src/assets/fonts/Poppins-Bold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		A53B18AC0F2D4ADAAC22A7E1 /* Poppins-BoldItalic.ttf */ = {isa = PBXFileReference; name = "Poppins-BoldItalic.ttf"; path = "../src/assets/fonts/Poppins-BoldItalic.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		DCCC52ADD452474B8EC3BC85 /* Poppins-ExtraBold.ttf */ = {isa = PBXFileReference; name = "Poppins-ExtraBold.ttf"; path = "../src/assets/fonts/Poppins-ExtraBold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		DF0E1F9344794CBEA8D2B15C /* Poppins-ExtraBoldItalic.ttf */ = {isa = PBXFileReference; name = "Poppins-ExtraBoldItalic.ttf"; path = "../src/assets/fonts/Poppins-ExtraBoldItalic.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		E3DB0A707A0A455F920C29DE /* Poppins-ExtraLight.ttf */ = {isa = PBXFileReference; name = "Poppins-ExtraLight.ttf"; path = "../src/assets/fonts/Poppins-ExtraLight.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		6CADE11C50764509BA056E01 /* Poppins-ExtraLightItalic.ttf */ = {isa = PBXFileReference; name = "Poppins-ExtraLightItalic.ttf"; path = "../src/assets/fonts/Poppins-ExtraLightItalic.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		73AD22A4873642F783B2BEC2 /* Poppins-Italic.ttf */ = {isa = PBXFileReference; name = "Poppins-Italic.ttf"; path = "../src/assets/fonts/Poppins-Italic.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		7FF8ED6805484B239D560705 /* Poppins-Light.ttf */ = {isa = PBXFileReference; name = "Poppins-Light.ttf"; path = "../src/assets/fonts/Poppins-Light.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		51703CCDAAD249D2A73E21EB /* Poppins-LightItalic.ttf */ = {isa = PBXFileReference; name = "Poppins-LightItalic.ttf"; path = "../src/assets/fonts/Poppins-LightItalic.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		DE22F911B22147D5B00A2AEC /* Poppins-Medium.ttf */ = {isa = PBXFileReference; name = "Poppins-Medium.ttf"; path = "../src/assets/fonts/Poppins-Medium.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		D3120517E1A541D98138BDA5 /* Poppins-MediumItalic.ttf */ = {isa = PBXFileReference; name = "Poppins-MediumItalic.ttf"; path = "../src/assets/fonts/Poppins-MediumItalic.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		143980F89FB645C2A3BF87EF /* Poppins-Regular.ttf */ = {isa = PBXFileReference; name = "Poppins-Regular.ttf"; path = "../src/assets/fonts/Poppins-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		2DF37EDFA5154D3F8D625CA1 /* Poppins-SemiBold.ttf */ = {isa = PBXFileReference; name = "Poppins-SemiBold.ttf"; path = "../src/assets/fonts/Poppins-SemiBold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		4177CAFA8C0A41AE98A16D1E /* Poppins-SemiBoldItalic.ttf */ = {isa = PBXFileReference; name = "Poppins-SemiBoldItalic.ttf"; path = "../src/assets/fonts/Poppins-SemiBoldItalic.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		D00CDBDCFD444785AD4E798D /* Poppins-Thin.ttf */ = {isa = PBXFileReference; name = "Poppins-Thin.ttf"; path = "../src/assets/fonts/Poppins-Thin.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		A6A89482093949AA956289BC /* Poppins-ThinItalic.ttf */ = {isa = PBXFileReference; name = "Poppins-ThinItalic.ttf"; path = "../src/assets/fonts/Poppins-ThinItalic.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		6855EFB6D9794789B0C4C5E1 /* ProstoOne-Regular.ttf */ = {isa = PBXFileReference; name = "ProstoOne-Regular.ttf"; path = "../src/assets/fonts/ProstoOne-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		375C87FFA6A64F1F89E9F862 /* Rowdies-Bold.ttf */ = {isa = PBXFileReference; name = "Rowdies-Bold.ttf"; path = "../src/assets/fonts/Rowdies-Bold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		404C59CF27FC4D0AA3435E49 /* Rowdies-Light.ttf */ = {isa = PBXFileReference; name = "Rowdies-Light.ttf"; path = "../src/assets/fonts/Rowdies-Light.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		4F14B53C2D234F5A8423E878 /* Rowdies-Regular.ttf */ = {isa = PBXFileReference; name = "Rowdies-Regular.ttf"; path = "../src/assets/fonts/Rowdies-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		8B44D12CEBDC4CA18D593F28 /* RussoOne-Regular.ttf */ = {isa = PBXFileReference; name = "RussoOne-Regular.ttf"; path = "../src/assets/fonts/RussoOne-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		04A924F3FAF64B2C9CD61366 /* Sarina-Regular.ttf */ = {isa = PBXFileReference; name = "Sarina-Regular.ttf"; path = "../src/assets/fonts/Sarina-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		3E00DC33E1D64BD1857BB474 /* SuezOne-Regular.ttf */ = {isa = PBXFileReference; name = "SuezOne-Regular.ttf"; path = "../src/assets/fonts/SuezOne-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		8EBFC99623E6475C9D037FFD /* OFL.txt */ = {isa = PBXFileReference; name = "OFL.txt"; path = "../src/assets/fonts/OFL.txt"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		CCF5CA695D824CA8899E2185 /* README.txt */ = {isa = PBXFileReference; name = "README.txt"; path = "../src/assets/fonts/README.txt"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		00E356EB1AD99517003FC87E /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				7699B88040F8A987B510C191 /* libPods-sicSocial-sicSocialTests.a in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		13B07F8C1A680F5B00A75B9A /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0C80B921A6F3F58F76C31292 /* libPods-sicSocial.a in Frameworks */,
+				0C80B921A6F3F58F76C31292 /* libPods-sicsocial.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		00E356EF1AD99517003FC87E /* sicSocialTests */ = {
+		13B07FAE1A68108700A75B9A /* sicsocial */ = {
 			isa = PBXGroup;
 			children = (
-				00E356F21AD99517003FC87E /* sicSocialTests.m */,
-				00E356F01AD99517003FC87E /* Supporting Files */,
-			);
-			path = sicSocialTests;
-			sourceTree = "<group>";
-		};
-		00E356F01AD99517003FC87E /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				00E356F11AD99517003FC87E /* Info.plist */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		13B07FAE1A68108700A75B9A /* sicSocial */ = {
-			isa = PBXGroup;
-			children = (
-				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
-				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
+				761780EC2CA45674006654EE /* AppDelegate.swift */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
-				13B07FB71A68108700A75B9A /* main.m */,
 				13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */,
-				F5C765006EB636CCF3A4D1C9 /* PrivacyInfo.xcprivacy */,
 			);
-			name = sicSocial;
+			name = sicsocial;
 			sourceTree = "<group>";
 		};
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				5DCACB8F33CDC322A6C60F78 /* libPods-sicSocial.a */,
-				19F6CBCC0A4E27FBF8BF4A61 /* libPods-sicSocial-sicSocialTests.a */,
+				5DCACB8F33CDC322A6C60F78 /* libPods-sicsocial.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -179,13 +70,11 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				13B07FAE1A68108700A75B9A /* sicSocial */,
+				13B07FAE1A68108700A75B9A /* sicsocial */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
-				00E356EF1AD99517003FC87E /* sicSocialTests */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				BBD78D7AC51CEA395F1C20DB /* Pods */,
-				7F15D35BA2F9465498DA4011 /* Resources */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -195,8 +84,7 @@
 		83CBBA001A601CBA00E9B192 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				13B07F961A680F5B00A75B9A /* sicSocial.app */,
-				00E356EE1AD99517003FC87E /* sicSocialTests.xctest */,
+				13B07F961A680F5B00A75B9A /* sicsocial.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -204,78 +92,18 @@
 		BBD78D7AC51CEA395F1C20DB /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				3B4392A12AC88292D35C810B /* Pods-sicSocial.debug.xcconfig */,
-				5709B34CF0A7D63546082F79 /* Pods-sicSocial.release.xcconfig */,
-				5B7EB9410499542E8C5724F5 /* Pods-sicSocial-sicSocialTests.debug.xcconfig */,
-				89C6BE57DB24E9ADA2F236DE /* Pods-sicSocial-sicSocialTests.release.xcconfig */,
+				3B4392A12AC88292D35C810B /* Pods-sicsocial.debug.xcconfig */,
+				5709B34CF0A7D63546082F79 /* Pods-sicsocial.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
 		};
-		7F15D35BA2F9465498DA4011 /* Resources */ = {
-			isa = "PBXGroup";
-			children = (
-				CAFAD2AF2CDC45E2A8929C75 /* BodoniModaSC-Italic-VariableFont.ttf */,
-				1D6C3609E29F48648428AB9F /* BodoniModaSC-VariableFont.ttf */,
-				9FE0EF1595BE444A95613AD7 /* Poppins-Black.ttf */,
-				87EC5319BC5044CE8BA542FD /* Poppins-BlackItalic.ttf */,
-				962D57332C1442DCB5925DEE /* Poppins-Bold.ttf */,
-				A53B18AC0F2D4ADAAC22A7E1 /* Poppins-BoldItalic.ttf */,
-				DCCC52ADD452474B8EC3BC85 /* Poppins-ExtraBold.ttf */,
-				DF0E1F9344794CBEA8D2B15C /* Poppins-ExtraBoldItalic.ttf */,
-				E3DB0A707A0A455F920C29DE /* Poppins-ExtraLight.ttf */,
-				6CADE11C50764509BA056E01 /* Poppins-ExtraLightItalic.ttf */,
-				73AD22A4873642F783B2BEC2 /* Poppins-Italic.ttf */,
-				7FF8ED6805484B239D560705 /* Poppins-Light.ttf */,
-				51703CCDAAD249D2A73E21EB /* Poppins-LightItalic.ttf */,
-				DE22F911B22147D5B00A2AEC /* Poppins-Medium.ttf */,
-				D3120517E1A541D98138BDA5 /* Poppins-MediumItalic.ttf */,
-				143980F89FB645C2A3BF87EF /* Poppins-Regular.ttf */,
-				2DF37EDFA5154D3F8D625CA1 /* Poppins-SemiBold.ttf */,
-				4177CAFA8C0A41AE98A16D1E /* Poppins-SemiBoldItalic.ttf */,
-				D00CDBDCFD444785AD4E798D /* Poppins-Thin.ttf */,
-				A6A89482093949AA956289BC /* Poppins-ThinItalic.ttf */,
-				6855EFB6D9794789B0C4C5E1 /* ProstoOne-Regular.ttf */,
-				375C87FFA6A64F1F89E9F862 /* Rowdies-Bold.ttf */,
-				404C59CF27FC4D0AA3435E49 /* Rowdies-Light.ttf */,
-				4F14B53C2D234F5A8423E878 /* Rowdies-Regular.ttf */,
-				8B44D12CEBDC4CA18D593F28 /* RussoOne-Regular.ttf */,
-				04A924F3FAF64B2C9CD61366 /* Sarina-Regular.ttf */,
-				3E00DC33E1D64BD1857BB474 /* SuezOne-Regular.ttf */,
-				8EBFC99623E6475C9D037FFD /* OFL.txt */,
-				CCF5CA695D824CA8899E2185 /* README.txt */,
-			);
-			name = Resources;
-			sourceTree = "<group>";
-			path = "";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		00E356ED1AD99517003FC87E /* sicSocialTests */ = {
+		13B07F861A680F5B00A75B9A /* sicsocial */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "sicSocialTests" */;
-			buildPhases = (
-				A55EABD7B0C7F3A422A6CC61 /* [CP] Check Pods Manifest.lock */,
-				00E356EA1AD99517003FC87E /* Sources */,
-				00E356EB1AD99517003FC87E /* Frameworks */,
-				00E356EC1AD99517003FC87E /* Resources */,
-				C59DA0FBD6956966B86A3779 /* [CP] Embed Pods Frameworks */,
-				F6A41C54EA430FDDC6A6ED99 /* [CP] Copy Pods Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				00E356F51AD99517003FC87E /* PBXTargetDependency */,
-			);
-			name = sicSocialTests;
-			productName = sicSocialTests;
-			productReference = 00E356EE1AD99517003FC87E /* sicSocialTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		13B07F861A680F5B00A75B9A /* sicSocial */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "sicSocial" */;
+			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "sicsocial" */;
 			buildPhases = (
 				C38B50BA6285516D6DCD4F65 /* [CP] Check Pods Manifest.lock */,
 				13B07F871A680F5B00A75B9A /* Sources */,
@@ -289,9 +117,9 @@
 			);
 			dependencies = (
 			);
-			name = sicSocial;
-			productName = sicSocial;
-			productReference = 13B07F961A680F5B00A75B9A /* sicSocial.app */;
+			name = sicsocial;
+			productName = sicsocial;
+			productReference = 13B07F961A680F5B00A75B9A /* sicsocial.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -302,16 +130,12 @@
 			attributes = {
 				LastUpgradeCheck = 1210;
 				TargetAttributes = {
-					00E356ED1AD99517003FC87E = {
-						CreatedOnToolsVersion = 6.2;
-						TestTargetID = 13B07F861A680F5B00A75B9A;
-					};
 					13B07F861A680F5B00A75B9A = {
 						LastSwiftMigration = 1120;
 					};
 				};
 			};
-			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "sicSocial" */;
+			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "sicsocial" */;
 			compatibilityVersion = "Xcode 12.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -324,56 +148,19 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				13B07F861A680F5B00A75B9A /* sicSocial */,
-				00E356ED1AD99517003FC87E /* sicSocialTests */,
+				13B07F861A680F5B00A75B9A /* sicsocial */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		00E356EC1AD99517003FC87E /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		13B07F8E1A680F5B00A75B9A /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
-				359AA82AABBC1E57CCF6E598 /* PrivacyInfo.xcprivacy in Resources */,
-				5639FD2A8EEC4E97B5EA9C40 /* BodoniModaSC-Italic-VariableFont.ttf in Resources */,
-				60E3DBC645DF4B7B86B3DA04 /* BodoniModaSC-VariableFont.ttf in Resources */,
-				6FCCFC6633C84D3C87CF94FE /* Poppins-Black.ttf in Resources */,
-				EAAA483492A44261BCF4E159 /* Poppins-BlackItalic.ttf in Resources */,
-				D9FA16149CFE40F482063B47 /* Poppins-Bold.ttf in Resources */,
-				38E5CA98164C4F6692D7CAE7 /* Poppins-BoldItalic.ttf in Resources */,
-				909E3E7505004EA19DD8ED2A /* Poppins-ExtraBold.ttf in Resources */,
-				E73CDE42F5924D5A83F66E47 /* Poppins-ExtraBoldItalic.ttf in Resources */,
-				A55CE47D006D450A95EF13A6 /* Poppins-ExtraLight.ttf in Resources */,
-				1B674AFE31014D7EB8AB1D82 /* Poppins-ExtraLightItalic.ttf in Resources */,
-				C5977AB4A152431481D747AF /* Poppins-Italic.ttf in Resources */,
-				B206F6212F0440D59DAA26AE /* Poppins-Light.ttf in Resources */,
-				B0F490438C284F2881C43B9C /* Poppins-LightItalic.ttf in Resources */,
-				1852A26EC8A347BD85C6B3DC /* Poppins-Medium.ttf in Resources */,
-				8C2C969636E34DFBBDCDC978 /* Poppins-MediumItalic.ttf in Resources */,
-				3AD57C659E1040BA85BD25B7 /* Poppins-Regular.ttf in Resources */,
-				073A56660633411A9F8ACBFA /* Poppins-SemiBold.ttf in Resources */,
-				DC86060146524FB09A11D3B7 /* Poppins-SemiBoldItalic.ttf in Resources */,
-				0F132096C9E54E529BBDCA60 /* Poppins-Thin.ttf in Resources */,
-				B8CBB53C1F4040B8A5AAC51A /* Poppins-ThinItalic.ttf in Resources */,
-				2A1E464D18D74B90BC538515 /* ProstoOne-Regular.ttf in Resources */,
-				CE4529144AC94B148CE82163 /* Rowdies-Bold.ttf in Resources */,
-				E11E2D8221B540DAA8F06ACE /* Rowdies-Light.ttf in Resources */,
-				3DCF6208461A4D5082865E5E /* Rowdies-Regular.ttf in Resources */,
-				BF86D49FAC6B454B9E4523DD /* RussoOne-Regular.ttf in Resources */,
-				F883675D0E9748EEB6D5DAE5 /* Sarina-Regular.ttf in Resources */,
-				7ED8E40698594B7F8D90F7DD /* SuezOne-Regular.ttf in Resources */,
-				E52CD249093447DA88D23CC0 /* OFL.txt in Resources */,
-				1CB645AECE0B47A2803F38F1 /* README.txt in Resources */,
+				FD1B66D6E948FC6FF4F2AB20 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -402,37 +189,15 @@
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-sicSocial/Pods-sicSocial-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-sicsocial/Pods-sicsocial-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-sicSocial/Pods-sicSocial-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-sicsocial/Pods-sicsocial-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-sicSocial/Pods-sicSocial-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		A55EABD7B0C7F3A422A6CC61 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-sicSocial-sicSocialTests-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-sicsocial/Pods-sicsocial-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		C38B50BA6285516D6DCD4F65 /* [CP] Check Pods Manifest.lock */ = {
@@ -450,28 +215,11 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-sicSocial-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-sicsocial-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		C59DA0FBD6956966B86A3779 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-sicSocial-sicSocialTests/Pods-sicSocial-sicSocialTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-sicSocial-sicSocialTests/Pods-sicSocial-sicSocialTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-sicSocial-sicSocialTests/Pods-sicSocial-sicSocialTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		E235C05ADACE081382539298 /* [CP] Copy Pods Resources */ = {
@@ -480,128 +228,42 @@
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-sicSocial/Pods-sicSocial-resources-${CONFIGURATION}-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-sicsocial/Pods-sicsocial-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-sicSocial/Pods-sicSocial-resources-${CONFIGURATION}-output-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-sicsocial/Pods-sicsocial-resources-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-sicSocial/Pods-sicSocial-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		F6A41C54EA430FDDC6A6ED99 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-sicSocial-sicSocialTests/Pods-sicSocial-sicSocialTests-resources-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-sicSocial-sicSocialTests/Pods-sicSocial-sicSocialTests-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-sicSocial-sicSocialTests/Pods-sicSocial-sicSocialTests-resources.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-sicsocial/Pods-sicsocial-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		00E356EA1AD99517003FC87E /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				00E356F31AD99517003FC87E /* sicSocialTests.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		13B07F871A680F5B00A75B9A /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
-				13B07FC11A68108700A75B9A /* main.m in Sources */,
+				761780ED2CA45674006654EE /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
-/* Begin PBXTargetDependency section */
-		00E356F51AD99517003FC87E /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 13B07F861A680F5B00A75B9A /* sicSocial */;
-			targetProxy = 00E356F41AD99517003FC87E /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
-
 /* Begin XCBuildConfiguration section */
-		00E356F61AD99517003FC87E /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5B7EB9410499542E8C5724F5 /* Pods-sicSocial-sicSocialTests.debug.xcconfig */;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				INFOPLIST_FILE = sicSocialTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				OTHER_LDFLAGS = (
-					"-ObjC",
-					"-lc++",
-					"$(inherited)",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/sicSocial.app/sicSocial";
-			};
-			name = Debug;
-		};
-		00E356F71AD99517003FC87E /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 89C6BE57DB24E9ADA2F236DE /* Pods-sicSocial-sicSocialTests.release.xcconfig */;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				COPY_PHASE_STRIP = NO;
-				INFOPLIST_FILE = sicSocialTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				OTHER_LDFLAGS = (
-					"-ObjC",
-					"-lc++",
-					"$(inherited)",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/sicSocial.app/sicSocial";
-			};
-			name = Release;
-		};
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3B4392A12AC88292D35C810B /* Pods-sicSocial.debug.xcconfig */;
+			baseConfigurationReference = 3B4392A12AC88292D35C810B /* Pods-sicsocial.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 4LXTF4P6BL;
 				ENABLE_BITCODE = NO;
-				INFOPLIST_FILE = sicSocial/Info.plist;
+				INFOPLIST_FILE = sicsocial/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.books";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -613,9 +275,7 @@
 					"-lc++",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
-				"PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*]" = sic.social.com;
-				PRODUCT_NAME = sicSocial;
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PRODUCT_NAME = sicsocial;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -624,15 +284,14 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5709B34CF0A7D63546082F79 /* Pods-sicSocial.release.xcconfig */;
+			baseConfigurationReference = 5709B34CF0A7D63546082F79 /* Pods-sicsocial.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 4LXTF4P6BL;
-				INFOPLIST_FILE = sicSocial/Info.plist;
+				INFOPLIST_FILE = sicsocial/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.books";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -643,9 +302,8 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = sic.social.com;
-				PRODUCT_NAME = sicSocial;
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_NAME = sicsocial;
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -655,7 +313,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CC = "";
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++20";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -683,7 +340,6 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
-				CXX = "";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
@@ -702,9 +358,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
-				LD = "";
-				LDPLUSPLUS = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					/usr/lib/swift,
 					"$(inherited)",
@@ -724,9 +378,13 @@
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 					"-DFOLLY_HAVE_CLOCK_GETTIME=1",
 				);
-				OTHER_LDFLAGS = "$(inherited)  ";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					" ",
+				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
 				USE_HERMES = true;
 			};
 			name = Debug;
@@ -735,7 +393,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CC = "";
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++20";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -763,7 +420,6 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
-				CXX = "";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
@@ -775,9 +431,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
-				LD = "";
-				LDPLUSPLUS = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					/usr/lib/swift,
 					"$(inherited)",
@@ -796,7 +450,10 @@
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 					"-DFOLLY_HAVE_CLOCK_GETTIME=1",
 				);
-				OTHER_LDFLAGS = "$(inherited)  ";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					" ",
+				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				USE_HERMES = true;
@@ -807,16 +464,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "sicSocialTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				00E356F61AD99517003FC87E /* Debug */,
-				00E356F71AD99517003FC87E /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "sicSocial" */ = {
+		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "sicsocial" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				13B07F941A680F5B00A75B9A /* Debug */,
@@ -825,7 +473,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "sicSocial" */ = {
+		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "sicsocial" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				83CBBA201A601CBA00E9B192 /* Debug */,
