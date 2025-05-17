@@ -1,7 +1,7 @@
 import {Socket, io} from 'socket.io-client';
 
 // const SOCKET_URL = 'http://192.168.12.202:5000'; // Replace with your server URL
-const SOCKET_URL = 'https://api.sic.org/'; // Replace with your server URL
+const SOCKET_URL = 'http://146.190.126.8:5000'; // Replace with your server URL
 
 let socket: Socket | null = null;
 
