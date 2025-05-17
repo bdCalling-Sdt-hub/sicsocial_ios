@@ -125,7 +125,7 @@ const Routes = () => {
     return () => {
       Linking?.removeAllListeners('url');
     };
-  }, []);
+  }, [handleDeepLink]);
 
   React.useEffect(() => {
     if (token) {
@@ -135,7 +135,7 @@ const Routes = () => {
       }
       initiateSocket();
     }
-  }, []);
+  }, [socket, token]);
 
   return (
     <NavigationContainer linking={token && linking}>
