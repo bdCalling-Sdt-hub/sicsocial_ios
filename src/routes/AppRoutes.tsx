@@ -2,7 +2,6 @@
 
 import * as React from 'react';
 
-import {Alert, Linking} from 'react-native';
 import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
 import {useContextApi, useStyles} from '../context/ContextApi';
 import {getSocket, initiateSocket} from '../redux/services/socket';
@@ -95,37 +94,37 @@ const Routes = () => {
 
   const socket = getSocket();
 
-  const handleDeepLink = (event: any) => {
-    const url = event?.url;
-    if (url && !token) {
-      Alert.alert('Please Login First');
-    } else {
-      // Linking.openURL(url);
-      if (socket) {
-        console.warn('Socket is already initialized');
-        return;
-      }
-      initiateSocket();
-    }
-  };
+  // const handleDeepLink = (event: any) => {
+  //   const url = event?.url;
+  //   if (url && !token) {
+  //     Alert.alert('Please Login First');
+  //   } else {
+  //     // Linking.openURL(url);
+  //     if (socket) {
+  //       console.warn('Socket is already initialized');
+  //       return;
+  //     }
+  //     initiateSocket();
+  //   }
+  // };
 
-  React.useEffect(() => {
-    // Add deep link listener
-    Linking.addEventListener('url', handleDeepLink);
+  // React.useEffect(() => {
+  //   // Add deep link listener
+  //   Linking.addEventListener('url', handleDeepLink);
 
-    // Handle initial URL if the app is opened from a deep link
-    Linking.getInitialURL().then(url => {
-      if (url) {
-        // handleDeepLink({url});
-        // console.log(url);
-      }
-    });
+  //   // Handle initial URL if the app is opened from a deep link
+  //   Linking.getInitialURL().then(url => {
+  //     if (url) {
+  //       // handleDeepLink({url});
+  //       // console.log(url);
+  //     }
+  //   });
 
-    // Clean up the listener
-    return () => {
-      Linking?.removeAllListeners('url');
-    };
-  }, [handleDeepLink]);
+  //   // Clean up the listener
+  //   return () => {
+  //     Linking?.removeAllListeners('url');
+  //   };
+  // }, [handleDeepLink]);
 
   React.useEffect(() => {
     if (token) {
