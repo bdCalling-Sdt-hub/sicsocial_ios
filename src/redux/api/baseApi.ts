@@ -5,6 +5,7 @@ import {clearToken} from '../apiSlices/tokenSlice';
 
 const baseQuery = fetchBaseQuery({
   // baseUrl: 'https://api.sic.org/api/v1',
+  // 146.190.126.8
   baseUrl: 'http://146.190.126.8:5000/api/v1',
   // baseUrl: 'http://192.168.12.202:5000/api/v1',
   timeout: 10000,
