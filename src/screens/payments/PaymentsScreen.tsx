@@ -37,18 +37,17 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
   const [extraLoading, setExtraLoading] = React.useState(false);
   const [paymentModal, setPaymentModal] = React.useState(false);
   const [paymentSSModal, setPaymentSSModal] = React.useState(false);
+  const {data: userData} = useGetUserProfileQuery({});
 
   const [amount, setAmount] = React.useState('');
   const [error, setError] = React.useState('');
   const [personalInfo, setPersonalInfo] = React.useState({
-    customerName: '',
-    customerEmail: '',
+    customerName: userData?.data?.fullName || '',
+    customerEmail: userData?.data?.email || '',
   });
 
   const [isShow, setIsShow] = React.useState(false);
   const [check, setCheck] = React.useState(false);
-
-  const {data: userData} = useGetUserProfileQuery({});
 
   const [paymentIntent] = usePaymentIntentMutation();
   const [paymentRecord] = usePaymentRecordMutation();
@@ -138,305 +137,332 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
   };
 
   return (
-    <View
-      style={{
-        height: '100%',
-        backgroundColor: colors.bg,
-      }}>
-      <BackButtonWithTitle
-        navigation={navigation}
-        thirdRoll
-        title="Donation informations"
-        titleStyle={{
-          fontSize: 20,
-          color: colors.textColor.primaryColor,
-          fontFamily: font.PoppinsSemiBold,
-        }}
-      />
+    <StripeProvider publishableKey="pk_test_51M6AQECe4QqAuKX4hQuRPLKDeB192L6xZiop8yWhLLrmbBTZjSsPKPyGvhhHVlKQNikct3mhaeZgyGjYTA17VwbT00l34SeOAr">
+      <View
+        style={{
+          height: '100%',
+          backgroundColor: colors.bg,
+        }}>
+        <BackButtonWithTitle
+          navigation={navigation}
+          thirdRoll
+          title="Donation informations"
+          titleStyle={{
+            fontSize: 20,
+            color: colors.textColor.primaryColor,
+            fontFamily: font.PoppinsSemiBold,
+          }}
+        />
 
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        showsHorizontalScrollIndicator={false}
-        keyboardShouldPersistTaps="always">
-        <View
-          style={{
-            marginTop: 24,
-            marginHorizontal: '5%',
-            gap: 24,
-          }}>
-          {userData?.data?.fullName && (
-            <View
-              style={{
-                gap: 8,
-              }}>
-              <Text
-                style={{
-                  fontFamily: font.Poppins,
-                  fontSize: 14,
-                  color: '#A1A1A1',
-                }}>
-                Full name
-              </Text>
-              <TextInput
-                editable={false}
-                value={userData?.data?.fullName}
-                style={{
-                  color: colors.textColor.normal,
-                  fontFamily: font.Poppins,
-                  backgroundColor: colors.gray.variant,
-                  borderRadius: 100,
-                  fontSize: 14,
-                  paddingHorizontal: 20,
-                  height: 56,
-                }}
-                placeholder="Enter full name"
-                placeholderTextColor={colors.textColor.palaceHolderColor}
-              />
-            </View>
-          )}
-          {userData?.data?.email && (
-            <View
-              style={{
-                gap: 8,
-              }}>
-              <Text
-                style={{
-                  fontFamily: font.Poppins,
-                  fontSize: 14,
-                  color: '#A1A1A1',
-                }}>
-                Email <Text style={{color: 'red'}}>*</Text>
-              </Text>
-              <TextInput
-                editable={false}
-                value={userData?.data?.email}
-                placeholderTextColor={colors.textColor.palaceHolderColor}
-                style={{
-                  color: colors.textColor.normal,
-                  fontFamily: font.Poppins,
-                  backgroundColor: colors.gray.variant,
-                  borderRadius: 100,
-                  fontSize: 14,
-                  paddingHorizontal: 20,
-                  height: 56,
-                }}
-                placeholder="Enter email"
-              />
-            </View>
-          )}
-          {userData?.data?.phoneNumber && (
-            <View
-              style={{
-                gap: 8,
-              }}>
-              <Text
-                style={{
-                  fontFamily: font.Poppins,
-                  fontSize: 14,
-                  color: '#A1A1A1',
-                }}>
-                Contact no
-              </Text>
-              <TextInput
-                editable={false}
-                value={userData?.data?.phoneNumber}
-                style={{
-                  color: colors.textColor.normal,
-                  fontFamily: font.Poppins,
-                  backgroundColor: colors.gray.variant,
-                  borderRadius: 100,
-                  fontSize: 14,
-                  paddingHorizontal: 20,
-                  height: 56,
-                }}
-                placeholder="Enter contact no"
-                placeholderTextColor={colors.textColor.palaceHolderColor}
-              />
-            </View>
-          )}
-          {userData?.data?.address && (
-            <View
-              style={{
-                gap: 8,
-              }}>
-              <Text
-                style={{
-                  fontFamily: font.Poppins,
-                  fontSize: 14,
-                  color: '#A1A1A1',
-                }}>
-                Address
-              </Text>
-              <TextInput
-                editable={false}
-                value={userData?.data?.address}
-                style={{
-                  fontFamily: font.Poppins,
-                  backgroundColor: colors.gray.variant,
-                  borderRadius: 100,
-                  fontSize: 14,
-                  paddingHorizontal: 20,
-                  height: 56,
-                  color: colors.textColor.normal,
-                }}
-                placeholder="Enter address"
-                placeholderTextColor={colors.textColor.palaceHolderColor}
-              />
-            </View>
-          )}
-
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          showsHorizontalScrollIndicator={false}
+          keyboardShouldPersistTaps="always">
           <View
             style={{
-              gap: 8,
-            }}>
-            <Text
-              style={{
-                fontFamily: font.Poppins,
-                fontSize: 14,
-                color: '#A1A1A1',
-              }}>
-              Donation Amounts
-            </Text>
-            <TextInput
-              style={{
-                color: 'black', // Use your color here
-                fontFamily: 'Poppins', // Use your font here
-                backgroundColor: '#f0f0f0', // Use your color here
-                borderRadius: 100,
-                fontSize: 14,
-                paddingHorizontal: 20,
-                height: 56,
-              }}
-              value={amount}
-              onChangeText={validateAmount}
-              placeholder="min-$50"
-              placeholderTextColor="#aaa" // Use your color here
-              keyboardType="decimal-pad"
-            />
-
-            {error ? (
-              <Text style={{color: 'red', fontSize: 12}}>{error}</Text>
-            ) : null}
-          </View>
-          <View
-            style={{
-              marginVertical: 10,
-            }}>
-            <NormalButton
-              disabled={Number(amount) <= 49}
-              onPress={() => {
-                setModalVisible(!modalVisible);
-              }}
-              title="Payment"
-            />
-          </View>
-        </View>
-      </ScrollView>
-      <CustomModal
-        setModalVisible={setModalVisible}
-        modalVisible={modalVisible}
-        Radius={15}
-        width={'80%'}
-        containerColor={colors.bg}
-        // height={'43%'}
-        backButton
-        appearance>
-        <View
-          style={{
-            paddingHorizontal: 20,
-          }}>
-          <Text
-            style={{
-              textAlign: 'center',
-              fontSize: 16,
-              marginVertical: 10,
-              color: colors.textColor.secondaryColor,
-              fontFamily: font.PoppinsSemiBold,
-            }}>
-            Plus confirm your informatins
-          </Text>
-
-          <View
-            style={{
-              marginVertical: 10,
-              //   justifyContent: 'center',
-              //   alignItems: 'center',
-              gap: 15,
-              paddingHorizontal: '5%',
+              marginTop: 24,
+              marginHorizontal: '5%',
+              gap: 24,
             }}>
             {userData?.data?.fullName && (
               <View
                 style={{
-                  flexDirection: 'row',
-                  gap: 10,
+                  gap: 8,
                 }}>
-                <Text
-                  style={{
-                    fontFamily: font.PoppinsMedium,
-                    fontSize: 14,
-                    color: colors.textColor.normal,
-                  }}>
-                  Name :
-                </Text>
                 <Text
                   style={{
                     fontFamily: font.Poppins,
                     fontSize: 14,
-                    color: colors.textColor.normal,
+                    color: '#A1A1A1',
                   }}>
-                  {userData?.data?.fullName}
+                  Full name
                 </Text>
+                <TextInput
+                  editable={false}
+                  value={userData?.data?.fullName}
+                  style={{
+                    color: colors.textColor.normal,
+                    fontFamily: font.Poppins,
+                    backgroundColor: colors.gray.variant,
+                    borderRadius: 100,
+                    fontSize: 14,
+                    paddingHorizontal: 20,
+                    height: 56,
+                  }}
+                  placeholder="Enter full name"
+                  placeholderTextColor={colors.textColor.palaceHolderColor}
+                />
               </View>
             )}
             {userData?.data?.email && (
               <View
                 style={{
-                  flexDirection: 'row',
-                  gap: 10,
+                  gap: 8,
                 }}>
-                <Text
-                  style={{
-                    fontFamily: font.PoppinsMedium,
-                    fontSize: 14,
-                    color: colors.textColor.normal,
-                  }}>
-                  Email :
-                </Text>
                 <Text
                   style={{
                     fontFamily: font.Poppins,
                     fontSize: 14,
-                    color: colors.textColor.normal,
+                    color: '#A1A1A1',
                   }}>
-                  {userData?.data?.email}
+                  Email <Text style={{color: 'red'}}>*</Text>
                 </Text>
+                <TextInput
+                  editable={false}
+                  value={userData?.data?.email}
+                  placeholderTextColor={colors.textColor.palaceHolderColor}
+                  style={{
+                    color: colors.textColor.normal,
+                    fontFamily: font.Poppins,
+                    backgroundColor: colors.gray.variant,
+                    borderRadius: 100,
+                    fontSize: 14,
+                    paddingHorizontal: 20,
+                    height: 56,
+                  }}
+                  placeholder="Enter email"
+                />
               </View>
             )}
             {userData?.data?.phoneNumber && (
               <View
                 style={{
-                  flexDirection: 'row',
-                  gap: 10,
+                  gap: 8,
                 }}>
-                <Text
-                  style={{
-                    fontFamily: font.PoppinsMedium,
-                    fontSize: 14,
-                    color: colors.textColor.normal,
-                  }}>
-                  Contact no:
-                </Text>
                 <Text
                   style={{
                     fontFamily: font.Poppins,
                     fontSize: 14,
-                    color: colors.textColor.normal,
+                    color: '#A1A1A1',
                   }}>
-                  {userData?.data?.phoneNumber}
+                  Contact no
                 </Text>
+                <TextInput
+                  editable={false}
+                  value={userData?.data?.phoneNumber}
+                  style={{
+                    color: colors.textColor.normal,
+                    fontFamily: font.Poppins,
+                    backgroundColor: colors.gray.variant,
+                    borderRadius: 100,
+                    fontSize: 14,
+                    paddingHorizontal: 20,
+                    height: 56,
+                  }}
+                  placeholder="Enter contact no"
+                  placeholderTextColor={colors.textColor.palaceHolderColor}
+                />
               </View>
             )}
             {userData?.data?.address && (
+              <View
+                style={{
+                  gap: 8,
+                }}>
+                <Text
+                  style={{
+                    fontFamily: font.Poppins,
+                    fontSize: 14,
+                    color: '#A1A1A1',
+                  }}>
+                  Address
+                </Text>
+                <TextInput
+                  editable={false}
+                  value={userData?.data?.address}
+                  style={{
+                    fontFamily: font.Poppins,
+                    backgroundColor: colors.gray.variant,
+                    borderRadius: 100,
+                    fontSize: 14,
+                    paddingHorizontal: 20,
+                    height: 56,
+                    color: colors.textColor.normal,
+                  }}
+                  placeholder="Enter address"
+                  placeholderTextColor={colors.textColor.palaceHolderColor}
+                />
+              </View>
+            )}
+
+            <View
+              style={{
+                gap: 8,
+              }}>
+              <Text
+                style={{
+                  fontFamily: font.Poppins,
+                  fontSize: 14,
+                  color: '#A1A1A1',
+                }}>
+                Donation Amounts
+              </Text>
+              <TextInput
+                style={{
+                  color: 'black', // Use your color here
+                  fontFamily: 'Poppins', // Use your font here
+                  backgroundColor: '#f0f0f0', // Use your color here
+                  borderRadius: 100,
+                  fontSize: 14,
+                  paddingHorizontal: 20,
+                  height: 56,
+                }}
+                value={amount}
+                onChangeText={validateAmount}
+                placeholder="min-$50"
+                placeholderTextColor="#aaa" // Use your color here
+                keyboardType="decimal-pad"
+              />
+
+              {error ? (
+                <Text style={{color: 'red', fontSize: 12}}>{error}</Text>
+              ) : null}
+            </View>
+            <View
+              style={{
+                marginVertical: 10,
+              }}>
+              <NormalButton
+                disabled={Number(amount) <= 49}
+                onPress={() => {
+                  setPaymentModal(true);
+                }}
+                title="Payment"
+              />
+            </View>
+          </View>
+        </ScrollView>
+        {/* <CustomModal
+          setModalVisible={setModalVisible}
+          modalVisible={modalVisible}
+          Radius={15}
+          width={'80%'}
+          containerColor={colors.bg}
+          // height={'43%'}
+          backButton
+          appearance>
+          <View
+            style={{
+              paddingHorizontal: 20,
+            }}>
+            <Text
+              style={{
+                textAlign: 'center',
+                fontSize: 16,
+                marginVertical: 10,
+                color: colors.textColor.secondaryColor,
+                fontFamily: font.PoppinsSemiBold,
+              }}>
+              Plus confirm your informatins
+            </Text>
+
+            <View
+              style={{
+                marginVertical: 10,
+                //   justifyContent: 'center',
+                //   alignItems: 'center',
+                gap: 15,
+                paddingHorizontal: '5%',
+              }}>
+              {userData?.data?.fullName && (
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    gap: 10,
+                  }}>
+                  <Text
+                    style={{
+                      fontFamily: font.PoppinsMedium,
+                      fontSize: 14,
+                      color: colors.textColor.normal,
+                    }}>
+                    Name :
+                  </Text>
+                  <Text
+                    style={{
+                      fontFamily: font.Poppins,
+                      fontSize: 14,
+                      color: colors.textColor.normal,
+                    }}>
+                    {userData?.data?.fullName}
+                  </Text>
+                </View>
+              )}
+              {userData?.data?.email && (
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    gap: 10,
+                  }}>
+                  <Text
+                    style={{
+                      fontFamily: font.PoppinsMedium,
+                      fontSize: 14,
+                      color: colors.textColor.normal,
+                    }}>
+                    Email :
+                  </Text>
+                  <Text
+                    style={{
+                      fontFamily: font.Poppins,
+                      fontSize: 14,
+                      color: colors.textColor.normal,
+                    }}>
+                    {userData?.data?.email}
+                  </Text>
+                </View>
+              )}
+              {userData?.data?.phoneNumber && (
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    gap: 10,
+                  }}>
+                  <Text
+                    style={{
+                      fontFamily: font.PoppinsMedium,
+                      fontSize: 14,
+                      color: colors.textColor.normal,
+                    }}>
+                    Contact no:
+                  </Text>
+                  <Text
+                    style={{
+                      fontFamily: font.Poppins,
+                      fontSize: 14,
+                      color: colors.textColor.normal,
+                    }}>
+                    {userData?.data?.phoneNumber}
+                  </Text>
+                </View>
+              )}
+              {userData?.data?.address && (
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    gap: 10,
+                  }}>
+                  <Text
+                    style={{
+                      fontFamily: font.PoppinsMedium,
+                      fontSize: 14,
+                      color: colors.textColor.normal,
+                    }}>
+                    Address:
+                  </Text>
+                  <Text
+                    style={{
+                      fontFamily: font.Poppins,
+                      fontSize: 14,
+                      color: colors.textColor.normal,
+                      textTransform: 'capitalize',
+                      width: '80%',
+                    }}>
+                    {userData?.data?.address}
+                  </Text>
+                </View>
+              )}
+
               <View
                 style={{
                   flexDirection: 'row',
@@ -448,127 +474,100 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
                     fontSize: 14,
                     color: colors.textColor.normal,
                   }}>
-                  Address:
+                  Donation :
                 </Text>
                 <Text
                   style={{
-                    fontFamily: font.Poppins,
+                    fontFamily: font.PoppinsMedium,
                     fontSize: 14,
                     color: colors.textColor.normal,
-                    textTransform: 'capitalize',
-                    width: '80%',
                   }}>
-                  {userData?.data?.address}
+                  ${amount}
                 </Text>
               </View>
-            )}
-
+            </View>
             <View
               style={{
-                flexDirection: 'row',
-                gap: 10,
+                marginVertical: 20,
               }}>
-              <Text
-                style={{
-                  fontFamily: font.PoppinsMedium,
-                  fontSize: 14,
-                  color: colors.textColor.normal,
-                }}>
-                Donation :
-              </Text>
-              <Text
-                style={{
-                  fontFamily: font.PoppinsMedium,
-                  fontSize: 14,
-                  color: colors.textColor.normal,
-                }}>
-                ${amount}
-              </Text>
+              <NormalButton
+                title="Confirm"
+                hight={45}
+                textSize={14}
+                width={'100%'}
+                onPress={() => {
+                  setModalVisible(false);
+                  setPaymentModal(true);
+                }}
+              />
             </View>
           </View>
+        </CustomModal> */}
+        <ModalOfBottom
+          setModalVisible={setPaymentModal}
+          modalVisible={paymentModal}
+          backButton
+          containerColor={colors.bg}>
           <View
             style={{
               marginVertical: 20,
+              // paddingHorizontal: '5%',
             }}>
-            <NormalButton
-              title="Confirm"
-              hight={45}
-              textSize={14}
-              width={'100%'}
-              onPress={() => {
-                setPaymentModal(!paymentModal);
-                setModalVisible(!modalVisible);
-              }}
-            />
-          </View>
-        </View>
-      </CustomModal>
-      <ModalOfBottom
-        setModalVisible={setPaymentModal}
-        modalVisible={paymentModal}
-        backButton
-        containerColor={colors.bg}>
-        <View
-          style={{
-            marginVertical: 20,
-            // paddingHorizontal: '5%',
-          }}>
-          <Text
-            style={{
-              textAlign: 'center',
-              fontSize: 16,
-              color: colors.textColor.secondaryColor,
-              fontFamily: font.Poppins,
-            }}>
-            Add your payment information
-          </Text>
-
-          <View
-            style={{
-              marginVertical: 10,
-              gap: -15,
-              borderColor: colors.gray.variantTwo,
-              borderWidth: 1,
-              borderRadius: 8,
-              paddingHorizontal: '3%',
-            }}>
-            <TextInput
+            <Text
               style={{
-                color: colors.textColor.normal,
-                height: 50,
-              }}
-              placeholderTextColor={colors.textColor.palaceHolderColor}
-              placeholder="Full Name"
-              value={personalInfo.customerName}
-              onChangeText={text =>
-                setPersonalInfo({...personalInfo, customerName: text})
-              }
-            />
-          </View>
-          <View
-            style={{
-              marginVertical: 10,
-              gap: -15,
-              borderColor: colors.gray.variantTwo,
-              borderWidth: 1,
-              borderRadius: 8,
-              paddingHorizontal: '3%',
-            }}>
-            <TextInput
-              style={{
-                color: colors.textColor.normal,
-                height: 50,
-              }}
-              placeholderTextColor={colors.textColor.palaceHolderColor}
-              placeholder="Email"
-              value={personalInfo.customerEmail}
-              onChangeText={text =>
-                setPersonalInfo({...personalInfo, customerEmail: text})
-              }
-            />
-          </View>
+                textAlign: 'center',
+                fontSize: 16,
+                color: colors.textColor.secondaryColor,
+                fontFamily: font.Poppins,
+              }}>
+              Add your payment information
+            </Text>
 
-          <StripeProvider publishableKey="pk_test_51M6AQECe4QqAuKX4hQuRPLKDeB192L6xZiop8yWhLLrmbBTZjSsPKPyGvhhHVlKQNikct3mhaeZgyGjYTA17VwbT00l34SeOAr">
+            <View
+              style={{
+                marginVertical: 10,
+                gap: -15,
+                borderColor: colors.gray.variantTwo,
+                borderWidth: 1,
+                borderRadius: 8,
+                paddingHorizontal: '3%',
+              }}>
+              <TextInput
+                style={{
+                  color: colors.textColor.normal,
+                  height: 50,
+                }}
+                placeholderTextColor={colors.textColor.palaceHolderColor}
+                placeholder="Full Name"
+                value={personalInfo.customerName}
+                onChangeText={text =>
+                  setPersonalInfo({...personalInfo, customerName: text})
+                }
+              />
+            </View>
+            <View
+              style={{
+                marginVertical: 10,
+                gap: -15,
+                borderColor: colors.gray.variantTwo,
+                borderWidth: 1,
+                borderRadius: 8,
+                paddingHorizontal: '3%',
+              }}>
+              <TextInput
+                style={{
+                  color: colors.textColor.normal,
+                  height: 50,
+                }}
+                placeholderTextColor={colors.textColor.palaceHolderColor}
+                placeholder="Email"
+                value={personalInfo.customerEmail}
+                onChangeText={text =>
+                  setPersonalInfo({...personalInfo, customerEmail: text})
+                }
+              />
+            </View>
+
             <CardField
               postalCodeEnabled={true}
               placeholders={{
@@ -594,187 +593,187 @@ const PaymentsScreen = ({navigation}: NavigProps<null>) => {
                 // console.log('focusField', focusedField);
               }}
             />
-          </StripeProvider>
-
-          <View
-            style={{
-              marginTop: 15,
-            }}>
-            <NormalButton
-              title={'Pay $' + amount}
-              hight={45}
-              backGroundColor={colors.primaryColor}
-              radius={5}
-              disabled={loading || extraLoading}
-              isLoading={loading || extraLoading}
-              onPress={() => {
-                handlePayPress();
-              }}
-            />
-          </View>
-        </View>
-      </ModalOfBottom>
-      <CustomModal
-        setModalVisible={setPaymentSSModal}
-        modalVisible={paymentSSModal}
-        containerColor={colors.bg}
-        Radius={15}
-        width={'80%'}
-        // height={'40%'}
-        backButton
-        appearance>
-        <View
-          style={{
-            paddingHorizontal: 20,
-          }}>
-          <Text
-            style={{
-              textAlign: 'center',
-              fontSize: 18,
-              marginVertical: 10,
-              color: '#F27405',
-              fontFamily: font.PoppinsSemiBold,
-              marginTop: 30,
-            }}>
-            Congratulations !
-          </Text>
-          <View
-            style={{
-              marginVertical: 10,
-              //   justifyContent: 'center',
-              //   alignItems: 'center',
-              gap: 5,
-            }}>
-            <Text
-              style={{
-                fontFamily: font.Poppins,
-                fontSize: 13,
-                color: colors.textColor.normal,
-                textAlign: 'justify',
-              }}>
-              {userData?.data?.fullName} , your donation is completed verify
-              your email for donation derails .
-            </Text>
-            {userData?.data?.email && (
-              <View
-                style={{
-                  flexDirection: 'row',
-                  gap: 10,
-                  justifyContent: 'center',
-                }}>
-                <Text
-                  style={{
-                    fontFamily: font.PoppinsMedium,
-                    fontSize: 13,
-                    color: colors.textColor.normal,
-                  }}>
-                  Email :
-                </Text>
-                <Text
-                  style={{
-                    fontFamily: font.Poppins,
-                    fontSize: 14,
-                    color: colors.textColor.normal,
-                  }}>
-                  {userData?.data?.email}
-                </Text>
-              </View>
-            )}
-
-            {userData?.data?.address && (
-              <View
-                style={{
-                  flexDirection: 'row',
-                  gap: 10,
-                  justifyContent: 'center',
-                }}>
-                <Text
-                  style={{
-                    fontFamily: font.PoppinsMedium,
-                    fontSize: 13,
-                    color: colors.textColor.normal,
-                  }}>
-                  Address:
-                </Text>
-                <Text
-                  style={{
-                    fontFamily: font.Poppins,
-                    fontSize: 13,
-                    color: colors.textColor.normal,
-                    textTransform: 'capitalize',
-                    width: '80%',
-                  }}>
-                  {userData?.data?.address}
-                </Text>
-              </View>
-            )}
 
             <View
               style={{
-                flexDirection: 'row',
-                gap: 10,
-                justifyContent: 'center',
-                marginVertical: 8,
+                marginTop: 15,
+              }}>
+              <NormalButton
+                title={'Pay $' + amount}
+                hight={45}
+                backGroundColor={colors.primaryColor}
+                radius={5}
+                disabled={loading || extraLoading}
+                isLoading={loading || extraLoading}
+                onPress={() => {
+                  handlePayPress();
+                }}
+              />
+            </View>
+          </View>
+        </ModalOfBottom>
+        <CustomModal
+          setModalVisible={setPaymentSSModal}
+          modalVisible={paymentSSModal}
+          containerColor={colors.bg}
+          Radius={15}
+          width={'80%'}
+          // height={'40%'}
+          backButton
+          appearance>
+          <View
+            style={{
+              paddingHorizontal: 20,
+            }}>
+            <Text
+              style={{
+                textAlign: 'center',
+                fontSize: 18,
+                marginVertical: 10,
+                color: '#F27405',
+                fontFamily: font.PoppinsSemiBold,
+                marginTop: 30,
+              }}>
+              Congratulations !
+            </Text>
+            <View
+              style={{
+                marginVertical: 10,
+                //   justifyContent: 'center',
+                //   alignItems: 'center',
+                gap: 5,
               }}>
               <Text
                 style={{
-                  fontFamily: font.PoppinsMedium,
-                  fontSize: 20,
-                  color: colors.green['#00B047'],
+                  fontFamily: font.Poppins,
+                  fontSize: 13,
+                  color: colors.textColor.normal,
+                  textAlign: 'justify',
                 }}>
-                Dontion amount :
+                {userData?.data?.fullName} , your donation is completed verify
+                your email for donation derails .
               </Text>
-              <Text
+              {userData?.data?.email && (
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    gap: 10,
+                    justifyContent: 'center',
+                  }}>
+                  <Text
+                    style={{
+                      fontFamily: font.PoppinsMedium,
+                      fontSize: 13,
+                      color: colors.textColor.normal,
+                    }}>
+                    Email :
+                  </Text>
+                  <Text
+                    style={{
+                      fontFamily: font.Poppins,
+                      fontSize: 14,
+                      color: colors.textColor.normal,
+                    }}>
+                    {userData?.data?.email}
+                  </Text>
+                </View>
+              )}
+
+              {userData?.data?.address && (
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    gap: 10,
+                    justifyContent: 'center',
+                  }}>
+                  <Text
+                    style={{
+                      fontFamily: font.PoppinsMedium,
+                      fontSize: 13,
+                      color: colors.textColor.normal,
+                    }}>
+                    Address:
+                  </Text>
+                  <Text
+                    style={{
+                      fontFamily: font.Poppins,
+                      fontSize: 13,
+                      color: colors.textColor.normal,
+                      textTransform: 'capitalize',
+                      width: '80%',
+                    }}>
+                    {userData?.data?.address}
+                  </Text>
+                </View>
+              )}
+
+              <View
                 style={{
-                  fontFamily: font.PoppinsMedium,
-                  fontSize: 20,
-                  color: colors.green['#00B047'],
+                  flexDirection: 'row',
+                  gap: 10,
+                  justifyContent: 'center',
+                  marginVertical: 8,
                 }}>
-                ${amount}
-              </Text>
+                <Text
+                  style={{
+                    fontFamily: font.PoppinsMedium,
+                    fontSize: 20,
+                    color: colors.green['#00B047'],
+                  }}>
+                  Dontion amount :
+                </Text>
+                <Text
+                  style={{
+                    fontFamily: font.PoppinsMedium,
+                    fontSize: 20,
+                    color: colors.green['#00B047'],
+                  }}>
+                  ${amount}
+                </Text>
+              </View>
+            </View>
+            <View
+              style={{
+                flexDirection: 'row',
+                gap: 24,
+                marginVertical: 5,
+                marginBottom: 10,
+              }}>
+              <NormalButton
+                title="Donate again"
+                hight={40}
+                textSize={14}
+                outLine
+                width={'45%'}
+                onPress={() => {
+                  setPaymentModal(false);
+                  setPaymentSSModal(false);
+
+                  setAmount('');
+                }}
+              />
+              <NormalButton
+                title="Back to home"
+                hight={40}
+                textSize={14}
+                // outLine
+                width={'45%'}
+                onPress={() => {
+                  setPaymentSSModal(false);
+                  setAmount('');
+                  setPersonalInfo({
+                    customerName: '',
+                    customerEmail: '',
+                  });
+                  navigation?.navigate('Home');
+                }}
+              />
             </View>
           </View>
-          <View
-            style={{
-              flexDirection: 'row',
-              gap: 24,
-              marginVertical: 5,
-              marginBottom: 10,
-            }}>
-            <NormalButton
-              title="Donate again"
-              hight={40}
-              textSize={14}
-              outLine
-              width={'45%'}
-              onPress={() => {
-                setPaymentModal(false);
-                setPaymentSSModal(false);
-
-                setAmount('');
-              }}
-            />
-            <NormalButton
-              title="Back to home"
-              hight={40}
-              textSize={14}
-              // outLine
-              width={'45%'}
-              onPress={() => {
-                setPaymentSSModal(false);
-                setAmount('');
-                setPersonalInfo({
-                  customerName: '',
-                  customerEmail: '',
-                });
-                navigation?.navigate('Home');
-              }}
-            />
-          </View>
-        </View>
-      </CustomModal>
-      <PopUpModal ref={modalRef} />
-    </View>
+        </CustomModal>
+        <PopUpModal ref={modalRef} />
+      </View>
+    </StripeProvider>
   );
 };
 
